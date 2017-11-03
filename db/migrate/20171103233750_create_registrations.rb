@@ -8,6 +8,7 @@ class CreateRegistrations < ActiveRecord::Migration[5.1]
       t.integer :guests_registered, default: 0
       t.integer :guests_attended, default: 0
       t.string  :accomodations, default: ""
+      t.timestamps
     end
   end
 end
