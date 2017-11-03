@@ -23,3 +23,6 @@
 .byebug_history
 
 spec/examples.txt
+
+.env
+.env.local
