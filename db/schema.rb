@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171103213430) do
+ActiveRecord::Schema.define(version: 20171103234509) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -24,6 +24,33 @@ ActiveRecord::Schema.define(version: 20171103213430) do
     t.integer "max_registrations"
     t.integer "min_leaders"
     t.integer "max_leaders"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "location_id", null: false
+  end
+
+  create_table "locations", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "address1"
+    t.string "address2"
+    t.string "city"
+    t.string "state"
+    t.string "zip"
+    t.string "map_url"
+    t.string "photo_url"
+    t.string "instructioons"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "registrations", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.integer "event_id", null: false
+    t.boolean "attended"
+    t.boolean "leader", default: false
+    t.integer "guests_registered", default: 0
+    t.integer "guests_attended", default: 0
+    t.string "accomodations", default: ""
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
