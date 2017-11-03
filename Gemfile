@@ -7,7 +7,6 @@ end
 
 gem 'rails', '~> 5.1.4'
 gem 'pg'
-gem 'puma', '~> 3.7'
 gem 'pundit'
 gem 'dotenv-rails'
 gem 'sass-rails', '~> 5.0'
