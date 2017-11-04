@@ -1,12 +1,24 @@
 <div class="container">
   <h1>Event Title: <%= @event.title %></h1>
+  <div class="row">
+  	<div class="col-md-6">
+	  <%= form_for [@event, @registration] do |f| %>
+	    <%= f.hidden_field :event_id %>
+	    <%= f.hidden_field :user_id %>
+	    <%= f.hidden_field :leader, value: '0' %>
+	    <% if current_user.is_leader? %>
+	      <%= f.label 'Register as Leader' %>
+	      <%= f.check_box :leader %>
+	    <% end %>
+	    <%= f.submit %>
+	  <% end %>
+  	</div>
+  	<div class="col-md-6">
+  		<h2>The Details</h2>
+  		<%= @event.start_time.strftime("%A, %D") %> 
+  		<h3>Location</h3>
+  		<%= @event.location.name %>
+  	</div>
+  </div>
 
-
-  <%= form_for [@event, @registration] do |f| %>
-    <%= f.hidden_field :event_id %>
-    <%= f.hidden_field :user_id %>
-    <%= f.submit %>
-  <% end %>
-
-  <for
 </div>
