@@ -13,6 +13,8 @@ class Event < ApplicationRecord
   scope :non_private, -> { where(is_private: false) }
   scope :future, -> { where('end_time > ?', Time.now) }
   scope :past, -> { where('end_time <= ?', Time.now) }
+  
+  accepts_nested_attributes_for :registrations
 
   def dates_are_valid?
     return if start_time.nil? || end_time.nil?

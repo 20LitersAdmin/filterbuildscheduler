@@ -17,6 +17,8 @@ class EventsController < ApplicationController
   def update
     @event = Event.find(params[:id])
     @event.update(event_params)
+    redirect_to event_path(@event)
+    
   end
 
   def edit
@@ -46,6 +48,9 @@ class EventsController < ApplicationController
                                   :max_leaders,
                                   :min_registrations,
                                   :max_registrations,
-                                  :is_private
+                                  :is_private,
+                                  :item_goal,
+                                  :item_results,
+                                  registrations_attributes: [ :id, :guests_attended ]
   end
 end
