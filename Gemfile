@@ -21,6 +21,10 @@ gem "delayed_job", "~> 4.1"
 gem "delayed_job_active_record", "~> 4.1"
 gem "delayed_cron_job", "~> 0.7.2"
 
+group :production do
+  gem 'puma'
+end
+
 group :development, :test do
   gem 'pry-byebug'
   gem 'rubocop'
