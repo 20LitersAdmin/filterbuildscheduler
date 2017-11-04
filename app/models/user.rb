@@ -10,6 +10,7 @@ class User < ApplicationRecord
   scope :admin, -> {where(is_admin: true)}
   has_many :registrations
   has_many :events, through: :registrations
+  has_and_belongs_to_many :technologies
   belongs_to :primary_location, class_name: "Location", primary_key: "id", foreign_key: "primary_location_id", optional: true
   attr_accessor :waiver_accepted
 
@@ -37,7 +38,7 @@ class User < ApplicationRecord
     return false unless is_leader
     return event.technology.nil? || qualified_technologies.exists?(event.technology)
   end
-  
+
   def registered?(event)
     Registration.where(user: self, event: event).present?
   end
