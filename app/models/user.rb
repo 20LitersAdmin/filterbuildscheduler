@@ -38,6 +38,6 @@ class User < ApplicationRecord
   end
   
   def registered?(event)
-    return Registration.where(user: self, event: event).present?
+    Registration.where(user: self, event: event).present?
   end
 end
