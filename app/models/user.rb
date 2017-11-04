@@ -9,6 +9,7 @@ class User < ApplicationRecord
   scope :builders, -> {active}
   scope :admin, -> {where(is_admin: true)}
   has_many :registrations
+  has_many :events, through: :registrations
   belongs_to :primary_location, class_name: "Location", primary_key: "id", foreign_key: "primary_location_id", optional: true
   attr_accessor :waiver_accepted
 
@@ -35,5 +36,13 @@ class User < ApplicationRecord
   def can_lead_event?(event)
     return false unless is_leader
     return event.technology.nil? || qualified_technologies.exists?(event.technology)
+  end
+  
+  def registered?(event)
+    Registration.where(user: self, event: event).present?
+
+  def available_events
+    Event.joins('LEFT OUTER JOIN registrations ON registrations.event_id = events.id')
+         .where('is_private = ? OR registrations.user_id = ?', false, id)
   end
 end
