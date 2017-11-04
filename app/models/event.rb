@@ -13,6 +13,10 @@ class Event < ApplicationRecord
   scope :future, -> { where('end_time > ?', Time.now) }
   scope :past, -> { where('end_time <= ?', Time.now) }
 
+  def in_the_past?
+    return end_time <= Time.now
+  end
+
   def dates_are_valid?
     return if start_time.nil? || end_time.nil?
     if start_time > end_time
