@@ -1,5 +1,5 @@
 
-class UserPolicy
+class UserPolicy < ApplicationPolicy
   attr_reader :user, :recipient
 
   def initialize(user, recipient)
