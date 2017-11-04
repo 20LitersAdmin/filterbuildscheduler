@@ -10,5 +10,12 @@ class User < ApplicationRecord
   scope :admin, -> {where(is_admin: true)}
   has_many :registrations
   has_one :primary_location, class_name: "Location", primary_key: "primary_location_id", foreign_key: "id"
-  has_many :qualified_technologies, class_name: "Technology", primary_key: "qualified_technology_ids", foreign_key: "id"
+
+  def qualified_technologies
+    if is_leader?
+      Technology.find_by(id: qualified_technology_id)
+    else
+      Technology.none
+    end
+  end
 end
