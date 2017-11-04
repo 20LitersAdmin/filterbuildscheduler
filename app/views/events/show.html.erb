@@ -8,9 +8,11 @@
           <%= f.hidden_field :event_id %>
           <%= f.hidden_field :user_id %>
           <%= f.hidden_field :leader, value: '0' %>
+          <div><%= f.label :name, "Name: #{current_user.name}" %></div>
+          <div><%= f.label :email, "Email: #{current_user.email}" %></div>
           <% if current_user.can_lead_event?(@event) %>
-            <%= f.label 'Register as Leader' %>
-            <%= f.check_box :leader %>
+            <div><%= f.label 'Register as Leader' %>
+            <%= f.check_box :leader %></div>
           <% end %>
           <%= f.submit %>
         <% end %>
@@ -36,7 +38,7 @@
       <% end %>
       <div><%= @event.location.city %>, <%= @event.location.state %> <%= @event.location.zip %></div>
       <% if @event.location.map_url %>
-        <a href="<%= @event.location.map_url %>">Map</a>
+        <a target="_blank" href="<%= @event.location.map_url %>">Map</a>
       <% end %>
     </div>
   </div>
