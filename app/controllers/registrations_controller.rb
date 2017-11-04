@@ -1,4 +1,6 @@
 class RegistrationsController < ApplicationController
+  before_action :find_registration, only: [:edit, :update, :destroy]
+  
   def create
     waiver_accepted = params[:registration].delete(:waiver_accepted)
     raise ActionController::BadRequest, "must accept waiver to participate" if waiver_accepted == '0'
@@ -20,13 +22,22 @@ class RegistrationsController < ApplicationController
 
     redirect_to events_path
   end
-
-  def delete
-    @reg = authorize Registration.find(params[:id])
-    @reg.delete
-    redirect_to registrations_path
+  
+  def edit
+  end
+  
+  def update
+    authorize @registration
+    @registration.update(registration_params)
+    redirect_to event_path(@registration.event)
   end
 
+  def destroy
+    authorize @registration
+    @registration.delete
+    redirect_to event_path(@registration.event)
+  end
+  
   private
 
   def user_params
@@ -41,6 +52,11 @@ class RegistrationsController < ApplicationController
     params.require(:registration).permit(:event_id,
                                          :user_id,
                                          :leader,
-                                         :guests_registered)
+                                         :guests_registered,
+                                         :accomodations)
+  end
+  
+  def find_registration
+    @registration = Registration.find(params[:id])
   end
 end

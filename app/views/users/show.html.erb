@@ -1,6 +1,10 @@
 <h1>Hello World</h1>
 
-<h3>See currently registered events</h3>
+<h3>Upcoming Events</h3>
+<% @user.registrations.each do |registration| %>
+  <%= registration.event.title %> (<%= link_to 'modify', edit_event_registration_path(registration.event, registration) %>)
+<% end %>
+
 <h3>See past events</h3>
 <h3>Private for build leaders: see qualifications</h3>
 

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171104162347) do
+ActiveRecord::Schema.define(version: 20171104185358) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -69,6 +69,13 @@ ActiveRecord::Schema.define(version: 20171104162347) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "technologies_users", id: false, force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "technology_id", null: false
+    t.index ["technology_id", "user_id"], name: "index_technologies_users_on_technology_id_and_user_id"
+    t.index ["user_id", "technology_id"], name: "index_technologies_users_on_user_id_and_technology_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
@@ -87,7 +94,6 @@ ActiveRecord::Schema.define(version: 20171104162347) do
     t.boolean "is_admin"
     t.boolean "is_archived", default: false
     t.date "signed_waiver_on"
-    t.integer "qualified_technology_id", default: [], array: true
     t.integer "primary_location_id"
     t.string "fname"
     t.string "lname"
