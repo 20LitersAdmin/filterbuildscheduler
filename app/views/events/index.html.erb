@@ -1,10 +1,16 @@
 <div class='container'>
   <%= link_to "Make a new one", new_event_path %>
 
-  <% @events.each do |event| %>
-    <h1><%= event.title %></h1>
-    <h2><%= event.start_time.strftime('%m/%d/%Y %I:%M%p') %></h2>
-    <h2><%= event.end_time.strftime('%m/%d/%Y %I:%M%p') %></h2>
-    <%= link_to 'Register', event_path(event) %>
-  <% end %>
+  <div class="event-container">
+    <% @events.each do |event| %>
+      <div class="event-wrapper">
+        <%= link_to event_path(event) do %>
+          <h2><%= event.title %></h2>
+          <h6><%= event.start_time.strftime('%m/%d/%Y %I:%M%p') %> - <%= event.end_time.strftime('%m/%d/%Y %I:%M%p') %></h6>
+          <h6>Location: <%= event.location.name %></h6>
+          <button class="btn btn-primary">Register Now!</button>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
 </div>
