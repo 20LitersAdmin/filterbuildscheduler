@@ -76,7 +76,49 @@
         <h4>Additional Event Details</h3>
         <div><%= @event.description %></div>
       <% end %>
+    </div>
+    <div class="col-md-6">
+      <div class="page-header">
+        <h1>Share Dialog</h1>
+      </div>
 
+      <p>Click the button below to trigger a Share Dialog</p>
+
+      <div id="shareBtn" class="btn btn-success clearfix">Share</div>
+
+      <p style="margin-top: 50px">
+        <hr />
+        <a class="btn btn-small"  href="https://developers.facebook.com/docs/sharing/reference/share-dialog">Share Dialog Documentation</a>
+      </p>
+
+
+      <script>
+        window.fbAsyncInit = function() {
+          FB.init({
+            appId            : '1665305893501056',
+            autoLogAppEvents : true,
+            xfbml            : true,
+            version          : 'v2.10'
+          });
+          FB.AppEvents.logPageView();
+        };
+
+      (function(d, s, id){
+         var js, fjs = d.getElementsByTagName(s)[0];
+         if (d.getElementById(id)) {return;}
+         js = d.createElement(s); js.id = id;
+         js.src = "https://connect.facebook.net/en_US/sdk.js";
+         fjs.parentNode.insertBefore(js, fjs);
+       }(document, 'script', 'facebook-jssdk'));
+
+      document.getElementById('shareBtn').onclick = function() {
+        FB.ui({
+          method: 'share',
+          display: 'popup',
+          href: 'https://dev.20liters.org/events/1',
+        }, function(response){});
+      }
+      </script>
     </div>
   </div>
 </div>
