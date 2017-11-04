@@ -4,9 +4,31 @@
 <% @user.registrations.each do |registration| %>
   <%= registration.event.title %> (<%= link_to 'modify', edit_event_registration_path(registration.event, registration) %>)
 <% end %>
+<% if @past_events.length > 0 %>
+  <h3>See past events</h3>
+  <div class="event-container">
+    <% @past_events.each do |event| %>
+      <div class="event">
+        <%= link_to event_path(event) do %>
+          <h2><%= event.title %></h2>
+          <div><%= event.start_time.strftime('%m/%d/%Y %I:%M%p') %> - <%= event.end_time.strftime('%m/%d/%Y %I:%M%p') %></div>
+          <div>Location: <%= event.location.name %></div>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+<% end %>
+<% if @user.is_leader %>
+  <h3>Qualifications</h3>
+  <% if !@user.technologies %>
+    <p>Not currently qualified with any technologies.</p>
+  <% else %>
+    <ul>
+      <% @user.technologies.each do |technology| %>
+    		<li><%= technology.name %> - <%= technology.description %></li>
+      <% end %>
+    </ul>
+  <% end %>
+<% end %>
 
-<h3>See past events</h3>
-<h3>Private for build leaders: see qualifications</h3>
-
-and edit myself
 <%= link_to("Edit", edit_user_path(current_user)) %>
