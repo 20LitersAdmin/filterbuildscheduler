@@ -14,6 +14,10 @@ class User < ApplicationRecord
   belongs_to :primary_location, class_name: "Location", primary_key: "id", foreign_key: "primary_location_id", optional: true
   attr_accessor :waiver_accepted
 
+  validates :fname, presence: true
+  validates :lname, presence: true
+  validates :email, presence: true
+
   def name
     "#{fname} #{lname}"
   end
@@ -26,14 +30,6 @@ class User < ApplicationRecord
     false
   end
 
-  def qualified_technologies
-    if is_leader?
-      Technology.find_by(id: qualified_technology_id)
-    else
-      Technology.none
-    end
-  end
-
   def can_lead_event?(event)
     return false unless is_leader
     return event.technology.nil? || qualified_technologies.exists?(event.technology)
@@ -43,8 +39,12 @@ class User < ApplicationRecord
     Registration.where(user: self, event: event).present?
   end
 
+  def leading?(event)
+    Registration.where(user: self, event: event, leader: true).present?
+  end
+
   def available_events
-    Event.joins('LEFT OUTER JOIN registrations ON registrations.event_id = events.id')
-         .where('is_private = ? OR registrations.user_id = ?', false, id)
+    Event.distinct.joins('LEFT JOIN registrations ON registrations.event_id = events.id')
+         .where('is_private = false OR registrations.user_id = ?', id)
   end
 end
