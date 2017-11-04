@@ -13,13 +13,25 @@ class RegistrationsController < ApplicationController
     redirect_to events_path
   end
 
-  private
-
-  def registration_params
-    params.require(:registration).permit(:event_id, :user_id)
+  def delete
+    @reg = authorize Registration.find(params[:id])
+    @reg.delete
+    redirect_to registrations_path
   end
+
+  private
 
   def user_params
     params.require(:user).permit(:name, :email)
+  end
+
+  def registration_params
+    if params[:registration][:leader] == '1' && !User.find(params[:registration][:user_id]).is_leader?
+      raise ActionController::BadRequest, "Cannot register as leader if you are not a leader" 
+    end
+
+    params.require(:registration).permit(:event_id,
+                                         :user_id,
+                                         :leader)
   end
 end
