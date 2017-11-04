@@ -79,37 +79,22 @@
     </div>
     <div class="col-md-6">
       <div class="page-header">
-        <h1>Share Dialog</h1>
+        <h1>Share This Event With Your Friends!</h1>
       </div>
 
-      <div id="shareBtn" class="btn btn-success clearfix">Share on Facebook</div>
-      <a href="https://twitter.com/share?ref_src=twsrc%5Etfw" class="twitter-share-button" data-size="large" data-text="Join me in building water filters!" data-show-count="false">Tweet</a><script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+      <div class="fb-share-button" data-href="<%= request.url %>" data-layout="button_count" data-size="small" data-mobile-iframe="true"><a class="fb-xfbml-parse-ignore" target="_blank" href="<%= request.url %>">Share on Facebook</a></div>
 
+      <a href="https://twitter.com/share?ref_src=twsrc%5Etfw" class="twitter-share-button" data-text="Join me in building water filters!" data-show-count="false">Tweet</a><script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+      <div id="fb-root"></div>
       <script>
-        window.fbAsyncInit = function() {
-          FB.init({
-            appId            : '1665305893501056',
-            autoLogAppEvents : true,
-            xfbml            : true,
-            version          : 'v2.10'
-          });
-          FB.AppEvents.logPageView();
-        };
-
-      (function(d, s, id){
-         var js, fjs = d.getElementsByTagName(s)[0];
-         if (d.getElementById(id)) {return;}
-         js = d.createElement(s); js.id = id;
-         js.src = "https://connect.facebook.net/en_US/sdk.js";
-         fjs.parentNode.insertBefore(js, fjs);
-       }(document, 'script', 'facebook-jssdk'));
-
-      document.getElementById('shareBtn').onclick = function() {
-        FB.ui({
-          method: 'feed',
-          href: window.location.href
-        }, function(response){});
-      }
+        (function(d, s, id) {
+          var js, fjs = d.getElementsByTagName(s)[0];
+          if (d.getElementById(id)) return;
+          js = d.createElement(s); js.id = id;
+          js.src = 'https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.10&appId=1665305893501056';
+          fjs.parentNode.insertBefore(js, fjs);
+        }(document, 'script', 'facebook-jssdk'));
       </script>
     </div>
   </div>
