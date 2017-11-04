@@ -10,7 +10,7 @@
           <h2><%= event.title %></h2>
           <div><%= event.start_time.strftime('%m/%d/%Y %I:%M%p') %> - <%= event.end_time.strftime('%m/%d/%Y %I:%M%p') %></div>
           <div>Location: <%= event.location.name %></div>
-          <div><%= event.signed_up %> / <%= event.max_registrations %></div>
+          <div><%= event.total_registerted %> / <%= event.max_registrations %></div>
           <button class="btn btn-primary">Register Now!</button>
         <% end %>
       </div>

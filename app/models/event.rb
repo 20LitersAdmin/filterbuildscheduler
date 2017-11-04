@@ -9,8 +9,8 @@ class Event < ApplicationRecord
   validate :dates_are_valid?
   validate :registrations_are_valid?
 
-  scope :future, -> {where('start_time > ?', Time.now)}
-  scope :past, -> {where('start_time <= ?', Time.now)}
+  scope :future, -> { where('end_time > ?', Time.now) }
+  scope :past, -> { where('end_time <= ?', Time.now) }
 
   def dates_are_valid?
     return if start_time.nil? || end_time.nil?
@@ -34,7 +34,7 @@ class Event < ApplicationRecord
     end
   end
 
-  def signed_up
+  def total_registerted
     if registrations.present?
       registrations.map(&:guests_registered).reduce(:+) + users.size
     else
