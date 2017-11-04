@@ -82,15 +82,8 @@
         <h1>Share Dialog</h1>
       </div>
 
-      <p>Click the button below to trigger a Share Dialog</p>
-
-      <div id="shareBtn" class="btn btn-success clearfix">Share</div>
-
-      <p style="margin-top: 50px">
-        <hr />
-        <a class="btn btn-small"  href="https://developers.facebook.com/docs/sharing/reference/share-dialog">Share Dialog Documentation</a>
-      </p>
-
+      <div id="shareBtn" class="btn btn-success clearfix">Share on Facebook</div>
+      <a href="https://twitter.com/share?ref_src=twsrc%5Etfw" class="twitter-share-button" data-size="large" data-text="Join me in building water filters!" data-show-count="false">Tweet</a><script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 
       <script>
         window.fbAsyncInit = function() {
@@ -113,9 +106,8 @@
 
       document.getElementById('shareBtn').onclick = function() {
         FB.ui({
-          method: 'share',
-          display: 'popup',
-          href: 'https://dev.20liters.org/events/1',
+          method: 'feed',
+          href: window.location.href
         }, function(response){});
       }
       </script>
