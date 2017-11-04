@@ -15,6 +15,22 @@ ActiveRecord::Schema.define(version: 20171104210127) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
+  create_table "delayed_jobs", force: :cascade do |t|
+    t.integer "priority", default: 0, null: false
+    t.integer "attempts", default: 0, null: false
+    t.text "handler", null: false
+    t.text "last_error"
+    t.datetime "run_at"
+    t.datetime "locked_at"
+    t.datetime "failed_at"
+    t.string "locked_by"
+    t.string "queue"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string "cron"
+    t.index ["priority", "run_at"], name: "delayed_jobs_priority"
+  end
+
   create_table "events", force: :cascade do |t|
     t.datetime "start_time", null: false
     t.datetime "end_time", null: false
@@ -57,6 +73,7 @@ ActiveRecord::Schema.define(version: 20171104210127) do
     t.string "accomodations", default: ""
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["user_id", "event_id"], name: "index_registrations_on_user_id_and_event_id", unique: true
   end
 
   create_table "technologies", force: :cascade do |t|
@@ -69,6 +86,13 @@ ActiveRecord::Schema.define(version: 20171104210127) do
     t.float "unit_rate"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "technologies_users", id: false, force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "technology_id", null: false
+    t.index ["technology_id", "user_id"], name: "index_technologies_users_on_technology_id_and_user_id"
+    t.index ["user_id", "technology_id"], name: "index_technologies_users_on_user_id_and_technology_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -89,7 +113,6 @@ ActiveRecord::Schema.define(version: 20171104210127) do
     t.boolean "is_admin"
     t.boolean "is_archived", default: false
     t.date "signed_waiver_on"
-    t.integer "qualified_technology_id", default: [], array: true
     t.integer "primary_location_id"
     t.string "fname"
     t.string "lname"
