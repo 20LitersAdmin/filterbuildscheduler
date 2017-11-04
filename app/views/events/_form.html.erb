@@ -1,0 +1,11 @@
+<%= simple_form_for @event do |f| %>
+  <%= f.input :title %>
+  <%= f.input :start_time %>
+  <%= f.input :end_time %>
+  <%= f.association :location %>
+  <%= f.input :min_leaders %>
+  <%= f.input :max_leaders %>
+  <%= f.input :min_registrations %>
+  <%= f.input :max_registrations %>
+  <%= f.button :submit %>
+<% end %>

@@ -8,9 +8,10 @@ class Event < ApplicationRecord
   validates :min_registrations, :max_registrations, :min_leaders, :max_leaders, numericality: { only_integer: true, greater_than: 0 }
   validate :dates_are_valid?
   validate :registrations_are_valid?
+  validate :leaders_are_valid?
 
-  scope :future, -> {where('start_time > ?', Time.now)}
-  scope :past, -> {where('start_time <= ?', Time.now)}
+  scope :future, -> { where('end_time > ?', Time.now) }
+  scope :past, -> { where('end_time <= ?', Time.now) }
 
   def dates_are_valid?
     return if start_time.nil? || end_time.nil?
@@ -26,6 +27,13 @@ class Event < ApplicationRecord
     end
   end
 
+  def leaders_are_valid?
+    return if min_leaders.nil? || max_leaders.nil?
+    if min_leaders > max_leaders
+      errors.add(:max_leaders, 'must be greater than min leaders')
+    end
+  end
+
   def format_time_range
     if start_time.beginning_of_day == end_time.beginning_of_day
       start_time.strftime("%A, %D %l:%M%p") + end_time.strftime(" - %l:%M%p")
@@ -34,4 +42,11 @@ class Event < ApplicationRecord
     end
   end
 
+  def total_registered
+    if registrations.present?
+      registrations.map(&:guests_registered).reduce(:+) + registrations.size
+    else
+      0
+    end
+  end
 end
