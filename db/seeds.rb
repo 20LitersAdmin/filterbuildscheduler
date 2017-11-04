@@ -110,7 +110,7 @@ User.create!([
     password: "password", password_confirmation: "password",
     fname: "Builder",
     lname: "Archived",
-    is_archived: true
+    deleted_at: '2017-11-03 00:00:00'
   },
   { email: "builderNoPW@email.com",
     fname: "Builder",
