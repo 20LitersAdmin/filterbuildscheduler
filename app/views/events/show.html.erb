@@ -14,6 +14,8 @@
             <div><%= f.label 'Register as Leader' %>
             <%= f.check_box :leader %></div>
           <% end %>
+          <%= f.label :guests_registered %>
+          <%= f.number_field :guests_registered %>
           <%= f.submit %>
         <% end %>
       <% else %>
@@ -24,6 +26,8 @@
             <%= o.input :lname, label: 'Last Name' %>
             <%= o.input :email, label: 'email' %>
           <% end %>
+          <%= f.label :guests_registered %>
+          <%= f.number_field :guests_registered %>
           <%= f.submit %>
         <% end %>
       <% end %>
