@@ -1,11 +1,19 @@
-
-
 class EventPolicy < ApplicationPolicy
-  attr_reader :user, :event
+  class Scope
+    attr_reader :user, :scope
 
-  def initialize(user, event)
-    @user = user
-    @event = event
+    def initialize(user, scope)
+      @user = user
+      @scope = scope
+    end
+
+    def resolve
+      if @user&.is_leader? || @user&.is_admin?
+        Event.all
+      else
+        Event.non_private
+      end
+    end
   end
 
   def delete?
