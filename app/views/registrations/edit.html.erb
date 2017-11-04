@@ -1,6 +1,6 @@
 <h2>Edit Registration for <%= @registration.event.title %></h2>
 
-<%= simple_form_for(@registration, url: 'whatever', html: { method: :put }) do |f| %>
+<%= simple_form_for(@registration, url: event_registration_path(@registration.event, @registration), html: { method: :put }) do |f| %>
   <%= f.error_notification %>
 
   <div class="form-inputs">

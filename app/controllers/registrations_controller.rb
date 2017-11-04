@@ -1,4 +1,6 @@
 class RegistrationsController < ApplicationController
+  before_action :find_registration, only: [:edit, :update, :destroy]
+  
   def create
     if current_user
       Registration.create!(registration_params)
@@ -17,12 +19,17 @@ class RegistrationsController < ApplicationController
   end
   
   def edit
-    @registration = Registration.find(params[:id])
+  end
+  
+  def update
+    authorize @registration
+    @registration.update(registration_params)
+    redirect_to event_path(@registration.event)
   end
 
   def destroy
-    @registration = authorize Registration.find(params[:id])
-    @@registration.delete
+    authorize @registration
+    @registration.delete
     redirect_to event_path(@registration.event)
   end
   
@@ -39,6 +46,12 @@ class RegistrationsController < ApplicationController
 
     params.require(:registration).permit(:event_id,
                                          :user_id,
-                                         :leader)
+                                         :leader,
+                                         :guests_registered,
+                                         :accomodations)
+  end
+  
+  def find_registration
+    @registration = Registration.find(params[:id])
   end
 end

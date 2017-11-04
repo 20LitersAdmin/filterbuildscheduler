@@ -10,11 +10,12 @@
           <%= f.hidden_field :leader, value: '0' %>
           <div><%= f.label :name, "Name: #{current_user.fname} #{current_user.lname}" %></div>
           <div><%= f.label :email, "Email: #{current_user.email}" %></div>
-          <% if current_user.registered?(@event) %>
-            <%= link_to "Change/Cancel Registration", edit_event_registration_path(@event, @registration) %>
-          <% elsif current_user.can_lead_event?(@event) %>
+          <% if current_user.can_lead_event?(@event) %>
             <div><%= f.label :leader, 'Register as Leader' %>
             <%= f.check_box :leader %></div>
+          <% end %>
+          <% if current_user.registered?(@event) %>
+            <%= link_to "Change/Cancel Registration", edit_event_registration_path(@event, @registration) %>
           <% end %>
           <%= f.submit unless current_user.registered?(@event) %>
         <% end %>
