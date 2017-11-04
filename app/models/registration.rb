@@ -4,5 +4,4 @@ class Registration < ApplicationRecord
   scope :registered_as_leader, -> {where(leader: true)}
   delegate :waiver_accepted, to: :user, prefix: :false
   attr_accessor :waiver_accepted
-
 end
