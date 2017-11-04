@@ -3,5 +3,6 @@
     <h1><%= event.title %></h1>
     <h2><%= event.start_time.strftime('%m/%d/%Y %I:%M%p') %></h2>
     <h2><%= event.end_time.strftime('%m/%d/%Y %I:%M%p') %></h2>
+    <%= link_to 'Register', event_path(event) %>
   <% end %>
 </div>
