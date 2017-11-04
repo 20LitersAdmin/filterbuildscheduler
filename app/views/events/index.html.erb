@@ -1,5 +1,5 @@
 <div class='container'>
-  <% if current_user.is_leader %>
+  <% if current_user and current_user.is_leader? %>
     <%= link_to "Make a new one", new_event_path, class: 'btn btn-primary' %>
   <% end %>
 
