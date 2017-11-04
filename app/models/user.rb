@@ -9,7 +9,7 @@ class User < ApplicationRecord
   scope :builders, -> {active}
   scope :admin, -> {where(is_admin: true)}
   has_many :registrations
-  has_one :primary_location, class_name: "Location", primary_key: "primary_location_id", foreign_key: "id"
+  belongs_to :primary_location, class_name: "Location", primary_key: "id", foreign_key: "primary_location_id", optional: true
 
   def password_required?
     false

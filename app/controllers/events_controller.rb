@@ -1,4 +1,5 @@
 class EventsController < ApplicationController
+
   def index
     @events = Event.all
   end
@@ -15,6 +16,12 @@ class EventsController < ApplicationController
   def create
     Event.create!(event_params)
     redirect_to action: :index
+  end
+
+  def delete
+    @event = authorize Event.find(params[:id])
+    @event.delete
+    redirect_to events_path
   end
 
   private
