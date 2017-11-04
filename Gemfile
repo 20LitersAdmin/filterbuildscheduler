@@ -20,6 +20,7 @@ gem 'bootstrap-sass'
 gem "delayed_job", "~> 4.1"
 gem "delayed_job_active_record", "~> 4.1"
 gem "delayed_cron_job", "~> 0.7.2"
+gem "paranoia", "~> 2.4"
 
 group :production do
   gem 'puma'
