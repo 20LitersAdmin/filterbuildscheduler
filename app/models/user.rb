@@ -40,7 +40,7 @@ class User < ApplicationRecord
   end
 
   def available_events
-    Event.joins('LEFT OUTER JOIN registrations ON registrations.event_id = events.id')
-         .where('is_private = ? OR registrations.user_id = ?', false, id)
+    Event.distinct.joins('LEFT JOIN registrations ON registrations.event_id = events.id')
+         .where('is_private = false OR registrations.user_id = ?', id)
   end
 end

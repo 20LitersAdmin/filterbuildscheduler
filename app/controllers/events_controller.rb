@@ -10,7 +10,7 @@ class EventsController < ApplicationController
 
     redirect_to action: :index if @event.in_the_past?
     @registration = Registration.where(user: current_user, event: @event).first_or_initialize
-    
+
   end
 
   def new
