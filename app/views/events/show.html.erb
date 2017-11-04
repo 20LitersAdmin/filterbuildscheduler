@@ -2,8 +2,9 @@
   <h1>Event Title: <%= @event.title %></h1>
   <div class="row">
   	<div class="col-md-6">
-      <% if @current_user %>
-    	  <%= form_for [@event, @registration] do |f| %>
+      <% if current_user %>
+        <%= link_to('Not you?', destroy_user_session_path, method: :delete) %>
+        <%= form_for [@event, @registration] do |f| %>
     	    <%= f.hidden_field :event_id %>
     	    <%= f.hidden_field :user_id %>
     	    <%= f.hidden_field :leader, value: '0' %>
