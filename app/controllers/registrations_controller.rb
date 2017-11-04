@@ -1,6 +1,7 @@
 class RegistrationsController < ApplicationController
   def create
-    Registration.create(registration_params)
+    Registration.create!(registration_params)
+    redirect_to events_path
   end
 
   def registration_params
