@@ -15,6 +15,7 @@ gem 'therubyracer', platforms: :ruby
 gem 'turbolinks', '~> 5'
 gem 'rails_admin'
 gem 'devise'
+gem 'bootstrap-sass'
 
 group :development, :test do
   gem 'pry-byebug'
