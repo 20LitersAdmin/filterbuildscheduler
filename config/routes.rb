@@ -5,7 +5,7 @@ Rails.application.routes.draw do
   devise_for :users
   get 'users/:id/show', to: 'users#show', as: 'show_user'
   get 'users/:id/edit', to: 'users#edit', as: 'edit_user'
-  patch 'users/:id', to: 'users#update'
+  patch 'users/:id', to: 'users#update', as: 'update_user'
   get :waiver, controller: :application
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
   resources :events do
