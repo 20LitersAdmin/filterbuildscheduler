@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171104132003) do
+ActiveRecord::Schema.define(version: 20171104154445) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -85,7 +85,7 @@ ActiveRecord::Schema.define(version: 20171104132003) do
     t.boolean "is_leader"
     t.boolean "is_admin"
     t.boolean "is_archived", default: false
-    t.date "signed_consent_form_on"
+    t.date "signed_waiver_on"
     t.integer "qualified_technology_id", default: [], array: true
     t.integer "primary_location_id"
     t.string "fname"

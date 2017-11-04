@@ -36,6 +36,7 @@ class EventsController < ApplicationController
                                   :start_time,
                                   :end_time,
                                   :location_id,
+                                  :technology_id,
                                   :min_leaders,
                                   :max_leaders,
                                   :min_registrations,
