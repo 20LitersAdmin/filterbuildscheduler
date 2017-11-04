@@ -4,19 +4,20 @@
 <% @user.registrations.each do |registration| %>
   <%= registration.event.title %> (<%= link_to 'modify', edit_event_registration_path(registration.event, registration) %>)
 <% end %>
-
-<h3>See past events</h3>
-<div class="event-container">
-  <% @past_events.each do |event| %>
-    <div class="event">
-      <%= link_to event_path(event) do %>
-        <h2><%= event.title %></h2>
-        <div><%= event.start_time.strftime('%m/%d/%Y %I:%M%p') %> - <%= event.end_time.strftime('%m/%d/%Y %I:%M%p') %></div>
-        <div>Location: <%= event.location.name %></div>
-      <% end %>
-    </div>
-  <% end %>
-</div>
+<% if @past_events %>
+  <h3>See past events</h3>
+  <div class="event-container">
+    <% @past_events.each do |event| %>
+      <div class="event">
+        <%= link_to event_path(event) do %>
+          <h2><%= event.title %></h2>
+          <div><%= event.start_time.strftime('%m/%d/%Y %I:%M%p') %> - <%= event.end_time.strftime('%m/%d/%Y %I:%M%p') %></div>
+          <div>Location: <%= event.location.name %></div>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+<% end %>
 <% if @user.is_leader %>
   <h3>Qualifications</h3>
   <% if !@user.technologies %>
