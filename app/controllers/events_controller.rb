@@ -35,6 +35,10 @@ class EventsController < ApplicationController
     params.require(:event).permit :title,
                                   :start_time,
                                   :end_time,
-                                  :location_id
+                                  :location_id,
+                                  :min_leaders,
+                                  :max_leaders,
+                                  :min_registrations,
+                                  :max_registrations
   end
 end
