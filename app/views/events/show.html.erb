@@ -33,7 +33,10 @@
             <%= f.label :guests_registered %>
             <%= f.number_field :guests_registered %>
           </div>
-          <%= f.submit %>
+          <% if current_user.registered?(@event) %>
+            <%= link_to "Change/Cancel Registration", edit_event_registration_path(@event, @registration) %>
+          <% end %>
+          <%= f.submit unless current_user.registered?(@event) %>
         <% end %>
       <% else %>
         <%= simple_form_for [@event, @registration] do |f| %>
