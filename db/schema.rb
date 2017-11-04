@@ -86,8 +86,8 @@ ActiveRecord::Schema.define(version: 20171104002831) do
     t.boolean "is_admin"
     t.boolean "is_archived", default: false
     t.date "signed_consent_form_on"
-    t.integer "qualified_technologies", default: [], array: true
-    t.integer "primary_location"
+    t.integer "qualified_technology_id", default: [], array: true
+    t.integer "primary_location_id"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
