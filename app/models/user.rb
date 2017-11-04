@@ -9,6 +9,7 @@ class User < ApplicationRecord
   scope :builders, -> {active}
   scope :admin, -> {where(is_admin: true)}
   has_many :registrations
+  has_many :events, through: :registrations
   belongs_to :primary_location, class_name: "Location", primary_key: "id", foreign_key: "primary_location_id", optional: true
   attr_accessor :waiver_accepted
 
@@ -39,5 +40,9 @@ class User < ApplicationRecord
   
   def registered?(event)
     Registration.where(user: self, event: event).present?
+
+  def available_events
+    Event.joins('LEFT OUTER JOIN registrations ON registrations.event_id = events.id')
+         .where('is_private = ? OR registrations.user_id = ?', false, id)
   end
 end

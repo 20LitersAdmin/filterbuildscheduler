@@ -1,8 +1,8 @@
 class EventsController < ApplicationController
-
   def index
-    @events = Event.future
-    @past_events = Event.past
+    our_events = policy_scope(Event)
+    @events = our_events.future
+    @past_events = our_events.past
   end
 
   def show
@@ -16,6 +16,11 @@ class EventsController < ApplicationController
 
   def new
     @event = Event.new
+  end
+
+  def update
+    @event = Event.find(params[:id])
+    @event.update(event_params)
   end
 
   def edit
@@ -44,6 +49,7 @@ class EventsController < ApplicationController
                                   :min_leaders,
                                   :max_leaders,
                                   :min_registrations,
-                                  :max_registrations
+                                  :max_registrations,
+                                  :is_private
   end
 end
