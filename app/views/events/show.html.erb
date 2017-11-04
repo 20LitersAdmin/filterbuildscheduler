@@ -6,7 +6,7 @@
   <div class="row">
     <div class="col-md-6">
       <% if current_user %>
-        <h1>Register</h1>
+        <h1><%= current_user.registered?(@event) ? "You're Registered!" : "Register" %></h1>
         <%= link_to('Not you?', destroy_user_session_path, method: :delete) %>
         <%= form_for [@event, @registration] do |f| %>
           <%= f.hidden_field :event_id %>
@@ -15,26 +15,30 @@
           <div><%= f.label :name, "Name: #{current_user.name}" %></div>
           <div><%= f.label :email, "Email: #{current_user.email}" %></div>
           <%= f.hidden_field :waiver_accepted, value: "#{current_user.waiver_accepted ? '1' : '0'}" %>
+          <% if current_user.registered?(@event) %>
+            <% if @registration.leader? %>
+              <div><%= f.label :leader, "You are a leader at this event." %></div>
+            <% end %>
+            <%= link_to "Change/Cancel Registration", edit_event_registration_path(@event, @registration), class: 'btn btn-primary' %>
+          <% else %>
+            <% if current_user.can_lead_event?(@event) %>
+              <div>
+                <%= f.label :leader, 'Register as Leader' %>
+                <%= f.check_box :leader %>
+              </div>
+            <% end %>
+            <div>
+              <%= f.label :guests_registered, 'Guests Attending: ' %>
+              <%= f.number_field :guests_registered %>
+            </div>
+          <% end %>
           <% if !current_user.waiver_accepted %>
             <div>
-              <a target="_blank" href="/waiver"><%= f.label :waiver_accepted, 'Accept the Liability Waiver' %></a>
               <%= f.check_box :waiver_accepted, label: 'email' %>
+              <a target="_blank" href="/waiver"><%= f.label :waiver_accepted, 'Accept the Liability Waiver' %></a>
             </div>
           <% else %>
             <div><a target="_blank" href="/waiver"><%="Review the Liability Waiver (accepted on #{current_user.signed_waiver_on})"%></a></div>
-          <% end %>
-          <% if current_user.can_lead_event?(@event) %>
-            <div>
-              <%= f.label :leader, 'Register as Leader' %>
-              <%= f.check_box :leader %>
-            </div>
-          <% end %>
-          <div>
-            <%= f.label :guests_registered %>
-            <%= f.number_field :guests_registered %>
-          </div>
-          <% if current_user.registered?(@event) %>
-            <%= link_to "Change/Cancel Registration", edit_event_registration_path(@event, @registration) %>
           <% end %>
           <%= f.submit unless current_user.registered?(@event) %>
         <% end %>
@@ -84,5 +88,6 @@
       <% end %>
 
     </div>
+    
   </div>
 </div>
