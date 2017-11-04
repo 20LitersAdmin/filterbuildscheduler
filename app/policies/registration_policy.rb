@@ -10,5 +10,9 @@ class RegistrationPolicy < ApplicationPolicy
   def destroy?
     user.is_admin? || registration.user == user
   end
+  
+  def update?
+    user.is_admin? || registration.user == user
+  end
 
 end
