@@ -8,6 +8,7 @@ class Event < ApplicationRecord
   validates :min_registrations, :max_registrations, :min_leaders, :max_leaders, numericality: { only_integer: true, greater_than: 0 }
   validate :dates_are_valid?
   validate :registrations_are_valid?
+  validate :leaders_are_valid?
 
   scope :future, -> { where('end_time > ?', Time.now) }
   scope :past, -> { where('end_time <= ?', Time.now) }
@@ -23,6 +24,13 @@ class Event < ApplicationRecord
     return if min_registrations.nil? || max_registrations.nil?
     if min_registrations > max_registrations
       errors.add(:max_registrations, 'must be greater than min registrations')
+    end
+  end
+
+  def leaders_are_valid?
+    return if min_leaders.nil? || max_leaders.nil?
+    if min_leaders > max_leaders
+      errors.add(:max_leaders, 'must be greater than min leaders')
     end
   end
 
