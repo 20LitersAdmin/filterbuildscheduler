@@ -25,7 +25,7 @@ class RegistrationsController < ApplicationController
 
     RegistrationMailer.delay.created reg
     flash[:success] = "You successfully registered!"
-    redirect_to event_path params[:registration][:event_id]
+    redirect_to event_path params[:event_id]
   end
 
   def edit
