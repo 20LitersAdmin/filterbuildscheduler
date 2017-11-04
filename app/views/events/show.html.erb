@@ -2,7 +2,7 @@
   <h1>Event Title: <%= @event.title %></h1>
 
 
-  <%= form_for @registration do |f| %>
+  <%= form_for [@event, @registration] do |f| %>
     <%= f.hidden_field :event_id %>
     <%= f.hidden_field :user_id %>
     <%= f.submit %>
