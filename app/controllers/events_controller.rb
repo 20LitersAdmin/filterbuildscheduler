@@ -34,7 +34,12 @@ class EventsController < ApplicationController
   def delete
     @event = authorize Event.find(params[:id])
     @event.delete
-    redirect_to events_path
+    flash[:success] = "Your registration has been cancelled."
+    if params[:authentication_token].present?
+      redirect_to home_path
+    else
+      redirect_to events_path
+    end
   end
 
   private
