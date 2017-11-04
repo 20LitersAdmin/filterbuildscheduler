@@ -5,15 +5,15 @@
       <% if current_user %>
         <%= link_to('Not you?', destroy_user_session_path, method: :delete) %>
         <%= form_for [@event, @registration] do |f| %>
-    	    <%= f.hidden_field :event_id %>
-    	    <%= f.hidden_field :user_id %>
-    	    <%= f.hidden_field :leader, value: '0' %>
-    	    <% if current_user.is_leader? %>
-    	      <%= f.label 'Register as Leader' %>
-    	      <%= f.check_box :leader %>
-    	    <% end %>
-    	    <%= f.submit %>
-    	  <% end %>
+          <%= f.hidden_field :event_id %>
+          <%= f.hidden_field :user_id %>
+          <%= f.hidden_field :leader, value: '0' %>
+          <% if current_user.is_leader? %>
+            <%= f.label 'Register as Leader' %>
+            <%= f.check_box :leader %>
+          <% end %>
+          <%= f.submit %>
+        <% end %>
       <% else %>
         <%= simple_form_for [@event, @registration] do |f| %>
           <%= f.hidden_field :event_id %>
