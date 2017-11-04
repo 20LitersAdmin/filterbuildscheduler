@@ -1,4 +1,6 @@
 <div class='container'>
+  <%= link_to "Make a new one", new_event_path %>
+
   <% @events.each do |event| %>
     <h1><%= event.title %></h1>
     <h2><%= event.start_time.strftime('%m/%d/%Y %I:%M%p') %></h2>

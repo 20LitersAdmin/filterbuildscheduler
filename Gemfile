@@ -9,6 +9,7 @@ gem 'rails', '~> 5.1.4'
 gem 'pg'
 gem 'pundit'
 gem 'dotenv-rails'
+gem 'simple_form'
 gem 'sass-rails', '~> 5.0'
 gem 'uglifier', '>= 1.3.0'
 gem 'therubyracer', platforms: :ruby
