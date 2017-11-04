@@ -18,7 +18,7 @@
       <ul class="nav navbar-nav">
         <li><%= link_to 'Events', events_path %></li>
         <% if current_user %>
-          <li><%= link_to "My Accout", edit_user_registration_path %></li>
+          <li><%= link_to "My Accout", show_user_path(current_user) %></li>
           <li><%= link_to 'Sign Out', destroy_user_session_path %></li>
         <% else %>
           <li><%= link_to 'Sign In', user_session_path %></li>
