@@ -1,6 +1,6 @@
 <div class='container'>
   <% if current_user and current_user.is_leader? %>
-    <%= link_to "Make a new one", new_event_path, class: 'btn btn-primary' %>
+    <%= link_to "Create New Event", new_event_path, class: 'btn btn-primary' %>
   <% else %>
     <div>
       <h3>Want a custom build event for your group?</h3>
@@ -14,6 +14,9 @@
       <div class="event">
         <%= link_to event_path(event) do %>
           <h2><%= event.title %></h2>
+          <% if event.is_private %>
+            <h6>This event is private</h6>
+          <% end %>
           <div><%= event.start_time.strftime('%m/%d/%Y %I:%M%p') %> - <%= event.end_time.strftime('%m/%d/%Y %I:%M%p') %></div>
           <div>Location: <%= event.location.name %></div>
           <div><%= event.total_registered %> / <%= event.max_registrations %></div>
