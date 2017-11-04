@@ -1,4 +1,3 @@
-
 class UserPolicy < ApplicationPolicy
   attr_reader :user, :recipient
 

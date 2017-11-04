@@ -44,6 +44,7 @@ ActiveRecord::Schema.define(version: 20171104180222) do
     t.datetime "updated_at", null: false
     t.integer "location_id", null: false
     t.integer "technology_id"
+    t.boolean "is_private", default: false, null: false
   end
 
   create_table "locations", force: :cascade do |t|
@@ -101,7 +102,7 @@ ActiveRecord::Schema.define(version: 20171104180222) do
     t.boolean "is_leader"
     t.boolean "is_admin"
     t.boolean "is_archived", default: false
-    t.date "signed_consent_form_on"
+    t.date "signed_waiver_on"
     t.integer "qualified_technology_id", default: [], array: true
     t.integer "primary_location_id"
     t.string "fname"
