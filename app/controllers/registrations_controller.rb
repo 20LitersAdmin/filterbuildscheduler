@@ -53,9 +53,6 @@ class RegistrationsController < ApplicationController
 
     params.require(:registration).permit(:event_id,
                                          :user_id,
-<<<<<<< HEAD
-                                         :leader)
-=======
                                          :leader,
                                          :guests_registered,
                                          :accomodations)
@@ -63,6 +60,5 @@ class RegistrationsController < ApplicationController
   
   def find_registration
     @registration = Registration.find(params[:id])
->>>>>>> master
   end
 end
