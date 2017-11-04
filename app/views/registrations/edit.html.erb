@@ -8,17 +8,17 @@
       <div><%= f.label :leader, 'Registered as Leader' %>
       <%= f.check_box :leader %></div>
     <% end %>
-    
-    <%= f.input :guests_registered, required: true, autofocus: true, label: "Total Guests" %>
+
+    <%= f.input :guests_registered, required: true, autofocus: true, label: "Total Guests (besides you)" %>
     <%= f.input :accomodations, autofocus: true, as: :text %>
-    
+
   </div>
 
   <div class="form-actions">
     <%= f.button :submit, "Update", class: 'btn-primary' %>
-    <%= link_to 'Cancel Registration', event_registration_path(@registration.event, @registration), 
-        data: {:confirm => 'Are you sure?'}, 
-        :method => :delete, 
+    <%= link_to 'Cancel Registration', event_registration_path(@registration.event, @registration),
+        data: {:confirm => 'Are you sure?'},
+        :method => :delete,
         class: 'btn btn-danger' %>
   </div>
 <% end %>
