@@ -20,6 +20,7 @@
           <%= simple_fields_for :user do |o| %>
             <%= o.input :fname, label: 'First Name' %>
             <%= o.input :lname, label: 'Last Name' %>
+            <%= o.input :email, label: 'email' %>
           <% end %>
           <%= f.submit %>
         <% end %>
