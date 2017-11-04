@@ -22,4 +22,9 @@ class User < ApplicationRecord
       Technology.none
     end
   end
+
+  def can_lead_event?(event)
+    return false unless is_leader
+    return event.technology.nil? || qualified_technologies.exists?(event.technology)
+  end
 end
