@@ -7,6 +7,7 @@ class EventsController < ApplicationController
 
   def show
     @event = Event.find(params[:id])
+    redirect_to action: :index if @event.in_the_past?
     @registration = Registration.new(user: current_user, event: @event)
   end
 
