@@ -16,7 +16,6 @@
     	  <% end %>
       <% else %>
         <%= simple_form_for [@event, @registration] do |f| %>
-          <h2>I AM NOT LOGGED IN</h2>
           <%= f.hidden_field :event_id %>
           <%= simple_fields_for :user do |o| %>
             <%= o.input :name, label: 'Name' %>
