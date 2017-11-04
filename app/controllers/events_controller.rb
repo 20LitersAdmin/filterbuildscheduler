@@ -10,7 +10,7 @@ class EventsController < ApplicationController
     if current_user
       @registration = Registration.first_or_initialize(user: current_user, event: @event)
     else
-      @registration = Registration.new(user: current_user, event: @event)
+      @registration = Registration.new(event: @event)
     end
   end
 
