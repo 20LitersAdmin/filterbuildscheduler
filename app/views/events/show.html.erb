@@ -11,9 +11,11 @@
           <div><%= f.label :name, "Name: #{current_user.name}" %></div>
           <div><%= f.label :email, "Email: #{current_user.email}" %></div>
           <% if current_user.can_lead_event?(@event) %>
-            <div><%= f.label 'Register as Leader' %>
+            <div><%= f.label :leader, 'Register as Leader' %>
             <%= f.check_box :leader %></div>
           <% end %>
+          <%= f.label :guests_registered %>
+          <%= f.number_field :guests_registered %>
           <%= f.submit %>
         <% end %>
       <% else %>
@@ -24,6 +26,8 @@
             <%= o.input :lname, label: 'Last Name' %>
             <%= o.input :email, label: 'email' %>
           <% end %>
+          <%= f.label :guests_registered %>
+          <%= f.number_field :guests_registered %>
           <%= f.submit %>
         <% end %>
       <% end %>
@@ -41,6 +45,17 @@
       <% if @event.location.map_url %>
         <a target="_blank" href="<%= @event.location.map_url %>">Map</a>
       <% end %>
+
+      <% if @event.location.instructions %>
+        <h4>Instructions</h3>
+        <div><%= @event.location.instructions %></div>
+      <% end %>
+
+      <% if @event.description %>
+        <h4>Additional Event Details</h3>
+        <div><%= @event.description %></div>
+      <% end %>
+
     </div>
   </div>
 </div>
