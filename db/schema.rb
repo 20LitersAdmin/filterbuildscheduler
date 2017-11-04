@@ -27,6 +27,7 @@ ActiveRecord::Schema.define(version: 20171104132003) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "location_id", null: false
+    t.integer "technology_id"
   end
 
   create_table "locations", force: :cascade do |t|
@@ -94,6 +95,7 @@ ActiveRecord::Schema.define(version: 20171104132003) do
   end
 
   add_foreign_key "events", "locations"
+  add_foreign_key "events", "technologies"
   add_foreign_key "registrations", "events"
   add_foreign_key "registrations", "users"
 end
