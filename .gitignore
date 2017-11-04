@@ -31,3 +31,5 @@ spec/examples.txt
 .DS_Store
 app/.DS_Store
 app/controllers/.DS_Store
+
+bin

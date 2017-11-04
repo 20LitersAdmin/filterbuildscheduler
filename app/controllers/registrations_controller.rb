@@ -1,17 +1,16 @@
 class RegistrationsController < ApplicationController
   def create
-    if current_user
-      Registration.create!(registration_params)
-    else
+    unless current_user
       user = User.find_or_initialize_by(email: user_params[:email]) do |user|
         user.fname = user_params[:fname]
         user.lname = user_params[:lname]
       end
 
       user.save && sign_in(:user, user) if user.new_record?
-
-      Registration.create!(event_id: params[:registration][:event_id], user_id: current_user.id)
     end
+
+    reg = Registration.create!(registration_params)
+    RegistrationMailer.delay.created reg
 
     redirect_to events_path
   end
@@ -35,7 +34,6 @@ class RegistrationsController < ApplicationController
 
     params.require(:registration).permit(:event_id,
                                          :user_id,
-                                         :leader,
-                                         :guests_registered)
+                                         :leader)
   end
 end

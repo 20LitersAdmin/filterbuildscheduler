@@ -1,0 +1,36 @@
+Filter Build details
+--------------------
+<%= @event.format_time_range %>
+
+Location:
+<%= @location.name %>
+<%= @location.address1 %>
+<% if @location.map_url %>
+<%= @location.address2 %>
+<% end %>
+<%= @location.city %>, <%= @location.state %>  <%= @location.zip %>
+
+<% if @location.map_url %>
+Map: <%= @location.map_url %>
+<% end %>
+
+<% if @event.location.instructions %>
+Instructions
+<%= @location.instructions %>
+<% end %>
+
+<% if @event.description %>
+Additional Event Details
+<%= @event.description %>
+<% end %>
+
+What to expect:
+* You'll receive a quick overview of the global water crisis and what we're doing about it as well as a demonstration of how to build filters.
+* Come late or leave early as you need to
+* Gloves and tools will be provided
+* Childcare is not provided, children as young as 4 can be involved in the build
+
+What to bring:
+* A water bottle is a good idea
+* Comfortable, close-toed shoes
+* A desire to help the 383 million people without access to clean water
