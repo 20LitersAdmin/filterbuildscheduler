@@ -26,14 +26,6 @@ class User < ApplicationRecord
     false
   end
 
-  def qualified_technologies
-    if is_leader?
-      Technology.find_by(id: qualified_technology_id)
-    else
-      Technology.none
-    end
-  end
-
   def can_lead_event?(event)
     return false unless is_leader
     return event.technology.nil? || qualified_technologies.exists?(event.technology)
@@ -41,6 +33,10 @@ class User < ApplicationRecord
 
   def registered?(event)
     Registration.where(user: self, event: event).present?
+  end
+
+  def leading?(event)
+    Registration.where(user: self, event: event, leader: true).present?
   end
 
   def available_events
