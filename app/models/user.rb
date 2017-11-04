@@ -41,6 +41,7 @@ class User < ApplicationRecord
 
   def registered?(event)
     Registration.where(user: self, event: event).present?
+  end
 
   def available_events
     Event.joins('LEFT OUTER JOIN registrations ON registrations.event_id = events.id')
