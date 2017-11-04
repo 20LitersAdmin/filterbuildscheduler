@@ -2,13 +2,12 @@
 
 <%= simple_form_for(@registration, url: event_registration_path(@registration.event, @registration), html: { method: :put }) do |f| %>
   <%= f.error_notification %>
-
   <div class="form-inputs">
     <% if current_user.can_lead_event?(@registration.event) %>
       <div><%= f.label :leader, 'Registered as Leader' %>
       <%= f.check_box :leader %></div>
     <% end %>
-    
+    <%= f.hidden_field :user_id %>
     <%= f.input :guests_registered, required: true, autofocus: true, label: "Total Guests" %>
     <%= f.input :accomodations, autofocus: true, as: :text %>
     
