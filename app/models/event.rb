@@ -56,4 +56,16 @@ class Event < ApplicationRecord
       0
     end
   end
+
+  def does_not_need_leaders?
+    registrations.where(leader: true).count >= max_leaders
+  end
+
+  def really_needs_leaders?
+    registrations.where(leader: true).count < min_leaders
+  end
+
+  def needs_leaders?
+    registrations.where(leader: true).count < max_leaders
+  end
 end
