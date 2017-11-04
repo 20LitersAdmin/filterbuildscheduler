@@ -10,6 +10,8 @@ class EventPolicy < ApplicationPolicy
     def resolve
       if @user&.is_leader? || @user&.is_admin?
         Event.all
+      elsif @user
+        @user.available_events
       else
         Event.non_private
       end
