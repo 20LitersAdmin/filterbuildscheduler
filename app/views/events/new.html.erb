@@ -1,0 +1,9 @@
+<div class="container">
+  <%= simple_form_for @event do |f| %>
+    <%= f.input :title %>
+    <%= f.input :start_time %>
+    <%= f.input :end_time %>
+    <%= f.association :location %>
+    <%= f.button :submit %>
+  <% end %>
+</div>
