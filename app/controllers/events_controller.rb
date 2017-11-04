@@ -14,6 +14,10 @@ class EventsController < ApplicationController
     @event = Event.new
   end
 
+  def edit
+    @event = Event.find(params[:id])
+  end
+
   def create
     Event.create!(event_params)
     redirect_to action: :index
@@ -32,9 +36,9 @@ class EventsController < ApplicationController
                                   :start_time,
                                   :end_time,
                                   :location_id,
-                                  :min_registrations,
-                                  :max_registrations,
                                   :min_leaders,
-                                  :max_leaders
+                                  :max_leaders,
+                                  :min_registrations,
+                                  :max_registrations
   end
 end
