@@ -1,3 +1,22 @@
-// Place all the styles related to the events controller here.
-// They will automatically be included in application.css.
-// You can use Sass (SCSS) here: http://sass-lang.com/
+@import "bootstrap";
+
+.event-container {
+  @extend .row;
+  .event {
+    @extend .col-sm-6;
+    @extend .col-md-4;
+    margin-top: 15px;
+    margin-bottom: 15px;
+    a {
+      display: block;
+      color: black;
+      text-decoration: none;
+      padding: 1em;
+      border-radius: 5px;
+      box-shadow: 0 0 5px #888;
+      &:hover {
+        box-shadow: 0 0 10px red;
+      }
+    }
+  }
+}
