@@ -1,10 +1,5 @@
 # This file should contain all the record creation needed to seed the database with its default values.
 # The data can then be loaded with the rails db:seed command (or created alongside the database with db:setup).
-#
-# Examples:
-#
-#   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
-#   Character.create(name: 'Luke', movie: movies.first)
 
 Location.create!([
   { name: 'Center of the Universe',
@@ -43,7 +38,7 @@ Event.create!([
   { start_time: 6.days.from_now,
     end_time: 6.days.from_now,
     title: "6 days from now",
-    description: "",
+    description: "This one should be private, but the model is missing some fields.",
     min_registrations: 1,
     max_registrations: 10,
     min_leaders: 1,
@@ -72,44 +67,44 @@ Technology.create!([
 ])
 
 User.create!([
-  { email: admin@email.com, 
-    password: password, password_confirmation: password, 
-    fname: Admin,
-    lname: Boss,
+  { email: "admin@email.com", 
+    password: "password", password_confirmation: "password", 
+    fname: "Admin",
+    lname: "Boss",
     is_leader: true,
     is_admin: true
   },
-  { email: leader1@email.com, 
-    password: password, password_confirmation: password, 
-    fname: Leader,
-    lname: One,
+  { email: "leader1@email.com", 
+    password: "password", password_confirmation: "password", 
+    fname: "Leader",
+    lname: "One",
     is_leader: true
   },
-  { email: leader2@email.com, 
-    password: password, password_confirmation: password, 
-    fname: Leader,
-    lname: Two,
+  { email: "leader2@email.com", 
+    password: "password", password_confirmation: "password", 
+    fname: "Leader",
+    lname: "Two",
     is_leader: true
   },
-  { email: builder1@email.com, 
-    password: password, password_confirmation: password, 
-    fname: Builder,
-    lname: One
+  { email: "builder1@email.com", 
+    password: "password", password_confirmation: "password", 
+    fname: "Builder",
+    lname: "One"
   },
-  { email: builder2@email.com, 
-    password: password, password_confirmation: password, 
-    fname: Builder,
-    lname: Two
+  { email: "builder2@email.com", 
+    password: "password", password_confirmation: "password", 
+    fname: "Builder",
+    lname: "Two"
   },
-  { email: builderMissing@email.com, 
-    password: password, password_confirmation: password, 
-    fname: Builder,
-    lname: Archived,
+  { email: "builderMissing@email.com", 
+    password: "password", password_confirmation: "password", 
+    fname: "Builder",
+    lname: "Archived",
     is_archived: true
   },
-  { email: builderNoPW@email.com,
-    fname: Builder,
-    lname: No Password
+  { email: "builderNoPW@email.com",
+    fname: "Builder",
+    lname: "No Password"
   },
 ])
 
