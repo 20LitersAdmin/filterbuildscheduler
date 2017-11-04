@@ -1,0 +1,7 @@
+<div class='container'>
+  <% @events.each do |event| %>
+    <h1><%= event.title %></h1>
+    <h2><%= event.start_time.strftime('%m/%d/%Y %I:%M%p') %></h2>
+    <h2><%= event.end_time.strftime('%m/%d/%Y %I:%M%p') %></h2>
+  <% end %>
+</div>
