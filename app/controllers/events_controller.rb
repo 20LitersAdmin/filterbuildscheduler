@@ -7,7 +7,11 @@ class EventsController < ApplicationController
 
   def show
     @event = Event.find(params[:id])
-    @registration = Registration.new(user: current_user, event: @event)
+    if current_user
+      @registration = Registration.first_or_initialize(user: current_user, event: @event)
+    else
+      @registration = Registration.new(user: current_user, event: @event)
+    end
   end
 
   def new
