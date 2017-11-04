@@ -1,4 +1,3 @@
-
 class TechnologyPolicy < ApplicationPolicy
   attr_reader :user, :technology
 

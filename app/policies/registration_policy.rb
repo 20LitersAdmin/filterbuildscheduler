@@ -1,4 +1,3 @@
-
 class RegistrationPolicy < ApplicationPolicy
   attr_reader :user, :registration
 
