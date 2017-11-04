@@ -1,7 +1,14 @@
 class UsersController < ApplicationController
   def show
   	@user = User.find(params[:id])
-    @past_events = @user.registrations.select{|r| r.event.end_time.past?}.map {|x| x.event}
+    @future_events = @user.registrations
+                          .joins(:event)
+                          .where('events.end_time > ?', Time.now)
+                          .map(&:event)
+    @past_events = @user.registrations
+                        .joins(:event)
+                        .where('events.end_time < ?', Time.now)
+                        .map(&:event)
   end
 
   def edit
