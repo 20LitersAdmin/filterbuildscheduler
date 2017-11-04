@@ -1,31 +1,111 @@
 # This file should contain all the record creation needed to seed the database with its default values.
 # The data can then be loaded with the rails db:seed command (or created alongside the database with db:setup).
-#
-# Examples:
-#
-#   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
-#   Character.create(name: 'Luke', movie: movies.first)
 
-location = Location.create(
-  name: 'Main Workshop',
-  address1: "address1-filler-data",
-  address2: "address2-filler-data",
-  city: "city-filler-data",
-  state: "state-filler-data",
-  zip: "zip-filler-data",
-  map_url: "map_url-filler-data",
-  photo_url: "photo_url-filler-data",
-  instructions: "instructions-filler-data",
-)
+Location.create!([
+  { name: 'Center of the Universe',
+    address1: "3501 Fairlanes Ave SW",
+    address2: "West side of the building",
+    city: "Grandville",
+    state: "MI",
+    zip: "49507",
+    map_url: "https://goo.gl/maps/ZgfJaae3ReJ2",
+    photo_url: "photo_url-filler-data",
+    instructions: "Park on West side of building, watch out for the alligator"
+  },
+  { name: 'Middle of Nowhere',
+    address1: "220 Alderman St",
+    address2: "West side of the building",
+    city: "Belding",
+    state: "MI",
+    zip: "48809",
+    map_url: "https://goo.gl/maps/ncrKcdMGsyK2",
+    photo_url: "photo_url-filler-data",
+    instructions: "Drive until civilization ends, then park and wait for nightfall."
+  }
+])
 
-event = Event.create(
-  start_time: 2.days.from_now,
-  end_time: 2.days.from_now,
-  title: "title-filler-data",
-  description: "description-filler-data",
-  min_registrations: 1,
-  max_registrations: 10,
-  min_leaders: 1,
-  max_leaders: 3,
-  location: location
-)
+Event.create!([
+  { start_time: 2.days.from_now,
+    end_time: 2.days.from_now,
+    title: "2 days from now",
+    description: "Open, public build. Anyone can come",
+    min_registrations: 1,
+    max_registrations: 10,
+    min_leaders: 1,
+    max_leaders: 3,
+    location: Location.first
+  },
+  { start_time: 6.days.from_now,
+    end_time: 6.days.from_now,
+    title: "6 days from now",
+    description: "This one should be private, but the model is missing some fields.",
+    min_registrations: 1,
+    max_registrations: 10,
+    min_leaders: 1,
+    max_leaders: 3,
+    location: Location.second
+  }
+])
+
+Technology.create!([
+  { name: "Bucket Filter",
+    description: "Designed by Village Water Filters and assembled by 20 Liters volunteers, this family-friendly build is open to people aged 4-104.",
+    ideal_build_length: 3,
+    ideal_group_size: 12,
+    ideal_leaders: 2,
+    family_friendly: true,
+    unit_rate: 2.13
+  },
+  { name: "Facility Filter",
+    description: "Got the engineering bug? Like to cut and glue PVC in complicated ways? Then this is the event for you.",
+    ideal_build_length: 4,
+    ideal_group_size: 4,
+    ideal_leaders: 1,
+    family_friendly: false,
+    unit_rate: 0.125
+  },
+])
+
+User.create!([
+  { email: "admin@email.com", 
+    password: "password", password_confirmation: "password", 
+    fname: "Admin",
+    lname: "Boss",
+    is_leader: true,
+    is_admin: true
+  },
+  { email: "leader1@email.com", 
+    password: "password", password_confirmation: "password", 
+    fname: "Leader",
+    lname: "One",
+    is_leader: true
+  },
+  { email: "leader2@email.com", 
+    password: "password", password_confirmation: "password", 
+    fname: "Leader",
+    lname: "Two",
+    is_leader: true
+  },
+  { email: "builder1@email.com", 
+    password: "password", password_confirmation: "password", 
+    fname: "Builder",
+    lname: "One"
+  },
+  { email: "builder2@email.com", 
+    password: "password", password_confirmation: "password", 
+    fname: "Builder",
+    lname: "Two"
+  },
+  { email: "builderMissing@email.com", 
+    password: "password", password_confirmation: "password", 
+    fname: "Builder",
+    lname: "Archived",
+    is_archived: true
+  },
+  { email: "builderNoPW@email.com",
+    fname: "Builder",
+    lname: "No Password"
+  },
+])
+
+

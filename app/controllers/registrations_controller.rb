@@ -4,7 +4,8 @@ class RegistrationsController < ApplicationController
       Registration.create!(registration_params)
     else
       user = User.find_or_initialize_by(email: user_params[:email]) do |user|
-        user.name = user_params[:name]
+        user.fname = user_params[:fname]
+        user.lname = user_params[:lname]
       end
 
       user.save && sign_in(:user, user) if user.new_record?
@@ -24,7 +25,7 @@ class RegistrationsController < ApplicationController
   private
 
   def user_params
-    params.require(:user).permit(:name, :email)
+    params.require(:user).permit(:fname, :lname, :email)
   end
 
   def registration_params
