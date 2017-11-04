@@ -10,6 +10,15 @@ class User < ApplicationRecord
   scope :admin, -> {where(is_admin: true)}
   has_many :registrations
   belongs_to :primary_location, class_name: "Location", primary_key: "id", foreign_key: "primary_location_id", optional: true
+  attr_accessor :waiver_accepted
+
+  def name
+    "#{fname} #{lname}"
+  end
+
+  def waiver_accepted
+    !signed_waiver_on.nil?
+  end
 
   def password_required?
     false
