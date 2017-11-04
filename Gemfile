@@ -21,6 +21,10 @@ gem "delayed_job", "~> 4.1"
 gem "delayed_job_active_record", "~> 4.1"
 gem "delayed_cron_job", "~> 0.7.2"
 
+group :production do
+  gem 'puma'
+end
+
 group :development, :test do
   gem 'pry-byebug'
   gem 'rubocop'
@@ -38,8 +42,6 @@ group :development do
   gem 'thin'
   gem 'web-console', '>= 3.3.0'
   gem 'listen', '>= 3.0.5', '< 3.2'
-  gem 'spring'
-  gem 'spring-watcher-listen', '~> 2.0.0'
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
