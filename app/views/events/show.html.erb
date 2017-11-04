@@ -18,8 +18,8 @@
         <%= simple_form_for [@event, @registration] do |f| %>
           <%= f.hidden_field :event_id %>
           <%= simple_fields_for :user do |o| %>
-            <%= o.input :name, label: 'Name' %>
-            <%= o.input :email, label: 'email' %>
+            <%= o.input :fname, label: 'First Name' %>
+            <%= o.input :lname, label: 'Last Name' %>
           <% end %>
           <%= f.submit %>
         <% end %>
