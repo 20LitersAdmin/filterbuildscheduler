@@ -1,13 +1,22 @@
 <div class='container'>
-  <%= link_to "Make a new one", new_event_path %>
+  <% if current_user and current_user.is_leader? %>
+    <%= link_to "Make a new one", new_event_path, class: 'btn btn-primary' %>
+  <% else %>
+    <div>
+      <h3>Want a custom build event for your group?</h3>
+      <p>If you have a group of 6+ people we can schedule a build at your convenience.</p>
+      <%= mail_to 'filterbuild@20liters.org', 'Email Us!', class: 'btn btn-primary', subject: 'Request for custom build event' %>
+    </div>
+  <% end %>
 
   <div class="event-container">
     <% @events.each do |event| %>
       <div class="event">
         <%= link_to event_path(event) do %>
           <h2><%= event.title %></h2>
-          <h6><%= event.start_time.strftime('%m/%d/%Y %I:%M%p') %> - <%= event.end_time.strftime('%m/%d/%Y %I:%M%p') %></h6>
-          <h6>Location: <%= event.location.name %></h6>
+          <div><%= event.start_time.strftime('%m/%d/%Y %I:%M%p') %> - <%= event.end_time.strftime('%m/%d/%Y %I:%M%p') %></div>
+          <div>Location: <%= event.location.name %></div>
+          <div><%= event.total_registered %> / <%= event.max_registrations %></div>
           <button class="btn btn-primary">Register Now!</button>
         <% end %>
       </div>

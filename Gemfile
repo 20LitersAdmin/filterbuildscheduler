@@ -22,6 +22,8 @@ group :development, :test do
   gem 'pry-byebug'
   gem 'rubocop'
   gem 'timecop'
+  gem 'factory_bot_rails'
+  gem 'faker'
 end
 
 group :test do
