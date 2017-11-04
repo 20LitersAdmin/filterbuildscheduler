@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171104194511) do
+ActiveRecord::Schema.define(version: 20171104230522) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -45,6 +45,8 @@ ActiveRecord::Schema.define(version: 20171104194511) do
     t.integer "location_id", null: false
     t.integer "technology_id"
     t.boolean "is_private", default: false, null: false
+    t.datetime "deleted_at"
+    t.index ["deleted_at"], name: "index_events_on_deleted_at"
   end
 
   create_table "locations", force: :cascade do |t|
@@ -59,6 +61,8 @@ ActiveRecord::Schema.define(version: 20171104194511) do
     t.string "instructions"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "deleted_at"
+    t.index ["deleted_at"], name: "index_locations_on_deleted_at"
   end
 
   create_table "registrations", force: :cascade do |t|
@@ -84,6 +88,8 @@ ActiveRecord::Schema.define(version: 20171104194511) do
     t.float "unit_rate"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "deleted_at"
+    t.index ["deleted_at"], name: "index_technologies_on_deleted_at"
   end
 
   create_table "technologies_users", id: false, force: :cascade do |t|
@@ -109,11 +115,12 @@ ActiveRecord::Schema.define(version: 20171104194511) do
     t.string "phone"
     t.boolean "is_leader"
     t.boolean "is_admin"
-    t.boolean "is_archived", default: false
     t.date "signed_waiver_on"
     t.integer "primary_location_id"
     t.string "fname"
     t.string "lname"
+    t.datetime "deleted_at"
+    t.index ["deleted_at"], name: "index_users_on_deleted_at"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
