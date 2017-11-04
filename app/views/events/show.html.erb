@@ -1,12 +1,22 @@
 <div class="container">
   <h1>Event Title: <%= @event.title %></h1>
 
-
-  <%= form_for [@event, @registration] do |f| %>
-    <%= f.hidden_field :event_id %>
-    <%= f.hidden_field :user_id %>
-    <%= f.submit %>
+  <% if @current_user %>
+    <%= form_for [@event, @registration] do |f| %>
+      <%= f.hidden_field :event_id %>
+      <%= f.hidden_field :user_id %>
+      <%= f.submit %>
+    <% end %>
+  <% else %>
+    <%= simple_form_for [@event, @registration] do |f| %>
+      <h2>I AM NOT LOGGED IN</h2>
+      <%= f.hidden_field :event_id %>
+      <%= simple_fields_for :user do |o| %>
+        <%= o.input :name, label: 'Name' %>
+        <%= o.input :email, label: 'email' %>
+      <% end %>
+      <%= f.submit %>
+    <% end %>
   <% end %>
-
   <for
 </div>
