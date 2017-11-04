@@ -17,6 +17,9 @@ gem 'turbolinks', '~> 5'
 gem 'rails_admin'
 gem 'devise'
 gem 'bootstrap-sass'
+gem "delayed_job", "~> 4.1"
+gem "delayed_job_active_record", "~> 4.1"
+gem "delayed_cron_job", "~> 0.7.2"
 
 group :development, :test do
   gem 'pry-byebug'
@@ -41,3 +44,4 @@ end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
+
