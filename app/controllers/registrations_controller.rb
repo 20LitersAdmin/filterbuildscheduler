@@ -21,8 +21,8 @@ class RegistrationsController < ApplicationController
     end
 
     RegistrationMailer.delay.created reg
-
-    redirect_to events_path
+    flash[:success] = "You successfully registered!"
+    redirect_to event_path params[:registration][:event_id]
   end
   
   def edit
@@ -37,6 +37,7 @@ class RegistrationsController < ApplicationController
   def destroy
     authorize @registration
     @registration.delete
+    flash[:warning] = "You are no longer registered."
     redirect_to event_path(@registration.event)
   end
   
