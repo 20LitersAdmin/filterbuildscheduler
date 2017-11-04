@@ -6,7 +6,10 @@ class RegistrationsController < ApplicationController
     raise ActionController::BadRequest, "must accept waiver to participate" if waiver_accepted == '0'
 
     if current_user
-      reg = Registration.create!(registration_params)
+      reg = Registration.create!(event_id: params[:event_id],
+                                 user: current_user,
+                                 leader: params.dig(:registration, :leader),
+                                 guests_registered: params[:registration][:guests_registered])
       current_user.update_attributes!(signed_waiver_on: Time.now) unless current_user.waiver_accepted
     else
       user = User.find_or_initialize_by(email: user_params[:email]) do |user|

@@ -14,6 +14,10 @@ class User < ApplicationRecord
   belongs_to :primary_location, class_name: "Location", primary_key: "id", foreign_key: "primary_location_id", optional: true
   attr_accessor :waiver_accepted
 
+  validates :fname, presence: true
+  validates :lname, presence: true
+  validates :email, presence: true
+
   def name
     "#{fname} #{lname}"
   end

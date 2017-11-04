@@ -27,11 +27,11 @@
 
     <% if !current_user.waiver_accepted %>
       <div>
-        <%= f.check_box :waiver_accepted, label: 'email' %>
+        <%= f.check_box :waiver_accepted %>
         <a target="_blank" href="/waiver"><%= f.label :waiver_accepted, 'Accept the Liability Waiver' %></a>
       </div>
     <% else %>
-      <%= f.hidden_field :waiver_accepted, value: 0 %>
+      <%= f.hidden_field :waiver_accepted, value: 1 %>
       <div><a target="_blank" href="/waiver"><%="Review the Liability Waiver (accepted on #{current_user.signed_waiver_on})"%></a></div>
     <% end %>
 
