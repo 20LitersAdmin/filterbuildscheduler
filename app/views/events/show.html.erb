@@ -5,63 +5,7 @@
   <% end %>
   <div class="row">
     <div class="col-md-6">
-      <% if current_user %>
-        <h1><%= current_user.registered?(@event) ? "You're Registered!" : "Register" %></h1>
-        <%= link_to('Not you?', destroy_user_session_path, method: :delete) %>
-        <%= form_for [@event, @registration] do |f| %>
-          <%= f.hidden_field :event_id %>
-          <%= f.hidden_field :user_id %>
-          <%= f.hidden_field :leader, value: '0' %>
-          <div><%= f.label :name, "Name: #{current_user.name}" %></div>
-          <div><%= f.label :email, "Email: #{current_user.email}" %></div>
-          <%= f.hidden_field :waiver_accepted, value: "#{current_user.waiver_accepted ? '1' : '0'}" %>
-          <% if current_user.registered?(@event) %>
-            <% if @registration.leader? %>
-              <div><%= f.label :leader, "You are a leader at this event." %></div>
-            <% end %>
-            <%= link_to "Change/Cancel Registration", edit_event_registration_path(@event, @registration), class: 'btn btn-primary' %>
-          <% else %>
-            <% if current_user.can_lead_event?(@event) %>
-              <div>
-                <%= f.label :leader, 'Register as Leader' %>
-                <%= f.check_box :leader %>
-              </div>
-            <% end %>
-            <div>
-              <%= f.label :guests_registered, 'Guests Attending: ' %>
-              <%= f.number_field :guests_registered %>
-            </div>
-          <% end %>
-          <% if !current_user.waiver_accepted %>
-            <div>
-              <%= f.check_box :waiver_accepted, label: 'email' %>
-              <a target="_blank" href="/waiver"><%= f.label :waiver_accepted, 'Accept the Liability Waiver' %></a>
-            </div>
-          <% else %>
-            <div><a target="_blank" href="/waiver"><%="Review the Liability Waiver (accepted on #{current_user.signed_waiver_on})"%></a></div>
-          <% end %>
-          <%= f.submit unless current_user.registered?(@event) %>
-        <% end %>
-      <% else %>
-        <%= simple_form_for [@event, @registration] do |f| %>
-          <%= f.hidden_field :event_id %>
-          <%= simple_fields_for :user do |o| %>
-            <%= o.input :fname, label: 'First Name' %>
-            <%= o.input :lname, label: 'Last Name' %>
-            <%= o.input :email, label: 'email' %>
-            <%= o.hidden_field :waiver_accepted, value: '0' %>
-            <div>
-              <a target="_blank" href="/waiver"><%= o.label :waiver_accepted, 'Accept the Liability Waiver' %></a>
-              <%= o.check_box :waiver_accepted, label: 'email' %>
-            </div>
-          <% end %>
-          <div>
-            <%= f.label :guests_registered %>
-            <%= f.number_field :guests_registered %>
-          </div>
-          <%= f.submit %>
-        <% end %>
-      <% end %>
+      <%= render partial: 'events/registration' %>
     </div>
     <div class="col-md-6">
       <h1>The Details</h1>
@@ -87,6 +31,22 @@
         <div><%= @event.description %></div>
       <% end %>
     </div>
+    
+    <% if @registration.leader? %>
+      <div class='col-md-6'>
+        <h1>Report</h1>
+          <%= simple_form_for @event  do |f| %>
+              <%= f.input :item_goal, label: "Build Goal :" %>
+              <%= f.input :item_results, label: "Total Filters Built :" %>
+              <%= f.label :attendance, label: "Attendance: " %>
+              <%= f.simple_fields_for :registrations do |r| %>
+                <%= r.input :guests_attended, label: "#{r.object.user.name} (expecting #{r.object.guests_registered})" %>
+              <% end %>
+            <%= f.submit "Submit Report", class: 'btn btn-primary' %>
+          <% end %>
+      </div>
+    <% end %>
+    
     <div class="col-md-6">
       <div class="page-header">
         <h1>Share This Event With Your Friends!</h1>
@@ -107,6 +67,6 @@
         }(document, 'script', 'facebook-jssdk'));
       </script>
     </div>
-    
+
   </div>
 </div>
