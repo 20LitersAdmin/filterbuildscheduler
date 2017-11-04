@@ -8,6 +8,9 @@ class Event < ApplicationRecord
   validates :min_registrations, :max_registrations, :min_leaders, :max_leaders, numericality: { only_integer: true, greater_than: 0 }
   validate :dates_are_valid?
   validate :registrations_are_valid?
+  
+  scope :future, -> {where('start_time > ?', Time.now)}
+  scope :past, -> {where('start_time <= ?', Time.now)}
 
   def dates_are_valid?
     if start_time > end_time
