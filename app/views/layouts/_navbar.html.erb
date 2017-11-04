@@ -8,7 +8,9 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="#">20Liters</a>
+      <a class="navbar-brand" href="https://20liters.org">
+        <%= image_tag("logo-horizontal-417-208.png", class: "nav-logo") %>
+      </a>
     </div>
 
     <!-- Collect the nav links, forms, and other content for toggling -->
@@ -18,7 +20,7 @@
         <% if current_user %>
           <li><%= link_to 'Sign Out', destroy_user_session_path %></li>
         <% else %>
-          <li><%= link_to 'Sign Up', new_user_registration_path %></li>
+          <li><%= link_to 'Sign In', user_session_path %></li>
         <% end %>
       </ul>
     </div><!-- /.navbar-collapse -->

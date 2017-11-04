@@ -28,5 +28,6 @@ spec/examples.txt
 .env
 .env.local
 /public/assets/*
-app/.DS_STORE
+.DS_Store
+app/.DS_Store
 app/controllers/.DS_Store
