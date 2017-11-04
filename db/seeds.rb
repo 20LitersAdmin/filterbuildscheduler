@@ -15,7 +15,7 @@ location = Location.create(
   zip: "zip-filler-data",
   map_url: "map_url-filler-data",
   photo_url: "photo_url-filler-data",
-  instructioons: "instructioons-filler-data",
+  instructions: "instructions-filler-data",
 )
 
 event = Event.create(
