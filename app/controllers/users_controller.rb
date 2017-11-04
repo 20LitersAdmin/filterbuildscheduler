@@ -1,6 +1,7 @@
 class UsersController < ApplicationController
   def show
   	@user = User.find(params[:id])
+    @past_events = @user.registrations.select{|r| r.event.end_time.past?}.map {|x| x.event}
   end
 
   def edit
