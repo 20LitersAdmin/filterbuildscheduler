@@ -4,7 +4,7 @@
 <% @user.registrations.each do |registration| %>
   <%= registration.event.title %> (<%= link_to 'modify', edit_event_registration_path(registration.event, registration) %>)
 <% end %>
-<% if @past_events %>
+<% if @past_events.length > 0 %>
   <h3>See past events</h3>
   <div class="event-container">
     <% @past_events.each do |event| %>
