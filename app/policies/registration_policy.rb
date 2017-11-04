@@ -7,8 +7,8 @@ class RegistrationPolicy < ApplicationPolicy
     @registration = registration
   end
 
-  def delete?
-    user.admin? || registration.user == user
+  def destroy?
+    user.is_admin? || registration.user == user
   end
 
 end

@@ -27,4 +27,8 @@ class User < ApplicationRecord
     return false unless is_leader
     return event.technology.nil? || qualified_technologies.exists?(event.technology)
   end
+  
+  def registered?(event)
+    return Registration.where(user: self, event: event).present?
+  end
 end

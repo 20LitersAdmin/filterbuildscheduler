@@ -15,13 +15,17 @@ class RegistrationsController < ApplicationController
 
     redirect_to events_path
   end
-
-  def delete
-    @reg = authorize Registration.find(params[:id])
-    @reg.delete
-    redirect_to registrations_path
+  
+  def edit
+    @registration = Registration.find(params[:id])
   end
 
+  def destroy
+    @registration = authorize Registration.find(params[:id])
+    @@registration.delete
+    redirect_to event_path(@registration.event)
+  end
+  
   private
 
   def user_params
