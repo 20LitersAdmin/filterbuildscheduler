@@ -1,16 +1,18 @@
 <div class="container">
-  <h1>Event Title: <%= @event.title %></h1>
+  <h1><%= @event.title %></h1>
   <div class="row">
-  	<div class="col-md-6">
+    <div class="col-md-6">
       <% if current_user %>
         <%= link_to('Not you?', destroy_user_session_path, method: :delete) %>
         <%= form_for [@event, @registration] do |f| %>
           <%= f.hidden_field :event_id %>
           <%= f.hidden_field :user_id %>
           <%= f.hidden_field :leader, value: '0' %>
-          <% if current_user.is_leader? %>
-            <%= f.label 'Register as Leader' %>
-            <%= f.check_box :leader %>
+          <div><%= f.label :name, "Name: #{current_user.name}" %></div>
+          <div><%= f.label :email, "Email: #{current_user.email}" %></div>
+          <% if current_user.can_lead_event?(@event) %>
+            <div><%= f.label 'Register as Leader' %>
+            <%= f.check_box :leader %></div>
           <% end %>
           <%= f.submit %>
         <% end %>
@@ -18,7 +20,8 @@
         <%= simple_form_for [@event, @registration] do |f| %>
           <%= f.hidden_field :event_id %>
           <%= simple_fields_for :user do |o| %>
-            <%= o.input :name, label: 'Name' %>
+            <%= o.input :fname, label: 'First Name' %>
+            <%= o.input :lname, label: 'Last Name' %>
             <%= o.input :email, label: 'email' %>
           <% end %>
           <%= f.submit %>
@@ -26,10 +29,18 @@
       <% end %>
     </div>
     <div class="col-md-6">
-      <h2>The Details</h2>
-      <%= @event.start_time.strftime("%A, %D") %>
+      <h1>The Details</h1>
+      <%= @event.format_time_range %>
       <h3>Location</h3>
-      <%= @event.location.name %>
+      <h4><%= @event.location.name %></h4>
+      <div><%= @event.location.address1 %></div>
+      <% if @event.location.address2 %>
+        <div><%= @event.location.address2 %></div>
+      <% end %>
+      <div><%= @event.location.city %>, <%= @event.location.state %> <%= @event.location.zip %></div>
+      <% if @event.location.map_url %>
+        <a target="_blank" href="<%= @event.location.map_url %>">Map</a>
+      <% end %>
     </div>
   </div>
 </div>
