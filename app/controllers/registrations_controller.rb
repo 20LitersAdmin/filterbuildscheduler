@@ -35,6 +35,7 @@ class RegistrationsController < ApplicationController
 
     params.require(:registration).permit(:event_id,
                                          :user_id,
-                                         :leader)
+                                         :leader,
+                                         :guests_registered)
   end
 end

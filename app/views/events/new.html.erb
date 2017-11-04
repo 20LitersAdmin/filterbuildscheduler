@@ -3,6 +3,10 @@
     <%= f.input :title %>
     <%= f.input :start_time %>
     <%= f.input :end_time %>
+    <%= f.input :min_registrations, input_html: { value: 0 } %>
+    <%= f.input :max_registrations, input_html: { value: 0 } %>
+    <%= f.input :min_leaders, input_html: { value: 0 } %>
+    <%= f.input :max_leaders, input_html: { value: 0 } %>
     <%= f.association :location %>
     <%= f.button :submit %>
   <% end %>

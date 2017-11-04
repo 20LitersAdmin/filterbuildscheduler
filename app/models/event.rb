@@ -34,4 +34,11 @@ class Event < ApplicationRecord
     end
   end
 
+  def signed_up
+    if registrations.present?
+      registrations.map(&:guests_registered).reduce(:+) + users.size
+    else
+      0
+    end
+  end
 end

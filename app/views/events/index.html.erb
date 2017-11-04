@@ -1,13 +1,16 @@
 <div class='container'>
-  <%= link_to "Make a new one", new_event_path %>
+  <% if current_user.is_leader %>
+    <%= link_to "Make a new one", new_event_path, class: 'btn btn-primary' %>
+  <% end %>
 
   <div class="event-container">
     <% @events.each do |event| %>
       <div class="event">
         <%= link_to event_path(event) do %>
           <h2><%= event.title %></h2>
-          <h6><%= event.start_time.strftime('%m/%d/%Y %I:%M%p') %> - <%= event.end_time.strftime('%m/%d/%Y %I:%M%p') %></h6>
-          <h6>Location: <%= event.location.name %></h6>
+          <div><%= event.start_time.strftime('%m/%d/%Y %I:%M%p') %> - <%= event.end_time.strftime('%m/%d/%Y %I:%M%p') %></div>
+          <div>Location: <%= event.location.name %></div>
+          <div><%= event.signed_up %> / <%= event.max_registrations %></div>
           <button class="btn btn-primary">Register Now!</button>
         <% end %>
       </div>
