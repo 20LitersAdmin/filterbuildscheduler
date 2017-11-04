@@ -4,8 +4,9 @@
   <%= f.error_notification %>
 
   <div class="form-inputs">
-    <%= f.input :fname, required: true, autofocus: true %>
-    <%= f.input :lname, required: true, autofocus: true %>
+    <%= f.input :id %>
+    <%= f.input :fname, required: true, autofocus: true, label: "First Name" %>
+    <%= f.input :lname, required: true, autofocus: true, label: "Last Name" %>
     <%= f.input :email, required: true, autofocus: true %>
 
     <% if devise_mapping.confirmable? && resource.pending_reconfirmation? %>
