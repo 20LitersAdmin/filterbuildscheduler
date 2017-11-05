@@ -3,6 +3,13 @@
 
 .event-container {
   @extend .row;
+  margin-bottom: 30px;
+  .heading {
+    font-weight: bold;
+    border-bottom: 2px solid $light-blue;
+    padding-left: 1em;
+    padding-bottom: 0.5em;
+  }
   .event {
     @extend .col-sm-6;
     @extend .col-md-4;
