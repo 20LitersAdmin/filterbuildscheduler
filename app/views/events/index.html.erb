@@ -22,5 +22,10 @@
       <h2 class="heading">Past Events</h2>
       <%= render partial: 'events/event', collection: @past_events %>
     </div>
+  <% else %>
+    <div class="event-container">
+      <h2 class="heading">Don't just build, lead!</h2>
+      <%= render partial: 'events/solicit'  %>
+    </div>
   <% end %>
 </div>
