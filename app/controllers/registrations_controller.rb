@@ -36,7 +36,7 @@ class RegistrationsController < ApplicationController
 
   def update
     authorize @registration
-    @registration.update(registration_params)
+    @registration.update!(registration_params)
     redirect_to event_path(@registration.event)
   end
 
