@@ -8,29 +8,47 @@ abbr, acronym {
   border-bottom: 0px !important;
 }
 
-.twentyliters .form-control {
-  border-radius: 0;
-}
+.twentyliters {
+  .form-control {
+    border-radius: 0;
+  }
 
-.btn.twentyliters {
-  border-radius: 0;
-  border: 0;
-  color: $grey;
-  font-weight: bold;
-}
+  textarea {
+    width: 100%;
+    border: 1px solid $slightly-darker-light-grey;
+  }
 
-.btn.twentyliters.yellow {
-  background-color: $yellow;
-}
+  .btn {
+    border-radius: 0;
+    border: 0;
+    color: $grey;
+    font-weight: bold;
+  }
 
-.btn.twentyliters.empty {
-  background-color: transparent;
-  border: 2px $yellow solid;
-  padding-left: 2em;
-  padding-right: 2em;
-  &:hover {
-    color: inherit;
-    box-shadow: 0 0 1px $grey;
+  .btn.yellow {
+    background-color: $yellow;
+    &:hover {
+      background-color: lighten($yellow, 10%)
+    }
+  }
+
+  .btn.red {
+    color: white;
+    background-color: $red;
+    &:hover {
+      background-color: lighten($red, 10%)
+    }
+  }
+
+  .btn.empty {
+    background-color: transparent;
+    border: 2px $yellow solid;
+    padding-left: 2em;
+    padding-right: 2em;
+    &:hover {
+      color: inherit;
+      box-shadow: 0 0 1px $grey;
+    }
   }
 }
 
