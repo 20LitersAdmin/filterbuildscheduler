@@ -13,8 +13,8 @@ class Event < ApplicationRecord
   validate :leaders_are_valid?
 
   scope :non_private, -> { where(is_private: false) }
-  scope :future, -> { where('end_time > ?', Time.now) }
-  scope :past, -> { where('end_time <= ?', Time.now) }
+  scope :future, -> { where('end_time > ?', Time.now).order(start_time: :asc) }
+  scope :past, -> { where('end_time <= ?', Time.now).order(start_time: :desc) }
 
   accepts_nested_attributes_for :registrations
 
