@@ -76,6 +76,6 @@ class Event < ApplicationRecord
   end
 
   def complete?
-    item_results.present? && item_goal.present? # && attendee_count.present?
+    item_results.present? && attendance.present?
   end
 end
