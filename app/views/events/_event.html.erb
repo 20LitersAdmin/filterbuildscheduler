@@ -1,36 +1,44 @@
 <div class="event">
   <%= link_to event_path(event) do %>
-    <div>
-      <span class="location">Hosted by <%= event.location.name %></span>
-    </div>
-    <h2><%= event.title %></h2>
+    <div class="top-part-wrapper">
+      <div>
+        <span class="location">Hosted by <%= event.location.name %></span>
+      </div>
+      <h2><%= event.title %></h2>
 
-    <div class='time'><%= event.format_time_range %></div>
-    <div class='family-friendly'>
-      <% if event.technology.family_friendly %>
-        <i>Family Friendly</i>
-      <% else %>
-        <i>Ages 12+</i>
-      <% end %>
-    </div>
+      <div class='time'><%= event.format_time_range %></div>
+      <div class='family-friendly'>
+        <% if event.technology.family_friendly %>
+          <i>Family Friendly</i>
+        <% else %>
+          <i>Ages 12+</i>
+        <% end %>
+      </div>
 
-    <button class="btn btn-primary twentyliters empty learn-more">Learn More</button>
-
-    <div class="bar"><%= event.total_registered %> of <%= event.max_registrations %> Registered</div>
-
-    <% if event.does_not_need_leaders? %>
-      <div class="bar blue">
-    <% elsif event.really_needs_leaders? %>
-      <div class="bar red">
-    <% elsif event.needs_leaders? %>
-      <div class="bar yellow">
-    <% end %>
-
-      <%= event.leaders_registered.count %> of <%= event.max_leaders %> Leaders Registered
+      <button class="btn btn-primary twentyliters empty learn-more">Learn More</button>
     </div>
 
-    <% if event.is_private %>
-      <div class="bar">This event is private</div>
-    <% end %>
+    <div class="bar-outer-wrapper <%= 'is_leader' if current_user&.is_leader %>">
+      <div class="bar-inner-wrapper">
+        <div class="bar"><%= event.total_registered %> of <%= event.max_registrations %> Registered</div>
+
+        <% if current_user&.is_leader %>
+          <% if event.does_not_need_leaders? %>
+            <div class="bar blue">
+          <% elsif event.really_needs_leaders? %>
+            <div class="bar red">
+          <% elsif event.needs_leaders? %>
+            <div class="bar yellow">
+          <% end %>
+
+            <%= event.leaders_registered.count %> of <%= event.max_leaders %> Leaders Registered
+          </div>
+        <% end %>
+
+        <% if event.is_private %>
+          <div class="bar">This event is private</div>
+        <% end %>
+      </div>
+    </div>
   <% end %>
 </div>
