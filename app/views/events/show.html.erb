@@ -28,7 +28,7 @@
         <% if @event.location.address2 %>
           <div><%= @event.location.address2 %></div>
         <% end %>
-        <div><%= @event.location.city %>, <%= @event.location.state %> <%= @event.location.zip %></div>
+        <div><%= @event.location.one_liner %></div>
         <% if @event.location.map_url.present? %>
           <a target="_blank" href="<%= @event.location.map_url %>">Map</a>
         <% end %>
@@ -42,7 +42,7 @@
           <div><%= @event.description %></div>
         <% end %>
         <% if current_user&.is_admin? || current_user&.is_leader %>
-          <%= link_to("Edit Event", edit_event_path(@event) , class: 'btn yellow') %>
+          <%= link_to("Edit Event", edit_event_path(@event), class: 'btn yellow') %>
         <% end %>
       </div>
     </div>
