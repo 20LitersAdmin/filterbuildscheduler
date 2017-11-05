@@ -60,8 +60,8 @@ class Event < ApplicationRecord
   end
 
   def total_registered
-    if non_leaders_registered.present?
-      non_leaders_registered.map(&:guests_registered).reduce(:+) + non_leaders_registered.non_leader.count
+    if registrations.present?
+      registrations.map(&:guests_registered).reduce(:+) + non_leaders_registered.count
     else
       0
     end
