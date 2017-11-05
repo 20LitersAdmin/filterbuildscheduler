@@ -15,13 +15,13 @@ class EventsController < ApplicationController
 
     @registration = Registration.where(user: current_user, event: @event).first_or_initialize
 
-    if ((current_user && current_user.is_admin) || @registration.leader?) && @event.incomplete? && @event.start_time < Time.now
+    if (current_user&.is_admin || @registration&.leader?) && @event.incomplete? && @event.start_time < Time.now
       @show_report = true
     else
       @show_report = false
     end
 
-    if ((current_user && current_user.is_admin) || @registration.leader?)
+    if (current_user&.is_admin || @registration&.leader?)
       @show_edit = true
     else
       @show_edit = false
@@ -41,7 +41,7 @@ class EventsController < ApplicationController
   def edit
     @event = Event.find(params[:id])
 
-    if ((current_user && current_user.is_admin) || @registration.leader?) && @event.start_time < Time.now
+    if (current_user&.is_admin || @registration&.leader?) && @event.start_time < Time.now
       @show_advanced = true
     else
       @show_advanced = false
