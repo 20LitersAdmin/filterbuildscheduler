@@ -10,10 +10,26 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171104154445) do
+ActiveRecord::Schema.define(version: 20171104230522) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "delayed_jobs", force: :cascade do |t|
+    t.integer "priority", default: 0, null: false
+    t.integer "attempts", default: 0, null: false
+    t.text "handler", null: false
+    t.text "last_error"
+    t.datetime "run_at"
+    t.datetime "locked_at"
+    t.datetime "failed_at"
+    t.string "locked_by"
+    t.string "queue"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string "cron"
+    t.index ["priority", "run_at"], name: "delayed_jobs_priority"
+  end
 
   create_table "events", force: :cascade do |t|
     t.datetime "start_time", null: false
@@ -28,6 +44,11 @@ ActiveRecord::Schema.define(version: 20171104154445) do
     t.datetime "updated_at", null: false
     t.integer "location_id", null: false
     t.integer "technology_id"
+    t.boolean "is_private", default: false, null: false
+    t.integer "item_goal"
+    t.integer "item_results"
+    t.datetime "deleted_at"
+    t.index ["deleted_at"], name: "index_events_on_deleted_at"
   end
 
   create_table "locations", force: :cascade do |t|
@@ -42,6 +63,8 @@ ActiveRecord::Schema.define(version: 20171104154445) do
     t.string "instructions"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "deleted_at"
+    t.index ["deleted_at"], name: "index_locations_on_deleted_at"
   end
 
   create_table "registrations", force: :cascade do |t|
@@ -54,6 +77,7 @@ ActiveRecord::Schema.define(version: 20171104154445) do
     t.string "accomodations", default: ""
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["user_id", "event_id"], name: "index_registrations_on_user_id_and_event_id", unique: true
   end
 
   create_table "technologies", force: :cascade do |t|
@@ -66,6 +90,15 @@ ActiveRecord::Schema.define(version: 20171104154445) do
     t.float "unit_rate"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "deleted_at"
+    t.index ["deleted_at"], name: "index_technologies_on_deleted_at"
+  end
+
+  create_table "technologies_users", id: false, force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "technology_id", null: false
+    t.index ["technology_id", "user_id"], name: "index_technologies_users_on_technology_id_and_user_id"
+    t.index ["user_id", "technology_id"], name: "index_technologies_users_on_user_id_and_technology_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -84,12 +117,12 @@ ActiveRecord::Schema.define(version: 20171104154445) do
     t.string "phone"
     t.boolean "is_leader"
     t.boolean "is_admin"
-    t.boolean "is_archived", default: false
     t.date "signed_waiver_on"
-    t.integer "qualified_technology_id", default: [], array: true
     t.integer "primary_location_id"
     t.string "fname"
     t.string "lname"
+    t.datetime "deleted_at"
+    t.index ["deleted_at"], name: "index_users_on_deleted_at"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end

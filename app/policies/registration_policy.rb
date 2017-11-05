@@ -1,4 +1,3 @@
-
 class RegistrationPolicy < ApplicationPolicy
   attr_reader :user, :registration
 
@@ -7,8 +6,16 @@ class RegistrationPolicy < ApplicationPolicy
     @registration = registration
   end
 
-  def delete?
-    user.admin? || registration.user == user
+  def destroy?
+    user.is_admin? || registration.user == user
   end
 
+  def update?
+    return true if user.is_admin?
+    if registration.leader
+      user.is_leader
+    else
+      registration.user == user
+    end
+  end
 end

@@ -1,6 +1,6 @@
 <h2>Edit Your Profile</h2>
 
-<%= simple_form_for @user, url: edit_user_path(@user.id) do |f| %>
+<%= simple_form_for @user, url: update_user_path(@user.id) do |f| %>
   <%= f.error_notification %>
 
   <div class="form-inputs">

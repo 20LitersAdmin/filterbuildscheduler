@@ -1,4 +1,3 @@
-
 class LocationPolicy < ApplicationPolicy
   attr_reader :user, :location
 

@@ -1,57 +1,11 @@
 <div class="container">
   <h1><%= @event.title %></h1>
+  <% if @event.is_private %>
+    <h6>This event is private</h6>
+  <% end %>
   <div class="row">
     <div class="col-md-6">
-      <% if current_user %>
-        <h1>Register</h1>
-        <%= link_to('Not you?', destroy_user_session_path, method: :delete) %>
-        <%= form_for [@event, @registration] do |f| %>
-          <%= f.hidden_field :event_id %>
-          <%= f.hidden_field :user_id %>
-          <%= f.hidden_field :leader, value: '0' %>
-          <div><%= f.label :name, "Name: #{current_user.name}" %></div>
-          <div><%= f.label :email, "Email: #{current_user.email}" %></div>
-          <%= f.hidden_field :waiver_accepted, value: "#{current_user.waiver_accepted ? '1' : '0'}" %>
-          <% if !current_user.waiver_accepted %>
-            <div>
-              <a target="_blank" href="/waiver"><%= f.label :waiver_accepted, 'Accept the Liability Waiver' %></a>
-              <%= f.check_box :waiver_accepted, label: 'email' %>
-            </div>
-          <% else %>
-            <div><a target="_blank" href="/waiver"><%="Review the Liability Waiver (accepted on #{current_user.signed_waiver_on})"%></a></div>
-          <% end %>
-          <% if current_user.can_lead_event?(@event) %>
-            <div>
-              <%= f.label :leader, 'Register as Leader' %>
-              <%= f.check_box :leader %>
-            </div>
-          <% end %>
-          <div>
-            <%= f.label :guests_registered %>
-            <%= f.number_field :guests_registered %>
-          </div>
-          <%= f.submit %>
-        <% end %>
-      <% else %>
-        <%= simple_form_for [@event, @registration] do |f| %>
-          <%= f.hidden_field :event_id %>
-          <%= simple_fields_for :user do |o| %>
-            <%= o.input :fname, label: 'First Name' %>
-            <%= o.input :lname, label: 'Last Name' %>
-            <%= o.input :email, label: 'email' %>
-            <%= o.hidden_field :waiver_accepted, value: '0' %>
-            <div>
-              <a target="_blank" href="/waiver"><%= o.label :waiver_accepted, 'Accept the Liability Waiver' %></a>
-              <%= o.check_box :waiver_accepted, label: 'email' %>
-            </div>
-          <% end %>
-          <div>
-            <%= f.label :guests_registered %>
-            <%= f.number_field :guests_registered %>
-          </div>
-          <%= f.submit %>
-        <% end %>
-      <% end %>
+      <%= render partial: 'events/registration' %>
     </div>
     <div class="col-md-6">
       <h1>The Details</h1>
@@ -76,7 +30,43 @@
         <h4>Additional Event Details</h3>
         <div><%= @event.description %></div>
       <% end %>
-
     </div>
+    
+    <% if @registration.leader? %>
+      <div class='col-md-6'>
+        <h1>Report</h1>
+          <%= simple_form_for @event  do |f| %>
+              <%= f.input :item_goal, label: "Build Goal :" %>
+              <%= f.input :item_results, label: "Total Filters Built :" %>
+              <%= f.label :attendance, label: "Attendance: " %>
+              <%= f.simple_fields_for :registrations do |r| %>
+                <%= r.input :guests_attended, label: "#{r.object.user.name} (expecting #{r.object.guests_registered})" %>
+              <% end %>
+            <%= f.submit "Submit Report", class: 'btn btn-primary' %>
+          <% end %>
+      </div>
+    <% end %>
+    
+    <div class="col-md-6">
+      <div class="page-header">
+        <h1>Share This Event With Your Friends!</h1>
+      </div>
+
+      <div class="fb-share-button" data-href="<%= request.url %>" data-layout="button_count" data-size="small" data-mobile-iframe="true"><a class="fb-xfbml-parse-ignore" target="_blank" href="<%= request.url %>">Share on Facebook</a></div>
+
+      <a href="https://twitter.com/share?ref_src=twsrc%5Etfw" class="twitter-share-button" data-text="<%= current_user && current_user.registered?(@event) ? 'Join me in building water filters!' : 'Help build water filters at this upcoming event'%>" data-show-count="false">Tweet</a><script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+      <div id="fb-root"></div>
+      <script>
+        (function(d, s, id) {
+          var js, fjs = d.getElementsByTagName(s)[0];
+          if (d.getElementById(id)) return;
+          js = d.createElement(s); js.id = id;
+          js.src = 'https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.10&appId=1665305893501056';
+          fjs.parentNode.insertBefore(js, fjs);
+        }(document, 'script', 'facebook-jssdk'));
+      </script>
+    </div>
+
   </div>
 </div>
