@@ -7,12 +7,13 @@ class Registration < ApplicationRecord
   delegate :waiver_accepted, to: :user, prefix: :false
   attr_accessor :waiver_accepted
 
-  validates :guests_registered, numericality: { only_integer: true, greater_than: -1 }, presence: true
+  validates :guests_registered, numericality: { only_integer: true, greater_than_or_equal_to: 0 }, presence: true
   validate :under_max_registrations?
   validate :under_max_leaders?
 
   def under_max_registrations?
     return if leader?
+    guests_registered = 0 if guests_registered.nil?
 
     # Diff in count of attendees - if it's a new record, it's the total
     # guest count plus the registrant. If it's an update, it's just the
