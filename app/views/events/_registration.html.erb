@@ -36,9 +36,9 @@
     <% end %>
 
     <% if current_user.registered?(@event) %>
-      <%= link_to "Change/Cancel Registration", edit_event_registration_path(@event, @registration), class: 'btn twentyliters yellow' %>
+      <%= link_to "Change/Cancel Registration", edit_event_registration_path(@event, @registration), class: 'btn yellow' %>
     <% else %>
-      <%= f.submit 'Register', class: 'btn twentyliters yellow' %>
+      <%= f.submit 'Register', class: 'btn yellow' %>
     <% end %>
   <% end %>
 <% else %>
