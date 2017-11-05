@@ -1,0 +1,22 @@
+$grey: rgb(74,74,74);
+$yellow: rgb(252,224,0);
+$light-blue: rgb(155,180,200);
+$light-grey: rgb(248,248,248);
+$red: rgb(249,14,28);
+
+$navbar-bg-color: $grey;
+
+@font-face {
+  font-family: "DINPro-Bold";
+  src: url("https://20liters.org/wp-content/themes/twenty-liters/library/fonts/dinpro/DINPro-Bold.woff2");
+}
+
+@font-face {
+  font-family: "DINPro-Medium";
+  src: url("https://20liters.org/wp-content/themes/twenty-liters/library/fonts/dinpro/DINPro-Medium.woff2");
+}
+
+@font-face {
+  font-family: "DINPro-Regular";
+  src: url("https://20liters.org/wp-content/themes/twenty-liters/library/fonts/dinpro/DINPro-Regular.woff2");
+}

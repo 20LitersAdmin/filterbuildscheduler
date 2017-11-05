@@ -45,9 +45,9 @@ ActiveRecord::Schema.define(version: 20171105004653) do
     t.integer "location_id", null: false
     t.integer "technology_id"
     t.boolean "is_private", default: false, null: false
-    t.datetime "deleted_at"
     t.integer "item_goal"
     t.integer "item_results"
+    t.datetime "deleted_at"
     t.integer "attendance"
     t.index ["deleted_at"], name: "index_events_on_deleted_at"
   end
