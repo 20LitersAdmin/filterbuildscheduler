@@ -20,7 +20,10 @@ class RegistrationsController < ApplicationController
 
       user.save! && sign_in(:user, user) if user.new_record?
 
-      reg = Registration.create!(event_id: params[:event_id], user_id: user.id)
+      reg = Registration.create!(event_id: params[:event_id],
+                                 user_id: user.id,
+                                 accomodations: params.dig(:registration, :accomodations),
+                                 guests_registered: params[:registration][:guests_registered])
     end
 
     RegistrationMailer.delay.created reg

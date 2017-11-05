@@ -1,25 +1,45 @@
-<h1>Liability Waiver & Media Release</h1>
+<% show_accept_button = false if local_assigns[:show_accept_button].nil? %>
+<% modal = true if local_assigns[:modal].nil? %>
 
-<i>Last updated November 1, 2017</i>
+<div class="modal-dialog" role="document">
+  <div class="modal-content">
+  <div class="modal-header">
+    <% if modal %>
+      <button type="button" class="close" data-dismiss="modal">&times;</button>
+    <% end %>
+    <h1 class="modal-title">Liability Waiver & Media Release</h4>
+  </div>
+  <div class="modal-body">
+    <i>Last updated November 1, 2017</i>
 
-<p><strong>Effective as of November 1, 2017</strong></p>
+    <p><strong>Effective as of November 1, 2017</strong></p>
 
-<p><strong>Organization:</strong> 20 Liters, located at 3501 Fairlanes Ave SW, Grandville, MI 49418</p>
+    <p><strong>Organization:</strong> 20 Liters, located at 3501 Fairlanes Ave SW, Grandville, MI 49418</p>
 
-<h2>Waiver of Liability</h2>
-<p>I desire to work as a volunteer for the organization and engage in the activities related to the organization.</p>
+    <h2>Waiver of Liability</h2>
+    <p>I desire to work as a volunteer for the organization and engage in the activities related to the organization.</p>
 
-<p>I understand I will not be compensated for my work.</p>
+    <p>I understand I will not be compensated for my work.</p>
 
-<p>I voluntarily release and hold harmless the organization and its successors and assigns from any and all liability, claims, and demands of whatever kind or nature, either in law or in equity, which arise or may hereafter arise from my volunteer work with the organization.</p>
+    <p>I voluntarily release and hold harmless the organization and its successors and assigns from any and all liability, claims, and demands of whatever kind or nature, either in law or in equity, which arise or may hereafter arise from my volunteer work with the organization.</p>
 
-<p>I understand the organization does not assume any responsibility for, or obligation to provide any assistance to me for any reason.
-I expressly and specifically assume the risk of injury or harm in any activity performed for the organization and release the organization from all liability for injury, illness, death, or property damage.</p>
+    <p>I understand the organization does not assume any responsibility for, or obligation to provide any assistance to me for any reason.
+    I expressly and specifically assume the risk of injury or harm in any activity performed for the organization and release the organization from all liability for injury, illness, death, or property damage.</p>
 
-<h2>Media Release</h2>
-<p>I hereby grant permission to the rights of my image, likeness and sound of my voice as recorded on audio or video tape without consideration or compensation.</p>
+    <h2>Media Release</h2>
+    <p>I hereby grant permission to the rights of my image, likeness and sound of my voice as recorded on audio or video tape without consideration or compensation.</p>
 
-<p>I understand that my image may be edited, copied, exhibited, displayed, published or distributed and waive the right to inspect or approve the finished product wherein my likeness appears.</p>
+    <p>I understand that my image may be edited, copied, exhibited, displayed, published or distributed and waive the right to inspect or approve the finished product wherein my likeness appears.</p>
 
-<h2>Agreement to Waiver and Release</h2>
-<p>By checking the box on the registration form on behalf of myself, or as a parent or guardian,  I confirm that I have been seen this waiver and release, have read it, and agree to its terms.</p>
+    <h2>Agreement to Waiver and Release</h2>
+    <p>By checking the box on the registration form on behalf of myself, or as a parent or guardian,  I confirm that I have been seen this waiver and release, have read it, and agree to its terms.</p>
+  </div>
+  <% if modal %>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      <% if show_accept_button %>
+        <button type="button" class="btn yellow btn-accept-waiver">Accept</button>
+      <% end %>
+    </div>
+  <% end %>
+</div>
