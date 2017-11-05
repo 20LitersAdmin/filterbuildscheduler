@@ -1,6 +1,17 @@
 @import "bootstrap";
 @import "variables";
 
+.event-show {
+  h1 {
+    text-align: center;
+  }
+
+  .btn {
+    display: block
+  }
+
+}
+
 .event-container {
   @extend .row;
   margin-bottom: 30px;

@@ -1,5 +1,5 @@
-<div class="container">
-  <h1 style="text-align: center;"><%= @event.title %></h1>
+<div class="container event-show">
+  <h1><%= @event.title %></h1>
   <% if @event.is_private %>
     <h6>This event is private</h6>
   <% end %>
@@ -8,78 +8,51 @@
       <%= render partial: 'events/registration' %>
     </div>
     <div class="col-md-6">
-      <h1>The Filter</h1>
-      <h3><%= @event.technology.name %></h3>
-      <% if @event.technology.family_friendly %>
-        <h4>Family-friendly! Ages 4 - 104!</h4>
-      <% else %>
-        <h4>Grown-up build</h4>
-        <i>Ages 12+ because of PVC glue and power tools</i>
-      <% end %>
-      <hr>
-      <h1>The Details</h1>
-      <h4><%= @event.format_time_range %></h4>
-      <h4><%= @event.location.name %></h4>
-      <div><%= @event.location.address1 %></div>
-      <% if @event.location.address2 %>
-        <div><%= @event.location.address2 %></div>
-      <% end %>
-      <div><%= @event.location.city %>, <%= @event.location.state %> <%= @event.location.zip %></div>
-      <% if @event.location.map_url %>
-        <a target="_blank" href="<%= @event.location.map_url %>">Map</a>
-      <% end %>
+      <div>
+        <h2>The Build</h2>
+        <h3><%= @event.technology.name %></h3>
+        <% if @event.technology.family_friendly %>
+          <h4>Family-friendly! Ages 4 - 104!</h4>
+        <% else %>
+          <h4>Grown-up build</h4>
+          <i>Ages 12+ because of PVC glue and power tools</i>
+        <% end %>
+      </div>
+      <div>
+        <h2>Details</h2>
+        <h4><%= @event.format_time_range %></h4>
+        <h4><%= @event.location.name %></h4>
+        <div><%= @event.location.address1 %></div>
+        <% if @event.location.address2 %>
+          <div><%= @event.location.address2 %></div>
+        <% end %>
+        <div><%= @event.location.city %>, <%= @event.location.state %> <%= @event.location.zip %></div>
+        <% if @event.location.map_url.present? %>
+          <a target="_blank" href="<%= @event.location.map_url %>">Map</a>
+        <% end %>
 
-      <% if @event.location.instructions %>
-        <h4>Instructions</h3>
-        <div><%= @event.location.instructions %></div>
-      <% end %>
+        <% if @event.location.instructions %>
+          <div><%= @event.location.instructions %></div>
+        <% end %>
 
-      <% if @event.description %>
-        <h4>Additional Event Details</h3>
-        <div><%= @event.description %></div>
-      <% end %>
-      <% if @event.incomplete? && current_user && current_user.is_admin? %>
-        <%= link_to("Edit Event", edit_event_path(@event) , class: 'btn twentyliters yellow') %>
-      <% end %>
+        <% if @event.description %>
+          <h4>Additional Event Details</h3>
+          <div><%= @event.description %></div>
+        <% end %>
+        <% if current_user&.is_admin? || current_user&.is_leader %>
+          <%= link_to("Edit Event", edit_event_path(@event) , class: 'btn twentyliters yellow') %>
+        <% end %>
+      </div>
     </div>
-      
 
     <% if @registration.leader? && @event.incomplete? %>
       <div class='col-md-6'>
-        <h1>Report</h1>
-          <%= simple_form_for @event  do |f| %>
-            <%= f.label :item_goal, label: "Build Goal: #{@event.item_goal}" %>
-            <%= f.input :item_results, label: "Total Filters Built: " %>
-            <%= f.label :number_registered, label: "Total Builders Registered: #{@event.registrations.sum(:guests_registered)}" %>
-            <%= f.input :attendance, label: "Actual Attendance: " %>
-            <%= f.label :attendance, label: "Attendance List:" %>
-            <%= f.simple_fields_for :registrations do |r| %>
-              <%= r.input :attended, label: "#{r.object.user.name} (expecting #{r.object.guests_registered})" %>
-            <% end %>
-            <%= f.submit "Submit Report", class: 'btn btn-primary' %>
-          <% end %>
+        <%= render partial: 'events/report' %>
       </div>
     <% end %>
 
     <div class="col-md-6">
-      <div class="page-header">
-        <h1>Share This Event With Your Friends!</h1>
-      </div>
-
-      <div class="fb-share-button" data-href="<%= request.url %>" data-layout="button_count" data-size="small" data-mobile-iframe="true"><a class="fb-xfbml-parse-ignore" target="_blank" href="<%= request.url %>">Share on Facebook</a></div>
-
-      <a href="https://twitter.com/share?ref_src=twsrc%5Etfw" class="twitter-share-button" data-text="<%= current_user && current_user.registered?(@event) ? 'Join me in building water filters!' : 'Help build water filters at this upcoming event'%>" data-show-count="false">Tweet</a><script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
-
-      <div id="fb-root"></div>
-      <script>
-        (function(d, s, id) {
-          var js, fjs = d.getElementsByTagName(s)[0];
-          if (d.getElementById(id)) return;
-          js = d.createElement(s); js.id = id;
-          js.src = 'https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.10&appId=1665305893501056';
-          fjs.parentNode.insertBefore(js, fjs);
-        }(document, 'script', 'facebook-jssdk'));
-      </script>
+      <%= render partial: 'events/share' %>
     </div>
 
   </div>
