@@ -27,12 +27,16 @@
 
     <% if !current_user.waiver_accepted %>
       <div>
-        <%= f.check_box :waiver_accepted %>
-        <a target="_blank" href="/waiver"><%= f.label :waiver_accepted, 'Accept the Liability Waiver' %></a>
+        <h5>
+          <%= f.hidden_field :waiver_accepted, value: '0' %>
+          <%= f.check_box :waiver_accepted %> Accept the <a class="waiver_click" data-toggle="modal" data-target="#waiverModal"><%= f.label :waiver_accepted, 'Liability Waiver' %></a>
+        </h5>
       </div>
     <% else %>
-      <%= f.hidden_field :waiver_accepted, value: 1 %>
-      <h5><a target="_blank" href="/waiver"><%="Review the Liability Waiver (accepted on #{current_user.signed_waiver_on})"%></a></h5>
+      <%= f.hidden_field :waiver_accepted, value: '1' %>
+      <div>
+        <h5> Review the <a class="waiver_click" data-toggle="modal" data-target="#waiverModal"><%="Liability Waiver"%></a> <%= "(accepted on #{current_user.signed_waiver_on})" %> </h5>
+      </div>
     <% end %>
 
     <% if current_user.registered?(@event) %>

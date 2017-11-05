@@ -59,3 +59,7 @@
 
   </div>
 </div>
+
+<div class="modal fade" id="waiverModal" tabindex="-1" role="dialog" aria-labelledby="Liability Waiver & Media Release" aria-hidden="true">
+  <%= render partial: 'users/user_waiver_form', locals: {show_accept_button: current_user ? !current_user.waiver_accepted : true} %>
+</div>
