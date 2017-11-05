@@ -17,6 +17,7 @@ gem 'turbolinks', '~> 5'
 gem "rails_admin_clone", "~> 0.0.6"
 gem 'rails_admin'
 gem 'devise'
+gem 'simple_token_authentication', '~> 1.0'
 gem 'bootstrap-sass'
 gem "delayed_job", "~> 4.1"
 gem "delayed_job_active_record", "~> 4.1"
