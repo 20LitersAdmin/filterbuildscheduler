@@ -52,6 +52,7 @@ class EventsController < ApplicationController
                                   :is_private,
                                   :item_goal,
                                   :item_results,
-                                  registrations_attributes: [ :id, :guests_attended ]
+                                  :attendance,
+                                  registrations_attributes: [ :id, :attended ]
   end
 end
