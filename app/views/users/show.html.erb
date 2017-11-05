@@ -1,21 +1,13 @@
-<h1>Hello World</h1>
-
-<h3>Upcoming Events</h3>
-<% @user.registrations.each do |registration| %>
-  <%= registration.event.title %> (<%= link_to 'modify', edit_event_registration_path(registration.event, registration) %>)
+<% if @user.events %>
+  <h3>Upcoming Events</h3>
+  <div class="event-container">
+    <%= render partial: 'events/event', collection: @future_events %>
+  </div>
 <% end %>
 <% if @past_events.length > 0 %>
-  <h3>See past events</h3>
+  <h3>Old Events</h3>
   <div class="event-container">
-    <% @past_events.each do |event| %>
-      <div class="event">
-        <%= link_to event_path(event) do %>
-          <h2><%= event.title %></h2>
-          <div><%= event.start_time.strftime('%m/%d/%Y %I:%M%p') %> - <%= event.end_time.strftime('%m/%d/%Y %I:%M%p') %></div>
-          <div>Location: <%= event.location.name %></div>
-        <% end %>
-      </div>
-    <% end %>
+    <%= render partial: 'events/event', collection: @past_events %>
   </div>
 <% end %>
 <% if @user.is_leader %>
