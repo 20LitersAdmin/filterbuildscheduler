@@ -11,6 +11,9 @@
 
   .navbar-default .navbar-nav > li > a {
     color: white;
+    @media (max-width: 767px) { 
+      text-decoration: none;
+    }
     &:hover {
       color: white;
       text-decoration: underline;
