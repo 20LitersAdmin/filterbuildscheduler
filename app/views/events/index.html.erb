@@ -1,4 +1,3 @@
-<div class='container'>
   <% if current_user and current_user.is_leader? %>
     <div class="action-container">
       <%= link_to "Create New Event", new_event_path, class: 'btn yellow' %>
@@ -10,8 +9,7 @@
       <%= mail_to 'filterbuild@20liters.org', 'Email Us!', class: 'btn yellow', subject: 'Request for custom build event' %>
     </div>
   <% end %>
-
-
+<div class='container'>
   <div class="event-container">
     <h2 class="heading">Upcoming Events</h2>
     <%= render partial: 'events/event', collection: @events %>
