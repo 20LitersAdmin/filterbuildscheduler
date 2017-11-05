@@ -1,37 +1,39 @@
 @import "variables";
 @import "bootstrap";
 
-.navbar.twentyliters {
-  background-color: $navbar-bg-color;
-  border-color: $navbar-bg-color;
-  border: none;
-  border-radius: 0;
-}
+.twentyliters{
+  .navbar {
+    background-color: $navbar-bg-color;
+    border-color: $navbar-bg-color;
+    border: none;
+    border-radius: 0;
+  }
 
-.navbar-default.twentyliters .navbar-nav > li > a {
-  color: white;
-  &:hover {
+  .navbar-default .navbar-nav > li > a {
     color: white;
-    text-decoration: underline;
+    &:hover {
+      color: white;
+      text-decoration: underline;
+    }
+  }
+
+  .navbar-default .navbar-toggle .icon-bar {
+    background-color: white;
+  }
+
+  .navbar-brand {
+    background: url('logo-white.png');
+    background-repeat: no-repeat;
+    background-size: contain;
+    margin-left: 1em;
+    height: 40px;
+    width: 200px;
+    margin-top: 5px;
   }
 }
 
-.navbar-default .navbar-toggle .icon-bar.twentyliters {
-  background-color: white;
-}
-
-.navbar-brand.twentyliters {
-  background: url('logo-white.png');
-  background-repeat: no-repeat;
-  background-size: contain;
-  margin-left: 1em;
-  height: 40px;
-  width: 200px;
-  margin-top: 5px;
-}
-
 @media (min-width: $sm-breakpoint) {
-  .navbar > .container-fluid .navbar-brand.twentyliters {
+  .twentyliters .navbar > .container-fluid .navbar-brand {
     margin-left: 1em;
   }
 }
