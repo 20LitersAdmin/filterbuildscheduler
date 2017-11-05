@@ -2,6 +2,7 @@ $grey: rgb(74,74,74);
 $yellow: rgb(252,224,0);
 $light-blue: rgb(155,180,200);
 $light-grey: rgb(248,248,248);
+$slightly-darker-light-grey: rgb(238,238,238);
 $red: rgb(249,14,28);
 
 $xs-breakpoint: 480px;
@@ -10,6 +11,7 @@ $md-breakpoint: 992px;
 $lg-breakpoint: 1200px;
 
 $navbar-bg-color: $grey;
+
 
 @font-face {
   font-family: "DINPro-Bold";
