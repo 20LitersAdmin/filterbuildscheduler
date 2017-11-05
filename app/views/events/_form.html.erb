@@ -10,6 +10,11 @@
   <%= f.input :min_registrations %>
   <%= f.input :max_registrations %>
   <%= f.input :item_goal %>
+  <% if @show_advanced %>
+    <%= f.input :item_results %>
+    Total Registered: <%= @event.total_registered %>
+    <%= f.input :attendance  %>
+  <% end %>
   <%= f.input :is_private %>
   <%= f.button :submit %>
 <% end %>
