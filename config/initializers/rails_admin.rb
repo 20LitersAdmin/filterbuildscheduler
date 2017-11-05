@@ -30,6 +30,7 @@ RailsAdmin.config do |config|
   end
 
   config.model Event do
+    exclude_fields :registrations
     list do
       scopes [nil, :only_deleted]
     end
