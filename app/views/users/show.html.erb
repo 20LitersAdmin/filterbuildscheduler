@@ -1,18 +1,23 @@
-<% if @user.events %>
+<% if @future_events.length.positive? %>
   <h3>Upcoming Events</h3>
   <div class="event-container">
     <%= render partial: 'events/event', collection: @future_events %>
   </div>
+<% else %>
+  <h3>No Upcoming Events Found</h3>
 <% end %>
-<% if @past_events.length > 0 %>
+
+<% if @past_events.length.positive? %>
   <h3>Old Events</h3>
   <div class="event-container">
     <%= render partial: 'events/event', collection: @past_events %>
   </div>
+<% else %>
+  <h3>No Past Events Found</h3>
 <% end %>
 <% if @user.is_leader %>
   <h3>Qualifications</h3>
-  <% if !@user.technologies %>
+  <% if @user.technologies.size.zero? %>
     <p>Not currently qualified with any technologies.</p>
   <% else %>
     <ul>
@@ -23,4 +28,4 @@
   <% end %>
 <% end %>
 
-<%= link_to("Edit", edit_user_path(current_user)) %>
+<%= link_to("Edit Account Information", edit_user_path(current_user), class: 'btn yellow') %>
