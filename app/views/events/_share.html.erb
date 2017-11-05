@@ -1,8 +1,15 @@
 <h2>Share This Event!</h2>
 
-<div class="fb-share-button" data-href="<%= request.url %>" data-layout="button_count" data-size="small" data-mobile-iframe="true"><a class="fb-xfbml-parse-ignore" target="_blank" href="<%= request.url %>">Share on Facebook</a></div>
+<div class="share-container">
+  <div>
+    <div class="fb-share-button" data-href="<%= request.url %>" data-layout="button_count" data-size="small" data-mobile-iframe="true"><a class="fb-xfbml-parse-ignore" target="_blank" href="<%= request.url %>">Share on Facebook</a></div>
+  </div>
 
-<a href="https://twitter.com/share?ref_src=twsrc%5Etfw" class="twitter-share-button" data-text="<%= current_user && current_user.registered?(@event) ? 'Join me in building water filters!' : 'Help build water filters at this upcoming event'%>" data-show-count="false">Tweet</a><script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+  <div>
+    <a href="https://twitter.com/share?ref_src=twsrc%5Etfw" class="twitter-share-button" data-text="<%= current_user && current_user.registered?(@event) ? 'Join me in building water filters!' : 'Help build water filters at this upcoming event'%>" data-show-count="false">Tweet</a><script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+  </div>
+</div>
 
 <div id="fb-root"></div>
 <script>
