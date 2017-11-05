@@ -28,7 +28,7 @@ class RegistrationsController < ApplicationController
 
       reg = Registration.create(event_id: params[:event_id],
                                  user_id: user.id,
-                                 accomodations: params.dig(:registration, :accomodations),
+                                 accommodations: params.dig(:registration, :accommodations),
                                  guests_registered: params[:registration][:guests_registered])
       if reg.errors.any?
         # Make them accept the waiver on their first successful registration, not this
@@ -74,7 +74,7 @@ class RegistrationsController < ApplicationController
                                          :user_id,
                                          :leader,
                                          :guests_registered,
-                                         :accomodations)
+                                         :accommodations)
   end
 
   def find_registration
