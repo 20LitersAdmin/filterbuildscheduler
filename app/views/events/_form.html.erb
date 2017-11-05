@@ -4,10 +4,10 @@
     <%= f.association :location %>
     <div class='row'>
       <div class='col-sm-6'>
-        <%= f.input :start_time, as: :string, input_html: {class: 'datetimepicker', :value => f.object.start_time.to_time.iso8601} %>
+        <%= f.input :start_time, as: :string, input_html: {class: 'datetimepicker', :value => time_for_form(f.object.start_time) } %>
       </div>
       <div class='col-sm-6'>
-        <%= f.input :end_time, as: :string, input_html: {class: 'datetimepicker', :value => f.object.end_time.to_time.iso8601} %>
+        <%= f.input :end_time, as: :string, input_html: {class: 'datetimepicker', :value => time_for_form(f.object.end_time) } %>
       </div>
     </div>
     <%= f.input :description, as: :text, input_html: {rows: 5}  %>
