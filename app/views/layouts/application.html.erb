@@ -15,6 +15,7 @@
     <link rel="icon" type="image/png" href="https://20liters.org/wp-content/themes/twenty-liters/library/images/icons/favicon-32x32.png" sizes="32x32" />
     <link rel="icon" type="image/png" href="https://20liters.org/wp-content/themes/twenty-liters/library/images/icons/favicon-16x16.png" sizes="16x16" />
     <link rel="icon" type="image/png" href="https://20liters.org/wp-content/themes/twenty-liters/library/images/icons/favicon-128.png" sizes="128x128" />
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <title>20Liters</title>
     <%= csrf_meta_tags %>
 
@@ -30,5 +31,6 @@
         <%= yield %>
       </div>
     </div>
+    <%= render partial: 'layouts/footer' %>
   </body>
 </html>

@@ -6,3 +6,70 @@
 
 @import "bootstrap-sprockets";
 @import "bootstrap";
+@import "variables";
+
+footer {
+	background-color: $grey;
+	color: $dark-grey;
+	margin-bottom: 0;
+	padding: 20px;
+	line-height: 30px;
+	text-align: center;
+	font-size: 18px;
+
+	i {
+		color: $yellow;
+		padding-left: 15px;
+	}
+
+	i:hover {
+	    color: $light-blue;
+	}
+
+	a {
+		color: $dark-grey;
+		padding-left: 18px;
+		padding-right: 18px;
+	}
+
+	a:hover {
+	    color: $light-blue;
+	}
+}
+
+.navbar {
+	padding: 5px 30px;
+
+	li {
+		padding-left: 15px;
+	}
+
+	a{
+	    border-bottom: 2px solid $gray;
+	  }
+
+	a:hover {
+		text-decoration: none !important;
+		font-weight: bold;
+		border-bottom: 2px solid #FCE000;
+	}
+}
+
+.give-button {
+    color: white !important;
+    margin-top: 8px;
+    margin-right: 5px;
+    -webkit-transition: all 0.14s ease-in-out;
+    transition: all 0.14s ease-in-out;
+    height: 42px;
+
+}
+
+.give-button:hover {
+	background-color: $yellow !important;
+	color: $grey !important;
+}
+
+.nav a {
+
+}
