@@ -1,5 +1,5 @@
 <div class="container">
-  <h1><%= @event.title %></h1>
+  <h1 style="text-align: center;"><%= @event.title %></h1>
   <% if @event.is_private %>
     <h6>This event is private</h6>
   <% end %>
@@ -8,9 +8,17 @@
       <%= render partial: 'events/registration' %>
     </div>
     <div class="col-md-6">
+      <h1>The Filter</h1>
+      <h3><%= @event.technology.name %></h3>
+      <% if @event.technology.family_friendly %>
+        <h4>Family-friendly! Ages 4 - 104!</h4>
+      <% else %>
+        <h4>Grown-up build</h4>
+        <i>Ages 12+ because of PVC glue and power tools</i>
+      <% end %>
+      <hr>
       <h1>The Details</h1>
-      <%= @event.format_time_range %>
-      <h3>Location</h3>
+      <h4><%= @event.format_time_range %></h4>
       <h4><%= @event.location.name %></h4>
       <div><%= @event.location.address1 %></div>
       <% if @event.location.address2 %>
@@ -30,7 +38,11 @@
         <h4>Additional Event Details</h3>
         <div><%= @event.description %></div>
       <% end %>
+      <% if @event.incomplete? && current_user && current_user.is_admin? %>
+        <%= link_to("Edit Event", edit_event_path(@event) , class: 'btn twentyliters yellow') %>
+      <% end %>
     </div>
+      
 
     <% if @registration.leader? && @event.incomplete? %>
       <div class='col-md-6'>
