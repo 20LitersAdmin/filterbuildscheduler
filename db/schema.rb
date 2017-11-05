@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171105033817) do
+ActiveRecord::Schema.define(version: 20171105174150) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -75,7 +75,7 @@ ActiveRecord::Schema.define(version: 20171105033817) do
     t.boolean "leader", default: false
     t.integer "guests_registered", default: 0
     t.integer "guests_attended", default: 0
-    t.string "accomodations", default: ""
+    t.string "accommodations", default: ""
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["user_id", "event_id"], name: "index_registrations_on_user_id_and_event_id", unique: true
@@ -122,8 +122,8 @@ ActiveRecord::Schema.define(version: 20171105033817) do
     t.integer "primary_location_id"
     t.string "fname"
     t.string "lname"
-    t.string "authentication_token", limit: 30
     t.datetime "deleted_at"
+    t.string "authentication_token", limit: 30
     t.index ["authentication_token"], name: "index_users_on_authentication_token", unique: true
     t.index ["deleted_at"], name: "index_users_on_deleted_at"
     t.index ["email"], name: "index_users_on_email", unique: true
