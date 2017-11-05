@@ -74,4 +74,12 @@ class Event < ApplicationRecord
   def needs_leaders?
     leaders_registered.count < max_leaders
   end
+
+  def incomplete?
+    !complete?
+  end
+
+  def complete?
+    item_results.present? && attendance.present?
+  end
 end
