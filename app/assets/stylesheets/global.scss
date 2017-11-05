@@ -19,7 +19,9 @@ abbr, acronym {
 
   .form-control {
     border-radius: 0;
+    border: 1px solid $yellow;
   }
+  
 
   textarea {
     width: 100%;
@@ -75,14 +77,4 @@ abbr, acronym {
   }
 }
 
-form {
-  .form-control {
-    border: 1px solid $yellow;
-    border-radius: 0px;
-  }
-  
-  textarea {
-    resize: none;
-  }
-}
 
