@@ -9,10 +9,12 @@ abbr, acronym {
 }
 
 .twentyliters {
+	a{color:$grey;
+	  text-decoration:none;}
   .form-control {
     border-radius: 0;
   }
-
+ 
   textarea {
     width: 100%;
     border: 1px solid $slightly-darker-light-grey;
@@ -54,10 +56,28 @@ abbr, acronym {
 }
 
 .action-container {
+  background-color: #fce000;	
   text-align: center;
-  max-width: $xs-breakpoint;
-  margin: 1em auto;
+  width: 109.7%;
+  margin:-1.4em 0 1.5em 0;
+  margin-left:-5%;
+  padding:1.5em;
   .btn {
     display: block;
+	border:2px solid;
+	width:12em;
+	margin:0 auto;
+	transition: all 0.14s ease-in-out;
   }
 }
+
+.btn :hover{
+	  color:#fff;
+	  background-color:000;
+  };
+
+
+
+
+
+
