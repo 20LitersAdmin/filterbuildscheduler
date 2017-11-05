@@ -32,7 +32,7 @@ class User < ApplicationRecord
 
   def can_lead_event?(event)
     return false unless is_leader
-    return event.technology.nil? || qualified_technologies.exists?(event.technology)
+    return event.technology.nil? || technologies.exists?(event.technology)
   end
 
   def registered?(event)
