@@ -14,14 +14,14 @@ class RegistrationMailer < ApplicationMailer
       @recipient.save
     end
 
-    mail(subject: "[20 Liters] Registration for #{@event.title} @ #{@event.start_time.to_formatted_s(:short)}")
+    mail(to: @recipient.email, subject: "[20 Liters] Registration for #{@event.title} @ #{@event.start_time.to_formatted_s(:short)}")
   end
 
   def reminder(registration)
     @registration = registration
     @recipient = registration.user
     @event = registration.event
-    mail(subject: "[20 Liters] Reminder for #{@event.title} @ #{@event.start_time.to_formatted_s(:short)}")
+    mail(to: @recipient.email, subject: "[20 Liters] Reminder for #{@event.title} @ #{@event.start_time.to_formatted_s(:short)}")
   end
 
 end
