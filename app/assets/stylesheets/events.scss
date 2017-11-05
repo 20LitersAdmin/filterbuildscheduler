@@ -20,10 +20,25 @@
       overflow: hidden;
       text-overflow: ellipsis;
     }
-    .bar {
-      background-color: $grey;
+    .top-part-wrapper {
+      height: 225px;
+    }
+    .bar-outer-wrapper {
+      position: relative;
+      height: 50px;
       margin-left: -2em;
       margin-right: -2em;
+      &.is_leader {
+        height: 125px;
+      }
+    }
+    .bar-inner-wrapper{
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+    }
+    .bar {
+      background-color: $grey;
       margin-top: 1em;
       color: white;
       padding: 0.5em;

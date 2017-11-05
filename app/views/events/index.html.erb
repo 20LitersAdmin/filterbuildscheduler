@@ -4,10 +4,10 @@
       <%= link_to "Create New Event", new_event_path, class: 'btn btn-primary twentyliters yellow' %>
     </div>
   <% else %>
-    <div>
+    <div class="action-container">
       <h3>Want a custom build event for your group?</h3>
       <p>If you have a group of 6+ people we can schedule a build at your convenience.</p>
-      <%= mail_to 'filterbuild@20liters.org', 'Email Us!', class: 'btn btn-primary', subject: 'Request for custom build event' %>
+      <%= mail_to 'filterbuild@20liters.org', 'Email Us!', class: 'btn btn-primary twentyliters yellow', subject: 'Request for custom build event' %>
     </div>
   <% end %>
 
