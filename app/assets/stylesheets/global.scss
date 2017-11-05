@@ -29,8 +29,12 @@ abbr, acronym {
   padding-left: 2em;
   padding-right: 2em;
   &:hover {
-    color: inherit;
-    box-shadow: 0 0 1px $grey;
+    background-color: $yellow;
+	color:$grey;
+    -webkit-transition: width 2s, height 4s; /* Safari */
+    transition: width 2s, height 4s;
+
+
   }
 }
 
