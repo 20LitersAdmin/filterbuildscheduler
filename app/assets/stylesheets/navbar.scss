@@ -1,7 +1,11 @@
+@import "variables";
 @import "bootstrap";
+
+.navbar-header {
+  background-color: $navbar-bg-color;
+}
 
 .nav-logo {
 	height: 50px;
 	margin-top: -1.125em;
-
 }
