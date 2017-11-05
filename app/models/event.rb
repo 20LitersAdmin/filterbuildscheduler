@@ -34,12 +34,20 @@ class Event < ApplicationRecord
     if min_registrations > max_registrations
       errors.add(:max_registrations, 'must be greater than min registrations')
     end
+
+    if total_registered > max_registrations
+      errors.add(:max_registrations, 'there are more registered attendees than the event max registrations')
+    end
   end
 
   def leaders_are_valid?
     return if min_leaders.nil? || max_leaders.nil?
     if min_leaders > max_leaders
       errors.add(:max_leaders, 'must be greater than min leaders')
+    end
+
+    if leaders_registered.count > max_leaders
+      errors.add(:max_leaders, 'there are more registered leaders than the event max leaders')
     end
   end
 
@@ -60,7 +68,11 @@ class Event < ApplicationRecord
   end
 
   def leaders_registered
-    registrations.where(leader: true)
+    registrations.registered_as_leader
+  end
+
+  def registrations_filled?
+    total_registered >= max_registrations
   end
 
   def does_not_need_leaders?
