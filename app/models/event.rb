@@ -1,4 +1,6 @@
 class Event < ApplicationRecord
+  acts_as_paranoid
+
   belongs_to :location
   belongs_to :technology, optional: true
   has_many :registrations
