@@ -20,12 +20,12 @@ class RegistrationsController < ApplicationController
 
       user.save! && sign_in(:user, user) if user.new_record?
 
-      reg = Registration.create!(event_id: params[:registration][:event_id], user_id: user.id)
+      reg = Registration.create!(event_id: params[:event_id], user_id: user.id)
     end
 
     RegistrationMailer.delay.created reg
     flash[:success] = "You successfully registered!"
-    redirect_to event_path params[:registration][:event_id]
+    redirect_to event_path params[:event_id]
   end
 
   def edit
