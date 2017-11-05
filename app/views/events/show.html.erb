@@ -1,5 +1,7 @@
 <div class="container event-show">
-  <h1><%= @event.title %></h1>
+  <div class="page-header">
+    <h1><%= @event.title %></h1>
+  </div>
   <% if @event.is_private %>
     <h6>This event is private</h6>
   <% end %>
