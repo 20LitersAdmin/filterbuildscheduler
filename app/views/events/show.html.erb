@@ -36,11 +36,13 @@
       <div class='col-md-6'>
         <h1>Report</h1>
           <%= simple_form_for @event  do |f| %>
-              <%= f.input :item_goal, label: "Build Goal :" %>
-              <%= f.input :item_results, label: "Total Filters Built :" %>
-              <%= f.label :attendance, label: "Attendance: " %>
+              <%= f.label :item_goal, label: "Build Goal: #{@event.item_goal}" %>
+              <%= f.input :item_results, label: "Total Filters Built: " %>
+              <%= f.label :number_registered, label: "Total Builders Registered: #{@event.registrations.sum(:guests_registered)}" %>
+              <%= f.input :attendance, label: "Actual Attendance: " %>
+              <%= f.label :attendance, label: "Attendance List:" %>
               <%= f.simple_fields_for :registrations do |r| %>
-                <%= r.input :guests_attended, label: "#{r.object.user.name} (expecting #{r.object.guests_registered})" %>
+                <%= r.input :attended, label: "#{r.object.user.name} (expecting #{r.object.guests_registered})" %>
               <% end %>
             <%= f.submit "Submit Report", class: 'btn btn-primary' %>
           <% end %>
