@@ -6,8 +6,10 @@
     <%= o.input :email, label: 'Email' %>
     <%= f.input :guests_registered, label: 'Additional Guests (excluding you)' %>
     <div>
-      <a target="_blank" href="/waiver"><%= f.label :waiver_accepted, 'Accept the Liability Waiver' %></a>
-      <%= f.check_box :waiver_accepted %>
+      <h5>
+        <%= f.hidden_field :waiver_accepted, value: '0' %>
+        <%= f.check_box :waiver_accepted %> Accept the <a class="waiver_click" data-toggle="modal" data-target="#waiverModal"><%= f.label :waiver_accepted, 'Liability Waiver' %></a>
+      </h5>
     </div>
   <% end %>
   <%= f.submit 'Register', class: 'btn twentyliters yellow' %>

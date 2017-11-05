@@ -4,7 +4,7 @@ class ApplicationController < ActionController::Base
   before_action :configure_permitted_parameters, if: :devise_controller?
 
   def waiver
-    render partial: 'users/user_waiver_form'
+    render partial: 'users/user_waiver_form', locals: {modal: false}
   end
 
   def configure_permitted_parameters
