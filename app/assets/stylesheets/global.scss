@@ -7,3 +7,22 @@
 abbr, acronym {
   border-bottom: 0px !important;
 }
+
+.btn.twentyliters {
+  border-radius: 0;
+  border: 0;
+  color: $grey;
+  font-weight: bold;
+}
+
+.btn.twentyliters.yellow {
+  background-color: $yellow;
+}
+
+.action-container {
+  text-align: center;
+  margin-bottom: 0.5em;
+  .btn {
+    display: block;
+  }
+}
