@@ -1,18 +1,28 @@
-<% if current_user %>
-  <h2><%= current_user.registered?(@event) ? "You're Registered!" : "Register" %></h2>
+<% if current_user&.registered?(@event) %>
+  <h2>You're Registered!</h2>
+  <h5><%= current_user.name %> | <%= current_user.email %></h5>
+  <%= link_to('Not you?', destroy_user_session_path, method: :delete) %>
 
-  <%= form_for [@event, @registration] do |f| %>
-    <h5><%= current_user.name %> | <%= current_user.email %></h5>
-    <%= link_to('Not you?', destroy_user_session_path, method: :delete) %>
+  <h5><%= @event.total_registered %> / <%= @event.max_registrations %> registered</h5>
+  <% if @registration.leader? %>
+    <div><%="You are one of #{ pluralize(@event.registrations.where(leader: true).count, 'leader') } at this event." %></div>
+    <div>Event leaders: <%= @event.registrations.registered_as_leader.map { |r| r.user.name }.join(', ') %></div>
+  <% end %>
+  <h5> Review the <a class="waiver_click" data-toggle="modal" data-target="#waiverModal"><%="Liability Waiver"%></a> <%= "(accepted on #{current_user.signed_waiver_on})" %> </h5>
+  <%= link_to "Change/Cancel Registration", edit_event_registration_path(@event, @registration), class: 'btn yellow' %>
+<% elsif @event.registrations_filled? %>
+  <h2>Registration Filled!</h2>
+  <h5>Registration is filled for this event! <a href="mailto:filterbuild@20liters.org?subject=Event <%=@event.title%> on <%=@event.start_time.to_date%> is full">Reach out to us</a> if you want to see this event expanded, or go back to the <a href="/events">event list</a> and check out something else!</h5>
+<% else %>
+  <% if current_user %>
+    <h2>Register</h2>
 
-    <h5><%= @event.total_registered %> / <%= @event.max_registrations %> registered</h5>
+    <%= form_for [@event, @registration] do |f| %>
+      <h5><%= current_user.name %> | <%= current_user.email %></h5>
+      <%= link_to('Not you?', destroy_user_session_path, method: :delete) %>
 
-    <% if current_user.registered?(@event) %>
-      <% if @registration.leader? %>
-        <div><%= f.label :leader, "You are one of #{ pluralize(@event.registrations.where(leader: true).count, 'leader') } at this event." %></div>
-        <div>Event leaders: <%= @event.registrations.where(leader: true).map { |r| r.user.name }.join(', ') %></div>
-      <% end %>
-    <% else %>
+      <h5><%= @event.total_registered %> / <%= @event.max_registrations %> registered</h5>
+
       <% if current_user.can_lead_event?(@event) %>
         <div>
           <%= f.label :leader, 'Register as Leader?' %>
@@ -26,28 +36,23 @@
         <%= f.label 'Notes:' %><br>
         <%= f.text_area :accommodations, class: 'accommodations' %>
       </div>
-    <% end %>
 
-    <% if !current_user.waiver_accepted %>
-      <div>
-        <h5>
-          <%= f.hidden_field :waiver_accepted, value: '0' %>
-          <%= f.check_box :waiver_accepted, required: true %> Accept the <a class="waiver_click" data-toggle="modal" data-target="#waiverModal"><%= f.label :waiver_accepted, 'Liability Waiver' %></a>
-        </h5>
-      </div>
-    <% else %>
-      <%= f.hidden_field :waiver_accepted, value: '1' %>
-      <div>
-        <h5> Review the <a class="waiver_click" data-toggle="modal" data-target="#waiverModal"><%="Liability Waiver"%></a> <%= "(accepted on #{current_user.signed_waiver_on})" %> </h5>
-      </div>
-    <% end %>
-
-    <% if current_user.registered?(@event) %>
-      <%= link_to "Change/Cancel Registration", edit_event_registration_path(@event, @registration), class: 'btn yellow' %>
-    <% else %>
+      <% if !current_user.waiver_accepted %>
+        <div>
+          <h5>
+            <%= f.hidden_field :waiver_accepted, value: '0' %>
+            <%= f.check_box :waiver_accepted %> Accept the <a class="waiver_click" data-toggle="modal" data-target="#waiverModal"><%= f.label :waiver_accepted, 'Liability Waiver' %></a>
+          </h5>
+        </div>
+      <% else %>
+        <%= f.hidden_field :waiver_accepted, value: '1' %>
+        <div>
+          <h5> Review the <a class="waiver_click" data-toggle="modal" data-target="#waiverModal"><%="Liability Waiver"%></a> <%= "(accepted on #{current_user.signed_waiver_on})" %> </h5>
+        </div>
+      <% end %>
       <%= f.submit 'Register', class: 'btn yellow' %>
     <% end %>
+  <% else %>
+    <%= render partial: 'events/anonymous_registration' %>
   <% end %>
-<% else %>
-  <%= render partial: 'events/anonymous_registration' %>
 <% end %>
