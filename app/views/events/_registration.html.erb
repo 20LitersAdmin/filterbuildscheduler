@@ -10,7 +10,8 @@
     <div><%= f.label :email, "Email: #{current_user.email}" %></div>
     <% if current_user.registered?(@event) %>
       <% if @registration.leader? %>
-        <div><%= f.label :leader, "You are a leader at this event." %></div>
+        <div><%= f.label :leader, "You are one of #{@event.registrations.where(leader: true).count} leader at this event." %></div>
+        <div>Event leaders: <%= @event.registrations.where(leader: true).map { |r| r.user.name }.join(', ') %></div>
       <% end %>
     <% else %>
       <% if current_user.can_lead_event?(@event) %>
