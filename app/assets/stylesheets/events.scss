@@ -18,12 +18,7 @@
     padding-right: 1em;
   }
   .waiver_click label {
-    color: $light-blue;
     cursor: pointer;
-    text-decoration: underline;
-    &:hover {
-      color: darken($light-blue, 10%);
-    }
   }
 }
 
