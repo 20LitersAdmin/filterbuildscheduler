@@ -33,7 +33,8 @@ Event.create!([
     max_registrations: 10,
     min_leaders: 1,
     max_leaders: 3,
-    location: Location.first
+    location: Location.first,
+    item_goal: 20
   },
   { start_time: 6.days.from_now,
     end_time: 6.days.from_now,
@@ -43,7 +44,19 @@ Event.create!([
     max_registrations: 10,
     min_leaders: 1,
     max_leaders: 3,
-    location: Location.second
+    location: Location.second,
+    item_goal: 20
+  },
+  { start_time: 10.days.ago,
+    end_time: 9.days.ago,
+    title: "10 days ago",
+    description: "I'm an event in the past.",
+    min_registrations: 1,
+    max_registrations: 10,
+    min_leaders: 1,
+    max_leaders: 3,
+    location: Location.first,
+    item_goal: 20
   }
 ])
 
@@ -67,45 +80,43 @@ Technology.create!([
 ])
 
 User.create!([
-  { email: "admin@email.com", 
-    password: "password", password_confirmation: "password", 
+  { email: "admin@email.com",
+    password: "password", password_confirmation: "password",
     fname: "Admin",
     lname: "Boss",
     is_leader: true,
     is_admin: true
   },
-  { email: "leader1@email.com", 
-    password: "password", password_confirmation: "password", 
+  { email: "leader1@email.com",
+    password: "password", password_confirmation: "password",
     fname: "Leader",
     lname: "One",
     is_leader: true
   },
-  { email: "leader2@email.com", 
-    password: "password", password_confirmation: "password", 
+  { email: "leader2@email.com",
+    password: "password", password_confirmation: "password",
     fname: "Leader",
     lname: "Two",
     is_leader: true
   },
-  { email: "builder1@email.com", 
-    password: "password", password_confirmation: "password", 
+  { email: "builder1@email.com",
+    password: "password", password_confirmation: "password",
     fname: "Builder",
     lname: "One"
   },
-  { email: "builder2@email.com", 
-    password: "password", password_confirmation: "password", 
+  { email: "builder2@email.com",
+    password: "password", password_confirmation: "password",
     fname: "Builder",
     lname: "Two"
   },
-  { email: "builderMissing@email.com", 
-    password: "password", password_confirmation: "password", 
+  { email: "builderMissing@email.com",
+    password: "password", password_confirmation: "password",
     fname: "Builder",
     lname: "Archived",
-    is_archived: true
+    deleted_at: '2017-11-03 00:00:00'
   },
   { email: "builderNoPW@email.com",
     fname: "Builder",
     lname: "No Password"
   },
 ])
-
-
