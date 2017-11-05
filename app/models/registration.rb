@@ -7,7 +7,7 @@ class Registration < ApplicationRecord
   delegate :waiver_accepted, to: :user, prefix: :false
   attr_accessor :waiver_accepted
 
-  validates :guests_registered, numericality: { only_integer: true, greater_than: -1 }
+  validates :guests_registered, numericality: { only_integer: true, greater_than: -1 }, presence: true
   validate :under_max_registrations?
   validate :under_max_leaders?
 
