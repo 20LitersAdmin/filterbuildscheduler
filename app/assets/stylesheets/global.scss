@@ -19,6 +19,17 @@ abbr, acronym {
   background-color: $yellow;
 }
 
+.btn.twentyliters.empty {
+  background-color: transparent;
+  border: 2px $yellow solid;
+  padding-left: 2em;
+  padding-right: 2em;
+  &:hover {
+    color: inherit;
+    box-shadow: 0 0 1px $grey;
+  }
+}
+
 .action-container {
   text-align: center;
   margin-bottom: 0.5em;
