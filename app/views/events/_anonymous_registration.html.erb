@@ -5,6 +5,7 @@
     <%= o.input :lname, label: 'Last Name' %>
     <%= o.input :email, label: 'Email' %>
     <%= f.input :guests_registered, label: 'Additional Guests (excluding you)' %>
+    <%= f.input :accomodations, label: 'Notes', as: :text %>
     <div>
       <a target="_blank" href="/waiver"><%= f.label :waiver_accepted, 'Accept the Liability Waiver' %></a>
       <%= f.check_box :waiver_accepted %>
