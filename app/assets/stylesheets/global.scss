@@ -9,6 +9,14 @@ abbr, acronym {
 }
 
 .twentyliters {
+  a {
+    color: $light-blue;
+    text-decoration: underline;
+    &:hover {
+      color: darken($light-blue, 10%);
+    }
+  }
+
   .form-control {
     border-radius: 0;
   }
@@ -50,6 +58,11 @@ abbr, acronym {
       background-color: $yellow;
   	  color:#fff;
     }
+  }
+
+  .form-control:focus {
+    box-shadow: 0 0 5px $light-blue;
+    border: 1px solid $light-grey;
   }
 }
 
