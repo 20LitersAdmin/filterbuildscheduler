@@ -15,7 +15,7 @@ class Event < ApplicationRecord
   scope :non_private, -> { where(is_private: false) }
   scope :future, -> { where('end_time > ?', Time.now) }
   scope :past, -> { where('end_time <= ?', Time.now) }
-  
+
   accepts_nested_attributes_for :registrations
 
   def in_the_past?
@@ -59,15 +59,19 @@ class Event < ApplicationRecord
     end
   end
 
+  def leaders_registered
+    registrations.where(leader: true)
+  end
+
   def does_not_need_leaders?
-    registrations.where(leader: true).count >= max_leaders
+    leaders_registered.count >= max_leaders
   end
 
   def really_needs_leaders?
-    registrations.where(leader: true).count < min_leaders
+    leaders_registered.count < min_leaders
   end
 
   def needs_leaders?
-    registrations.where(leader: true).count < max_leaders
+    leaders_registered.count < max_leaders
   end
 end

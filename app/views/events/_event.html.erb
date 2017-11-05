@@ -1,25 +1,29 @@
 <div class="event">
   <%= link_to event_path(event) do %>
+    <div>
+      <span class="location">Hosted by <%= event.location.name %></span>
+    </div>
     <h2><%= event.title %></h2>
-    <% if event.is_private %>
-      <h6>This event is private</h6>
-    <% end %>
-    <div><%= event.start_time.strftime('%m/%d/%Y %I:%M%p') %> - <%= event.end_time.strftime('%m/%d/%Y %I:%M%p') %></div>
-    <div>Location: <%= event.location.name %></div>
-    <div><%= event.total_registered %> / <%= event.max_registrations %></div>
+
+    <div class='time'><%= event.format_time_range %></div>
+
+    <button class="btn btn-primary twentyliters empty learn-more">Learn More</button>
+
+    <div class="bar"><%= event.total_registered %> of <%= event.max_registrations %> Registered</div>
+
     <% if event.does_not_need_leaders? %>
-      <div>
-        We good with leaders.
-      </div>
+      <div class="bar blue">
     <% elsif event.really_needs_leaders? %>
-      <div>
-        Really needs leaders.
-      </div>
+      <div class="bar red">
     <% elsif event.needs_leaders? %>
-      <div>
-        Could use some more leaders.
-      </div>
+      <div class="bar yellow">
     <% end %>
-    <button class="btn btn-primary">Register Now!</button>
+
+      <%= event.leaders_registered.count %> of <%= event.max_leaders %> Leaders Registered
+    </div>
+
+    <% if event.is_private %>
+      <div class="bar">This event is private</div>
+    <% end %>
   <% end %>
 </div>
