@@ -45,9 +45,9 @@ ActiveRecord::Schema.define(version: 20171105004653) do
     t.integer "location_id", null: false
     t.integer "technology_id"
     t.boolean "is_private", default: false, null: false
+    t.datetime "deleted_at"
     t.integer "item_goal"
     t.integer "item_results"
-    t.datetime "deleted_at"
     t.integer "attendance"
     t.index ["deleted_at"], name: "index_events_on_deleted_at"
   end
@@ -123,6 +123,8 @@ ActiveRecord::Schema.define(version: 20171105004653) do
     t.string "fname"
     t.string "lname"
     t.datetime "deleted_at"
+    t.string "authentication_token", limit: 30
+    t.index ["authentication_token"], name: "index_users_on_authentication_token", unique: true
     t.index ["deleted_at"], name: "index_users_on_deleted_at"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true

@@ -2,14 +2,17 @@ class EventsController < ApplicationController
   def index
     our_events = policy_scope(Event)
     @events = our_events.future
-    @past_events = our_events.past
+    if current_user&.is_leader?
+      @past_events = our_events.past
+    end
   end
 
   def show
     @event = Event.find(params[:id])
-    redirect_to action: :index if @event.in_the_past?
-    @registration = Registration.where(user: current_user, event: @event).first_or_initialize
 
+    redirect_to action: :index if @event.in_the_past? && !current_user.is_leader
+
+    @registration = Registration.where(user: current_user, event: @event).first_or_initialize
   end
 
   def new
@@ -34,7 +37,12 @@ class EventsController < ApplicationController
   def delete
     @event = authorize Event.find(params[:id])
     @event.delete
-    redirect_to events_path
+    flash[:success] = "Your registration has been cancelled."
+    if params[:authentication_token].present?
+      redirect_to home_path
+    else
+      redirect_to events_path
+    end
   end
 
   private

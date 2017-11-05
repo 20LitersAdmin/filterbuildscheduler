@@ -10,32 +10,15 @@
   <% end %>
 
   <div class="event-container">
-    <% @events.each do |event| %>
-      <div class="event">
-        <%= link_to event_path(event) do %>
-          <h2><%= event.title %></h2>
-          <% if event.is_private %>
-            <h6>This event is private</h6>
-          <% end %>
-          <div><%= event.start_time.strftime('%m/%d/%Y %I:%M%p') %> - <%= event.end_time.strftime('%m/%d/%Y %I:%M%p') %></div>
-          <div>Location: <%= event.location.name %></div>
-          <div><%= event.total_registered %> / <%= event.max_registrations %></div>
-          <% if event.does_not_need_leaders? %>
-            <div>
-              We good with leaders.
-            </div>
-          <% elsif event.really_needs_leaders? %>
-            <div>
-              Really needs leaders.
-            </div>
-          <% elsif event.needs_leaders? %>
-            <div>
-              Could use some more leaders.
-            </div>
-          <% end %>
-          <button class="btn btn-primary">Register Now!</button>
-        <% end %>
-      </div>
-    <% end %>
+    <%= render partial: 'events/event', collection: @events %>
   </div>
+
+  <% if @past_events.present? %>
+
+    <h3>Old events</h3>
+
+    <div class="event-container">
+      <%= render partial: 'events/event', collection: @past_events %>
+    </div>
+  <% end %>
 </div>

@@ -3,6 +3,8 @@ class ApplicationController < ActionController::Base
   protect_from_forgery with: :exception
   before_action :configure_permitted_parameters, if: :devise_controller?
 
+  acts_as_token_authentication_handler_for User
+
   def waiver
     render partial: 'users/user_waiver_form'
   end

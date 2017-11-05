@@ -1,4 +1,5 @@
 class User < ApplicationRecord
+  acts_as_token_authenticatable
   acts_as_paranoid
 
   # Include default devise modules. Others available are:
@@ -32,7 +33,7 @@ class User < ApplicationRecord
 
   def can_lead_event?(event)
     return false unless is_leader
-    return event.technology.nil? || qualified_technologies.exists?(event.technology)
+    return event.technology.nil? || technologies.exists?(event.technology)
   end
 
   def registered?(event)
