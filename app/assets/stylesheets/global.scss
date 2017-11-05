@@ -50,6 +50,11 @@ abbr, acronym {
       box-shadow: 0 0 1px $grey;
     }
   }
+
+  .form-control:focus {
+    box-shadow: 0 0 5px $light-blue;
+    border: 1px solid $light-grey;
+  }
 }
 
 .action-container {
