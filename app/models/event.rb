@@ -1,4 +1,6 @@
 class Event < ApplicationRecord
+  acts_as_paranoid
+
   belongs_to :location
   belongs_to :technology, optional: true
   has_many :registrations
@@ -10,8 +12,15 @@ class Event < ApplicationRecord
   validate :registrations_are_valid?
   validate :leaders_are_valid?
 
+  scope :non_private, -> { where(is_private: false) }
   scope :future, -> { where('end_time > ?', Time.now) }
   scope :past, -> { where('end_time <= ?', Time.now) }
+  
+  accepts_nested_attributes_for :registrations
+
+  def in_the_past?
+    return end_time <= Time.now
+  end
 
   def dates_are_valid?
     return if start_time.nil? || end_time.nil?
@@ -48,5 +57,17 @@ class Event < ApplicationRecord
     else
       0
     end
+  end
+
+  def does_not_need_leaders?
+    registrations.where(leader: true).count >= max_leaders
+  end
+
+  def really_needs_leaders?
+    registrations.where(leader: true).count < min_leaders
+  end
+
+  def needs_leaders?
+    registrations.where(leader: true).count < max_leaders
   end
 end

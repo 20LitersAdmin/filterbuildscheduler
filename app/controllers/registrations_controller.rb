@@ -1,10 +1,15 @@
 class RegistrationsController < ApplicationController
+  before_action :find_registration, only: [:edit, :update, :destroy]
+
   def create
     waiver_accepted = params[:registration].delete(:waiver_accepted)
     raise ActionController::BadRequest, "must accept waiver to participate" if waiver_accepted == '0'
 
     if current_user
-      Registration.create!(registration_params)
+      reg = Registration.create!(event_id: params[:event_id],
+                                 user: current_user,
+                                 leader: params.dig(:registration, :leader),
+                                 guests_registered: params[:registration][:guests_registered])
       current_user.update_attributes!(signed_waiver_on: Time.now) unless current_user.waiver_accepted
     else
       user = User.find_or_initialize_by(email: user_params[:email]) do |user|
@@ -15,16 +20,28 @@ class RegistrationsController < ApplicationController
 
       user.save! && sign_in(:user, user) if user.new_record?
 
-      Registration.create!(event_id: params[:registration][:event_id], user_id: user.id)
+      reg = Registration.create!(event_id: params[:registration][:event_id], user_id: user.id)
     end
 
-    redirect_to events_path
+    RegistrationMailer.delay.created reg
+    flash[:success] = "You successfully registered!"
+    redirect_to event_path params[:registration][:event_id]
   end
 
-  def delete
-    @reg = authorize Registration.find(params[:id])
-    @reg.delete
-    redirect_to registrations_path
+  def edit
+  end
+
+  def update
+    authorize @registration
+    @registration.update(registration_params)
+    redirect_to event_path(@registration.event)
+  end
+
+  def destroy
+    authorize @registration
+    @registration.delete
+    flash[:warning] = "You are no longer registered."
+    redirect_to event_path(@registration.event)
   end
 
   private
@@ -34,13 +51,14 @@ class RegistrationsController < ApplicationController
   end
 
   def registration_params
-    if params[:registration][:leader] == '1' && !User.find(params[:registration][:user_id]).is_leader?
-      raise ActionController::BadRequest, "Cannot register as leader if you are not a leader"
-    end
-
     params.require(:registration).permit(:event_id,
                                          :user_id,
                                          :leader,
-                                         :guests_registered)
+                                         :guests_registered,
+                                         :accomodations)
+  end
+
+  def find_registration
+    @registration = Registration.find(params[:id])
   end
 end
