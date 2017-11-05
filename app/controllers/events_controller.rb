@@ -34,8 +34,13 @@ class EventsController < ApplicationController
 
   def update
     @event = Event.find(params[:id])
-    @event.update!(event_params)
-    redirect_to event_path(@event)
+    @event.update(event_params)
+    if @event.errors.any?
+      flash[:error] = @event.errors.first.join(": ")
+      redirect_to edit_event_path(@event)
+    else
+      redirect_to event_path(@event)
+    end
   end
 
   def edit
@@ -49,14 +54,19 @@ class EventsController < ApplicationController
   end
 
   def create
-    Event.create!(event_params)
-    redirect_to action: :index
+    @event = Event.create(event_params)
+    if @event.errors.any?
+      flash[:error] = @event.errors.first.join(": ")
+      redirect_to new_event_path
+    else
+      redirect_to action: :index
+    end
   end
 
   def delete
     @event = authorize Event.find(params[:id])
-    @event.delete
-    flash[:success] = "Your registration has been cancelled."
+    @event.delete!
+    flash[:success] = "The event has been cancelled."
     if params[:authentication_token].present?
       redirect_to home_path
     else
@@ -77,6 +87,7 @@ class EventsController < ApplicationController
                                   :min_registrations,
                                   :max_registrations,
                                   :is_private,
+                                  :description,
                                   :item_goal,
                                   :item_results,
                                   :attendance,

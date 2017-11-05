@@ -50,6 +50,7 @@
           <h5> Review the <a class="waiver_click" data-toggle="modal" data-target="#waiverModal"><%="Liability Waiver"%></a> <%= "(accepted on #{current_user.signed_waiver_on})" %> </h5>
         </div>
       <% end %>
+      <%= f.submit 'Register', class: 'btn yellow' %>
     <% end %>
   <% else %>
     <%= render partial: 'events/anonymous_registration' %>

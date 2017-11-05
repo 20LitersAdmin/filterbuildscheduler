@@ -2,11 +2,11 @@ class Event < ApplicationRecord
   acts_as_paranoid
 
   belongs_to :location
-  belongs_to :technology, optional: true
+  belongs_to :technology
   has_many :registrations
   has_many :users, through: :registrations
 
-  validates :start_time, :end_time, :title, presence: true
+  validates :start_time, :end_time, :title, :min_leaders, :max_leaders, :min_registrations, :max_registrations, presence: true
   validates :min_registrations, :max_registrations, :min_leaders, :max_leaders, numericality: { only_integer: true, greater_than: 0 }
   validate :dates_are_valid?
   validate :registrations_are_valid?
@@ -60,11 +60,15 @@ class Event < ApplicationRecord
   end
 
   def total_registered
-    if registrations.present?
-      registrations.map(&:guests_registered).reduce(:+) + registrations.size
+    if non_leaders_registered.present?
+      non_leaders_registered.map(&:guests_registered).reduce(:+) + non_leaders_registered.non_leader.count
     else
       0
     end
+  end
+
+  def non_leaders_registered
+    registrations.non_leader
   end
 
   def leaders_registered
