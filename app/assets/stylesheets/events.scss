@@ -47,7 +47,7 @@
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-	  padding-top:20px;
+      padding-top: 20px;
     }
     .top-part-wrapper {
       height: 250px;
@@ -83,7 +83,7 @@
     }
     .learn-more {
       margin: 2em;
-	  margin-top:2.3em;
+      margin-top:2.3em;
     }
     a {
       text-align: center;
@@ -93,6 +93,8 @@
       text-decoration: none;
       padding: 3.6em 2em 0 2em;
       &:hover {
+        color: black;
+        background-color: $light-grey;
         box-shadow: 0 0 5px #888;
       }
       button {
