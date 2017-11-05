@@ -42,7 +42,7 @@
           <div><%= @event.description %></div>
         <% end %>
         <% if current_user&.is_admin? || current_user&.is_leader %>
-          <%= link_to("Edit Event", edit_event_path(@event) , class: 'btn twentyliters yellow') %>
+          <%= link_to("Edit Event", edit_event_path(@event) , class: 'btn yellow') %>
         <% end %>
       </div>
     </div>
@@ -58,4 +58,8 @@
     </div>
 
   </div>
+</div>
+
+<div class="modal fade" id="waiverModal" tabindex="-1" role="dialog" aria-labelledby="Liability Waiver & Media Release" aria-hidden="true">
+  <%= render partial: 'users/user_waiver_form', locals: {show_accept_button: current_user ? !current_user.waiver_accepted : true} %>
 </div>
