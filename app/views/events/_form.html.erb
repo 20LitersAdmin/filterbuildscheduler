@@ -2,12 +2,14 @@
   <%= f.input :title %>
   <%= f.input :start_time %>
   <%= f.input :end_time %>
+  <%= f.input :description  %>
   <%= f.association :location %>
   <%= f.association :technology %>
   <%= f.input :min_leaders %>
   <%= f.input :max_leaders %>
   <%= f.input :min_registrations %>
   <%= f.input :max_registrations %>
+  <%= f.input :item_goal %>
   <%= f.input :is_private %>
   <%= f.button :submit %>
 <% end %>

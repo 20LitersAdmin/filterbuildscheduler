@@ -6,6 +6,11 @@
     <h2><%= event.title %></h2>
 
     <div class='time'><%= event.format_time_range %></div>
+    <div class='family-friendly'>
+      <% if event.technology.family_friendly %>
+        <p>Family Friendly Build!</p>
+      <% end %>
+    </div>
 
     <button class="btn btn-primary twentyliters empty learn-more">Learn More</button>
 
