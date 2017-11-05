@@ -4,10 +4,10 @@
     <%= f.association :location %>
     <div class='row'>
       <div class='col-sm-6'>
-        <%= f.input :start_time, as: :string, input_html: {class: 'datetimepicker', :value => f.object.start_time.to_time.iso8601} %>
+        <%= f.input :start_time, as: :string, input_html: {class: 'datetimepicker', :value => f.object.start_time&.to_time&.iso8601 || Time.now} %>
       </div>
       <div class='col-sm-6'>
-        <%= f.input :end_time, as: :string, input_html: {class: 'datetimepicker', :value => f.object.end_time.to_time.iso8601} %>
+        <%= f.input :end_time, as: :string, input_html: {class: 'datetimepicker', :value => f.object.end_time&.to_time&.iso8601 || Time.now} %>
       </div>
     </div>
     <%= f.input :description, as: :text, input_html: {rows: 5}  %>
@@ -28,7 +28,7 @@
     <%= f.input :max_registrations, label: 'Max. Builders' %>
       </div>
     </div>
-    
+
     <div class='row'>
       <div class='col-sm-6'>
     <%= f.input :item_goal %>
@@ -50,7 +50,7 @@
     <% else %>
       </div>
     <% end %>
-    
+
     <%= f.input :is_private, label: 'Private Event' %>
     <%= f.button :submit, class: 'btn twentyliters yellow' %>
   <% end %>
