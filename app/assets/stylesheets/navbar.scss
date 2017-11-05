@@ -1,11 +1,37 @@
 @import "variables";
 @import "bootstrap";
 
-.navbar-header {
+.navbar.twentyliters {
   background-color: $navbar-bg-color;
+  border-color: $navbar-bg-color;
+  border: none;
+  border-radius: 0;
 }
 
-.nav-logo {
-	height: 50px;
-	margin-top: -1.125em;
+.navbar-default.twentyliters .navbar-nav > li > a {
+  color: white;
+  &:hover {
+    color: white;
+    text-decoration: underline;
+  }
+}
+
+.navbar-default .navbar-toggle .icon-bar.twentyliters {
+  background-color: white;
+}
+
+.navbar-brand.twentyliters {
+  background: url('logo-white.png');
+  background-repeat: no-repeat;
+  background-size: contain;
+  margin-left: 1em;
+  height: 40px;
+  width: 200px;
+  margin-top: 5px;
+}
+
+@media (min-width: 768px) {
+  .navbar > .container-fluid .navbar-brand.twentyliters {
+    margin-left: 1em;
+  }
 }
