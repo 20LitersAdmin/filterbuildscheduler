@@ -11,7 +11,6 @@ abbr, acronym {
 .twentyliters {
   a {
     color: $light-blue;
-    text-decoration: underline;
     &:hover {
       color: darken($light-blue, 10%);
     }
@@ -25,7 +24,7 @@ abbr, acronym {
 
   textarea {
     width: 100%;
-    border: 1px solid $slightly-darker-light-grey;
+    border: 1px solid #ccc;
   }
 
   .btn {
@@ -36,6 +35,7 @@ abbr, acronym {
   }
 
   .btn.yellow {
+    color: $grey;
     background-color: $yellow;
     &:hover {
       background-color: lighten($yellow, 10%)
