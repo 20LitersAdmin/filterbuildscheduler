@@ -1,13 +1,12 @@
 <% if current_user %>
-  <h1><%= current_user.registered?(@event) ? "You're Registered!" : "Register" %></h1>
-
-  <div><%= @event.total_registered %> / <%= @event.max_registrations %> registered</div>
-
-  <%= link_to('Not you?', destroy_user_session_path, method: :delete) %>
+  <h2><%= current_user.registered?(@event) ? "You're Registered!" : "Register" %></h2>
 
   <%= form_for [@event, @registration] do |f| %>
-    <div><%= f.label :name, "Name: #{current_user.name}" %></div>
-    <div><%= f.label :email, "Email: #{current_user.email}" %></div>
+    <h5><%= current_user.name %> | <%= current_user.email %></h5>
+    <%= link_to('Not you?', destroy_user_session_path, method: :delete) %>
+
+    <h5><%= @event.total_registered %> / <%= @event.max_registrations %> registered</h5>
+
     <% if current_user.registered?(@event) %>
       <% if @registration.leader? %>
         <div><%= f.label :leader, "You are one of #{ pluralize(@event.registrations.where(leader: true).count, 'leader') } at this event." %></div>
@@ -16,30 +15,37 @@
     <% else %>
       <% if current_user.can_lead_event?(@event) %>
         <div>
-          <%= f.label :leader, 'Register as Leader' %>
+          <%= f.label :leader, 'Register as Leader?' %>
           <%= f.check_box :leader %>
         </div>
       <% end %>
       <div>
         <%= f.label :guests_registered, 'Guests Attending: ' %>
         <%= f.number_field :guests_registered %>
+        <br>
+        <%= f.label 'Notes:' %><br>
+        <%= f.text_area :accomodations, class: 'accomodations' %>
       </div>
     <% end %>
 
     <% if !current_user.waiver_accepted %>
       <div>
-        <%= f.check_box :waiver_accepted %>
-        <a target="_blank" href="/waiver"><%= f.label :waiver_accepted, 'Accept the Liability Waiver' %></a>
+        <h5>
+          <%= f.hidden_field :waiver_accepted, value: '0' %>
+          <%= f.check_box :waiver_accepted, required: true %> Accept the <a class="waiver_click" data-toggle="modal" data-target="#waiverModal"><%= f.label :waiver_accepted, 'Liability Waiver' %></a>
+        </h5>
       </div>
     <% else %>
-      <%= f.hidden_field :waiver_accepted, value: 1 %>
-      <div><a target="_blank" href="/waiver"><%="Review the Liability Waiver (accepted on #{current_user.signed_waiver_on})"%></a></div>
+      <%= f.hidden_field :waiver_accepted, value: '1' %>
+      <div>
+        <h5> Review the <a class="waiver_click" data-toggle="modal" data-target="#waiverModal"><%="Liability Waiver"%></a> <%= "(accepted on #{current_user.signed_waiver_on})" %> </h5>
+      </div>
     <% end %>
 
     <% if current_user.registered?(@event) %>
-      <%= link_to "Change/Cancel Registration", edit_event_registration_path(@event, @registration), class: 'btn twentyliters yellow' %>
+      <%= link_to "Change/Cancel Registration", edit_event_registration_path(@event, @registration), class: 'btn yellow' %>
     <% else %>
-      <%= f.submit 'Register', class: 'btn btn-primary' %>
+      <%= f.submit 'Register', class: 'btn yellow' %>
     <% end %>
   <% end %>
 <% else %>

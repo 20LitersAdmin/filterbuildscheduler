@@ -29,7 +29,28 @@
       </div>
     </div>
     
+    <div class='row'>
+      <div class='col-sm-6'>
     <%= f.input :item_goal %>
+      </div>
+    <% if @show_advanced %>
+        <div class='col-sm-6'>
+          <%= f.input :item_results %>
+        </div>
+      </div>
+      <div class='row'>
+        <div class='col-sm-6'>
+          <%= f.label "Total Registered:" %><br/>
+          <%= f.label "#{@event.total_registered}" %>
+        </div>
+        <div class='col-sm-6'>
+          <%= f.input :attendance  %>
+        </div>
+      </div>
+    <% else %>
+      </div>
+    <% end %>
+    
     <%= f.input :is_private, label: 'Private Event' %>
     <%= f.button :submit, class: 'btn twentyliters yellow' %>
   <% end %>

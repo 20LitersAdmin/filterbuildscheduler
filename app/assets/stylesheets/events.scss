@@ -1,6 +1,27 @@
 @import "bootstrap";
 @import "variables";
 
+.event-show {
+  padding-bottom: 100px;
+  h1 {
+    text-align: center;
+  }
+  .btn {
+    margin-top: 1em;
+    display: block;
+    width: 100%;
+  }
+  .share-container {
+    display: flex;
+  }
+  .share-container > div {
+    padding-right: 1em;
+  }
+  .waiver_click label {
+    cursor: pointer;
+  }
+}
+
 .event-container {
   @extend .row;
   margin-bottom: 30px;
@@ -19,13 +40,14 @@
       padding-left: 8px;
       padding-right: 8px;
       border-bottom: 2px solid $yellow;
-      padding-bottom: 10px;
+      padding-bottom: 20px;
     }
     h2 {
       font-weight: bold;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+	  padding-top:20px;
     }
     .top-part-wrapper {
       height: 225px;
@@ -46,9 +68,9 @@
     }
     .bar {
       background-color: $grey;
-      margin-top: 1em;
+
       color: white;
-      padding: 0.5em;
+      padding: 0.8em 0.5em 0.8em 0.5em ;
       &.yellow {
         background-color: $yellow;
       }
@@ -61,6 +83,7 @@
     }
     .learn-more {
       margin: 2em;
+	  margin-top:2.3em;
     }
     a {
       text-align: center;
@@ -68,7 +91,7 @@
       display: block;
       color: black;
       text-decoration: none;
-      padding: 2em 2em 0 2em;
+      padding: 3.6em 2em 0 2em;
       &:hover {
         box-shadow: 0 0 5px #888;
       }
@@ -77,4 +100,72 @@
       }
     }
   }
+}
+
+.center-align {
+  text-align: center;
+}
+
+.btn-yellow-filled {
+  border: 2px solid #FCE000;
+  background-color: #FCE000;
+  color: #4A4A4A;
+  display: inline-block;
+  position: relative;
+  font-family: "DINPro","Helvetica Neue",Helvetica,Arial,sans-serif;
+  font-weight: bold;
+  margin: 7px 0;
+  text-align: center;
+  padding: 7px 19px;
+  font-size: 0.8em;
+}
+
+.solicit-row {
+  display: grid;
+  text-align: center;
+}
+
+.solicit-container {
+  margin: 0px auto;
+}
+
+.solicit-box {
+  display: block;
+  width: 180px;
+  height: 180px;
+  margin: 8px;
+  background-color: #4A4A4A;
+  color: white;
+  float: left;
+
+  .inner {
+    padding: 6px;
+  }
+
+  .solicit-button {
+    margin-top: 18px;
+    margin-bottom: 25px;
+  }
+}
+
+.solicit-title {
+  font-weight: bold;
+  text-transform: uppercase;
+  line-height: 18px;
+  margin-top: 16px;
+  margin-bottom: 6px;
+  font-size: 1.125em;
+  box-sizing: border-box;
+}
+
+.solicit-text {
+  font-size: .875em;
+  line-height: 18px;
+  margin-top: 14px;
+  margin-bottom: 6px;
+  min-height: 56px !important;
+  hyphens: auto;
+}
+.family-friendly{
+	margin-top:.2rem;
 }
