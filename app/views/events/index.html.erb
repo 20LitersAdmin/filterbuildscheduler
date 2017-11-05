@@ -1,6 +1,8 @@
 <div class='container'>
   <% if current_user and current_user.is_leader? %>
-    <%= link_to "Create New Event", new_event_path, class: 'btn btn-primary' %>
+    <div class="action-container">
+      <%= link_to "Create New Event", new_event_path, class: 'btn btn-primary twentyliters yellow' %>
+    </div>
   <% else %>
     <div>
       <h3>Want a custom build event for your group?</h3>
