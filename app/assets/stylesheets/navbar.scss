@@ -30,7 +30,7 @@
   margin-top: 5px;
 }
 
-@media (min-width: 768px) {
+@media (min-width: $sm-breakpoint) {
   .navbar > .container-fluid .navbar-brand.twentyliters {
     margin-left: 1em;
   }
