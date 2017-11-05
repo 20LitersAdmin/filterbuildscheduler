@@ -1,4 +1,8 @@
 <% if @future_events.length.positive? %>
+  <div class="event-container">
+    <h2 class="heading">Account - <%= @user.fname %> <%= @user.lname %></h2>
+  </div>
+
   <h3>Upcoming Events</h3>
   <div class="event-container">
     <%= render partial: 'events/event', collection: @future_events %>
