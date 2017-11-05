@@ -16,7 +16,8 @@ class Registration < ApplicationRecord
 
     # Diff in count of attendees - if it's a new record, it's the total
     # guest count plus the registrant. If it's an update, it's just the
-    # difference in guest count. Special case if the
+    # difference in guest count. Special case if the user registered as a
+    # leader then de-registered.
     attendees_diff = new_record? ? guests_registered + 1 : guests_registered - guests_registered_was - (leader_was ? 1 : 0)
 
     # overflow represents how many attendees we would be over max if this
