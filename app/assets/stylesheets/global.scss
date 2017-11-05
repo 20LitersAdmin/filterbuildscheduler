@@ -25,14 +25,13 @@ abbr, acronym {
 
 .btn.twentyliters.empty {
   background-color: transparent;
+  transition: all 0.14s ease-in-out;
   border: 2px $yellow solid;
   padding-left: 2em;
   padding-right: 2em;
   &:hover {
     background-color: $yellow;
-	color:$grey;
-    -webkit-transition: width 2s, height 4s; /* Safari */
-    transition: width 2s, height 4s;
+	color:#fff;
 
 
   }
