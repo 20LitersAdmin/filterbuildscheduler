@@ -24,42 +24,6 @@ Location.create!([
   }
 ])
 
-Event.create!([
-  { start_time: 2.days.from_now,
-    end_time: 2.days.from_now,
-    title: "2 days from now",
-    description: "Open, public build. Anyone can come",
-    min_registrations: 1,
-    max_registrations: 10,
-    min_leaders: 1,
-    max_leaders: 3,
-    location: Location.first,
-    item_goal: 20
-  },
-  { start_time: 6.days.from_now,
-    end_time: 6.days.from_now,
-    title: "6 days from now",
-    description: "This one should be private, but the model is missing some fields.",
-    min_registrations: 1,
-    max_registrations: 10,
-    min_leaders: 1,
-    max_leaders: 3,
-    location: Location.second,
-    item_goal: 20
-  },
-  { start_time: 10.days.ago,
-    end_time: 9.days.ago,
-    title: "10 days ago",
-    description: "I'm an event in the past.",
-    min_registrations: 1,
-    max_registrations: 10,
-    min_leaders: 1,
-    max_leaders: 3,
-    location: Location.first,
-    item_goal: 20
-  }
-])
-
 Technology.create!([
   { name: "Bucket Filter",
     description: "Designed by Village Water Filters and assembled by 20 Liters volunteers, this family-friendly build is open to people aged 4-104.",
@@ -77,6 +41,45 @@ Technology.create!([
     family_friendly: false,
     unit_rate: 0.125
   },
+])
+
+Event.create!([
+  { start_time: 2.days.from_now,
+    end_time: 2.days.from_now,
+    title: "2 days from now",
+    description: "Open, public build. Anyone can come",
+    min_registrations: 1,
+    max_registrations: 10,
+    min_leaders: 1,
+    max_leaders: 3,
+    location: Location.first,
+    item_goal: 20,
+    technology_id: Technology.first.id
+  },
+  { start_time: 6.days.from_now,
+    end_time: 6.days.from_now,
+    title: "6 days from now",
+    description: "This one should be private, but the model is missing some fields.",
+    min_registrations: 1,
+    max_registrations: 10,
+    min_leaders: 1,
+    max_leaders: 3,
+    location: Location.second,
+    item_goal: 20,
+    technology_id: Technology.first.id
+  },
+  { start_time: 10.days.ago,
+    end_time: 9.days.ago,
+    title: "10 days ago",
+    description: "I'm an event in the past.",
+    min_registrations: 1,
+    max_registrations: 10,
+    min_leaders: 1,
+    max_leaders: 3,
+    location: Location.first,
+    item_goal: 20,
+    technology_id: Technology.second.id
+  }
 ])
 
 User.create!([
