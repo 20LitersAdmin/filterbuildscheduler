@@ -12,7 +12,15 @@
 <div class='container'>
   <div class="event-container">
     <h2 class="heading">Upcoming Events</h2>
-    <%= render partial: 'events/event', collection: @events %>
+    <% if @events.count > 0 %>
+      <%= render partial: 'events/event', collection: @events %>
+    <% else %>
+      <div class="center-align action-container">
+        <h4>No upcoming events.</h4>
+        <p>Want to get notified when new build events are available?</p>
+        <a href="https://20liters.kindful.com/register/volunteer" class="btn yellow">Join the Email List</a>
+      </div>
+    <% end %>
   </div>
 
   <% if @past_events.present? %>
