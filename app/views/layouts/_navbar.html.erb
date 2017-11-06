@@ -14,7 +14,7 @@
 
     <!-- Collect the nav links, forms, and other content for toggling -->
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-      <ul class="nav navbar-nav">
+      <ul class="nav navbar-nav navbar-right">
         <li><%= link_to 'Events', events_path %></li>
         <% if current_user %>
           <li><%= link_to('Admin', '/admin') if current_user.is_admin? %></li>
@@ -23,7 +23,9 @@
         <% else %>
           <li><%= link_to 'Sign In', user_session_path %></li>
         <% end %>
+          <li><button class="btn btn-primary empty give-button" onclick="location.href='https://20liters.org/get-involved/#organizers'"">Give</button></li>
       </ul>
+      
     </div><!-- /.navbar-collapse -->
   </div><!-- /.container-fluid -->
 </nav>
