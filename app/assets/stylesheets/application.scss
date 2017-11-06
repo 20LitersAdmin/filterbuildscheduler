@@ -13,16 +13,18 @@ footer {
 	color: $dark-grey;
 	margin-bottom: 0;
 	padding: 20px;
-	line-height: 30px;
+	line-height: 14px;
 	text-align: center;
-	font-size: 18px;
-	position: fixed;
+	font-size: 12px;
 	bottom: 0;
 	width: 100%;
 
 	i {
 		color: $yellow;
 		padding-left: 15px;
+		&:hover {
+			color: $light-blue;
+		}
 	}
 
 	i:hover {
@@ -33,5 +35,11 @@ footer {
 		color: $dark-grey;
 		padding-left: 18px;
 		padding-right: 18px;
+
+		&:hover {
+			text-decoration: none;
+		}
+	}
+}
 	}
 }
