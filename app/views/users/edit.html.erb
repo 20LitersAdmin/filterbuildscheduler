@@ -1,19 +1,21 @@
-<h2>Edit Your Profile</h2>
+<div class='col-xs-12'>
+  <h2>Edit Your Profile</h2>
 
-<%= simple_form_for @user, url: update_user_path(@user.id) do |f| %>
-  <%= f.error_notification %>
+  <%= simple_form_for @user, url: update_user_path(@user.id) do |f| %>
+    <%= f.error_notification %>
 
-  <div class="form-inputs">
-    <%= f.input :fname, required: true, autofocus: true, label: "First Name" %>
-    <%= f.input :lname, required: true, autofocus: true, label: "Last Name" %>
-    <%= f.input :email, required: true, autofocus: true %>
-    <%= f.input :password, autocomplete: "off", hint: "leave it blank if you don't want to change it", required: false %>
-    <%= f.input :password_confirmation, required: false %>
-  </div>
+    <div class="form-inputs">
+      <%= f.input :fname, required: true, autofocus: true, label: "First Name" %>
+      <%= f.input :lname, required: true, autofocus: true, label: "Last Name" %>
+      <%= f.input :email, required: true, autofocus: true %>
+      <%= f.input :password, autocomplete: "off", hint: "leave it blank if you don't want to change it", required: false %>
+      <%= f.input :password_confirmation, required: false %>
+    </div>
 
-  <div class="form-actions">
-    <%= f.button :submit, "Update", class: 'btn yellow' %>
-  </div>
-<% end %>
+    <div class="form-actions">
+      <%= f.button :submit, "Update", class: 'btn yellow' %>
+    </div>
+  <% end %>
 
-<%= link_to "Back", :back %>
+  <%= link_to "Back", :back %>
+</div>
