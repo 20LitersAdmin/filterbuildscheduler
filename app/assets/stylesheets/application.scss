@@ -6,3 +6,37 @@
 
 @import "bootstrap-sprockets";
 @import "bootstrap";
+<<<<<<< Updated upstream
+=======
+@import "variables";
+
+footer {
+	background-color: $navbar-bg-color;
+	color: $dark-grey;
+	margin-bottom: 0;
+	padding: 20px;
+	line-height: 14px;
+	text-align: center;
+	font-size: 12px;
+	bottom: 0;
+	width: 100%;
+
+	i {
+		color: $yellow;
+		padding-left: 15px;
+		&:hover {
+			color: $light-blue;
+		}
+	}
+
+	a {
+		color: $dark-grey;
+		padding-left: 18px;
+		padding-right: 18px;
+
+		&:hover {
+			text-decoration: none;
+		}
+	}
+}
+>>>>>>> Stashed changes
