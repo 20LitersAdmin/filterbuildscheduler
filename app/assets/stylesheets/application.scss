@@ -6,8 +6,6 @@
 
 @import "bootstrap-sprockets";
 @import "bootstrap";
-<<<<<<< Updated upstream
-=======
 @import "variables";
 
 footer {
@@ -29,6 +27,10 @@ footer {
 		}
 	}
 
+	i:hover {
+	    color: $light-blue;
+	}
+
 	a {
 		color: $dark-grey;
 		padding-left: 18px;
@@ -39,4 +41,9 @@ footer {
 		}
 	}
 }
->>>>>>> Stashed changes
+	}
+
+	a:hover {
+	    color: $light-blue;
+	}
+}
