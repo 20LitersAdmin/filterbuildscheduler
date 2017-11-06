@@ -16,13 +16,14 @@ abbr, acronym {
     }
   }
 
+
   .form-control {
     border-radius: 0;
     border: 1px solid $yellow;
   }
-  
 
-  textarea {
+
+   textarea {
     width: 100%;
     border: 1px solid #ccc;
   }
@@ -69,17 +70,21 @@ abbr, acronym {
 }
 
 .action-container {
+  background-color: #fce000;
   text-align: center;
-<<<<<<< Updated upstream
-  max-width: $xs-breakpoint;
-  margin: 1em auto;
-=======
   margin:-1.4em 0 1.5em 0;
   padding:1.5em;
->>>>>>> Stashed changes
   .btn {
     display: block;
+	border:2px solid;
+	width:12em;
+	margin:0 auto;
+	transition: all 0.14s ease-in-out;
   }
 }
 
+.btn :hover{
+	  color:#fff;
+	  background-color:000;
+  };
 
