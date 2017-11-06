@@ -53,9 +53,25 @@ class Event < ApplicationRecord
 
   def format_time_range
     if start_time.beginning_of_day == end_time.beginning_of_day
-      start_time.strftime("%A, %D %l:%M%p") + end_time.strftime(" - %l:%M%p")
+      start_time.strftime("%a, %m/%-d %l:%M%P") + end_time.strftime(" - %l:%M%P")
     else
-      start_time.strftime("%A, %D at %l:%M%p") + end_time.strftime(" to %A, %D at %l:%M%p ")
+      start_time.strftime("%a, %m/%-d at %l:%M%P") + end_time.strftime(" to %a, %m/%-d at %l:%M%P")
+    end
+  end
+
+  def format_date_only
+    if start_time.beginning_of_day == end_time.beginning_of_day
+      start_time.strftime("%a, %m/%-d")
+    else
+      start_time.strftime("%a, %m/%-d at %l:%M%P") + end_time.strftime(" to %a, %m/%-d at %l:%M%P")
+    end
+  end
+
+  def format_time_only
+    if start_time.beginning_of_day == end_time.beginning_of_day
+      start_time.strftime("%l:%M%P") + end_time.strftime(" - %l:%M%P")
+    else
+      " "
     end
   end
 

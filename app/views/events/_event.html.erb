@@ -4,9 +4,9 @@
       <div>
         <span class="location">Hosted by <%= event.location.name %></span>
       </div>
-      <h2><%= event.title %></h2>
-
-      <div class='time'><%= event.format_time_range %></div>
+      <h2 class="date"><%= event.format_date_only %></h2>
+      <h3 class="time"><%= event.format_time_only %></h3>
+      <h3 class="title"><%= event.title %></h3>
       <div class='family-friendly'>
         <% if event.technology.family_friendly %>
           <i>Family Friendly</i>
