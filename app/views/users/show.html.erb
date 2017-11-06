@@ -1,35 +1,37 @@
-<% if @future_events.length.positive? %>
-  <div class="event-container">
-    <h2 class="heading">Account - <%= @user.fname %> <%= @user.lname %></h2>
-  </div>
+<div class='col-xs-12'>
+  <% if @future_events.length.positive? %>
+    <div class="event-container">
+      <h2 class="heading">Account - <%= @user.fname %> <%= @user.lname %></h2>
+    </div>
 
-  <h3>Upcoming Events</h3>
-  <div class="event-container">
-    <%= render partial: 'events/event', collection: @future_events %>
-  </div>
-<% else %>
-  <h3>No Upcoming Events Found</h3>
-<% end %>
-
-<% if @past_events.length.positive? %>
-  <h3>Old Events</h3>
-  <div class="event-container">
-    <%= render partial: 'events/event', collection: @past_events %>
-  </div>
-<% else %>
-  <h3>No Past Events Found</h3>
-<% end %>
-<% if @user.is_leader %>
-  <h3>Qualifications</h3>
-  <% if @user.technologies.size.zero? %>
-    <p>Not currently qualified with any technologies.</p>
+    <h3>Upcoming Events</h3>
+    <div class="event-container">
+      <%= render partial: 'events/event', collection: @future_events %>
+    </div>
   <% else %>
-    <ul>
-      <% @user.technologies.each do |technology| %>
-    		<li><%= technology.name %> - <%= technology.description %></li>
-      <% end %>
-    </ul>
+    <h3>No Upcoming Events Found</h3>
   <% end %>
-<% end %>
 
-<%= link_to("Edit Account Information", edit_user_path(current_user), class: 'btn yellow') %>
+  <% if @past_events.length.positive? %>
+    <h3>Old Events</h3>
+    <div class="event-container">
+      <%= render partial: 'events/event', collection: @past_events %>
+    </div>
+  <% else %>
+    <h3>No Past Events Found</h3>
+  <% end %>
+  <% if @user.is_leader %>
+    <h3>Qualifications</h3>
+    <% if @user.technologies.size.zero? %>
+      <p>Not currently qualified with any technologies.</p>
+    <% else %>
+      <ul>
+        <% @user.technologies.each do |technology| %>
+      		<li><%= technology.name %> - <%= technology.description %></li>
+        <% end %>
+      </ul>
+    <% end %>
+  <% end %>
+
+  <%= link_to("Edit Account Information", edit_user_path(current_user), class: 'btn yellow') %>
+</div>
