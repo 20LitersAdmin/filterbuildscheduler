@@ -40,14 +40,21 @@
       padding-left: 8px;
       padding-right: 8px;
       border-bottom: 2px solid $yellow;
-      padding-bottom: 20px;
+      padding-bottom: 12px;
     }
-    h2 {
+    .date {
       font-weight: bold;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
       padding-top: 20px;
+    }
+    .time {
+      margin-top: 6px;
+    }
+    .title {
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      margin-top: 12px;
+      font-weight: bolder;
     }
     .top-part-wrapper {
       height: 250px;
@@ -83,7 +90,7 @@
     }
     .learn-more {
       margin: 2em;
-      margin-top:2.3em;
+      margin-top: 1em;
     }
     a {
       text-align: center;
@@ -91,7 +98,7 @@
       display: block;
       color: black;
       text-decoration: none;
-      padding: 3.6em 2em 0 2em;
+      padding: 2em 2em 0 2em;
       &:hover {
         color: black;
         background-color: $light-grey;
@@ -145,7 +152,6 @@
     }
   }
 }
-
 
 .solicit-title {
   font-weight: bold;
