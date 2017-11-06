@@ -11,6 +11,9 @@
 
   .navbar-default .navbar-nav > li > a {
     color: white;
+    @media (max-width: 767px) { 
+      text-decoration: none;
+    }
     &:hover {
       color: white;
       text-decoration: underline;
@@ -61,16 +64,21 @@
 }
 
 .give-button {
-    color: white !important;
-    margin-top: 8px;
-    margin-right: 5px;
-    -webkit-transition: all 0.14s ease-in-out;
-    transition: all 0.14s ease-in-out;
-    height: 42px;
-
+  color: white !important;
+  margin-top: 8px;
+  margin-right: 5px;
+  -webkit-transition: all 0.14s ease-in-out;
+  transition: all 0.14s ease-in-out;
+  height: 42px;
 }
 
 .give-button:hover {
   background-color: $yellow !important;
   color: $grey !important;
 }
+
+.container-fluid{
+	padding-top:.6em;
+	padding-bottom:.6em;
+}
+
