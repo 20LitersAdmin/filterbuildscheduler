@@ -70,8 +70,13 @@ abbr, acronym {
 
 .action-container {
   text-align: center;
+<<<<<<< Updated upstream
   max-width: $xs-breakpoint;
   margin: 1em auto;
+=======
+  margin:-1.4em 0 1.5em 0;
+  padding:1.5em;
+>>>>>>> Stashed changes
   .btn {
     display: block;
   }
