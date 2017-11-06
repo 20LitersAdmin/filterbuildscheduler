@@ -1,20 +1,57 @@
-<%= simple_form_for @event do |f| %>
-  <%= f.input :title %>
-  <%= f.input :start_time %>
-  <%= f.input :end_time %>
-  <%= f.input :description  %>
-  <%= f.association :location %>
-  <%= f.association :technology %>
-  <%= f.input :min_leaders %>
-  <%= f.input :max_leaders %>
-  <%= f.input :min_registrations %>
-  <%= f.input :max_registrations %>
-  <%= f.input :item_goal %>
-  <% if @show_advanced %>
-    <%= f.input :item_results %>
-    Total Registered: <%= @event.total_registered %>
-    <%= f.input :attendance  %>
+<div class='col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2 event-form'>
+  <%= simple_form_for @event do |f| %>
+    <%= f.input :title %>
+    <%= f.association :location %>
+    <div class='row'>
+      <div class='col-sm-6'>
+        <%= f.input :start_time, as: :string, input_html: {class: 'datetimepicker', :value => time_for_form(f.object.start_time) } %>
+      </div>
+      <div class='col-sm-6'>
+        <%= f.input :end_time, as: :string, input_html: {class: 'datetimepicker', :value => time_for_form(f.object.end_time) } %>
+      </div>
+    </div>
+    <%= f.input :description, as: :text, input_html: {rows: 5}  %>
+    <%= f.association :technology %>
+    <div class='row'>
+      <div class='col-sm-6'>
+        <%= f.input :min_leaders, label: 'Min. Leaders' %>
+      </div>
+      <div class='col-sm-6'>
+        <%= f.input :max_leaders, label: 'Max. Leaders' %>
+      </div>
+    </div>
+    <div class='row'>
+      <div class='col-sm-6'>
+    <%= f.input :min_registrations, label: 'Min. Builders' %>
+    </div>
+    <div class='col-sm-6'>
+    <%= f.input :max_registrations, label: 'Max. Builders' %>
+      </div>
+    </div>
+
+    <div class='row'>
+      <div class='col-sm-6'>
+    <%= f.input :item_goal %>
+      </div>
+    <% if @show_advanced %>
+        <div class='col-sm-6'>
+          <%= f.input :item_results %>
+        </div>
+      </div>
+      <div class='row'>
+        <div class='col-sm-6'>
+          <%= f.label "Total Registered:" %><br/>
+          <%= f.label "#{@event.total_registered}" %>
+        </div>
+        <div class='col-sm-6'>
+          <%= f.input :attendance  %>
+        </div>
+      </div>
+    <% else %>
+      </div>
+    <% end %>
+
+    <%= f.input :is_private, label: 'Private Event' %>
+    <%= f.button :submit, class: 'btn twentyliters yellow' %>
   <% end %>
-  <%= f.input :is_private %>
-  <%= f.button :submit %>
-<% end %>
+</div>

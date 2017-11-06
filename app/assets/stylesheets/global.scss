@@ -9,13 +9,23 @@ abbr, acronym {
 }
 
 .twentyliters {
-  .form-control {
-    border-radius: 0;
+  a {
+    color: $light-blue;
+    &:hover {
+      color: darken($light-blue, 10%);
+    }
   }
 
-  textarea {
+
+  .form-control {
+    border-radius: 0;
+    border: 1px solid $yellow;
+  }
+
+
+   textarea {
     width: 100%;
-    border: 1px solid $slightly-darker-light-grey;
+    border: 1px solid #ccc;
   }
 
   .btn {
@@ -26,6 +36,7 @@ abbr, acronym {
   }
 
   .btn.yellow {
+    color: $grey;
     background-color: $yellow;
     &:hover {
       background-color: lighten($yellow, 10%)
@@ -42,21 +53,40 @@ abbr, acronym {
 
   .btn.empty {
     background-color: transparent;
+    transition: all 0.14s ease-in-out;
     border: 2px $yellow solid;
     padding-left: 2em;
     padding-right: 2em;
     &:hover {
-      color: inherit;
-      box-shadow: 0 0 1px $grey;
+      background-color: $yellow;
+  	  color:#fff;
     }
+  }
+
+  .form-control:focus {
+    box-shadow: 0 0 5px $light-blue;
+    border: 1px solid $light-grey;
   }
 }
 
 .action-container {
+  background-color: #fce000;
   text-align: center;
-  max-width: $xs-breakpoint;
-  margin: 1em auto;
+  width: 109.7%;
+  margin:-1.4em 0 1.5em 0;
+  margin-left:-5%;
+  padding:1.5em;
   .btn {
     display: block;
+	border:2px solid;
+	width:12em;
+	margin:0 auto;
+	transition: all 0.14s ease-in-out;
   }
 }
+
+.btn :hover{
+	  color:#fff;
+	  background-color:000;
+  };
+
