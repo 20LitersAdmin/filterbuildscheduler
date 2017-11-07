@@ -63,7 +63,7 @@ class Event < ApplicationRecord
     if start_time.beginning_of_day == end_time.beginning_of_day
       start_time.strftime("%a, %m/%-d")
     else
-      start_time.strftime("%a, %m/%-d at %l:%M%P") + end_time.strftime(" to %a, %m/%-d at %l:%M%P")
+      start_time.strftime("%a, %m/%-d %l:%M%P") + end_time.strftime(" to %a, %m/%-d %l:%M%P")
     end
   end
 
