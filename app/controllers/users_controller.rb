@@ -1,14 +1,26 @@
 class UsersController < ApplicationController
   def show
   	@user = User.find(params[:id])
-    @future_events = @user.registrations
-                          .joins(:event)
-                          .where('events.end_time > ?', Time.now)
-                          .map(&:event)
-    @past_events = @user.registrations
-                        .joins(:event)
-                        .where('events.end_time < ?', Time.now)
-                        .map(&:event)
+    @leading_events = @user.registrations
+                           .where(leader: false)
+                           .joins(:event)
+                           .where('events.end_time > ?', Time.now)
+                           .map(&:event)
+    @attending_events = @user.registrations
+                             .where(leader: true)
+                             .joins(:event)
+                             .where('events.end_time > ?', Time.now)
+                             .map(&:event)
+    @lead_events = @user.registrations
+                         .where(leader: false)
+                         .joins(:event)
+                         .where('events.end_time < ?', Time.now)
+                         .map(&:event)
+    @attended_events = @user.registrations
+                             .where(leader: true)
+                             .joins(:event)
+                             .where('events.end_time < ?', Time.now)
+                             .map(&:event)
   end
 
   def edit
