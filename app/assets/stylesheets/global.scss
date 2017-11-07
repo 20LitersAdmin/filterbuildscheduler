@@ -51,6 +51,14 @@ abbr, acronym {
     }
   }
 
+  .btn.blue {
+    color: white;
+    background-color: $light-blue;
+    &:hover {
+      background-color: lighten($light-blue, 10%)
+    }
+  }
+
   .btn.empty {
     background-color: transparent;
     transition: all 0.14s ease-in-out;

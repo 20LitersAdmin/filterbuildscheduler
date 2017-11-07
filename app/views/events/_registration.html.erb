@@ -19,7 +19,7 @@
 
     <%= form_for [@event, @registration] do |f| %>
       <h5><%= current_user.name %> | <%= current_user.email %></h5>
-      <%= link_to('Not you?', destroy_user_session_path, method: :delete) %>
+      <%= link_to('Not you?', destroy_user_session_path, method: :delete, class: "btn empty") %>
 
       <h5><%= @event.total_registered %> / <%= @event.max_registrations %> registered</h5>
 

@@ -1,3 +1,36 @@
-// Place all the styles related to the users controller here.
-// They will automatically be included in application.css.
-// You can use Sass (SCSS) here: http://sass-lang.com/
+@import "bootstrap";
+@import "variables";
+
+.modal-dialog {
+  h2 {
+    font-size: 1.7em;
+    margin-top: 8px;
+  }
+
+  h3 {
+    font-size: 1.25em;
+    margin-top: 12px;
+  }
+}
+
+.event-container {
+  .user-edit {
+    margin-top: -56px;
+    margin-right: 12px;
+    height: 32px;
+    display: block;
+    float: right;
+  }
+  .heading {
+    padding-right: 60px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+.qualifications-div {
+  padding: .8em 1em;
+  background-color: $light-grey;
+  // color: white;
+}
