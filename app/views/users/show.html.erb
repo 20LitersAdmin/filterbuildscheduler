@@ -1,37 +1,59 @@
-<div class='col-xs-12'>
-  <% if @future_events.length.positive? %>
-    <div class="event-container">
-      <h2 class="heading">Account - <%= @user.fname %> <%= @user.lname %></h2>
-    </div>
+<div class='col-xs-12 user-show'>
+  <div class="event-container">
+    <h2 class="heading"><%= @user.fname %> <%= @user.lname %></h2>
+    <%= link_to("Edit", edit_user_path(current_user), class: 'btn yellow user-edit') %>
+  </div>
 
-    <h3>Upcoming Events</h3>
-    <div class="event-container">
-      <%= render partial: 'events/event', collection: @future_events %>
-    </div>
-  <% else %>
-    <h3>No Upcoming Events Found</h3>
-  <% end %>
-
-  <% if @past_events.length.positive? %>
-    <h3>Old Events</h3>
-    <div class="event-container">
-      <%= render partial: 'events/event', collection: @past_events %>
-    </div>
-  <% else %>
-    <h3>No Past Events Found</h3>
-  <% end %>
   <% if @user.is_leader %>
-    <h3>Qualifications</h3>
-    <% if @user.technologies.size.zero? %>
-      <p>Not currently qualified with any technologies.</p>
-    <% else %>
-      <ul>
-        <% @user.technologies.each do |technology| %>
-      		<li><%= technology.name %> - <%= technology.description %></li>
-        <% end %>
-      </ul>
-    <% end %>
+    <div class="qualifications-div">
+      <h3>Qualifications</h3>
+      <% if @user.technologies.size.zero? %>
+        <p>Not currently qualified with any technologies.</p>
+      <% else %>
+        <ul>
+          <% @user.technologies.each do |technology| %>
+            <li><%= technology.name %></li>
+          <% end %>
+        </ul>
+      <% end %>
+    </div>
   <% end %>
 
-  <%= link_to("Edit Account Information", edit_user_path(current_user), class: 'btn yellow') %>
+  <h3>Events you're leading</h3>
+  <% if @leading_events.length.positive? %>
+    <div class="event-container">
+      <%= render partial: 'events/event', collection: @leading_events %>
+    </div>
+  <% else %>
+    <p>No upcoming events</p>
+  <% end %>
+
+  <h3>Events you're attending</h3>
+  <% if @attending_events.length.positive? %>
+    <div class="event-container">
+      <%= render partial: 'events/event', collection: @attending_events %>
+    </div>
+  <% else %>
+    <p>No upcoming events</p>
+  <% end %>
+
+  <h3>Events you've lead</h3>
+  <% if @leading_events.length.positive? %>
+    <div class="event-container">
+      <%= render partial: 'events/event', collection: @lead_events %>
+    </div>
+  <% else %>
+    <p>No past events</p>
+  <% end %>
+
+  <h3>Events you've attended</h3>
+  <% if @attending_events.length.positive? %>
+    <div class="event-container">
+      <%= render partial: 'events/event', collection: @attended_events %>
+    </div>
+  <% else %>
+    <p>No past events</p>
+  <% end %>
+
+
 </div>
