@@ -1,0 +1,20 @@
+<tr class="active center-align tr-bordered">
+  <td><%= registration.user.name %></td>
+  <td><%= registration.user.email %></td>
+  <td></td>
+  <td>
+    <% if registration.user.signed_waiver_on %>
+      Electronically signed on <%= registration.user.signed_waiver_on.strftime("%m/%-d/%y") %>
+    <% end %>
+  </td>
+  <td class="center-align"><i class="fa fa-square-o"></i></td>
+</tr>
+<% registration.guests_registered.times do %>
+  <tr>
+    <td>Guest Name:</td>
+    <td class="right-align">Relationship:</td>
+    <td class="right-align">Email:</td>
+    <td></td>
+    <td></td>
+  </tr>
+<% end %>
