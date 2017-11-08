@@ -1,6 +1,8 @@
 class EventsController < ApplicationController
   acts_as_token_authentication_handler_for User, only: [:delete]
 
+  before_action :require_admin_or_leader, only: [:new, :update, :edit, :attendance]
+
   def index
     our_events = policy_scope(Event).includes(:location, registrations: :user)
     @events = our_events.future
