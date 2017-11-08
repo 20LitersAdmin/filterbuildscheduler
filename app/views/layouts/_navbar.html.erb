@@ -15,7 +15,7 @@
     <!-- Collect the nav links, forms, and other content for toggling -->
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
       <ul class="nav navbar-nav navbar-right">
-        <li><%= link_to 'Events', events_path %></li>
+        <li><%= link_to 'Builds', events_path %></li>
         <% if current_user %>
           <li><%= link_to('Admin', '/admin') if current_user.is_admin? %></li>
           <li><%= link_to "My Account", show_user_path(current_user) %></li>

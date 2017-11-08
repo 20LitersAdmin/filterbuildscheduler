@@ -7,6 +7,17 @@
   margin: auto 1em;
 }
 
+.attendance-img {
+  width: 100%;
+}
+
+.attendance-notes {
+  margin: 10px auto;
+  p {
+    margin: 0 !important;
+  }
+}
+
 .attendance-list {
   width: 100%;
   table-layout: fixed;
