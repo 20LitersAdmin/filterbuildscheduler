@@ -30,7 +30,7 @@ $navbar-bg-color: $grey;
 }
 
 .alert-success {
-  background-color: lighten($yellow, 30%);
+  background-color: lighten($yellow, 10%);
   border-color: $yellow;
   color: $grey;
   text-align: center;
@@ -42,13 +42,13 @@ $navbar-bg-color: $grey;
   text-align: center;
 }
 .alert-warning {
-  background-color: lighten($grey, 30%);
-  border-color: $grey;
+  background-color: lighten($light-blue, 30%);
+  border-color: $light-blue;
   color: white;
   text-align: center;
 }
 .alert-info {
-  background-color: lighten($yellow, 30%);
+  background-color: lighten($yellow, 10%);
   border-color: $yellow;
   color: $grey;
   text-align: center;

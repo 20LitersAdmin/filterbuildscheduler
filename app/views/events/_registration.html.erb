@@ -5,8 +5,15 @@
 
   <h5><%= @event.total_registered %> / <%= @event.max_registrations %> registered</h5>
   <% if @registration.leader? %>
-    <div><%="You are one of #{ pluralize(@event.registrations.where(leader: true).count, 'leader') } at this event." %></div>
-    <div>Event leaders: <%= @event.registrations.registered_as_leader.map { |r| r.user.name }.join(', ') %></div>
+    <div>
+      <% if @event.registrations.where(leader: true).count == 1 %>
+        You are the only leader currently registered.
+      <% else %>
+        <%="You are one of #{ pluralize(@event.registrations.where(leader: true).count, 'leader') } at this event." %>
+        <br>
+        Event leaders: <%= @event.registrations.registered_as_leader.map { |r| r.user.name }.join(', ') %>
+      <% end %>
+    </div>
   <% end %>
   <h5> Review the <a class="waiver_click" data-toggle="modal" data-target="#waiverModal"><%="Liability Waiver"%></a> <%= "(accepted on #{current_user.signed_waiver_on})" %> </h5>
   <%= link_to "Change/Cancel Registration", edit_event_registration_path(@event, @registration), class: 'btn yellow' %>
