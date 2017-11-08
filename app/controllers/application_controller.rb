@@ -22,20 +22,21 @@ class ApplicationController < ActionController::Base
   end
 
   def require_self_or_admin(user)
-  	require_signin
-  	unless current_user.is_admin || user == current_user
+  	unless current_user&.is_admin || user == current_user
+  		flash[:warning] = "You don't have permission."
+  		redirect_to root_path
+  	end
+  end
 
   def require_admin
-  	require_signin
-  	unless current_user.is_admin
+  	unless current_user&.is_admin
   		flash[:warning] = "You don't have permission."
   		redirect_to root_path
   	end
   end
 
   def require_admin_or_leader
-  	require_signin
-  	unless current_user.is_admin || current_user.is_leader
+  	unless current_user&.is_admin || current_user&.is_leader
   		flash[:warning] = "You don't have permission."
   		redirect_to root_path
   	end

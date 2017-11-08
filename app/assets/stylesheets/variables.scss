@@ -48,9 +48,9 @@ $navbar-bg-color: $grey;
   text-align: center;
 }
 .alert-warning {
-  background-color: lighten($light-blue, 30%);
+  background-color: lighten($light-blue, 10%);
   border-color: $light-blue;
-  color: white;
+  color: $grey;
   text-align: center;
 }
 .alert-info {

@@ -1,7 +1,7 @@
 class UsersController < ApplicationController
 
   before_action only: [:show, :edit, :update] do
-    require_self_or_admin(User.find[params[:id]])
+    require_self_or_admin(User.find(params[:id]))
   end
 
   def show
