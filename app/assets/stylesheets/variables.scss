@@ -28,3 +28,28 @@ $navbar-bg-color: $grey;
   font-family: "DINPro-Regular";
   src: url("https://20liters.org/wp-content/themes/twenty-liters/library/fonts/dinpro/DINPro-Regular.woff2");
 }
+
+.alert-success {
+  background-color: lighten($yellow, 30%);
+  border-color: $yellow;
+  color: $grey;
+  text-align: center;
+}
+.alert-danger {
+  background-color: lighten($red, 30%);
+  border-color: $red;
+  color: white;
+  text-align: center;
+}
+.alert-warning {
+  background-color: lighten($grey, 30%);
+  border-color: $grey;
+  color: white;
+  text-align: center;
+}
+.alert-info {
+  background-color: lighten($yellow, 30%);
+  border-color: $yellow;
+  color: $grey;
+  text-align: center;
+}
