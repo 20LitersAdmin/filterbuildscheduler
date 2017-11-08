@@ -1,0 +1,37 @@
+@import "bootstrap";
+@import "variables";
+@import "font-awesome";
+
+.attendance-btn {
+  float: right;
+  margin: auto 1em;
+}
+
+.attendance-list {
+  width: 100%;
+  table-layout: fixed;
+  border: 1px solid #ddd;
+
+  td {
+    height: 42px;
+    vertical-align: middle !important;
+  }
+
+  .tbl-col-lg {
+    width: 23%;
+  }
+  .tbl-col-sm {
+    width: 6%;
+    font-size: .8em;
+  }
+  .small {
+    font-size: .8em;
+  }
+  .tr-bordered > td, th {
+    border: 1px solid #ddd;
+  }
+  th {
+    text-align: center;
+    vertical-align: middle !important;
+  }
+}
