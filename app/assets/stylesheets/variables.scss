@@ -29,6 +29,12 @@ $navbar-bg-color: $grey;
   src: url("https://20liters.org/wp-content/themes/twenty-liters/library/fonts/dinpro/DINPro-Regular.woff2");
 }
 
+.alert {
+  background-color: lighten($yellow, 10%);
+  border-color: $yellow;
+  color: $grey;
+  text-align: center;
+}
 .alert-success {
   background-color: lighten($yellow, 10%);
   border-color: $yellow;
@@ -42,9 +48,9 @@ $navbar-bg-color: $grey;
   text-align: center;
 }
 .alert-warning {
-  background-color: lighten($light-blue, 30%);
+  background-color: lighten($light-blue, 10%);
   border-color: $light-blue;
-  color: white;
+  color: $grey;
   text-align: center;
 }
 .alert-info {

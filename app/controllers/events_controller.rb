@@ -1,6 +1,8 @@
 class EventsController < ApplicationController
   acts_as_token_authentication_handler_for User, only: [:delete]
 
+  before_action :require_admin_or_leader, only: [:new, :update, :edit, :attendance]
+
   def index
     our_events = policy_scope(Event).includes(:location, registrations: :user)
     @events = our_events.future
@@ -11,6 +13,11 @@ class EventsController < ApplicationController
 
   def show
     @event = Event.find(params[:id])
+
+    @technology = @event.technology
+    if @technology.img_url.present? 
+      @tech_img = @technology.img_url
+    end
 
     redirect_to action: :index if @event.in_the_past? && !current_user.is_leader
 
