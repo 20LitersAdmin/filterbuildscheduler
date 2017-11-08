@@ -8,12 +8,26 @@ abbr, acronym {
   border-bottom: 0px !important;
 }
 
+@media print {
+  .no-print, .no-print * {
+    display: none !important;
+  }
+}
+
 .twentyliters {
   a {
     color: $light-blue;
     &:hover {
       color: darken($light-blue, 10%);
     }
+  }
+
+  .center-align {
+    text-align: center;
+  }
+
+  .right-align {
+    text-align: right;
   }
 
 
