@@ -52,7 +52,7 @@
             <%= link_to "Map", @event.location.map_url, class: "btn blue", target: "_blank" %>
           <% end %>
 
-          <% if @event.description.length > 0 %>
+          <% if @event.description.present? %>
             <h4>Additional Event Details</h3>
             <div><%= @event.description %></div>
           <% end %>
