@@ -11,12 +11,10 @@
       <a class="navbar-brand" href="https://20liters.org">
       </a>
     </div>
-
-    <!-- Collect the nav links, forms, and other content for toggling -->
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
       <ul class="nav navbar-nav navbar-right">
         <li>
-          <% if !current_page?(controller: 'events', action: 'index') %>
+          <% if !current_page?('/events') && !current_page?(root_url) %>
             <%= link_to 'Builds', root_path %>
           <% end %>  
           </li>
