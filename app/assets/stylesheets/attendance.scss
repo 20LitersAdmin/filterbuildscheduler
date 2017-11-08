@@ -46,3 +46,15 @@
     vertical-align: middle !important;
   }
 }
+
+@media print {
+  .attendance-img {
+    width: 170px;
+    float: right;
+  }
+
+  .attendance-title {
+    width: 800px;
+  }
+
+}
