@@ -75,6 +75,13 @@ class EventsController < ApplicationController
     end
   end
 
+  def attendance
+    @event = Event.find(params[:id])
+    @registrations = Registration.where(event_id: @event.id)
+
+    @print_blanks = @event.max_registrations - @event.total_registered + 5
+  end
+
   private
 
   def event_params

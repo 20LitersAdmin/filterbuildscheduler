@@ -1,5 +1,5 @@
-# This file should contain all the record creation needed to seed the database with its default values.
-# The data can then be loaded with the rails db:seed command (or created alongside the database with db:setup).
+# # This file should contain all the record creation needed to seed the database with its default values.
+# # The data can then be loaded with the rails db:seed command (or created alongside the database with db:setup).
 
 Location.create!([
   { name: 'Center of the Universe',
@@ -121,5 +121,39 @@ User.create!([
   { email: "builderNoPW@email.com",
     fname: "Builder",
     lname: "No Password"
+  },
+])
+
+Registration.create!([
+  {
+    user_id: 1,
+    guests_registered: 2,
+    event_id: 1,
+    leader: true
+  },
+  {
+    user_id: 2,
+    guests_registered: 4,
+    event_id: 1
+  },
+  {
+    user_id: 3,
+    guests_registered: 0,
+    event_id: 1
+  },
+  {
+    user_id: 4,
+    guests_registered: 6,
+    event_id: 1
+  },
+  {
+    user_id: 5,
+    guests_registered: 3,
+    event_id: 1
+  },
+  {
+    user_id: 7,
+    guests_registered: 5,
+    event_id: 1
   },
 ])
