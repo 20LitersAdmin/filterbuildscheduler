@@ -18,5 +18,7 @@ Rails.application.routes.draw do
     mount LetterOpenerWeb::Engine, at: "/letter_opener"
   end
 
+  mount StripeEvent::Engine, at: '/stripe-events'
+
   get "*path", to:  'locations#route_error'
 end
