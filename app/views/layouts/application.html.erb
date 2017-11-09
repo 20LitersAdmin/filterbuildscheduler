@@ -25,6 +25,16 @@
 
   <body class="twentyliters">
     <%= render partial: 'layouts/navbar' %>
+    <% if current_page?('/events') || current_page?(root_url) %>
+      <% if current_user.nil? || !current_user.is_leader? %>
+        <div class="hero-img collapse in" id="collapseHero">
+          <h2>Want a custom build event for your group?</h2>
+          <p>If you have a group of 6+ people we can schedule a build at your convenience.</p>
+          <%= mail_to 'filterbuild@20liters.org', 'Email Us!', class: 'btn hero', subject: 'Request for custom build event' %>
+          <a  class='btn hero collapse' role="button" data-toggle="collapse" href="#collapseHero" aria-expanded="true" aria-controls="collapseHero">No Thanks</a>
+        </div>
+      <% end %>
+    <% end %>
     <div class='container'>
       <%= flash_messages %>
       <div class='row'>
