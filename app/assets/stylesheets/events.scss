@@ -25,6 +25,39 @@
   }
 }
 
+.hero-img {
+  text-align: center;
+  background-image: url(https://20liters.org/wp-content/uploads/2016/07/cta-bg.jpg);
+  padding: 50px 0 12px 0;
+  margin: -20px auto 20px auto;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center ;
+  box-sizing: border-box;
+  color: white;
+  h2 {
+    font-weight: bold;
+  }
+  p {
+    font-size: 1.375em;
+    font-weight: normal;
+    margin-bottom: 24px;
+  }
+}
+
+.btn.hero {
+  border: 1px solid white !important;
+  color: white !important;
+  display: block;
+  width: 12em;
+  margin: 1em auto !important;
+  transition: all 0.14s ease-in-out;
+
+  &.collapse {
+    margin-top: 1em;
+  }
+}
+
 .event-container {
   @extend .row;
   margin-bottom: 30px;
