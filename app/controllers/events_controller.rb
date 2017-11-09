@@ -15,7 +15,7 @@ class EventsController < ApplicationController
     @event = Event.find(params[:id])
 
     @technology = @event.technology
-    if @technology.img_url.present? 
+    if @technology.img_url.present?
       @tech_img = @technology.img_url
     end
 
@@ -44,7 +44,7 @@ class EventsController < ApplicationController
     @event = Event.find(params[:id])
     @event.update(event_params)
     if @event.errors.any?
-      flash[:error] = @event.errors.first.join(": ")
+      flash[:alert] = @event.errors.first.join(": ")
       redirect_to edit_event_path(@event)
     else
       redirect_to event_path(@event)
@@ -64,7 +64,7 @@ class EventsController < ApplicationController
   def create
     @event = Event.create(event_params)
     if @event.errors.any?
-      flash[:error] = @event.errors.first.join(": ")
+      flash[:alert] = @event.errors.first.join(": ")
       redirect_to new_event_path
     else
       redirect_to action: :index
