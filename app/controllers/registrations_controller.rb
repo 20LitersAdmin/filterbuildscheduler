@@ -11,7 +11,7 @@ class RegistrationsController < ApplicationController
                                  leader: params.dig(:registration, :leader),
                                  guests_registered: params[:registration][:guests_registered])
       if reg.errors.any?
-        flash[:error] = reg.errors.first.join(": ")
+        flash[:danger] = reg.errors.first.join(": ")
       else
         current_user.update_attributes!(signed_waiver_on: Time.now) unless current_user.waiver_accepted
         RegistrationMailer.delay.created reg
@@ -34,7 +34,7 @@ class RegistrationsController < ApplicationController
         # Make them accept the waiver on their first successful registration, not this
         # failed registration
         current_user.update_attributes!(signed_waiver_on: nil)
-        flash[:error] = reg.errors.first.join(": ")
+        flash[:danger] = reg.errors.first.join(": ")
       else
         RegistrationMailer.delay.created reg
         flash[:success] = "You successfully registered!"
@@ -51,7 +51,7 @@ class RegistrationsController < ApplicationController
     authorize @registration
     @registration.update(registration_params)
     if @registration.errors.any?
-      flash[:error] = @registration.errors.first.join(": ")
+      flash[:danger] = @registration.errors.first.join(": ")
     end
     redirect_to event_path(@registration.event)
   end
