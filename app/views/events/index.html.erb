@@ -1,14 +1,8 @@
-  <% if current_user and current_user.is_leader? %>
-    <div class="action-container">
-      <%= link_to "Schedue a New Build", new_event_path, class: 'btn yellow' %>
-    </div>
-  <% else %>
-    <div class="action-container">
-      <h3>Want a custom build event for your group?</h3>
-      <p>If you have a group of 6+ people we can schedule a build at your convenience.</p>
-      <%= mail_to 'filterbuild@20liters.org', 'Email Us!', class: 'btn yellow', subject: 'Request for custom build event' %>
-    </div>
-  <% end %>
+<% if current_user and current_user.is_leader? %>
+  <div class="action-container">
+    <%= link_to "Schedue a New Build", new_event_path, class: 'btn yellow' %>
+  </div>
+<% end %>
 <div class='container'>
   <div class="event-container">
     <h2 class="heading">Upcoming Builds</h2>
