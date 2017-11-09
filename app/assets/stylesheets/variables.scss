@@ -36,25 +36,25 @@ $navbar-bg-color: $grey;
   text-align: center;
 }
 
-.alert-success {
+.success {
   background-color: lighten($yellow, 10%);
   border-color: $yellow;
   color: $grey;
   text-align: center;
 }
-.alert-danger {
+.danger {
   background-color: lighten($red, 30%);
   border-color: $red;
-  color: white;
+  color: $grey;
   text-align: center;
 }
-.alert-warning {
+.warning {
   background-color: lighten($light-blue, 10%);
   border-color: $light-blue;
   color: $grey;
   text-align: center;
 }
-.alert-info {
+.info {
   background-color: lighten($yellow, 10%);
   border-color: $yellow;
   color: $grey;

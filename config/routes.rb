@@ -17,4 +17,6 @@ Rails.application.routes.draw do
   if Rails.env.development?
     mount LetterOpenerWeb::Engine, at: "/letter_opener"
   end
+
+  get "*path", to:  'locations#route_error'
 end
