@@ -15,6 +15,9 @@ abbr, acronym {
 }
 
 .twentyliters {
+  text-rendering: optimizelegibility;
+  -webkit-font-smoothing: antialiased;
+  line-height: 1.5;
   a {
     color: $light-blue;
     &:hover {
