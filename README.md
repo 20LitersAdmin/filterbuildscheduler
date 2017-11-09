@@ -1,24 +1,19 @@
 # README
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+## Things to do
+1. Figure out Kindful API (Rails: RestClient gem)
+..* Sent email to support@kindful
+..* Decide on events -- have to have $$ amount [name, id, [contact],[transaction]]
+..* Need to build confirm attendance (to trigger 'user attended event [instead of registering]')
+..* KINDFUL_API/imports
+..* Contact importing (w/ matching & group assignment)
+..* Event importing (w/ matching [use "name", let Kindful create the ID])
+..* Create POROs (update_contact, update_event)
+..* Trigger POROs from controllers (user#create, user#update, event#create, event#update, registration#report)
+2. Add inventory system functionality
+3. Roll in monthly reporting?
 
-Things you may want to cover:
-
-* Ruby version
-
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+### Learning about Kindful's API
+1. Seems to be focused around this model:
+..* Import contact (assign external ID) with "update", while matching on [FName, LName, Email], assigning them to the groups ["15780" - builders, "22893" - leaders ]
+..* Import event with "update", while matching on "name", let Kindful assign the event ID, must be done with contacts_with_transactions?
