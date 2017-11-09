@@ -3,7 +3,7 @@
 ## Things to do
 1. Figure out Kindful API (Rails: RestClient gem)
 ..* Sent email to support@kindful
-..* Decide on events -- have to have $$ amount
+..* Decide on events -- have to have $$ amount [name, id, [contact],[transaction]]
 ..* Need to build confirm attendance (to trigger 'user attended event [instead of registering]')
 ..* KINDFUL_API/imports
 ..* Contact importing (w/ matching & group assignment)
