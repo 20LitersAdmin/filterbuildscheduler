@@ -2,7 +2,6 @@
 
 ## Things to do
 1. Figure out Kindful API (Rails: RestClient gem)
-..* Sent email to support@kindful
 ..* Decide on events -- have to have $$ amount [name, id, [contact],[transaction]]
 ..* Need to build confirm attendance (to trigger 'user attended event [instead of registering]')
 ..* KINDFUL_API/imports
@@ -10,6 +9,7 @@
 ..* Event importing (w/ matching [use "name", let Kindful create the ID])
 ..* Create POROs (update_contact, update_event)
 ..* Trigger POROs from controllers (user#create, user#update, event#create, event#update, registration#report)
+2. Add a Stripe Webhook / API for CauseVox to replace Zapier
 2. Add inventory system functionality
 3. Roll in monthly reporting?
 
