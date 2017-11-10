@@ -8,8 +8,8 @@ end
 
 gem 'rails', '~> 5.1.4'
 gem 'pg'
-gem 'pundit'
 gem 'dotenv-rails'
+gem 'pundit'
 gem 'simple_form'
 gem 'sass-rails', '~> 5.0'
 gem 'uglifier', '>= 1.3.0'
@@ -20,6 +20,7 @@ gem 'rails_admin'
 gem 'devise'
 gem 'simple_token_authentication', '~> 1.0'
 gem 'bootstrap-sass'
+gem 'jquery-rails'
 gem "delayed_job", "~> 4.1"
 gem "delayed_job_active_record", "~> 4.1"
 gem "delayed_cron_job", "~> 0.7.2"
@@ -28,6 +29,9 @@ gem 'momentjs-rails', '>= 2.9.0'
 gem 'bootstrap3-datetimepicker-rails', '~> 4.14.30'
 gem 'font-awesome-rails'
 gem 'rest-client'
+gem 'stripe'
+gem 'stripe_event'
+gem 'pry-byebug'
 
 group :production do
   gem 'puma'
@@ -35,7 +39,7 @@ group :production do
 end
 
 group :development, :test do
-  gem 'pry-byebug'
+  
   gem 'rubocop'
   gem 'timecop'
   gem 'factory_bot_rails'

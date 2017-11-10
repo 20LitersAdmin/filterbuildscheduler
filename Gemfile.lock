@@ -94,6 +94,8 @@ GEM
       railties (>= 3.0.0)
     faker (1.8.4)
       i18n (~> 0.5)
+    faraday (0.13.1)
+      multipart-post (>= 1.2, < 3)
     ffi (1.9.18)
     font-awesome-rails (4.7.0.2)
       railties (>= 3.2, < 5.2)
@@ -151,6 +153,7 @@ GEM
     minitest (5.10.3)
     momentjs-rails (2.17.1)
       railties (>= 3.1)
+    multipart-post (2.0.0)
     nested_form (0.3.2)
     netrc (0.11.0)
     nio4r (2.1.0)
@@ -294,6 +297,11 @@ GEM
       actionpack (>= 4.0)
       activesupport (>= 4.0)
       sprockets (>= 3.0.0)
+    stripe (3.8.0)
+      faraday (~> 0.10)
+    stripe_event (1.8.0)
+      activesupport (>= 3.1)
+      stripe (>= 1.6, < 4.0)
     temple (0.8.0)
     therubyracer (0.12.3)
       libv8 (~> 3.16.14.15)
@@ -342,6 +350,7 @@ DEPENDENCIES
   factory_bot_rails
   faker
   font-awesome-rails
+  jquery-rails
   letter_opener_web
   listen (>= 3.0.5, < 3.2)
   momentjs-rails (>= 2.9.0)
@@ -361,6 +370,8 @@ DEPENDENCIES
   sass-rails (~> 5.0)
   simple_form
   simple_token_authentication (~> 1.0)
+  stripe
+  stripe_event
   therubyracer
   thin
   timecop
