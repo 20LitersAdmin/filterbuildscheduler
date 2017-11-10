@@ -30,6 +30,7 @@ gem 'font-awesome-rails'
 gem 'rest-client'
 gem 'stripe'
 gem 'stripe_event'
+gem 'pry-byebug'
 
 group :production do
   gem 'puma'
@@ -37,7 +38,7 @@ group :production do
 end
 
 group :development, :test do
-  gem 'pry-byebug'
+  
   gem 'rubocop'
   gem 'timecop'
   gem 'factory_bot_rails'
