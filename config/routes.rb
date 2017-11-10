@@ -10,15 +10,19 @@ Rails.application.routes.draw do
 
   get 'events/:id/attendance', to: 'events#attendance', as: 'event_attendance'
 
+  get 'info', to: 'pages#info', as: 'info'
+
   resources :events do
     resources :registrations
   end
+
+  mount StripeEvent::Engine, at: '/stripe-events'
 
   if Rails.env.development?
     mount LetterOpenerWeb::Engine, at: "/letter_opener"
   end
 
-  mount StripeEvent::Engine, at: '/stripe-events'
-
-  get "*path", to:  'locations#route_error'
+  
+  # catch-all for bad url
+  get "*path", to:  'pages#route_error'
 end
