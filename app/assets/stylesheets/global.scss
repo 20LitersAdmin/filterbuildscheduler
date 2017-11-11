@@ -33,6 +33,12 @@ abbr, acronym {
     text-align: right;
   }
 
+  .float-right {
+    display: block;
+    width: 50%;
+    float: right;
+  }
+
 
   .form-control {
     border-radius: 0;
