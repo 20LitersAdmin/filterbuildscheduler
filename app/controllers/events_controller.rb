@@ -12,6 +12,7 @@ class EventsController < ApplicationController
   end
 
   def show
+    @image =
     @event = Event.find(params[:id])
 
     @technology = @event.technology
