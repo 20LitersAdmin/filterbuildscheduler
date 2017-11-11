@@ -19,6 +19,10 @@ class EventsController < ApplicationController
       @tech_img = @technology.img_url
     end
 
+    if @technology.info_url.present?
+      @tech_info = @technology.info_url
+    end
+
     redirect_to action: :index if @event.in_the_past? && !current_user.is_leader
 
     @registration = Registration.where(user: current_user, event: @event).first_or_initialize
