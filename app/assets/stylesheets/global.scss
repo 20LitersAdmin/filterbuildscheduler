@@ -8,6 +8,10 @@ abbr, acronym {
   border-bottom: 0px !important;
 }
 
+html {
+  background-color: $grey;
+}
+
 @media print {
   .no-print, .no-print * {
     display: none !important;
@@ -90,7 +94,7 @@ abbr, acronym {
     padding-right: 2em;
     &:hover {
       background-color: $yellow;
-  	  color:#fff;
+      color:#fff;
     }
   }
 
@@ -106,15 +110,14 @@ abbr, acronym {
   padding:1.5em;
   .btn {
     display: block;
-	border:2px solid;
-	width:12em;
-	margin:0 auto;
-	transition: all 0.14s ease-in-out;
+  border:2px solid;
+  width:12em;
+  margin:0 auto;
+  transition: all 0.14s ease-in-out;
   }
 }
 
 .btn :hover{
-	  color:#fff;
-	  background-color:000;
-  };
-
+  color:#fff;
+  background-color:000;
+};
