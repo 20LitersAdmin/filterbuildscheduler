@@ -14,7 +14,9 @@ module BuildPlanner
     config.time_zone = 'Eastern Time (US & Canada)'
 
     config.active_job.queue_adapter = :delayed_job
-    
+
+    config.serve_static_assets = true
+
     config.generators do |g|
       g.test_framework :rspec
     end
