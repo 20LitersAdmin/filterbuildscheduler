@@ -12,7 +12,7 @@
     width: 100%;
   }
   .share-container {
-    display: flex;
+    display: inline-flex;
   }
   .share-container > div {
     padding-right: 1em;
@@ -22,6 +22,28 @@
   }
   .tech-img {
     width: 100%;
+  }
+
+  .share-container {
+
+  }
+
+  .mt-10 {
+    margin-top: 10px;
+  }
+
+  .mt-5 {
+    margin-top: 5px;
+  }
+
+  .thin hr {
+    margin: -6px 0px 0px 0px;
+  }
+
+  @media (min-width: 768px) {
+    .right-align-md {
+      text-align: right;
+    }
   }
 }
 

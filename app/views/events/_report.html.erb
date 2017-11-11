@@ -4,9 +4,22 @@
   <%= f.input :item_results, label: "Total Filters Built: " %>
   <%= f.label :number_registered, label: "Total Builders Registered: #{@event.registrations.sum(:guests_registered)}" %>
   <%= f.input :attendance, label: "Actual Attendance: " %>
-  <%= f.label :attendance, label: "Attendance List:" %>
+
   <%= f.simple_fields_for :registrations do |r| %>
-    <%= r.input :attended, label: "#{r.object.user.name} (expecting #{r.object.guests_registered})" %>
+    <div class="row">
+      <div class="col-sm-6">
+        <%= r.input :attended, label: "#{r.object.user.name} (expecting #{r.object.guests_registered})" %>
+      </div>
+      <div class="col-sm-3 mt-10 right-align-md">
+        Guests attended:
+      </div>
+      <div class="col-sm-3 mt-5">
+        <%= r.input :guests_attended, label: false %>
+      </div>
+    </div>
+    <div class="row thin">
+      <hr>
+    </div>
   <% end %>
-  <%= f.submit "Submit Report", class: 'btn btn-primary' %>
+  <%= f.submit "Submit Report", class: 'btn yellow devise' %>
 <% end %>
