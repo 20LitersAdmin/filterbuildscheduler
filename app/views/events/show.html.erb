@@ -13,9 +13,9 @@
     <div class="col-md-6">
       <div class="row">
         <% if @tech_img.present? %>
-          <div class="col-md-8">
+          <div class="col-xs-8">
         <% else %>
-          <div class="col-md-12">
+          <div class="col-xs-12">
         <% end %>
           <h2>The Filter</h2>
           <h3><%= @technology.name %></h3>
@@ -27,12 +27,15 @@
           <% end %>
         </div>
         <% if @tech_img.present? %>
-          <div class='col-md-4'>
+          <div class='col-xs-4'>
             <img src="<%= @tech_img  %>" class="tech-img">
+            <% if @tech_info.present? %>
+              <%= link_to "Learn more", @tech_info, target: "_blank", class: "btn blue devise" %>
+            <% end %>
           </div>
         <% end %>
       </div>
-        
+
       <div class="row">
         <div class="col-xs-12">
           <h2>The Details</h2>
@@ -58,21 +61,25 @@
           <% end %>
           <% if current_user&.is_admin? || current_user&.is_leader %>
             <%= link_to("Edit Event", edit_event_path(@event), class: 'btn yellow') %>
-            <%= link_to "Attendance List", event_attendance_path(@event), class: 'btn empty' %>
+            <%= link_to "Print Attendance List", event_attendance_path(@event), class: 'btn empty' %>
           <% end %>
         </div>
       </div>
     </div>
 
+    <% if !@event.in_the_past? %>
+      <div class="col-xs-12 center-align">
+        <%= render partial: 'events/share' %>
+      </div>
+    <% end %>
+
     <% if @show_report %>
-      <div class='col-md-6'>
+      <div class='col-xs-12 col-md-6 col-md-offset-3'>
         <%= render partial: 'events/report' %>
       </div>
     <% end %>
 
-    <div class="col-md-6">
-      <%= render partial: 'events/share' %>
-    </div>
+
 
   </div>
 </div>
