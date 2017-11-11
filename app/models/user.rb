@@ -19,6 +19,10 @@ class User < ApplicationRecord
   validates :lname, presence: true
   validates :email, presence: true
 
+  def admin_or_leader?
+    is_admin? || is_leader?
+  end
+
   def name
     "#{fname} #{lname}"
   end

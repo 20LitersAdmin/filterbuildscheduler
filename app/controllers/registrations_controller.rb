@@ -6,10 +6,13 @@ class RegistrationsController < ApplicationController
     raise ActionController::BadRequest, "must accept waiver to participate" if waiver_accepted == '0'
 
     if current_user
-      reg = Registration.create(event_id: params[:event_id],
+      reg = Registration.new(event_id: params[:event_id],
                                  user: current_user,
                                  leader: params.dig(:registration, :leader),
                                  guests_registered: params[:registration][:guests_registered])
+      authorize reg
+      reg.save
+
       if reg.errors.any?
         flash[:danger] = reg.errors.first.join(": ")
       else
@@ -26,10 +29,14 @@ class RegistrationsController < ApplicationController
 
       user.save! && sign_in(:user, user) if user.new_record?
 
-      reg = Registration.create(event_id: params[:event_id],
+      reg = Registration.new(event_id: params[:event_id],
                                  user_id: user.id,
                                  accommodations: params.dig(:registration, :accommodations),
                                  guests_registered: params[:registration][:guests_registered])
+
+      authorize reg
+      reg.save
+
       if reg.errors.any?
         # Make them accept the waiver on their first successful registration, not this
         # failed registration

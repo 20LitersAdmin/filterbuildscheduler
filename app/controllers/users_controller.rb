@@ -1,11 +1,10 @@
 class UsersController < ApplicationController
 
-  before_action only: [:show, :edit, :update] do
-    require_self_or_admin(User.find(params[:id]))
+  before_action only: [:show, :edit, :update, :delete] do
+    find_and_authorize_user
   end
 
   def show
-  	@user = User.find(params[:id])
     @leading_events = @user.registrations
                            .where(leader: false)
                            .joins(:event)
@@ -29,22 +28,26 @@ class UsersController < ApplicationController
   end
 
   def edit
-  	@user = User.find(params[:id])
   end
 
   def update
-    @user = User.find params[:id]
     @user.update user_params
+    flash[:success] = "User updated"
     redirect_to events_path
   end
 
   def delete
-    @user = authorize User.find(params[:id])
     @user.delete
+    flash[:danger] = "User deleted"
     redirect_to users_path
   end
 
   private
+
+  def find_and_authorize_user
+    @user = User.find params[:id]
+    authorize @user
+  end
 
   def user_params
     params.require(:user).permit :fname,
