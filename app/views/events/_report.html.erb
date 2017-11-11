@@ -3,18 +3,18 @@
   <%= f.label :item_goal, label: "Build Goal: #{@event.item_goal}" %>
   <%= f.input :item_results, label: "Total Filters Built: " %>
   <%= f.label :number_registered, label: "Total Builders Registered: #{@event.registrations.sum(:guests_registered)}" %>
-  <%= f.input :attendance, label: "Actual Attendance: ", input_html: { value: @event.registrations.sum(:guests_registered) || '0'} %>
+  <%= f.input :attendance, label: "Actual Attendance: " %>
 
   <%= f.simple_fields_for :registrations do |r| %>
     <div class="row">
       <div class="col-sm-6">
-        <%= r.input :attended, label: "#{r.object.user.name} (expecting #{r.object.guests_registered})", input_html: { checked: true } %>
+        <%= r.input :attended, label: "#{r.object.user.name} (expecting #{r.object.guests_registered})" %>
       </div>
       <div class="col-sm-3 mt-10 right-align-md">
         Guests attended:
       </div>
       <div class="col-sm-3 mt-5">
-        <%= r.input :guests_attended, label: false, input_html: { value: r.object.guests_registered || '0'} %>
+        <%= r.input :guests_attended, label: false %>
       </div>
     </div>
     <div class="row thin">
