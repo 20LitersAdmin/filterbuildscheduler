@@ -1,8 +1,6 @@
 class EventsController < ApplicationController
   acts_as_token_authentication_handler_for User, only: [:delete]
 
-  before_action :require_admin_or_leader, only: [:new, :update, :edit, :attendance]
-
   def index
     our_events = policy_scope(Event).includes(:location, registrations: :user)
     @events = our_events.future
@@ -12,7 +10,6 @@ class EventsController < ApplicationController
   end
 
   def show
-    @image =
     @event = Event.find(params[:id])
 
     @technology = @event.technology
@@ -47,6 +44,8 @@ class EventsController < ApplicationController
 
   def update
     @event = Event.find(params[:id])
+    authorize @event
+
     @event.update(event_params)
     if @event.errors.any?
       flash[:alert] = @event.errors.first.join(": ")
@@ -58,6 +57,7 @@ class EventsController < ApplicationController
 
   def edit
     @event = Event.find(params[:id])
+    authorize @event
 
     if (current_user&.is_admin || @registration&.leader?) && @event.start_time < Time.now
       @show_advanced = true
@@ -68,6 +68,8 @@ class EventsController < ApplicationController
 
   def create
     @event = Event.create(event_params)
+    authorize @event
+
     if @event.errors.any?
       flash[:alert] = @event.errors.first.join(": ")
       redirect_to new_event_path
@@ -78,6 +80,8 @@ class EventsController < ApplicationController
 
   def delete
     @event = authorize Event.find(params[:id])
+    authorize @event
+
     @event.delete!
     flash[:success] = "The event has been cancelled."
     if params[:authentication_token].present?
@@ -89,6 +93,8 @@ class EventsController < ApplicationController
 
   def attendance
     @event = Event.find(params[:id])
+    authorize @event, :edit?
+
     @registrations = Registration.where(event_id: @event.id)
 
     @print_blanks = @event.max_registrations - @event.total_registered + 5
