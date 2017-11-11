@@ -16,13 +16,13 @@ Rails.application.routes.draw do
     resources :registrations
   end
 
-  mount StripeEvent::Engine, at: '/stripe-events'
+  # mount StripeEvent::Engine, at: '/stripe-events'
 
   if Rails.env.development?
     mount LetterOpenerWeb::Engine, at: "/letter_opener"
   end
 
-  
+
   # catch-all for bad url
   get "*path", to:  'pages#route_error'
 end
