@@ -15,7 +15,7 @@
       <ul class="nav navbar-nav navbar-right">
         <% if !current_page?('/events') && !current_page?(root_url) %>
           <li>
-            <%= link_to 'Builds', root_path %> 
+            <%= link_to 'Builds', root_path %>
           </li>
         <% end %>
         <% if !current_page?('/info') %>
@@ -30,7 +30,7 @@
         <% else %>
           <li><%= link_to 'Sign In', user_session_path %></li>
         <% end %>
-          <li><button class="btn btn-primary empty give-button" onclick="location.href='https://20liters.org/get-involved/#organize'"">Give</button></li>
+          <li><a class="btn btn-primary empty give-button" href="https://20liters.org/get-involved/#organize"">Give</a></li>
       </ul>
 
     </div><!-- /.navbar-collapse -->
