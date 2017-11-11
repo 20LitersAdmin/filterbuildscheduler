@@ -11,7 +11,7 @@
   * Trigger POROs from controllers (user#create, user#update, event#create, event#update, registration#report)
 2. Add a Stripe Webhook / API for CauseVox to replace Zapier
   * Accepting & reading Stripe webhook is working
-  * Sending to Kindful os not
+  * Sending to Kindful is not
 2. Add inventory system functionality
 3. Roll in monthly reporting?
 
