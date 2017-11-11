@@ -20,3 +20,12 @@
     fjs.parentNode.insertBefore(js, fjs);
   }(document, 'script', 'facebook-jssdk'));
 </script>
+
+<% content_for :fb_og do %>
+  <meta property="og:url" content="<%= request.url %>">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Filter Build">
+  <meta property="og:description" content="Tackle the global clean water crisis by assembling water filters.">
+  <meta property="og:image" content="<%= image_path('20L_Logo.png') %>">
+<% end %>
+
