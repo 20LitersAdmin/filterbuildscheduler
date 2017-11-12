@@ -1,4 +1,4 @@
-class InventoryStuff < ActiveRecord::Migration[5.1]
+class TechnologyStuff < ActiveRecord::Migration[5.1]
   def change
     add_column :users, :does_inventory , :boolean
 

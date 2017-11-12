@@ -124,36 +124,154 @@
 #   },
 # ])
 
-Registration.create!([
+# Registration.create!([
+#   {
+#     user_id: 1,
+#     guests_registered: 2,
+#     event_id: 1,
+#     leader: true
+#   },
+#   {
+#     user_id: 2,
+#     guests_registered: 4,
+#     event_id: 1
+#   },
+#   {
+#     user_id: 3,
+#     guests_registered: 0,
+#     event_id: 1
+#   },
+#   {
+#     user_id: 4,
+#     guests_registered: 6,
+#     event_id: 1
+#   },
+#   {
+#     user_id: 5,
+#     guests_registered: 3,
+#     event_id: 1
+#   },
+#   {
+#     user_id: 7,
+#     guests_registered: 5,
+#     event_id: 1
+#   },
+# ])
+
+Material.create!([
   {
-    user_id: 1,
-    guests_registered: 2,
-    event_id: 1,
-    leader: true
+    name: 'PVC 2-inch schd 40',
+    supplier: 'Lowes',
+    price_cents: 499,
+    min_order: 1,
+    order_id: "PLB213-45",
+    weeks_to_deliver: 1.5
   },
   {
-    user_id: 2,
-    guests_registered: 4,
-    event_id: 1
+    name: 'PVC 1/2-inch schd 40',
+    supplier: 'Lowes',
+    price_cents: 299,
+    min_order: 1,
+    order_id: "PLB213-40",
+    weeks_to_deliver: 1.2
   },
   {
-    user_id: 3,
-    guests_registered: 0,
-    event_id: 1
+    name: 'Hose 1/2-inch-ID clear flexible',
+    supplier: 'Hoses Online',
+    price_cents: 1600,
+    min_order: 1,
+    order_id: "HO-2345",
+    weeks_to_deliver: 3
   },
   {
-    user_id: 4,
-    guests_registered: 6,
-    event_id: 1
+    name: 'Lumber 2x4x8 pine',
+    supplier: 'Lowes',
+    price_cents: 505,
+    min_order: 1,
+    order_id: "LMB456-01",
+    weeks_to_deliver: 1.5
+  }
+])
+
+Part.create!([
+  {
+    name: "PVC Endcaps 1/2-inch",
+    supplier: 'SupplyHouse.com',
+    order_url: 'https://www.supplyhouse.com',
+    price_cents: 925,
+    min_order: 50,
+    order_id: "615-27",
+    common_id: "half inch endcaps undrilled",
+    weeks_to_deliver: 2,
+    sample_size: 10,
+    sample_weight: 1.125
   },
   {
-    user_id: 5,
-    guests_registered: 3,
-    event_id: 1
+    name: "PVC Endcaps 1/2-inch drilled",
+    common_id: "half inch endcaps drilled",
+    weeks_to_deliver: 2,
+    sample_size: 10,
+    sample_weight: 1.025
   },
   {
-    user_id: 7,
-    guests_registered: 5,
-    event_id: 1
+    name: "Backwash hose",
+    common_id: "backwash hose cut",
+    sample_size: 10,
+    sample_weight: 3,
+    made_from_materials: true,
   },
+  {
+    name: "Filter Cartridge 3-inch",
+    supplier: 'NOK',
+    price_cents: 704,
+    min_order: 500,
+    order_id: "HFMC360211572",
+    weeks_to_deliver: 16,
+    sample_size: 50,
+    sample_weight: 5.25
+  },
+  {
+    name: "35-mm O-ring",
+    supplier: 'NOK',
+    price_cents: 12,
+    min_order: 1200,
+    order_id: "HFMC360211572-01",
+    common_id: "Filter o-ring thick",
+    weeks_to_deliver: 16,
+    sample_size: 100,
+    sample_weight: 0.125
+  },
+  {
+    name: "32-mm O-ring",
+    supplier: 'NOK',
+    price_cents: 8,
+    min_order: 1200,
+    order_id: "HFMC360211572-02",
+    common_id: "Filter o-ring thin",
+    weeks_to_deliver: 16,
+    sample_size: 100,
+    sample_weight: 0.125
+  },
+  {
+    name: "Molded long filter housing component blue",
+    supplier: 'WeMakeYourPlastics',
+    price_cents: 200,
+    min_order: 100,
+    order_id: "050WMYP-01",
+    common_id: "Blue long component",
+    weeks_to_deliver: 10,
+    sample_size: 5,
+    sample_weight: 1.6
+  },
+  {
+    name: "Molded short filter housing component blue",
+    supplier: 'WeMakeYourPlastics',
+    price_cents: 200,
+    min_order: 100,
+    order_id: "050WMYP-02",
+    common_id: "Blue short component",
+    weeks_to_deliver: 10,
+    sample_size: 8,
+    sample_weight: 1.2
+  }
 ])
