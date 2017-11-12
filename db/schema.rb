@@ -10,10 +10,41 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171108175458) do
+ActiveRecord::Schema.define(version: 20171112193830) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "components", force: :cascade do |t|
+    t.string "name", null: false
+    t.integer "sample_size"
+    t.float "sample_weight"
+    t.string "common_id"
+    t.boolean "completed_tech"
+    t.boolean "completed_tech_boxed"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "components_parts", id: false, force: :cascade do |t|
+    t.bigint "component_id", null: false
+    t.bigint "part_id", null: false
+    t.bigint "components_id", null: false
+    t.bigint "parts_id", null: false
+    t.integer "parts_per_component", default: 1, null: false
+    t.index ["components_id"], name: "index_components_parts_on_components_id"
+    t.index ["parts_id"], name: "index_components_parts_on_parts_id"
+  end
+
+  create_table "components_parts_technologies", force: :cascade do |t|
+    t.bigint "components_id"
+    t.bigint "parts_id"
+    t.bigint "technologies_id"
+    t.integer "items_per_technology", default: 1, null: false
+    t.index ["components_id"], name: "index_components_parts_technologies_on_components_id"
+    t.index ["parts_id"], name: "index_components_parts_technologies_on_parts_id"
+    t.index ["technologies_id"], name: "index_components_parts_technologies_on_technologies_id"
+  end
 
   create_table "delayed_jobs", force: :cascade do |t|
     t.integer "priority", default: 0, null: false
@@ -66,6 +97,46 @@ ActiveRecord::Schema.define(version: 20171108175458) do
     t.datetime "updated_at", null: false
     t.datetime "deleted_at"
     t.index ["deleted_at"], name: "index_locations_on_deleted_at"
+  end
+
+  create_table "materials", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "supplier"
+    t.string "order_url"
+    t.integer "price_cents"
+    t.string "price_currency", default: "USD", null: false
+    t.integer "min_order"
+    t.string "order_id"
+    t.float "weeks_to_deliver"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "materials_parts", id: false, force: :cascade do |t|
+    t.bigint "material_id", null: false
+    t.bigint "part_id", null: false
+    t.bigint "materials_id", null: false
+    t.bigint "parts_id", null: false
+    t.integer "parts_per_material", null: false
+    t.index ["materials_id"], name: "index_materials_parts_on_materials_id"
+    t.index ["parts_id"], name: "index_materials_parts_on_parts_id"
+  end
+
+  create_table "parts", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "supplier"
+    t.string "order_url"
+    t.integer "price_cents"
+    t.string "price_currency", default: "USD", null: false
+    t.integer "min_order"
+    t.string "order_id"
+    t.string "common_id"
+    t.float "weeks_to_deliver"
+    t.integer "sample_size"
+    t.float "sample_weight"
+    t.boolean "made_from_materials", default: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "registrations", force: :cascade do |t|
@@ -126,14 +197,22 @@ ActiveRecord::Schema.define(version: 20171108175458) do
     t.string "lname"
     t.datetime "deleted_at"
     t.string "authentication_token", limit: 30
+    t.boolean "does_inventory"
     t.index ["authentication_token"], name: "index_users_on_authentication_token", unique: true
     t.index ["deleted_at"], name: "index_users_on_deleted_at"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  add_foreign_key "components_parts", "components", column: "components_id"
+  add_foreign_key "components_parts", "parts", column: "parts_id"
+  add_foreign_key "components_parts_technologies", "components", column: "components_id"
+  add_foreign_key "components_parts_technologies", "parts", column: "parts_id"
+  add_foreign_key "components_parts_technologies", "technologies", column: "technologies_id"
   add_foreign_key "events", "locations"
   add_foreign_key "events", "technologies"
+  add_foreign_key "materials_parts", "materials", column: "materials_id"
+  add_foreign_key "materials_parts", "parts", column: "parts_id"
   add_foreign_key "registrations", "events"
   add_foreign_key "registrations", "users"
 end
