@@ -20,3 +20,6 @@
   * Import contact (assign external ID) with "update", while matching on [FName, LName, Email], assigning them to the groups ["15780" - builders, "22893" - leaders ]
   * Import event with "update", while matching on "name", let Kindful assign the event ID, must be done with contacts_with_transactions?
 2. How to submit app key? In header?
+
+## The Future
+1. Use Paperclip to add part and component images
