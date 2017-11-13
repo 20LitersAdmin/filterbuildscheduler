@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171113034452) do
+ActiveRecord::Schema.define(version: 20171113184018) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -27,6 +27,13 @@ ActiveRecord::Schema.define(version: 20171113034452) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "components_counts", id: false, force: :cascade do |t|
+    t.bigint "component_id", null: false
+    t.bigint "count_id", null: false
+    t.index ["component_id", "count_id"], name: "index_components_counts_on_component_id_and_count_id"
+    t.index ["count_id", "component_id"], name: "index_components_counts_on_count_id_and_component_id"
+  end
+
   create_table "components_parts", id: false, force: :cascade do |t|
     t.bigint "component_id", null: false
     t.bigint "part_id", null: false
@@ -41,6 +48,34 @@ ActiveRecord::Schema.define(version: 20171113034452) do
     t.integer "components_per_technology", default: 1, null: false
     t.index ["component_id", "technology_id"], name: "index_components_technologies_on_component_id_and_technology_id"
     t.index ["technology_id", "component_id"], name: "index_components_technologies_on_technology_id_and_component_id"
+  end
+
+  create_table "counts", force: :cascade do |t|
+    t.bigint "components_id"
+    t.bigint "parts_id"
+    t.bigint "materials_id"
+    t.integer "loose_count", default: 0, null: false
+    t.integer "unopened_boxes_count", default: 0, null: false
+    t.datetime "deleted_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["components_id"], name: "index_counts_on_components_id"
+    t.index ["materials_id"], name: "index_counts_on_materials_id"
+    t.index ["parts_id"], name: "index_counts_on_parts_id"
+  end
+
+  create_table "counts_materials", id: false, force: :cascade do |t|
+    t.bigint "count_id", null: false
+    t.bigint "material_id", null: false
+    t.index ["count_id", "material_id"], name: "index_counts_materials_on_count_id_and_material_id"
+    t.index ["material_id", "count_id"], name: "index_counts_materials_on_material_id_and_count_id"
+  end
+
+  create_table "counts_parts", id: false, force: :cascade do |t|
+    t.bigint "count_id", null: false
+    t.bigint "part_id", null: false
+    t.index ["count_id", "part_id"], name: "index_counts_parts_on_count_id_and_part_id"
+    t.index ["part_id", "count_id"], name: "index_counts_parts_on_part_id_and_count_id"
   end
 
   create_table "delayed_jobs", force: :cascade do |t|
@@ -79,6 +114,29 @@ ActiveRecord::Schema.define(version: 20171113034452) do
     t.integer "attendance"
     t.integer "boxes_packed"
     t.index ["deleted_at"], name: "index_events_on_deleted_at"
+  end
+
+  create_table "inventories", force: :cascade do |t|
+    t.datetime "date", null: false
+    t.boolean "reported", default: false, null: false
+    t.boolean "receiving", default: false, null: false
+    t.datetime "deleted_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "inventories_technologies", id: false, force: :cascade do |t|
+    t.bigint "inventory_id", null: false
+    t.bigint "technology_id", null: false
+    t.index ["inventory_id", "technology_id"], name: "index_inventories_technologies_on_inventory"
+    t.index ["technology_id", "inventory_id"], name: "index_inventories_technologies_on_technology"
+  end
+
+  create_table "inventories_users", id: false, force: :cascade do |t|
+    t.bigint "inventory_id", null: false
+    t.bigint "user_id", null: false
+    t.index ["inventory_id", "user_id"], name: "index_inventories_users_on_inventory_id_and_user_id"
+    t.index ["user_id", "inventory_id"], name: "index_inventories_users_on_user_id_and_inventory_id"
   end
 
   create_table "locations", force: :cascade do |t|
