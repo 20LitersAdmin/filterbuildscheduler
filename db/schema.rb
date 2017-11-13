@@ -35,14 +35,12 @@ ActiveRecord::Schema.define(version: 20171112193830) do
     t.index ["part_id", "component_id"], name: "index_components_parts_on_part_id_and_component_id"
   end
 
-  create_table "components_parts_technologies", id: false, force: :cascade do |t|
-    t.bigint "components_id"
-    t.bigint "parts_id"
-    t.bigint "technologies_id", null: false
-    t.integer "items_per_technology", default: 1, null: false
-    t.index ["components_id"], name: "index_components_parts_technologies_on_components_id"
-    t.index ["parts_id"], name: "index_components_parts_technologies_on_parts_id"
-    t.index ["technologies_id"], name: "index_components_parts_technologies_on_technologies_id"
+  create_table "components_technologies", id: false, force: :cascade do |t|
+    t.bigint "component_id", null: false
+    t.bigint "technology_id", null: false
+    t.integer "components_per_technology", default: 1, null: false
+    t.index ["component_id", "technology_id"], name: "index_components_technologies_on_component_id_and_technology_id"
+    t.index ["technology_id", "component_id"], name: "index_components_technologies_on_technology_id_and_component_id"
   end
 
   create_table "delayed_jobs", force: :cascade do |t|
@@ -138,6 +136,14 @@ ActiveRecord::Schema.define(version: 20171112193830) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "parts_technologies", id: false, force: :cascade do |t|
+    t.bigint "part_id", null: false
+    t.bigint "technology_id", null: false
+    t.integer "parts_per_technology", default: 1, null: false
+    t.index ["part_id", "technology_id"], name: "index_parts_technologies_on_part_id_and_technology_id"
+    t.index ["technology_id", "part_id"], name: "index_parts_technologies_on_technology_id_and_part_id"
+  end
+
   create_table "registrations", force: :cascade do |t|
     t.integer "user_id", null: false
     t.integer "event_id", null: false
@@ -203,9 +209,6 @@ ActiveRecord::Schema.define(version: 20171112193830) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
-  add_foreign_key "components_parts_technologies", "components", column: "components_id"
-  add_foreign_key "components_parts_technologies", "parts", column: "parts_id"
-  add_foreign_key "components_parts_technologies", "technologies", column: "technologies_id"
   add_foreign_key "events", "locations"
   add_foreign_key "events", "technologies"
   add_foreign_key "registrations", "events"
