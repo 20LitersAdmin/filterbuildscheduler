@@ -29,17 +29,15 @@ ActiveRecord::Schema.define(version: 20171112193830) do
   create_table "components_parts", id: false, force: :cascade do |t|
     t.bigint "component_id", null: false
     t.bigint "part_id", null: false
-    t.bigint "components_id", null: false
-    t.bigint "parts_id", null: false
     t.integer "parts_per_component", default: 1, null: false
-    t.index ["components_id"], name: "index_components_parts_on_components_id"
-    t.index ["parts_id"], name: "index_components_parts_on_parts_id"
+    t.index ["component_id", "part_id"], name: "index_components_parts_on_component_id_and_part_id"
+    t.index ["part_id", "component_id"], name: "index_components_parts_on_part_id_and_component_id"
   end
 
-  create_table "components_parts_technologies", force: :cascade do |t|
+  create_table "components_parts_technologies", id: false, force: :cascade do |t|
     t.bigint "components_id"
     t.bigint "parts_id"
-    t.bigint "technologies_id"
+    t.bigint "technologies_id", null: false
     t.integer "items_per_technology", default: 1, null: false
     t.index ["components_id"], name: "index_components_parts_technologies_on_components_id"
     t.index ["parts_id"], name: "index_components_parts_technologies_on_parts_id"
@@ -115,11 +113,9 @@ ActiveRecord::Schema.define(version: 20171112193830) do
   create_table "materials_parts", id: false, force: :cascade do |t|
     t.bigint "material_id", null: false
     t.bigint "part_id", null: false
-    t.bigint "materials_id", null: false
-    t.bigint "parts_id", null: false
     t.integer "parts_per_material", null: false
-    t.index ["materials_id"], name: "index_materials_parts_on_materials_id"
-    t.index ["parts_id"], name: "index_materials_parts_on_parts_id"
+    t.index ["material_id", "part_id"], name: "index_materials_parts_on_material_id_and_part_id"
+    t.index ["part_id", "material_id"], name: "index_materials_parts_on_part_id_and_material_id"
   end
 
   create_table "parts", force: :cascade do |t|
@@ -204,15 +200,11 @@ ActiveRecord::Schema.define(version: 20171112193830) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
-  add_foreign_key "components_parts", "components", column: "components_id"
-  add_foreign_key "components_parts", "parts", column: "parts_id"
   add_foreign_key "components_parts_technologies", "components", column: "components_id"
   add_foreign_key "components_parts_technologies", "parts", column: "parts_id"
   add_foreign_key "components_parts_technologies", "technologies", column: "technologies_id"
   add_foreign_key "events", "locations"
   add_foreign_key "events", "technologies"
-  add_foreign_key "materials_parts", "materials", column: "materials_id"
-  add_foreign_key "materials_parts", "parts", column: "parts_id"
   add_foreign_key "registrations", "events"
   add_foreign_key "registrations", "users"
 end

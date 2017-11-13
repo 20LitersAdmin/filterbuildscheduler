@@ -39,21 +39,21 @@ class TechnologyStuff < ActiveRecord::Migration[5.1]
     end
 
     create_join_table :materials, :parts do |t|
-      t.references :materials, index: true, foreign_key: true, null: false
-      t.references :parts, index: true, foreign_key: true, null: false
+      t.index [:material_id, :part_id]
+      t.index [:part_id, :material_id]
       t.integer :parts_per_material, null: false
     end
 
     create_join_table :components, :parts do |t|
-      t.references :components, index: true, foreign_key: true, null: false
-      t.references :parts, index: true, foreign_key: true, null: false
+      t.index [:component_id, :part_id]
+      t.index [:part_id, :component_id]
       t.integer :parts_per_component, null: false, default: 1
     end
 
-    create_table :components_parts_technologies do |t|
+    create_table :components_parts_technologies, id: false do |t|
       t.references :components, index: true, foreign_key: true
       t.references :parts, index: true, foreign_key: true
-      t.references :technologies, index: true, foreign_key: true
+      t.references :technologies, index: true, foreign_key: true, null: false
       t.integer :items_per_technology, null: false, default: 1
     end
 
