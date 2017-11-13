@@ -52,6 +52,24 @@ RailsAdmin.config do |config|
     end
   end
 
+  config.model Component do
+    list do
+      scopes [nil, :only_deleted]
+    end
+  end
+
+  config.model Material do
+    list do
+      scopes [nil, :only_deleted]
+    end
+  end
+
+  config.model Part do
+    list do
+      scopes [nil, :only_deleted]
+    end
+  end
+
   config.actions do
     dashboard                     # mandatory
     index                         # mandatory
