@@ -10,6 +10,7 @@ class TechnologyStuff < ActiveRecord::Migration[5.1]
       t.integer :min_order
       t.string :order_id
       t.float :weeks_to_deliver
+      t.datetime :deleted_at
       t.timestamps
     end
 
@@ -25,6 +26,7 @@ class TechnologyStuff < ActiveRecord::Migration[5.1]
       t.integer :sample_size
       t.float :sample_weight
       t.boolean :made_from_materials, default: false
+      t.datetime :deleted_at
       t.timestamps
     end
 
@@ -35,6 +37,7 @@ class TechnologyStuff < ActiveRecord::Migration[5.1]
       t.string :common_id
       t.boolean :completed_tech
       t.boolean :completed_tech_boxed
+      t.datetime :deleted_at
       t.timestamps
     end
 
