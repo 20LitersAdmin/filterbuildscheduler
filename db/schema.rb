@@ -10,10 +10,38 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171108175458) do
+ActiveRecord::Schema.define(version: 20171113034452) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "components", force: :cascade do |t|
+    t.string "name", null: false
+    t.integer "sample_size"
+    t.float "sample_weight"
+    t.string "common_id"
+    t.boolean "completed_tech"
+    t.boolean "completed_tech_boxed"
+    t.datetime "deleted_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "components_parts", id: false, force: :cascade do |t|
+    t.bigint "component_id", null: false
+    t.bigint "part_id", null: false
+    t.integer "parts_per_component", default: 1, null: false
+    t.index ["component_id", "part_id"], name: "index_components_parts_on_component_id_and_part_id"
+    t.index ["part_id", "component_id"], name: "index_components_parts_on_part_id_and_component_id"
+  end
+
+  create_table "components_technologies", id: false, force: :cascade do |t|
+    t.bigint "component_id", null: false
+    t.bigint "technology_id", null: false
+    t.integer "components_per_technology", default: 1, null: false
+    t.index ["component_id", "technology_id"], name: "index_components_technologies_on_component_id_and_technology_id"
+    t.index ["technology_id", "component_id"], name: "index_components_technologies_on_technology_id_and_component_id"
+  end
 
   create_table "delayed_jobs", force: :cascade do |t|
     t.integer "priority", default: 0, null: false
@@ -46,9 +74,10 @@ ActiveRecord::Schema.define(version: 20171108175458) do
     t.integer "technology_id", null: false
     t.boolean "is_private", default: false, null: false
     t.integer "item_goal"
-    t.integer "item_results"
+    t.integer "technologies_built"
     t.datetime "deleted_at"
     t.integer "attendance"
+    t.integer "boxes_packed"
     t.index ["deleted_at"], name: "index_events_on_deleted_at"
   end
 
@@ -66,6 +95,54 @@ ActiveRecord::Schema.define(version: 20171108175458) do
     t.datetime "updated_at", null: false
     t.datetime "deleted_at"
     t.index ["deleted_at"], name: "index_locations_on_deleted_at"
+  end
+
+  create_table "materials", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "supplier"
+    t.string "order_url"
+    t.integer "price_cents"
+    t.string "price_currency", default: "USD", null: false
+    t.integer "min_order"
+    t.string "order_id"
+    t.float "weeks_to_deliver"
+    t.datetime "deleted_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "materials_parts", id: false, force: :cascade do |t|
+    t.bigint "material_id", null: false
+    t.bigint "part_id", null: false
+    t.integer "parts_per_material", null: false
+    t.index ["material_id", "part_id"], name: "index_materials_parts_on_material_id_and_part_id"
+    t.index ["part_id", "material_id"], name: "index_materials_parts_on_part_id_and_material_id"
+  end
+
+  create_table "parts", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "supplier"
+    t.string "order_url"
+    t.integer "price_cents"
+    t.string "price_currency", default: "USD", null: false
+    t.integer "min_order"
+    t.string "order_id"
+    t.string "common_id"
+    t.float "weeks_to_deliver"
+    t.integer "sample_size"
+    t.float "sample_weight"
+    t.boolean "made_from_materials", default: false
+    t.datetime "deleted_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "parts_technologies", id: false, force: :cascade do |t|
+    t.bigint "part_id", null: false
+    t.bigint "technology_id", null: false
+    t.integer "parts_per_technology", default: 1, null: false
+    t.index ["part_id", "technology_id"], name: "index_parts_technologies_on_part_id_and_technology_id"
+    t.index ["technology_id", "part_id"], name: "index_parts_technologies_on_technology_id_and_part_id"
   end
 
   create_table "registrations", force: :cascade do |t|
@@ -126,6 +203,7 @@ ActiveRecord::Schema.define(version: 20171108175458) do
     t.string "lname"
     t.datetime "deleted_at"
     t.string "authentication_token", limit: 30
+    t.boolean "does_inventory"
     t.index ["authentication_token"], name: "index_users_on_authentication_token", unique: true
     t.index ["deleted_at"], name: "index_users_on_deleted_at"
     t.index ["email"], name: "index_users_on_email", unique: true

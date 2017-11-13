@@ -1,14 +1,19 @@
 <h2>Report</h2>
 <%= simple_form_for @event  do |f| %>
   <%= f.label :item_goal, label: "Build Goal: #{@event.item_goal}" %>
-  <%= f.input :item_results, label: "Total Filters Built: " %>
-  <%= f.label :number_registered, label: "Total Builders Registered: #{@event.registrations.sum(:guests_registered)}" %>
-  <%= f.input :attendance, label: "Actual Attendance: " %>
-
+  <%= f.input :technologies_built, label: "Filters built (but not boxed): " %>
+  <%= f.input :boxes_packed, label: "Boxes packed (ready to ship): " %>
+  <%= f.label :number_registered, label: "Total Builders and Leaders Registered: #{@event.registrations.sum(:guests_registered) + @event.registrations.count}" %>
+  <%= f.input :attendance, label: "Total Attendance:" %>
+  <div class="row">
+    <div class="col-xs-12">
+      <h3>Registration-based attendance: <span id="attendance_counter">0</span></h3>
+    </div>
+  </div>
   <%= f.simple_fields_for :registrations do |r| %>
     <div class="row">
       <div class="col-sm-6">
-        <%= r.input :attended, label: "#{r.object.user.name} (expecting #{r.object.guests_registered})" %>
+        <%= r.input :attended, label: "#{r.object.user.name} (with #{r.object.guests_registered} guests)", input_html: { tabindex: '-1' } %>
       </div>
       <div class="col-sm-3 mt-10 right-align-md">
         Guests attended:
@@ -21,5 +26,7 @@
       <hr>
     </div>
   <% end %>
-  <%= f.submit "Submit Report", class: 'btn yellow devise' %>
+  <% if current_page?(controller: 'events', action: 'show') %>
+    <%= f.submit "Submit Report", class: 'btn yellow devise' %>
+  <% end %>
 <% end %>

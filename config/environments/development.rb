@@ -7,7 +7,7 @@ Rails.application.configure do
   config.cache_classes = false
 
   # Do -n-o-t- eager load code on boot.
-  config.eager_load = true
+  config.eager_load = false
 
   # Show full error reports.
   config.consider_all_requests_local = true
