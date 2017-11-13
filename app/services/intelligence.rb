@@ -3,6 +3,7 @@ class Intellegence
   def extrapolate(component)
     # calculate the number of parts in a component
     # adjust the count accordingly
+  end
 
   def inventory_on_hand(part)
     # don't count component::parts marked as completed_tech || completed_tech_boxes
