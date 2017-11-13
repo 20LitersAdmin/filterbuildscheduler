@@ -115,7 +115,8 @@ class EventsController < ApplicationController
                                   :is_private,
                                   :description,
                                   :item_goal,
-                                  :item_results,
+                                  :technologies_built,
+                                  :boxes_packed,
                                   :attendance,
                                   registrations_attributes: [ :id, :attended ]
   end
