@@ -31,13 +31,19 @@
 
     <div class='row'>
       <div class='col-sm-6'>
-    <%= f.input :item_goal %>
+        <%= f.input :item_goal %>
       </div>
-    <% if @show_advanced %>
+      <div class='col-sm-6 height-75'>
+        <%= f.input :is_private, label: 'Private Event' %>
+      </div>
+      <% if @show_advanced %>
         <div class='col-sm-6'>
-          <%= f.input :item_results %>
+          <%= f.input :technologies_built, label: "Filters built (but not boxed): " %>
         </div>
-      </div>
+        <div class='col-sm-6'>
+          <%= f.input :boxes_packed, label: "Boxes packed (ready to ship): " %>
+        </div>
+      </div> <!-- class="row" -->
       <div class='row'>
         <div class='col-sm-6'>
           <%= f.label "Total Registered:" %><br/>
@@ -47,11 +53,16 @@
           <%= f.input :attendance  %>
         </div>
       </div>
+        <div class="row">
+          <div class="col-sm-12">
+            <%= render partial: 'events/report' %>
+          </div>
+        </div>
     <% else %>
       </div>
     <% end %>
 
-    <%= f.input :is_private, label: 'Private Event' %>
+
     <%= f.button :submit, class: 'btn yellow devise' %>
   <% end %>
   <%= link_to "Back", events_path(), class: 'btn blue devise' %>
