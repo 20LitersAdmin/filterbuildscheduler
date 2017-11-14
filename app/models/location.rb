@@ -6,4 +6,8 @@ class Location < ApplicationRecord
   def one_liner
     "#{city}, #{state} #{zip}"
   end
+
+  def addr_one_liner
+    "#{address1}, #{city}, #{state} #{zip}"
+  end
 end
