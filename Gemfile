@@ -33,6 +33,7 @@ gem 'stripe'
 gem 'stripe_event'
 gem 'pry-byebug'
 gem 'money-rails'
+gem 'google_calendar'
 
 group :production do
   gem 'puma'
