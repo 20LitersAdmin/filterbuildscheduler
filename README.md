@@ -5,7 +5,6 @@
   * Needs views / printable
   * Needs variance check
 2. Created event pushes to Google Calendar
-  * https://readysteadycode.com/howto-integrate-google-calendar-with-rails
   * https://github.com/northworld/google_calendar
 2. Figure out Kindful API (Rails: RestClient gem)
   * https://github.com/delongtj/kindful_constant_contact
