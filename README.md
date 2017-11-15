@@ -1,7 +1,13 @@
 # README
 
 ## Things to do
-1. Figure out Kindful API (Rails: RestClient gem)
+1. Add inventory system functionality
+  * Needs views / printable
+  * Needs variance check
+2. Created event pushes to Google Calendar
+  * https://github.com/northworld/google_calendar
+2. Figure out Kindful API (Rails: RestClient gem)
+  * https://github.com/delongtj/kindful_constant_contact
   * Decide on events -- have to have $$ amount [name, id, [contact],[transaction]]
   * Need to build confirm attendance (to trigger 'user attended event [instead of registering]')
   * KINDFUL_API/imports
@@ -12,7 +18,6 @@
 2. Add a Stripe Webhook / API for CauseVox to replace Zapier
   * Accepting & reading Stripe webhook is working
   * Sending to Kindful is not
-2. Add inventory system functionality
 3. Roll in monthly reporting?
 
 ### Learning about Kindful's API
@@ -23,3 +28,5 @@
 
 ## The Future
 1. Use Paperclip to add part and component images
+
+

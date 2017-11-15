@@ -114,4 +114,12 @@ class Event < ApplicationRecord
   def complete?
     technologies_built.present? && attendance.present?
   end
+
+  def privacy_humanize
+    if is_private == true
+      "Private Event"
+    else
+      "Public Event"
+    end
+  end
 end
