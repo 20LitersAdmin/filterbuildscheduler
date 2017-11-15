@@ -47,6 +47,7 @@ class EventsController < ApplicationController
     authorize @event
 
     @event.update(event_params)
+
     if @event.errors.any?
       flash[:alert] = @event.errors.first.join(": ")
       redirect_to edit_event_path(@event)
@@ -69,6 +70,8 @@ class EventsController < ApplicationController
   def create
     @event = Event.create(event_params)
     authorize @event
+
+    EventMailer.send_ical(@event).deliver!
 
     if @event.errors.any?
       flash[:alert] = @event.errors.first.join(": ")
