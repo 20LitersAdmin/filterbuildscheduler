@@ -22,7 +22,6 @@ Rails.application.routes.draw do
     mount LetterOpenerWeb::Engine, at: "/letter_opener"
   end
 
-
   # catch-all for bad url
   get "*path", to:  'pages#route_error'
 end

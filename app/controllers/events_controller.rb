@@ -48,9 +48,6 @@ class EventsController < ApplicationController
 
     @event.update(event_params)
 
-    # gcal = GoogleCalendar.new
-    # gcal.update(@event)
-
     if @event.errors.any?
       flash[:alert] = @event.errors.first.join(": ")
       redirect_to edit_event_path(@event)
@@ -74,9 +71,7 @@ class EventsController < ApplicationController
     @event = Event.create(event_params)
     authorize @event
 
-    # gcal = GoogleCalendar.new
-    # gcal.create(@event)
-
+    EventMailer.send_ical(@event).deliver!
 
     if @event.errors.any?
       flash[:alert] = @event.errors.first.join(": ")
@@ -89,9 +84,6 @@ class EventsController < ApplicationController
   def delete
     @event = authorize Event.find(params[:id])
     authorize @event
-
-    # gcal = GoogleCalendar.new
-    # gcal.destroy(@event)
 
     @event.delete!
     flash[:success] = "The event has been cancelled."

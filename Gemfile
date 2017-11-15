@@ -33,7 +33,7 @@ gem 'stripe'
 gem 'stripe_event'
 gem 'pry-byebug'
 gem 'money-rails'
-gem 'google_calendar'
+gem 'icalendar'
 
 group :production do
   gem 'puma'
@@ -41,7 +41,6 @@ group :production do
 end
 
 group :development, :test do
-
   gem 'rubocop'
   gem 'timecop'
   gem 'factory_bot_rails'
