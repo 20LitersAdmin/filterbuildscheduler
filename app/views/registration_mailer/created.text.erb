@@ -1,12 +1,14 @@
 <%= @recipient.fname %>,
 
-Thanks for registering to build filters with 20 Liters.
+Thanks for registering to build filters with 20 Liters. We're glad you've signed up!
 
 Here are the details:
+=========================
 <%= render partial: 'details' %>
 
-<% if @token %>
-We're glad you've signed up!  Please go to <%= edit_password_url(@recipient, reset_password_token: @token) %> to finish setting up your account.
-<% end %>
+If you plans change and you can't come, please send an email to filterbuilds@20liters.org.
+
+Thanks!
+- 20 Liters
 
 

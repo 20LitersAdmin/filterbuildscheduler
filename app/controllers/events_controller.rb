@@ -71,12 +71,12 @@ class EventsController < ApplicationController
     @event = Event.create(event_params)
     authorize @event
 
-    EventMailer.send_ical(@event).deliver!
-
     if @event.errors.any?
       flash[:alert] = @event.errors.first.join(": ")
       redirect_to new_event_path
     else
+      flash[:success] = "The event has been created."
+      EventMailer.send_ical(@event).deliver!
       redirect_to action: :index
     end
   end

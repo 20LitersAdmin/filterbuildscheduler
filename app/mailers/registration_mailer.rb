@@ -1,4 +1,5 @@
 class RegistrationMailer < ApplicationMailer
+  helper MailerHelper
 
   default from: "filterbuilds@20liters.org"
 
@@ -22,6 +23,7 @@ class RegistrationMailer < ApplicationMailer
     @registration = registration
     @recipient = registration.user
     @event = registration.event
+    @location = @event.location
     mail(to: @recipient.email, subject: "[20 Liters] Reminder for #{@event.title} @ #{@event.start_time.to_formatted_s(:short)}")
   end
 
