@@ -17,8 +17,6 @@ module BuildPlanner
 
     config.action_mailer.default_url_options = { host: "make.20liters.org"}
     config.action_mailer.preview_path = "#{Rails.root}/spec/mailers/previews"
-    config.action_controller.asset_host = "#{Rails.root}"
-    config.action_mailer.asset_host = "#{Rails.root}"
 
     config.serve_static_assets = true
 
