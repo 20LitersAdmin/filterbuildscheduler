@@ -1,4 +1,5 @@
 class RegistrationMailer < ApplicationMailer
+  helper MailerHelper
 
   default from: "filterbuilds@20liters.org"
 

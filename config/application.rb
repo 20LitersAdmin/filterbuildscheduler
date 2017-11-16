@@ -15,6 +15,8 @@ module BuildPlanner
 
     config.active_job.queue_adapter = :delayed_job
 
+    config.action_mailer.default_url_options = { host: "make.20liters.org"}
+
     config.serve_static_assets = true
 
     config.generators do |g|

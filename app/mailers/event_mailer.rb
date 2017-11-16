@@ -1,4 +1,5 @@
 class EventMailer < ApplicationMailer
+  helper MailerHelper
   default from: "filterbuilds@20liters.org"
 
   # content_type "multipart/mixed"
@@ -21,7 +22,7 @@ class EventMailer < ApplicationMailer
       e.description = @description
     end
     cal.append_custom_property('METHOD', 'REQUEST')
-    mail.attachments['20Liters_filterbuild.ics'] = { mime_type: 'text/calendar', content: cal.to_ical }
+    mail.attachments['20Liters_filterbuild_#{@event.start_time.trftime("%Y%m%dT%H%M%S")}.ics'] = { mime_type: 'text/calendar', content: cal.to_ical }
     mail(to: @recipients, subject: '20 Liters: New Filter Build Event Scheduled')
   end
 
