@@ -1,0 +1,31 @@
+<div class="whole" style="position: relative; min-height: 1px; padding-left: 15px; padding-right: 15px; float: left; width: 100%;">
+  <p><%= @recipient.fname %>,</p>
+
+  <p>Thanks for registering to build filters with 20 Liters. We're glad you've signed up!</p>
+
+  <p style="text-decoration: underline; margin-bottom: 6px"><strong>Here are the details</strong></p>
+  <div class="row" style="margin-left: -15px; margin-right: -15px;" >
+    <%= render partial: 'details' %>
+  </div>
+
+  <div class="row" style="margin-top: 26px; margin-left: -15px; margin-right: -15px; ">
+    <div class="whole" style="position: relative; min-height: 16px; padding-left: 15px; padding-right: 15px; float: left; width: 100%; text-align: center;">
+      <p><strong>Have a Question?</strong> Just reply to this email.</p>
+    </div>
+    <div class="whole" style="position: relative; min-height: 16px; padding-left: 15px; padding-right: 15px; float: left; width: 100%; text-align: center;">
+      <p><strong>If plans change and you can't make it</strong>, no worries, just please let us know you're not coming.</p>
+      <%= link_to "Cancel my registration", event_registration_url(@event, @registration, user_token: @recipient.authentication_token, user_email: @recipient.email ), method: :delete, class: "btn blue", style: "display: inline-block; margin-bottom: 0; font-weight: normal; text-align: center; vertical-align: middle; border: 1px solid transparent; white-space: nowrap; padding: 6px 12px; font-size: 14px; text-decoration: none; color: #4a4a4a; background-color: #9bb4c8; border-color: #91a0c8;" %>
+    </div>
+    <% if @token %>
+      <div class="whole" style="position: relative; min-height: 16px; padding-left: 15px; padding-right: 15px; float: left; width: 100%; text-align: center; margin-top: 24px;">
+        <p><strong>If you plan to build often</strong>, you might want to save time by logging in. You can finish setting up your account here:</p>
+        <%= link_to "Create my account", edit_password_url(@recipient, reset_password_token: @token), class: "btn yellow", style: "display: inline-block; margin-bottom: 0; font-weight: normal; text-align: center; vertical-align: middle; border: 1px solid transparent; white-space: nowrap; padding: 6px 12px; font-size: 14px; text-decoration: none; color: #4a4a4a; background-color: #fce000; border-color: ##fcc900;" %>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+
+
+
+
