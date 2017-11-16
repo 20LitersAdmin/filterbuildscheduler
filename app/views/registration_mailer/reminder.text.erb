@@ -1,11 +1,14 @@
-<%= @user.fname %>,
+<%= @recipient.fname %>,
 
 This is a reminder that your filter build for 20 Liters is coming up soon.
 
-If you can no longer make it, <%= link_to "click here to cancel your registration.", event_registration_path(@event, @registration, user_token: @recipient.authentication_token, user_email: @recipient.email ), method: :delete %>
+If you can no longer make it, <%= link_to "click here to cancel your registration.", event_registration_url(@event, @registration, user_token: @recipient.authentication_token, user_email: @recipient.email ), method: :delete %>
 
-If you have any other questions, just email <a href="mailto:filterbuilds@20liters.org">filterbuilds@20liters.org</a>
+If you have any other questions, just reply to this email.
 
 Here are the details:
 =========================
 <%= render partial: 'details' %>
+
+Thanks,
+- 20 Liters

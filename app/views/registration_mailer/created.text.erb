@@ -6,12 +6,9 @@ Here are the details:
 =========================
 <%= render partial: 'details' %>
 
-If you can no longer make it, <%= link_to "click here to cancel your registration.", event_registration_path(@event, @registration, user_token: @recipient.authentication_token, user_email: @recipient.email ), method: :delete %>
+If you plans change and you can't come, please send an email to filterbuilds@20liters.org.
 
-<% if @token %>
-=========================
-If you plan to build often, you might want to save time by logging in. You can finish setting up your account here:
-<%= edit_password_url(@recipient, reset_password_token: @token) %> to
-<% end %>
+Thanks!
+- 20 Liters
 
 
