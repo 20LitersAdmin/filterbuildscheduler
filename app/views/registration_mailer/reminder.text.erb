@@ -4,4 +4,8 @@ This is a reminder that your filter build for 20 Liters is coming up soon.
 
 If you can no longer make it, <%= link_to "click here to cancel your registration.", event_registration_path(@event, @registration, user_token: @recipient.authentication_token, user_email: @recipient.email ), method: :delete %>
 
+If you have any other questions, just email <a href="mailto:filterbuilds@20liters.org">filterbuilds@20liters.org</a>
+
+Here are the details:
+=========================
 <%= render partial: 'details' %>
