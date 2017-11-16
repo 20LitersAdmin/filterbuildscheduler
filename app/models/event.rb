@@ -1,4 +1,6 @@
 class Event < ApplicationRecord
+  extend TimeSplitter::Accessors
+  split_accessor :start_time, :end_time
   acts_as_paranoid
 
   belongs_to :location
