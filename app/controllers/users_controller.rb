@@ -6,22 +6,22 @@ class UsersController < ApplicationController
 
   def show
     @leading_events = @user.registrations
-                           .where(leader: false)
+                           .where(leader: true)
                            .joins(:event)
                            .where('events.end_time > ?', Time.now)
                            .map(&:event)
     @attending_events = @user.registrations
-                             .where(leader: true)
+                             .where(leader: false)
                              .joins(:event)
                              .where('events.end_time > ?', Time.now)
                              .map(&:event)
     @lead_events = @user.registrations
-                         .where(leader: false)
+                         .where(leader: true)
                          .joins(:event)
                          .where('events.end_time < ?', Time.now)
                          .map(&:event)
     @attended_events = @user.registrations
-                             .where(leader: true)
+                             .where(leader: false)
                              .joins(:event)
                              .where('events.end_time < ?', Time.now)
                              .map(&:event)
