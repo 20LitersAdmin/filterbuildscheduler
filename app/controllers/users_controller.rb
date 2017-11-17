@@ -32,7 +32,7 @@ class UsersController < ApplicationController
 
   def update
     @user.update user_params
-    flash[:success] = "User updated"
+    flash[:success] = "Info updated!"
     redirect_to events_path
   end
 

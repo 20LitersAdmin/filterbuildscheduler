@@ -1,0 +1,12 @@
+A new filter build event has been created by <%= @user.name %>.
+
+Details:
+<%= render partial: 'details' %>
+
+Use the link below to add this event to your Google calendar.
+Use the attached iCal for other calendar types.
+
+<%= url_for_gcal(@event) %>
+
+Visit the site:
+https://20liters.org

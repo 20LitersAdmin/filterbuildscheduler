@@ -53,17 +53,17 @@ class Event < ApplicationRecord
 
   def format_time_range
     if start_time.beginning_of_day == end_time.beginning_of_day
-      start_time.strftime("%a, %m/%-d %l:%M%P") + end_time.strftime(" - %l:%M%P")
+      start_time.strftime("%a, %-m/%-d %l:%M%P") + end_time.strftime(" - %l:%M%P")
     else
-      start_time.strftime("%a, %m/%-d at %l:%M%P") + end_time.strftime(" to %a, %m/%-d at %l:%M%P")
+      start_time.strftime("%a, %-m/%-d at %l:%M%P") + end_time.strftime(" to %a, %-m/%-d at %l:%M%P")
     end
   end
 
   def format_date_only
     if start_time.beginning_of_day == end_time.beginning_of_day
-      start_time.strftime("%a, %m/%-d")
+      start_time.strftime("%a, %-m/%-d")
     else
-      start_time.strftime("%a, %m/%-d %l:%M%P") + end_time.strftime(" to %a, %m/%-d %l:%M%P")
+      start_time.strftime("%a, %-m/%-d %l:%M%P") + end_time.strftime(" to %a, %-m/%-d %l:%M%P")
     end
   end
 
@@ -120,6 +120,22 @@ class Event < ApplicationRecord
       "Private Event"
     else
       "Public Event"
+    end
+  end
+
+  def mailer_time
+    start_time.strftime('%a, %-m/%-d')
+  end
+
+  def leaders_names
+    if leaders_registered.present?
+      registrations.registered_as_leader.map { |r| r.user.fname }.join(', ')
+    end
+  end
+
+  def leaders_names_full
+    if leaders_registered.present?
+      registrations.registered_as_leader.map { |r| r.user.name }.join(', ')
     end
   end
 end

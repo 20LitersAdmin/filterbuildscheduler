@@ -4,13 +4,20 @@ class EventMailer < ApplicationMailer
 
   # content_type "multipart/mixed"
 
-  def send_ical(event)
+  def created(event, user)
     @event = event
+    @user = user
     @recipients = User.where(send_notification_emails: true).map { |r| r.email }
-    @location = event.location.addr_one_liner
+    @location = event.location
     @summary = event.title + ": " + event.technology.name
     @description = event.privacy_humanize
     @attachment_title = "20Liters_filterbuild_" + @event.start_time.strftime("%Y%m%dT%H%M") + ".ical"
+
+    if @event.leaders_registered.count == 1
+      @leader_count_text = "The leader is:"
+    elsif @event.leaders_registered.count > 1
+      @leader_count_text = "The leaders are:"
+    end
 
     cal = Icalendar::Calendar.new
     cal.event do |e|
@@ -18,7 +25,7 @@ class EventMailer < ApplicationMailer
       e.dtend = @event.end_time
       e.organizer = "mailto:filterbuilds@20liters.org"
       e.attendee = @recipients
-      e.location = @location
+      e.location = @location.addr_one_liner
       e.summary = @summary
       e.description = @description
     end
