@@ -306,6 +306,7 @@ GEM
       actionpack (>= 4.0)
       activesupport (>= 4.0)
       sprockets (>= 3.0.0)
+    squasher (0.6.0)
     stripe (3.8.0)
       faraday (~> 0.10)
     stripe_event (1.8.0)
@@ -381,6 +382,7 @@ DEPENDENCIES
   sass-rails (~> 5.0)
   simple_form
   simple_token_authentication (~> 1.0)
+  squasher
   stripe
   stripe_event
   therubyracer
