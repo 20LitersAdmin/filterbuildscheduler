@@ -20,6 +20,8 @@ class User < ApplicationRecord
   validates :lname, presence: true
   validates :email, presence: true
 
+  # after_save :notify_email_changed, if: :encrypted_password_changed?
+
   def admin_or_leader?
     is_admin? || is_leader?
   end
