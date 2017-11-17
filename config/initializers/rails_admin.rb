@@ -55,9 +55,12 @@ RailsAdmin.config do |config|
   end
 
   config.model Location do
-    exclude_fields :id, :map_url, :photo_url, :instructions, :created_at, :updated_at, :deleted_at
     list do
       scopes [nil, :only_deleted]
+      field :name
+      field :address1
+      field :address2
+      field :zip
     end
   end
 

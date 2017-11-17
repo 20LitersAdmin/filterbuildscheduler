@@ -4,8 +4,9 @@ class EventMailer < ApplicationMailer
 
   # content_type "multipart/mixed"
 
-  def send_ical(event)
+  def created(event, user)
     @event = event
+    @user = user
     @recipients = User.where(send_notification_emails: true).map { |r| r.email }
     @location = event.location.addr_one_liner
     @summary = event.title + ": " + event.technology.name
