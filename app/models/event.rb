@@ -132,4 +132,10 @@ class Event < ApplicationRecord
       registrations.registered_as_leader.map { |r| r.user.fname }.join(', ')
     end
   end
+
+  def leaders_names_full
+    if leaders_registered.present?
+      registrations.registered_as_leader.map { |r| r.user.name }.join(', ')
+    end
+  end
 end

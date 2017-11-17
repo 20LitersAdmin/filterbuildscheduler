@@ -1,9 +1,10 @@
 A new filter build event has been created by <%= @user.name %>.
 
 Details:
-<%= render partial: '/views/partials/registration_mailer/details' %>
+<%= render partial: 'details' %>
 
-Use the attachment or the link below to add it to your calendar.
+Use the link below to add this event to your Google calendar.
+Use the attached iCal for other calendar types.
 
 <%= url_for_gcal(@event) %>
 

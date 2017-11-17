@@ -1,9 +1,9 @@
-<%= @recipient.fname %>,
+Hello <%= @recipient.fname %>,
 
-This is a reminder that your filter build for 20 Liters is coming up soon.
+Don't forget you registered to build filters with us.
 
-<% if @recipient.password.present? %>
-If you can no longer make it, you can log in and cancel your registration:
+<% if @recipient.encrypted_password.present? %>
+If you can no longer make it, you can log in and cancel your registration (in My Account):
 https://make.20liters.org/users/sign_in
 <% else %>
 If you can no longer make it, please let us know by replying to this email.
@@ -14,6 +14,3 @@ If you have any other questions, feel free to ask!
 Here are the details:
 =========================
 <%= render partial: 'details' %>
-
-Thanks,
-- 20 Liters

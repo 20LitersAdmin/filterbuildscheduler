@@ -9,7 +9,7 @@ class RegistrationMailer < ApplicationMailer
     @event = registration.event
     @location = @event.location
 
-    if @recipient.password.blank?
+    if @recipient.encrypted_password.blank?
       @token = Devise.token_generator.generate(User, :reset_password_token)
       @recipient.reset_password_token = @token[1]
       @token = @token[0]

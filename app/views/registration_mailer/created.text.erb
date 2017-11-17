@@ -1,4 +1,4 @@
-<%= @recipient.fname %>,
+Hello <%= @recipient.fname %>,
 
 Thanks for registering to build filters with 20 Liters. We're glad you've signed up!
 
@@ -6,9 +6,9 @@ Here are the details:
 =========================
 <%= render partial: 'details' %>
 
-If you plans change and you can't come, please send an email to filterbuilds@20liters.org.
-
-Thanks!
-- 20 Liters
-
-
+<% if @recipient.encrypted_password.present? %>
+If you can no longer make it, you can log in and cancel your registration (in My Account):
+https://make.20liters.org/users/sign_in
+<% else %>
+If you can no longer make it, please let us know by replying to this email.
+<% end %>
