@@ -32,5 +32,6 @@
   * 2017-11-17T06:43:38.884139+00:00 app[web.1]: [641df5f6-28a1-4649-bede-5c3d3f5deb0c] AbstractController::ActionNotFound (The action 'show' could not be found for RegistrationsController)
 2. Users reported issues registering on mobile (iPhones?), probably anonymous?
 3. /events/1/edit not submitting, but no errors (nested attributes?) -- only affects past events
+4. bad route: https://make.20liters.org/admin/event/1/edit
 
 
