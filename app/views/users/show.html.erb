@@ -39,7 +39,7 @@
 
   <% if @user.is_leader %>
     <h3>Events you've lead</h3>
-    <% if @leading_events.length.positive? %>
+    <% if @lead_events.length.positive? %>
       <div class="event-container">
         <%= render partial: 'events/event', collection: @lead_events %>
       </div>
@@ -49,7 +49,7 @@
   <% end %>
 
   <h3>Events you've attended</h3>
-  <% if @attending_events.length.positive? %>
+  <% if @attended_events.length.positive? %>
     <div class="event-container">
       <%= render partial: 'events/event', collection: @attended_events %>
     </div>
