@@ -2,9 +2,14 @@
 
 This is a reminder that your filter build for 20 Liters is coming up soon.
 
-If you can no longer make it, <%= link_to "click here to cancel your registration.", event_registration_url(@event, @registration, user_token: @recipient.authentication_token, user_email: @recipient.email ), method: :delete %>
+<% if @recipient.password.present? %>
+If you can no longer make it, you can log in and cancel your registration:
+https://make.20liters.org/users/sign_in
+<% else %>
+If you can no longer make it, please let us know by replying to this email.
+<% end %>
 
-If you have any other questions, just reply to this email.
+If you have any other questions, feel free to ask!
 
 Here are the details:
 =========================

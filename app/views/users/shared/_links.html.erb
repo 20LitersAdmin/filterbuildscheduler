@@ -1,8 +1,8 @@
-<%- if controller_name != 'sessions' %>
+<%- if controller_name != 'sessions' && controller_name != 'passwords' %>
   <%= link_to "Already have an account? Sign in", new_session_path(resource_name), class: "btn empty devise" %><br />
 <% end -%>
 
-<%- if devise_mapping.registerable? && controller_name != 'registrations' %>
+<%- if devise_mapping.registerable? && controller_name != 'registrations' && controller_name != 'passwords' %>
   <%= link_to "Don't have an account? Sign up!", new_registration_path(resource_name), class: "btn yellow devise" %><br />
 <% end -%>
 
