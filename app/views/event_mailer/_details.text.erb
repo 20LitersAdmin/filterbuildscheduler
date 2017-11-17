@@ -1,0 +1,19 @@
+<%= @event.format_time_range %>
+<%= @event.title %>
+
+Location:
+<%= @location.name %>
+<%= @location.address1 %>
+<% if @location.map_url %>
+<%= @location.address2 %>
+<% end %>
+<%= @location.city %>, <%= @location.state %>  <%= @location.zip %>
+
+<% if @location.map_url %>
+Map: <%= @location.map_url %>
+<% end %>
+
+<% if @event.leaders_names.present? %>
+<%= @leader_count_text %>
+<%= @event.leaders_names_full %>
+<% end %>
