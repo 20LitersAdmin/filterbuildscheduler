@@ -45,6 +45,7 @@ group :development, :test do
   gem 'timecop'
   gem 'factory_bot_rails'
   gem 'faker'
+  gem 'squasher'
 end
 
 group :test do
