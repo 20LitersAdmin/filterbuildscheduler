@@ -1,9 +1,9 @@
 class RegistrationMailerPreview < ActionMailer::Preview
   def created
-    RegistrationMailer.created(Registration.last)
+    RegistrationMailer.created(Registration.first)
   end
 
   def reminder
-    RegistrationMailer.reminder(Registration.last)
+    RegistrationMailer.reminder(Registration.first)
   end
 end
