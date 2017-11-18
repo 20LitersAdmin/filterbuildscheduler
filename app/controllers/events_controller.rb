@@ -77,7 +77,7 @@ class EventsController < ApplicationController
       redirect_to new_event_path
     else
       flash[:success] = "The event has been created."
-      EventMailer.created(@event, current_user).deliver!
+      EventMailer.delay.created(@event, current_user)
       redirect_to action: :index
     end
   end
@@ -85,7 +85,6 @@ class EventsController < ApplicationController
   def delete
     @event = authorize Event.find(params[:id])
     authorize @event
-    EventMailer.cancelled(@event, current_user).deliver!
     @event.delete!
     flash[:success] = "The event has been cancelled."
     if params[:authentication_token].present?
