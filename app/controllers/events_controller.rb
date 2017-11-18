@@ -98,7 +98,7 @@ class EventsController < ApplicationController
     @event = Event.find(params[:id])
     authorize @event, :edit?
 
-    @registrations = Registration.where(event_id: @event.id)
+    @registrations = @event.registrations.ordered_by_user_lname
 
     @print_blanks = @event.max_registrations - @event.total_registered + 5
   end
