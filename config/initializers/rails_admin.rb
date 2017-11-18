@@ -43,6 +43,7 @@ RailsAdmin.config do |config|
   end
 
   config.model Event do
+    object_label_method :format_time_range
     list do
       scopes [nil, :only_deleted]
       field :start_time

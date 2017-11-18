@@ -7,6 +7,7 @@ class EventsController < ApplicationController
     if current_user&.is_leader?
       @past_events = our_events.past
     end
+    @user = current_user
   end
 
   def show

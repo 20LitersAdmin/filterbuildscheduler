@@ -55,7 +55,7 @@ class Event < ApplicationRecord
     if start_time.beginning_of_day == end_time.beginning_of_day
       start_time.strftime("%a, %-m/%-d %l:%M%P") + end_time.strftime(" - %l:%M%P")
     else
-      start_time.strftime("%a, %-m/%-d at %l:%M%P") + end_time.strftime(" to %a, %-m/%-d at %l:%M%P")
+      start_time.strftime("%a, %-m/%-d %l:%M%P") + end_time.strftime(" to %a, %-m/%-d at %l:%M%P")
     end
   end
 
@@ -136,6 +136,17 @@ class Event < ApplicationRecord
   def leaders_names_full
     if leaders_registered.present?
       registrations.registered_as_leader.map { |r| r.user.name }.join(', ')
+    end
+  end
+
+  def you_are_attendee(user)
+    if user && registrations.where(user_id: user.id).where(leader: false).present?
+      "(including you)"
+    end
+  end
+  def you_are_leader(user)
+    if user.is_leader && registrations.where(user_id: user.id).where(leader: true).present?
+      "(including you)"
     end
   end
 end

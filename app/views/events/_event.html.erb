@@ -1,4 +1,7 @@
 <div class="event">
+  <% if event.you_are_attendee(@user).present? || event.you_are_leader(@user).present? %>
+    <%= image_tag "registered_badge.png", size: "80x80", class: "registered-badge" %>
+  <% end %>
   <%= link_to event_path(event) do %>
     <div class="top-part-wrapper">
       <div>
@@ -20,7 +23,10 @@
 
     <div class="bar-outer-wrapper <%= 'is_leader' if current_user&.is_leader %>">
       <div class="bar-inner-wrapper">
-        <div class="bar"><%= event.total_registered %> of <%= event.max_registrations %> Registered</div>
+        <div class="bar">
+          <%= event.total_registered %> of <%= event.max_registrations %> Registered
+          <%= event.you_are_attendee(@user) %>.
+        </div>
 
         <% if current_user&.is_leader %>
           <% if event.does_not_need_leaders? %>
@@ -32,6 +38,8 @@
           <% end %>
 
             <%= event.leaders_registered.count %> of <%= event.max_leaders %> Leaders Registered
+            <%= event.you_are_leader(@user) %>.
+
           </div>
         <% end %>
 
