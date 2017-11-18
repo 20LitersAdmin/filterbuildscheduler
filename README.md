@@ -2,8 +2,7 @@
 
 ## Things to do
 1. Don't show leaders on attendance list
-1. Show "You're leading" on Event#show events
-1. Always email-remind Admins of upcoming builds (for prep and printing)
+1. Always email-remind Admins of upcoming builds -- Added, wait for live testing (of both registration#reminder and event#reminder)
 1. Need paper event evaluation forms
 1. Add inventory system functionality
   * Needs views / printable
