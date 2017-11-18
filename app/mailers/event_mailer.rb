@@ -9,7 +9,7 @@ class EventMailer < ApplicationMailer
     @user = user
     @recipients = User.where(send_notification_emails: true).map { |r| r.email }
     @location = event.location
-    @summary = event.title + ": " + event.technology.name
+    @summary = "[20 Liters] " + event.title + ": " + event.technology.name
     @description = event.privacy_humanize
     @attachment_title = "20Liters_filterbuild_" + @event.start_time.strftime("%Y%m%dT%H%M") + ".ical"
 
