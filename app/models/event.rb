@@ -141,12 +141,12 @@ class Event < ApplicationRecord
 
   def you_are_attendee(user)
     if user && registrations.where(user_id: user.id).where(leader: false).present?
-      "(including you)"
+      " (including you)"
     end
   end
   def you_are_leader(user)
     if user&.is_leader && registrations.where(user_id: user.id).where(leader: true).present?
-      "(including you)"
+      " (including you)"
     end
   end
 end
