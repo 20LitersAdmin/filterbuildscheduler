@@ -3,6 +3,7 @@ class RegistrationReminderJob < ApplicationJob
 
   def perform(*args)
     Event.where('start_time > ? and start_time < ?', Time.now, Time.now.tomorrow).each do |e|
+      EventMailer.reminder e
       e.registrations.each do |r|
         RegistrationMailer.reminder r
       end
