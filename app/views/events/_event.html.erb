@@ -24,8 +24,7 @@
     <div class="bar-outer-wrapper <%= 'is_leader' if current_user&.is_leader %>">
       <div class="bar-inner-wrapper">
         <div class="bar">
-          <%= event.total_registered %> of <%= event.max_registrations %> Registered
-          <%= event.you_are_attendee(@user) %>.
+          <%= event.total_registered %> of <%= event.max_registrations %> Registered<%= event.you_are_attendee(@user) %>.
         </div>
 
         <% if current_user&.is_leader %>
@@ -37,8 +36,7 @@
             <div class="bar yellow">
           <% end %>
 
-            <%= event.leaders_registered.count %> of <%= event.max_leaders %> Leaders Registered
-            <%= event.you_are_leader(@user) %>.
+            <%= event.leaders_registered.count %> of <%= event.max_leaders %> Leaders Registered<%= event.you_are_leader(@user) %>.
 
           </div>
         <% end %>
