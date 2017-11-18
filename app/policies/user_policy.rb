@@ -1,10 +1,15 @@
 class UserPolicy < ApplicationPolicy
+
   def delete?
-    user.admin?
+    user.is_admin?
   end
 
   def update?
     user.is_admin? || user == record
+  end
+
+  def show?
+    user == record || user.is_admin?
   end
 
   class Scope

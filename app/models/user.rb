@@ -55,4 +55,8 @@ class User < ApplicationRecord
     Event.distinct.joins('LEFT JOIN registrations ON registrations.event_id = events.id')
          .where('is_private = false OR registrations.user_id = ?', id)
   end
+
+  def has_no_password
+    !encrypted_password.present?
+  end
 end

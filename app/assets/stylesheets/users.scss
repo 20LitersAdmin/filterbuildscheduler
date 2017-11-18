@@ -29,14 +29,22 @@
   }
 }
 
-.qualifications-div {
+.emphasis-div {
   padding: .8em 1em;
-  background-color: $light-grey;
-  // color: white;
+  background-color: $slightly-darker-light-grey;
+  min-height: 268px !important;
+  box-shadow: 0 0 5px #888;
 }
 
 .btn.devise {
   margin-top: .5em;
   margin-bottom: .5em;
   width: 100%;
+}
+
+.user-form-inputs .has-error {
+  color: $red;
+  border-color: $red;
+  -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+  box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
 }
