@@ -2,7 +2,6 @@
 
 ## Things to do
 1. Don't show leaders on attendance list
-1. Always email-remind Admins of upcoming builds -- Added, wait for live testing (of both registration#reminder and event#reminder)
 1. Need paper event evaluation forms
 1. Add inventory system functionality
   * Needs views / printable
@@ -24,11 +23,11 @@
 
 ## The Future
 1. Use Paperclip to add part and component images
+1. Wait for live testing - do builders and admins get reminder emails?
 
 ## BUGS! AHH! BUGS!
 1. Cancelling a registration from an email:
-  * 2017-11-17T06:43:38.884139+00:00 app[web.1]: [641df5f6-28a1-4649-bede-5c3d3f5deb0c] AbstractController::ActionNotFound (The action 'show' could not be found for RegistrationsController)
-2. Users reported issues registering on mobile (iPhones?), probably anonymous?
+  * AbstractController::ActionNotFound (The action 'show' could not be found for RegistrationsController)
 3. /events/1/edit not submitting, but no errors (nested attributes?) -- only affects past events
 4. bad route: https://make.20liters.org/admin/event/1/edit
 

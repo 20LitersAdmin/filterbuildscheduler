@@ -4,6 +4,7 @@ class Registration < ApplicationRecord
   belongs_to :event
   scope :registered_as_leader, -> {where(leader: true)}
   scope :non_leader, -> {where(leader: false)}
+  scope :ordered_by_user_lname, -> { includes(:user).order('users.lname')}
   delegate :waiver_accepted, to: :user, prefix: :false
   attr_accessor :waiver_accepted
 
