@@ -15,4 +15,20 @@ class RegistrationPolicy < ApplicationPolicy
       record.user == user
     end
   end
+
+  def index?
+    user.admin_or_leader?
+  end
+
+  def new?
+    user.admin_or_leader?
+  end
+
+  def edit?
+    user.admin_or_leader?
+  end
+
+  def show?
+    user.admin_or_leader?
+  end
 end

@@ -14,9 +14,10 @@ class EventsController < ApplicationController
 
     # decide whether or not to show the event with a stupidly complicated nested if
     if @event.in_the_past?
-      if current_user&.is_admin || @registration&.leader?
+      if current_user&.is_admin || @registration.leader?
         # past events can only be viewed by admins or those who lead the event.
         @show_event = true
+        @show_admin_registration = true
       else
         @show_event = false
       end

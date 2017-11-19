@@ -3,7 +3,6 @@
 ## Things to do
 1. Post-registration: supress email if event.end_time < Time.now
 3. Updated event sends email when datetime/location changes
-4. Maybe display "Room for ## more" instead of total registered?
 
 1. Need paper event evaluation forms
 1. Add inventory system functionality
