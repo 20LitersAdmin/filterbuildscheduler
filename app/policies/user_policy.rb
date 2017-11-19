@@ -5,15 +5,15 @@ class UserPolicy < ApplicationPolicy
   end
 
   def show?
-    user.is_admin? || user == record
+    if user.present?
+      user.is_admin? || user == record
+    else
+      false
+    end
   end
 
   def update?
     user.is_admin? || user == record
-  end
-
-  def show?
-    user == record || user.is_admin?
   end
 
   class Scope
