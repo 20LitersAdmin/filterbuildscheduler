@@ -5,6 +5,9 @@ class UsersController < ApplicationController
   end
 
   def show
+    if @user.has_no_password
+      flash[:warning] = "You haven't set your password yet, please do so now."
+    end
     @leading_events = @user.registrations
                            .where(leader: true)
                            .joins(:event)
@@ -28,6 +31,9 @@ class UsersController < ApplicationController
   end
 
   def edit
+    if @user.has_no_password
+      flash[:warning] = "You haven't set your password yet, please do so now."
+    end
   end
 
   def update

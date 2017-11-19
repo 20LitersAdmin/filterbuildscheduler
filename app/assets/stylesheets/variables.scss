@@ -29,34 +29,28 @@ $navbar-bg-color: $grey;
   src: url("https://20liters.org/wp-content/themes/twenty-liters/library/fonts/dinpro/DINPro-Regular.woff2");
 }
 
-.alert {
-  background-color: lighten($yellow, 10%);
-  border-color: $yellow;
-  color: $grey;
-  text-align: center;
-}
+// .alert {
+//   background-color: lighten($yellow, 10%);
+//   border-color: $yellow;
+//   color: $grey;
+//   text-align: center;
+// }
 
-.success {
+.alert-success {
   background-color: lighten($yellow, 10%);
   border-color: $yellow;
   color: $grey;
   text-align: center;
 }
-.danger {
+.alert-warning {
   background-color: lighten($red, 30%);
   border-color: $red;
   color: $grey;
   text-align: center;
 }
-.warning {
+.alert-notice {
   background-color: lighten($light-blue, 10%);
   border-color: $light-blue;
-  color: $grey;
-  text-align: center;
-}
-.info {
-  background-color: lighten($yellow, 10%);
-  border-color: $yellow;
   color: $grey;
   text-align: center;
 }
