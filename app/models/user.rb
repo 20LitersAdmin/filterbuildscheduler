@@ -19,6 +19,8 @@ class User < ApplicationRecord
   validates :lname, presence: true
   validates :email, presence: true
 
+  before_save :ensure_authentication_token
+
   # after_save :notify_email_changed, if: :encrypted_password_changed?
 
   def admin_or_leader?
@@ -57,5 +59,20 @@ class User < ApplicationRecord
 
   def has_no_password
     !encrypted_password.present?
+  end
+
+  def ensure_authentication_token
+    if authentication_token.blank?
+      self.authentication_token = generate_authentication_token
+    end
+  end
+
+  private
+
+  def generate_authentication_token
+    loop do
+      token = Devise.friendly_token
+      break token unless User.where(authentication_token: token).first
+    end
   end
 end
