@@ -1,0 +1,18 @@
+<%= simple_form_for [@event, @registration] do |f| %>
+  <%= f.hidden_field :event_id %>
+  <%= simple_fields_for :user do |o| %>
+    <%= o.input :fname, label: 'First Name' %>
+    <%= o.input :lname, label: 'Last Name' %>
+    <%= o.input :email, label: 'Email' %>
+    <p>Room for <%= pluralize(@event.registrations_remaining - 1, 'more guest') %></p>
+    <%= f.input :guests_registered, label: 'Additional Guests (excluding you)', input_html: { min: 0, max: @event.registrations_remaining - 1 } %>
+    <%= f.input :accommodations, label: 'Notes', as: :text %>
+    <div>
+      <h4>
+        <%= f.hidden_field :waiver_accepted, value: '0' %>
+        <%= f.check_box :waiver_accepted, required: true %> <strong>Accept the <a class="waiver_click" data-toggle="modal" data-target="#waiverModal"><%= f.label :waiver_accepted, 'Waiver and Release' %></strong></a>
+      </h4>
+    </div>
+  <% end %>
+  <%= f.submit 'Register', class: 'btn yellow' %>
+<% end %>

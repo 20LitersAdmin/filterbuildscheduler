@@ -1,0 +1,32 @@
+<%= simple_form_for [@event, @registration] do |f| %>
+  <h4><%= current_user.name %> | <%= current_user.email %></h4>
+  <%= link_to('Not you?', destroy_user_session_path, method: :delete, class: "btn empty") %>
+  <% if current_user.can_lead_event?(@event) %>
+    <div>
+      <%= f.label :leader, 'Register as Leader?' %>
+      <%= f.check_box :leader %>
+    </div>
+  <% end %>
+  <div>
+    <p>Room for <%= pluralize(@event.registrations_remaining - 1, 'more guest') %></p>
+    <%= f.input :guests_registered, label: 'Additional Guests (excluding you)', input_html: { min: 0, max: @event.registrations_remaining - 1 } %>
+    <%= f.input :accommodations, label: 'Notes', as: :text %>
+  </div>
+
+  <% if !current_user.waiver_accepted %>
+    <div>
+      <h4>
+        <%= f.hidden_field :waiver_accepted, value: '0' %>
+        <%= f.check_box :waiver_accepted, required: true %> <strong>Accept the <a class="waiver_click" data-toggle="modal" data-target="#waiverModal"><%= f.label :waiver_accepted, 'Waiver and Release' %></strong></a>
+      </h4>
+    </div>
+  <% else %>
+    <%= f.hidden_field :waiver_accepted, value: '1' %>
+    <div>
+      <h5> Review the <a class="waiver_click" data-toggle="modal" data-target="#waiverModal"><%="Waiver and Release"%></a> (accepted on <%= current_user.signed_waiver_on.strftime("%-m/%-d/%Y") %>)
+      </h5>
+    </div>
+  <% end %>
+  <%= f.submit 'Register', class: 'btn yellow' %>
+
+<% end %>
