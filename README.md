@@ -2,6 +2,8 @@
 
 ## Things to do
 1. Registration capping is not working... registration.rb validate :under_max_registration
+  * Patched my own solution into RegistrationController
+  * Maybe display "Room for ## more" instead of total registered?
 1. Need paper event evaluation forms
 1. Add inventory system functionality
   * Needs views / printable
