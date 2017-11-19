@@ -1,7 +1,7 @@
 class Registration < ApplicationRecord
   include ActiveModel::Dirty
   belongs_to :user
-  belongs_to :event
+  belongs_to :event, inverse_of: :registrations
   scope :registered_as_leader, -> {where(leader: true)}
   scope :non_leader, -> {where(leader: false)}
   scope :ordered_by_user_lname, -> { includes(:user).order('users.lname')}

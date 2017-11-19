@@ -17,7 +17,8 @@ class RegistrationsController < ApplicationController
         flash[:danger] = reg.errors.first.join(": ")
       else
         current_user.update_attributes!(signed_waiver_on: Time.now) unless current_user.waiver_accepted
-        RegistrationMailer.delay.created reg
+        #RegistrationMailer.delay.created reg
+        RegistrationMailer.created(reg).deliver!
         flash[:success] = "You successfully registered!"
       end
     else
