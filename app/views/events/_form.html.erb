@@ -53,15 +53,9 @@
           <%= f.input :attendance  %>
         </div>
       </div>
-        <div class="row">
-          <div class="col-sm-12">
-            <%= render partial: 'events/report' %>
-          </div>
-        </div>
     <% else %>
       </div>
     <% end %>
-
 
     <%= f.button :submit, class: 'btn yellow devise' %>
   <% end %>
