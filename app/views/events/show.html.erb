@@ -8,7 +8,39 @@
 
   <div class="row">
     <div class="col-md-6">
-      <%= render partial: 'events/registration' %>
+      <h2>Register</h2>
+      <h4><%= @event.total_registered %> / <%= @event.max_registrations %> registered.
+      </h4>
+      <p>
+        <% if @event.total_registered > 0 %>
+          <% if @event.registrations_remaining.positive? %>
+            Room for <%= pluralize(@event.registrations_remaining, 'more person') %>.
+          <% else %>
+            <strong>Event is full. No more room for additional guests.</strong>
+          <% end %>
+        <% end %>
+      </p>
+      <p><strong>
+        Event <%= pluralize_without_count(@event.registrations.registered_as_leader.count, 'leader') %>: <%= @event.registrations.registered_as_leader.map { |r| r.user.fname }.join(', ') %>
+      </strong></p>
+      <hr>
+      <% if current_user %>
+        <% if current_user.registered?(@event) %>
+          <%= render partial: 'events/registration_registered' %>
+        <% else %>
+          <% if @event.registrations_filled? %>
+            <%= render partial: 'events/registration_full' %>
+          <% else %>
+            <%= render partial: 'events/registration_signedin' %>
+          <% end %>
+        <% end %>
+      <% else # current_user == nil %>
+        <% if @event.registrations_filled? %>
+          <%= render partial: 'events/registration_full' %>
+        <% else %>
+          <%= render partial: 'events/registration_anonymous' %>
+        <% end %>
+      <% end %>
     </div>
     <div class="col-md-6">
       <div class="row">

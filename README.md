@@ -2,14 +2,14 @@
 
 ## Things to do
 1. Post-registration: supress email if event.end_time < Time.now
-1. Registration capping is not working... registration.rb validate :under_max_registration
-  * Patched my own solution into RegistrationController
-  * Maybe display "Room for ## more" instead of total registered?
+3. Updated event sends email when datetime/location changes
+4. Maybe display "Room for ## more" instead of total registered?
+
 1. Need paper event evaluation forms
 1. Add inventory system functionality
   * Needs views / printable
   * Needs variance check
-3. Updated event sends email when datetime/location changes
+
 4. Add a Stripe Webhook / API for CauseVox to replace Zapier
   * Accepting & reading Stripe webhook is working
   * Sending to Kindful is not
@@ -29,6 +29,7 @@
 1. Wait for live testing - do builders and admins get reminder emails?
 
 ## BUGS! AHH! BUGS!
-4. bad route: https://make.20liters.org/admin/event/1/edit
+1. Registration capping is not working... registration.rb validate :under_max_registration
+  * Patched my own solution into RegistrationController
 
 
