@@ -10,30 +10,47 @@ class EventsController < ApplicationController
 
   def show
     @event = Event.find(params[:id])
-
-    @technology = @event.technology
-    if @technology.img_url.present?
-      @tech_img = @technology.img_url
-    end
-
-    if @technology.info_url.present?
-      @tech_info = @technology.info_url
-    end
-
-    redirect_to action: :index if @event.in_the_past? && !current_user.is_leader
-
     @registration = Registration.where(user: current_user, event: @event).first_or_initialize
 
-    if (current_user&.is_admin || @registration&.leader?) && @event.incomplete? && @event.start_time < Time.now
-      @show_report = true
-    else
-      @show_report = false
+    # decide whether or not to show the event with a stupidly complicated nested if
+    if @event.in_the_past?
+      if current_user&.is_admin || @registration&.leader?
+        # past events can only be viewed by admins or those who lead the event.
+        @show_event = true
+      else
+        @show_event = false
+      end
+    else # event is in the future
+      @show_event = true
     end
 
-    if (current_user&.is_admin || @registration&.leader?)
-      @show_edit = true
+    # take action on that decision
+    if @show_event == true
+      @technology = @event.technology
+      if @technology.img_url.present?
+        @tech_img = @technology.img_url
+      end
+
+      if @technology.info_url.present?
+        @tech_info = @technology.info_url
+      end
+
+
+
+      if (current_user&.is_admin || @registration&.leader?) && @event.incomplete? && @event.start_time < Time.now
+        @show_report = true
+      else
+        @show_report = false
+      end
+
+      if (current_user&.is_admin || @registration&.leader?)
+        @show_edit = true
+      else
+        @show_edit = false
+      end
     else
-      @show_edit = false
+      flash[:warning] = "You don't have permission"
+      redirect_to action: :index
     end
   end
 
