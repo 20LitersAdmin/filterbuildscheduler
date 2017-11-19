@@ -25,8 +25,10 @@ class RegistrationsController < ApplicationController
           flash[:danger] = reg.errors.first.join(": ")
         else
           current_user.update_attributes!(signed_waiver_on: Time.now) unless current_user.waiver_accepted
-          RegistrationMailer.delay.created reg
-          # RegistrationMailer.created(reg).deliver!
+          if @event.start_time > Time.now #don't send emails for past events.
+            # RegistrationMailer.delay.created reg
+            RegistrationMailer.created(reg).deliver!
+          end
           flash[:success] = "You successfully registered!"
         end
       else # anonymous user
@@ -52,8 +54,10 @@ class RegistrationsController < ApplicationController
           current_user.update_attributes!(signed_waiver_on: nil)
           flash[:danger] = reg.errors.first.join(": ")
         else
-          RegistrationMailer.delay.created reg
-          # RegistrationMailer.created(reg).deliver!
+          if @event.start_time > Time.now #don't send emails for past events.
+            # RegistrationMailer.delay.created reg
+            RegistrationMailer.created(reg).deliver!
+          end
           flash[:success] = "You successfully registered!"
         end
       end # if current_user
