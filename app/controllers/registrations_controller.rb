@@ -1,5 +1,6 @@
 class RegistrationsController < ApplicationController
   before_action :find_registration, only: [:edit, :update, :destroy]
+  before_action :authenticate_user_from_token!, only: [:edit, :update, :destroy]
 
   def create
     waiver_accepted = params[:registration].delete(:waiver_accepted)
@@ -22,6 +23,7 @@ class RegistrationsController < ApplicationController
         else
           current_user.update_attributes!(signed_waiver_on: Time.now) unless current_user.waiver_accepted
           RegistrationMailer.delay.created reg
+          # RegistrationMailer.created(reg).deliver!
           flash[:success] = "You successfully registered!"
         end
       else # anonymous user
@@ -42,12 +44,13 @@ class RegistrationsController < ApplicationController
         reg.save
 
         if reg.errors.any?
-          # Make them accept the waiver on their first successful registration, not this
+          # Make anonymous users accept the waiver on their first successful registration, not this
           # failed registration
           current_user.update_attributes!(signed_waiver_on: nil)
           flash[:danger] = reg.errors.first.join(": ")
         else
           RegistrationMailer.delay.created reg
+          # RegistrationMailer.created(reg).deliver!
           flash[:success] = "You successfully registered!"
         end
       end # if current_user
@@ -92,5 +95,17 @@ class RegistrationsController < ApplicationController
 
   def find_registration
     @registration = Registration.find(params[:id])
+  end
+
+  private
+
+  def authenticate_user_from_token!
+    user_token = params[:user_token].presence
+    user_email = params[:user_email].presence
+    user = user_token && user_email && User.find_by_email(user_email.to_s)
+
+    if user && Devise.secure_compare(user.authentication_token, params[:user_token])
+      sign_in user
+    end
   end
 end

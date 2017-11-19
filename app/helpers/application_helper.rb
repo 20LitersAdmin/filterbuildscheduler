@@ -1,10 +1,9 @@
 module ApplicationHelper
   def bootstrap_class_for(flash_type)
     h = {
-      success: "alert-success",
-      error: "alert-warning",
-      warning: "alert-warning",
-      notice: "alert-notice"
+      success: "success",
+      danger: "danger",
+      warning: "warning"
     }
     return h[flash_type.to_sym] || flash_type.to_s
   end
