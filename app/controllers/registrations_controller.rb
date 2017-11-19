@@ -3,6 +3,7 @@ class RegistrationsController < ApplicationController
 
   def create
     waiver_accepted = params[:registration].delete(:waiver_accepted)
+
     #raise ActionController::BadRequest, "must accept waiver to participate" if waiver_accepted == '0'
     if waiver_accepted == '0'
       flash[:danger] = "You must review and sign the Liability Waiver first"

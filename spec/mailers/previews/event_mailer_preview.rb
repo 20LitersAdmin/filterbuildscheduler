@@ -3,4 +3,8 @@ class EventMailerPreview < ActionMailer::Preview
   def created
     EventMailer.created(Event.first, User.first)
   end
+
+  def reminder
+    EventMailer.reminder(Event.last)
+  end
 end
