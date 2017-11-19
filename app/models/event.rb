@@ -95,6 +95,10 @@ class Event < ApplicationRecord
     total_registered >= max_registrations
   end
 
+  def registrations_remaining
+    max_registrations - total_registered
+  end
+
   def does_not_need_leaders?
     leaders_registered.count >= max_leaders
   end

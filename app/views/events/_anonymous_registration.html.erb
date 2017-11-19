@@ -4,7 +4,7 @@
     <%= o.input :fname, label: 'First Name' %>
     <%= o.input :lname, label: 'Last Name' %>
     <%= o.input :email, label: 'Email' %>
-    <%= f.input :guests_registered, label: 'Additional Guests (excluding you)' %>
+    <%= f.input :guests_registered, label: 'Additional Guests (excluding you)', input_html: { min: 0, max: @event.registrations_remaining - 1 } %>
     <%= f.input :accommodations, label: 'Notes', as: :text %>
     <div>
       <h4>

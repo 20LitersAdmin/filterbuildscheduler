@@ -4,12 +4,15 @@ class RegistrationsController < ApplicationController
 
   def create
     waiver_accepted = params[:registration].delete(:waiver_accepted)
+    @event = Event.find(params[:event_id])
 
     #raise ActionController::BadRequest, "must accept waiver to participate" if waiver_accepted == '0'
     if waiver_accepted == '0'
       flash[:danger] = "You must review and sign the Liability Waiver first"
+    elsif @event.max_registrations < (@event.total_registered + params[:registration][:guests_registered].to_i + 1) #count up the totals and validate
+      # This should be handled by Registration.under_max_registrations?
+      flash[:danger] = "There is only room for #{@event.registrations_remaining - 1} guests at this event."
     else
-
       if current_user
         reg = Registration.new(event_id: params[:event_id],
                                    user: current_user,
