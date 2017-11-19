@@ -18,58 +18,60 @@ class RegistrationsController < ApplicationController
       flash[:danger] = "There is only room for #{@event.registrations_remaining - 1} guests at this event."
     else # stop hacking validations
 
-      # This is structured for the event#show imbedded form, probably need a separate way to handle registration# actions
-      if current_user
-        reg = Registration.new(event_id: params[:event_id],
-                                   user: current_user,
-                                   leader: params.dig(:registration, :leader),
-                                   guests_registered: params[:registration][:guests_registered])
-        authorize reg
-        reg.save
-
-        if reg.errors.any?
-          flash[:danger] = reg.errors.first.join(": ")
-        else
-          current_user.update_attributes!(signed_waiver_on: Time.now) unless current_user.waiver_accepted
-          if @event.start_time > Time.now #don't send emails for past events.
-            # RegistrationMailer.delay.created reg
-            RegistrationMailer.created(reg).deliver!
-          end
-          flash[:success] = "You successfully registered!"
+      case params[:registration][:form_source]
+        # Admin registering for user      <- find_or_initialize user && save
+        # Anon user registering for self  <-- find_or_initialize user && save && signin
+        # Current_user self-registering   <-- current_user
+      when "admin"
+        @user = User.find_or_initialize_by(email: user_params[:email]) do |user|
+          user.fname ||= user_params[:fname]
+          user.lname ||= user_params[:lname]
+          user.signed_waiver_on ||= Time.now
         end
-      else # anonymous user
-        user = User.find_or_initialize_by(email: user_params[:email]) do |user|
+        @user.save!
+        @leader = false
+
+      when "anon"
+        @user = User.find_or_initialize_by(email: user_params[:email]) do |user|
           user.fname = user_params[:fname]
           user.lname = user_params[:lname]
           user.signed_waiver_on = Time.now
         end
+        @user.save!
+        sign_in(:user, @user)
+        @leader = false
 
-        user.save! && sign_in(:user, user) if user.new_record?
+      when "self"
+        @user = current_user
+        @user.update_attributes!(signed_waiver_on: Time.now) unless current_user.waiver_accepted
+        @leader = params[:registration][:leader]
+      end
 
-        reg = Registration.new(event_id: params[:event_id],
-                                   user_id: user.id,
-                                   accommodations: params.dig(:registration, :accommodations),
-                                   guests_registered: params[:registration][:guests_registered])
+      registration = Registration.new(event: @event,
+                              user: @user,
+                            leader: @leader,
+                 guests_registered: params[:registration][:guests_registered],
+                 accommodations: params[:registration][:accommodations])
 
-        authorize reg
-        reg.save
+      authorize registration
+      registration.save!
 
-        if reg.errors.any?
-          # Make anonymous users accept the waiver on their first successful registration, not this
-          # failed registration
-          current_user.update_attributes!(signed_waiver_on: nil)
-          flash[:danger] = reg.errors.first.join(": ")
-        else
-          if @event.start_time > Time.now #don't send emails for past events.
-            # RegistrationMailer.delay.created reg
-            RegistrationMailer.created(reg).deliver!
-          end
-          flash[:success] = "You successfully registered!"
+      if registration.errors.any?
+        flash[:danger] = registration.errors.first.join(": ")
+      else
+        if @event.start_time > Time.now # don't send emails for past events.
+          # RegistrationMailer.delay.created reg
+          RegistrationMailer.created(registration).deliver!
         end
-      end # if current_user
+        flash[:success] = "Registration successful!"
+      end
 
+      if params[:form_source] == "admin"
+        redirect_to event_registrations_path @event
+      else
+        redirect_to event_path @event
+      end
     end
-    redirect_to event_path params[:event_id]
   end
 
   def new

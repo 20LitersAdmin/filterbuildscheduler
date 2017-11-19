@@ -43,4 +43,7 @@ class Registration < ApplicationRecord
     end
   end
 
+  def form_source
+  end
+
 end

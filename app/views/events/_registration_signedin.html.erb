@@ -1,4 +1,5 @@
 <%= simple_form_for [@event, @registration] do |f| %>
+  <%= f.hidden_field :form_source, input_html: { value: "self" } %>
   <h4><%= current_user.name %> | <%= current_user.email %></h4>
   <%= link_to('Not you?', destroy_user_session_path, method: :delete, class: "btn empty") %>
   <% if current_user.can_lead_event?(@event) %>

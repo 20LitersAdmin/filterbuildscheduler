@@ -1,2 +1,26 @@
-<h2>Register A Person</h2>
-<%= render partial: "form" %>
+<div class="container event-show">
+  <div class="page-header">
+    <h1>Register someone for <%= @event.title %></h1>
+    <% if @event.is_private %>
+      <h4 class="center-align">Private Event</h4>
+    <% end %>
+  </div>
+</div>
+<div>
+  <h4><%= @event.total_registered %> / <%= @event.max_registrations %> registered.
+  </h4>
+  <p>
+    <% if @event.total_registered > 0 %>
+      <% if @event.registrations_remaining.positive? %>
+        Room for <%= pluralize(@event.registrations_remaining, 'more person') %>.
+      <% else %>
+        <strong>Event is full. No more room for additional guests.</strong>
+      <% end %>
+    <% end %>
+  </p>
+  <%= render partial: "form" %>
+</div>
+
+<div>
+  <%= link_to "Back to Registration List", event_registrations_path(@event), class: "btn yellow" %>
+</div>
