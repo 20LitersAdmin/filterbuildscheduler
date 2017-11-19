@@ -1,6 +1,4 @@
 class EventsController < ApplicationController
-  acts_as_token_authentication_handler_for User, only: [:delete]
-
   def index
     our_events = policy_scope(Event).includes(:location, registrations: :user)
     @events = our_events.future
@@ -87,11 +85,7 @@ class EventsController < ApplicationController
     authorize @event
     @event.delete!
     flash[:success] = "The event has been cancelled."
-    if params[:authentication_token].present?
-      redirect_to home_path
-    else
-      redirect_to events_path
-    end
+    redirect_to events_path
   end
 
   def attendance
@@ -121,6 +115,6 @@ class EventsController < ApplicationController
                                   :technologies_built,
                                   :boxes_packed,
                                   :attendance,
-                                  registrations_attributes: [ :id, :attended ]
+                                  registrations_attributes: [ :id, :user_id, :event_id, :attended, :leader, :guests_registered, :guests_attended ]
   end
 end
