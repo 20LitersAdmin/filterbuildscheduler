@@ -3,51 +3,56 @@ class RegistrationsController < ApplicationController
 
   def create
     waiver_accepted = params[:registration].delete(:waiver_accepted)
-    raise ActionController::BadRequest, "must accept waiver to participate" if waiver_accepted == '0'
 
-    if current_user
-      reg = Registration.new(event_id: params[:event_id],
-                                 user: current_user,
-                                 leader: params.dig(:registration, :leader),
-                                 guests_registered: params[:registration][:guests_registered])
-      authorize reg
-      reg.save
-
-      if reg.errors.any?
-        flash[:danger] = reg.errors.first.join(": ")
-      else
-        current_user.update_attributes!(signed_waiver_on: Time.now) unless current_user.waiver_accepted
-        #RegistrationMailer.delay.created reg
-        RegistrationMailer.created(reg).deliver!
-        flash[:success] = "You successfully registered!"
-      end
+    #raise ActionController::BadRequest, "must accept waiver to participate" if waiver_accepted == '0'
+    if waiver_accepted == '0'
+      flash[:danger] = "You must review and sign the Liability Waiver first"
     else
-      user = User.find_or_initialize_by(email: user_params[:email]) do |user|
-        user.fname = user_params[:fname]
-        user.lname = user_params[:lname]
-        user.signed_waiver_on = Time.now
-      end
 
-      user.save! && sign_in(:user, user) if user.new_record?
+      if current_user
+        reg = Registration.new(event_id: params[:event_id],
+                                   user: current_user,
+                                   leader: params.dig(:registration, :leader),
+                                   guests_registered: params[:registration][:guests_registered])
+        authorize reg
+        reg.save
 
-      reg = Registration.new(event_id: params[:event_id],
-                                 user_id: user.id,
-                                 accommodations: params.dig(:registration, :accommodations),
-                                 guests_registered: params[:registration][:guests_registered])
+        if reg.errors.any?
+          flash[:danger] = reg.errors.first.join(": ")
+        else
+          current_user.update_attributes!(signed_waiver_on: Time.now) unless current_user.waiver_accepted
+          RegistrationMailer.delay.created reg
+          flash[:success] = "You successfully registered!"
+        end
+      else # anonymous user
+        user = User.find_or_initialize_by(email: user_params[:email]) do |user|
+          user.fname = user_params[:fname]
+          user.lname = user_params[:lname]
+          user.signed_waiver_on = Time.now
+        end
 
-      authorize reg
-      reg.save
+        user.save! && sign_in(:user, user) if user.new_record?
 
-      if reg.errors.any?
-        # Make them accept the waiver on their first successful registration, not this
-        # failed registration
-        current_user.update_attributes!(signed_waiver_on: nil)
-        flash[:danger] = reg.errors.first.join(": ")
-      else
-        RegistrationMailer.delay.created reg
-        flash[:success] = "You successfully registered!"
-      end
-    end
+        reg = Registration.new(event_id: params[:event_id],
+                                   user_id: user.id,
+                                   accommodations: params.dig(:registration, :accommodations),
+                                   guests_registered: params[:registration][:guests_registered])
+
+        authorize reg
+        reg.save
+
+        if reg.errors.any?
+          # Make them accept the waiver on their first successful registration, not this
+          # failed registration
+          current_user.update_attributes!(signed_waiver_on: nil)
+          flash[:danger] = reg.errors.first.join(": ")
+        else
+          RegistrationMailer.delay.created reg
+          flash[:success] = "You successfully registered!"
+        end
+      end # if current_user
+
+    end # if waiver_accepted == '0'
 
     redirect_to event_path params[:event_id]
   end
