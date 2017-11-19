@@ -65,7 +65,7 @@ class EventsController < ApplicationController
     @event.update(event_params)
 
     if @event.errors.any?
-      flash[:alert] = @event.errors.first.join(": ")
+      flash[:warning] = @event.errors.first.join(": ")
       redirect_to edit_event_path(@event)
     else
       redirect_to event_path(@event)
@@ -88,7 +88,7 @@ class EventsController < ApplicationController
     authorize @event
 
     if @event.errors.any?
-      flash[:alert] = @event.errors.first.join(": ")
+      flash[:warning] = @event.errors.first.join(": ")
       redirect_to new_event_path
     else
       flash[:success] = "The event has been created."
