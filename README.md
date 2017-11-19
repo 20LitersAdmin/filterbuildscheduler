@@ -1,6 +1,7 @@
 # README
 
 ## Things to do
+1. Post-registration: supress email if event.end_time < Time.now
 1. Registration capping is not working... registration.rb validate :under_max_registration
   * Patched my own solution into RegistrationController
   * Maybe display "Room for ## more" instead of total registered?
@@ -28,9 +29,6 @@
 1. Wait for live testing - do builders and admins get reminder emails?
 
 ## BUGS! AHH! BUGS!
-1. Cancelling a registration from an email:
-  * AbstractController::ActionNotFound (The action 'show' could not be found for RegistrationsController)
-3. /events/1/edit not submitting, but no errors (nested attributes?) -- only affects past events
 4. bad route: https://make.20liters.org/admin/event/1/edit
 
 
