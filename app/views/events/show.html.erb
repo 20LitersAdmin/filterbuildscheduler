@@ -4,6 +4,9 @@
     <% if @event.is_private %>
       <h4 class="center-align">Private Event</h4>
     <% end %>
+    <% if @show_admin_registration %>
+      <%= link_to "Manage / Register Builders", event_registrations_path(@event), class: "btn blue" %>
+    <% end %>
   </div>
 
   <div class="row">
@@ -24,23 +27,23 @@
         Event <%= pluralize_without_count(@event.registrations.registered_as_leader.count, 'leader') %>: <%= @event.registrations.registered_as_leader.map { |r| r.user.fname }.join(', ') %>
       </strong></p>
       <hr>
-      <% if current_user %>
-        <% if current_user.registered?(@event) %>
-          <%= render partial: 'events/registration_registered' %>
-        <% else %>
+        <% if current_user %>
+          <% if current_user.registered?(@event) %>
+            <%= render partial: 'events/registration_registered' %>
+          <% else %>
+            <% if @event.registrations_filled? %>
+              <%= render partial: 'events/registration_full' %>
+            <% else %>
+              <%= render partial: 'events/registration_signedin' %>
+            <% end %>
+          <% end %>
+        <% else # current_user == nil %>
           <% if @event.registrations_filled? %>
             <%= render partial: 'events/registration_full' %>
           <% else %>
-            <%= render partial: 'events/registration_signedin' %>
+            <%= render partial: 'events/registration_anonymous' %>
           <% end %>
         <% end %>
-      <% else # current_user == nil %>
-        <% if @event.registrations_filled? %>
-          <%= render partial: 'events/registration_full' %>
-        <% else %>
-          <%= render partial: 'events/registration_anonymous' %>
-        <% end %>
-      <% end %>
     </div>
     <div class="col-md-6">
       <div class="row">

@@ -1,0 +1,20 @@
+<div class="container event-show">
+  <div class="page-header">
+    <h1>Registrations for <%= @event.title %></h1>
+    <% if @event.is_private %>
+      <h4 class="center-align">Private Event</h4>
+    <% end %>
+  </div>
+</div>
+
+<div class="col-xs-12">
+  <% if @registrations.count.positive? %>
+    A list of currently registered people
+  <% else %>
+    <h3>No registrations found.</h3>
+  <% end %>
+</div>
+
+<div class="col-xs-12">
+  <%= link_to "New Registration", new_event_registration_path(@event), class: "btn yellow" %>
+</div>

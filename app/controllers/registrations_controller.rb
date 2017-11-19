@@ -2,17 +2,23 @@ class RegistrationsController < ApplicationController
   before_action :find_registration, only: [:edit, :update, :destroy]
   before_action :authenticate_user_from_token!, only: [:edit, :update, :destroy]
 
+  def index
+    @event = Event.find(params[:event_id])
+    @registrations = @event.registrations
+  end
+
   def create
     waiver_accepted = params[:registration].delete(:waiver_accepted)
     @event = Event.find(params[:event_id])
 
-    #raise ActionController::BadRequest, "must accept waiver to participate" if waiver_accepted == '0'
     if waiver_accepted == '0'
       flash[:danger] = "You must review and sign the Liability Waiver first"
     elsif @event.max_registrations < (@event.total_registered + params[:registration][:guests_registered].to_i + 1) #count up the totals and validate
       # This should be handled by Registration.under_max_registrations?
       flash[:danger] = "There is only room for #{@event.registrations_remaining - 1} guests at this event."
-    else
+    else # stop hacking validations
+
+      # This is structured for the event#show imbedded form, probably need a separate way to handle registration# actions
       if current_user
         reg = Registration.new(event_id: params[:event_id],
                                    user: current_user,
@@ -62,12 +68,19 @@ class RegistrationsController < ApplicationController
         end
       end # if current_user
 
-    end # if waiver_accepted == '0'
-
+    end
     redirect_to event_path params[:event_id]
   end
 
+  def new
+    @event = Event.find(params[:event_id])
+    @registration = Registration.new(event_id: @event.id)
+  end
+
   def edit
+  end
+
+  def show
   end
 
   def update
