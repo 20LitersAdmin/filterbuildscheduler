@@ -19,7 +19,7 @@
 
     <div class="whole" style="position: relative; min-height: 16px; padding-left: 15px; padding-right: 15px; float: left; width: 100%; text-align: left;">
       <p><strong>If your plans change and you can't make it</strong>, no worries, just please let us know you're not coming.</p>
-      <%= link_to "Cancel my registration", event_registration_url(@event, @registration, user_token: @recipient.authentication_token, user_email: @recipient.email ), method: :delete, class: "btn blue", style: "display: inline-block; margin-bottom: 0; font-weight: normal; text-align: center; vertical-align: middle; border: 1px solid transparent; white-space: nowrap; padding: 6px 12px; font-size: 14px; text-decoration: none; color: #4a4a4a; background-color: #9bb4c8; border-color: #91a0c8;" %>
+      <%= link_to "Cancel my registration", edit_event_registration_url(@event, @registration, user_token: @recipient.authentication_token, user_email: @recipient.email ), class: "btn blue", style: "display: inline-block; margin-bottom: 0; font-weight: normal; text-align: center; vertical-align: middle; border: 1px solid transparent; white-space: nowrap; padding: 6px 12px; font-size: 14px; text-decoration: none; color: #4a4a4a; background-color: #9bb4c8; border-color: #91a0c8;" %>
     </div>
     <div class="whole" style="position: relative; min-height: 16px; padding-left: 15px; padding-right: 15px; float: left; width: 100%; text-align: left; margin-top: 24px;">
       <% if @token %>
