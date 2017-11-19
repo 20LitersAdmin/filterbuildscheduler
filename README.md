@@ -1,7 +1,9 @@
 # README
 
 ## Things to do
-1. Post-registration: supress email if event.end_time < Time.now
+1. event/:id/registration actions -- new: PUNDIT NotAuthorizedError
+
+1. Post-registration: supress email if event.end_time < Time.now -- needs to be tested
 3. Updated event sends email when datetime/location changes
 
 1. Need paper event evaluation forms

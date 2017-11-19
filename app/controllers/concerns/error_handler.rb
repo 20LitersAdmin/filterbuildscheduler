@@ -7,7 +7,7 @@ module ErrorHandler
   end
 
   def render_forbidden
-    flash[:danger] = 'You do not have permission'
+    flash[:danger] = 'You do not have permission: PUNDIT CALL'
     redirect_back(fallback_location: root_path)
   end
 end
