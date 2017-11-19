@@ -9,7 +9,7 @@ class EventMailer < ApplicationMailer
     @user = user
     @recipients = User.where(send_notification_emails: true).map { |r| r.email }
     @location = event.location
-    @summary = event.title + ": " + event.technology.name
+    @summary = "[20 Liters] " + event.title + ": " + event.technology.name
     @description = event.privacy_humanize
     @attachment_title = "20Liters_filterbuild_" + @event.start_time.strftime("%Y%m%dT%H%M") + ".ical"
 
@@ -31,6 +31,19 @@ class EventMailer < ApplicationMailer
     end
     cal.append_custom_property('METHOD', 'REQUEST')
     mail.attachments[@attachment_title] = { mime_type: 'text/calendar', content: cal.to_ical }
-    mail(to: @recipients, subject: '20 Liters: New Filter Build Event Scheduled')
+    mail(to: @recipients, subject: '[20 Liters] New Filter Build Event Scheduled')
+  end
+
+  def reminder(event)
+    @event = event
+    @recipients = User.where(send_notification_emails: true).map { |r| r.email }
+    @location = event.location
+    if @event.leaders_registered.count == 1
+      @leader_count_text = "The leader is:"
+    elsif @event.leaders_registered.count > 1
+      @leader_count_text = "The leaders are:"
+    end
+
+    mail(to: @recipients, subject: '[20 Liters] Upcoming Filter Build Event')
   end
 end
