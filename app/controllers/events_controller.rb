@@ -63,6 +63,17 @@ class EventsController < ApplicationController
     @event = Event.find(params[:id])
     authorize @event
 
+    if @event.start_time > Time.now && (@event.start_time_changed? || @event.end_time_changed? || @event.location_id_changed? || @event.technology_id_changed? || @event.is_private_changed?)
+      # EventMailer.delay.changed(@event, current_user)
+      EventMailer.changed(@event, current_user).deliver!
+      if @event.registrations.exists? && ( @event.start_time_changed? || @event.end_time_changed? || @event.location_id_changed? || @event.technology_id_changed? )
+        @event.registrations.each do |registration|
+          # RegistrationMailer.delay.event_changed(registration, @event)
+          RegistrationMailer.event_changed(registration, @event).deliver!
+        end
+      end
+    end
+
     @event.update(event_params)
 
     if @event.errors.any?
