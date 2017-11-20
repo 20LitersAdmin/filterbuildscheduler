@@ -1,0 +1,59 @@
+<div class="row">
+  <div class="whole" style="position: relative; min-height: 1px; padding-left: 15px; padding-right: 15px; float: left; width: 100%;">
+    <h2>A filter build event was changed by <%= @user.name %></h2>
+    <% if @registered_users_notified %>
+      <p>The system sent emails to everyone who was registered, informing them of these changes.</p>
+    <% end %>
+  </div>
+
+  <div class="whole" style="position: relative; min-height: 1px; padding-left: 15px; padding-right: 15px; float: left; width: 100%;">
+    <h3 style="margin-bottom: 6px"><strong>Here are the changes:</strong></h3>
+  </div>
+  <div class="whole" style="position: relative; min-height: 1px; padding-left: 15px; padding-right: 15px; float: left; width: 100%;">
+    <% if @start_time || @end_time %>
+      <h4>The time was changed:</h4>
+      <p>Original: <%= format_changed_time_range(@event.start_time_was, @event.end_time_was) %></p>
+      <p>Now: <%= format_changed_time_range(@event.start_time, @event.end_time) %></p>
+    <% end %>
+  </div>
+
+  <div class="whole" style="position: relative; min-height: 1px; padding-left: 15px; padding-right: 15px; float: left; width: 100%;">
+    <% if @location_id %>
+      <h4>The location was changed:</h4>
+      <p>Original: <%= @location_was %></p>
+      <p>Now: <%= @location %></p>
+    <% end %>
+  </div>
+  <div class="whole" style="position: relative; min-height: 1px; padding-left: 15px; padding-right: 15px; float: left; width: 100%;">
+    <% if @technology_id %>
+      <h4>The Technology was changed:</h4>
+      <p>Original: <%= @technology_was.name %></p>
+      <p>Now: <%= @technology.name %></p>
+    <% end %>
+  </div>
+  <div class="whole" style="position: relative; min-height: 1px; padding-left: 15px; padding-right: 15px; float: left; width: 100%;">
+    <% if @is_private %>
+      <p><strong>The event type was changed:</strong> <%= privacy_case(@is_private) %></p>
+    <% end %>
+  </div>
+</div>
+
+<div class="row">
+  <div class="whole" style="position: relative; min-height: 1px; padding-left: 15px; padding-right: 15px; float: left; width: 100%;">
+    <h4>Was this a mistake?</h4>
+  </div>
+  <div class="whole" style="position: relative; min-height: 1px; padding-left: 15px; padding-right: 15px; float: left; width: 50%; text-align: center;">
+    <%= link_to "Go to changed filter build", event_url(@event), class: "btn blue", style: "display: inline-block; margin-bottom: 0; font-weight: normal; text-align: center; vertical-align: middle; border: 1px solid transparent; white-space: nowrap; padding: 6px 12px; font-size: 14px; text-decoration: none; color: #4a4a4a; background-color: #9bb4c8; border-color: #91a0c8;" %>
+  </div>
+</div>
+
+<div class="row">
+  <div class="whole" style="position: relative; min-height: 1px; padding-left: 15px; padding-right: 15px; float: left; width: 100%;">
+    <p>While we can't delete the old calendar appointment for you, we have created a new one.</p>
+    <p>Use the link below to add this event to your Google calendar.</p>
+    <p>Use the attached iCal for other calendar types.</p>
+  </div>
+  <div class="whole" style="position: relative; min-height: 1px; padding-left: 15px; padding-right: 15px; float: left; width: 50%; text-align: center;">
+    <%= link_to "Add to my Google Calendar", url_for_event_gcal, class: "btn yellow", style: "display: inline-block; margin-bottom: 0; font-weight: normal; text-align: center; vertical-align: middle; border: 1px solid transparent; white-space: nowrap; padding: 6px 12px; font-size: 14px; text-decoration: none; color: #4a4a4a; background-color: #fce000; border-color: ##fcc900;" %>
+  </div>
+</div>

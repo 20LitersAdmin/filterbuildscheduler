@@ -1,0 +1,32 @@
+A filter build event was changed by <%= @user.name %>
+
+<% if @start_time || @end_time %>
+The time was changed:
+Original: <%= format_changed_time_range(@event.start_time_was, @event.end_time_was) %>
+Now: <%= format_changed_time_range(@event.start_time, @event.end_time) %>
+<% end %>
+
+<% if @location_id %>
+The location was changed:
+Original: <%= @location_was %>
+Now: <%= @location %>
+<% end %>
+
+<% if @technology_id %>
+The Technology was changed:
+Original: <%= @technology_was.name %>
+Now: <%= @technology.name %>
+<% end %>
+
+<% if @is_private %>
+The event type was changed: <%= privacy_case(@is_private) %>
+<% end %>
+
+Was this a mistake? The event can be found here:
+<%= url_for event_url(@event) %>
+
+While we can't delete the old calendar appointment for you, we have created a new one.
+Use the link below to add this event to your Google calendar.
+Use the attached iCal for other calendar types.
+
+<%= url_for_event_gcal %>
