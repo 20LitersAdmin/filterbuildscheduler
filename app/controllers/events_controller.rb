@@ -132,6 +132,7 @@ class EventsController < ApplicationController
   def delete
     @event = authorize Event.find(params[:id])
     authorize @event
+    # send emails to registrations and leaders before cancelling
     @event.delete!
     flash[:success] = "The event has been cancelled."
     redirect_to events_path
