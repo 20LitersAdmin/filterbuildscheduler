@@ -31,15 +31,10 @@
     <li>You'll receive a quick overview of the global water crisis and what we're doing about it as well as a demonstration of how to build filters.</li>
     <li>Come late or leave early as you need to</li>
     <li>
-      Childcare is not provided
-      <% if @event.technology.family_friendly %>
-        , children as young as 4 can be involved in the build!
-      <% else %>
-        . Parents / Guardians should decide if their children are old enough to participate. You can reply to this email for more info.
-      <% end %>
+      Gloves and tools will be provided
     </li>
     <li>
-      Gloves and tools will be provided
+      Childcare is not provided, <%= child_statement_email(@technology) %>
     </li>
   </ul>
   <p style="margin-bottom: 6px;"><strong>What to bring:</strong></p>

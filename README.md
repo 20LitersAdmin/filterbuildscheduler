@@ -1,9 +1,10 @@
 # README
 
 ## Things to do
-3. Updated event sends email when datetime/location changes
+4. Cancelled event sends email to all registrants && users.where(send_notification_emails: true)
+5. Allow leadership to email all registrants from registration#index
+6. Allow leadership to CRUD registrants for events.in_the_past
 
-1. Need paper event evaluation forms
 1. Add inventory system functionality
   * Needs views / printable
   * Needs variance check
@@ -26,10 +27,10 @@
 1. Use Paperclip to add part and component images
 1. Wait for live testing:
   * Do builders and admins get reminder emails?
-  * Do people get emails if the event is in the past?
+  * Do registrants not get registration#created emails if the event is in the past?
 
 ## BUGS! AHH! BUGS!
-1. Registration capping is not working... registration.rb validate :under_max_registration
+1. Registration.rb validations not working  ( eg. :under_max_registration)
   * Patched my own solution into RegistrationController
 
 

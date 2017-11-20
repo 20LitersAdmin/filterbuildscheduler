@@ -1,6 +1,8 @@
 <%= @event.format_time_range %>
 <%= @event.title %>
 
+We'll be building <%= @technology.name.pluralize %>
+
 Location:
 <%= @location.name %>
 <%= @location.address1 %>
@@ -27,7 +29,7 @@ What to expect:
 * You'll receive a quick overview of the global water crisis and what we're doing about it as well as a demonstration of how to build filters.
 * Come late or leave early as you need to
 * Gloves and tools will be provided
-* Childcare is not provided, children as young as 4 can be involved in the build
+* Childcare is not provided, <%= child_statement_email(@technology) %>
 
 What to bring:
 * A water bottle is a good idea

@@ -1,0 +1,49 @@
+Hello <%= @recipient.fname %>,
+
+The filter build event that you registered for has changed.
+
+<% if !@registration.guests_registered.nil? && @registration.guests_registered > 0 %>
+You registered to bring <%= pluralize(@registration.guests_registered, 'guest') %>.
+Please share this information with them.
+<% end %>
+
+<% if @recipient.encrypted_password.present? %>
+If you can no longer make it, you can log in and cancel your registration (in My Account):
+https://make.20liters.org/users/sign_in
+<% else %>
+If you can no longer make it, please let us know by replying to this email.
+<% end %>
+
+Here are the changes:
+=========================
+
+<% if @start_time || @end_time %>
+* The time was changed:
+Original: <%= format_changed_time_range(@event.start_time_was, @event.end_time_was) %>
+Now: <%= format_changed_time_range(@event.start_time, @event.end_time) %>
+<% end %>
+
+<% if @location_id %>
+* The location was changed:
+Original: <%= @location_was %>
+Now: <%= @location %>
+<% end %>
+
+<% if @technology_id %>
+* The Technology was changed:
+Original: <%= @technology_was.name %>
+Now: <%= @technology.name %>
+<% end %>
+
+Here are all the details:
+=========================
+<%= render partial: 'details' %>
+
+
+Add to your calendar:
+===========================
+While we can't delete the old calendar appointment for you, we have created a new one.
+Copy and paste the whole link below to add this event to your Google calendar.
+Use the attached iCal for other calendar types.
+
+<%= url_for_registration_gcal %>
