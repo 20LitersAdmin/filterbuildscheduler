@@ -6,6 +6,13 @@ class EventsController < ApplicationController
       @past_events = our_events.past
     end
     @user = current_user
+
+    @deleted_events = Event.only_deleted
+  end
+
+  def cancelled
+    @deleted_events = Event.only_deleted
+    @user = current_user
   end
 
   def show

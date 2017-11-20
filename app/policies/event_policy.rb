@@ -15,6 +15,14 @@ class EventPolicy < ApplicationPolicy
     user.admin_or_leader?
   end
 
+  def show?
+    user.admin_or_leader?
+  end
+
+  def cancelled?
+    user.admin_or_leader?
+  end
+
   class Scope
     attr_reader :user, :scope
 

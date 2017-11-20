@@ -8,11 +8,15 @@ Rails.application.routes.draw do
   patch 'users/:id', to: 'users#update', as: 'update_user'
   get :waiver, controller: :application
 
-  get 'events/:id/attendance', to: 'events#attendance', as: 'event_attendance'
-
   get 'info', to: 'pages#info', as: 'info'
 
   resources :events do
+    collection do
+      get 'cancelled'
+    end
+    member do
+      get 'attendance'
+    end
     resources :registrations
   end
 
