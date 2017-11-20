@@ -1,10 +1,11 @@
 class RegistrationPolicy < ApplicationPolicy
   def create?
-    record.user == user
+    #user.admin_or_leader? || record.user == user
+    true
   end
 
   def destroy?
-    user.is_admin? || record.user == user
+    user.admin_or_leader? || record.user == user
   end
 
   def update?
@@ -14,5 +15,21 @@ class RegistrationPolicy < ApplicationPolicy
     else
       record.user == user
     end
+  end
+
+  def index?
+    user.admin_or_leader?
+  end
+
+  def new?
+    user.admin_or_leader?
+  end
+
+  def edit?
+    user.admin_or_leader?
+  end
+
+  def show?
+    user.admin_or_leader?
   end
 end

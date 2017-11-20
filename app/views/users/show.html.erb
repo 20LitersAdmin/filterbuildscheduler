@@ -4,7 +4,7 @@
     <% if @user.has_no_password  %>
       <%= link_to("Set your password!", edit_user_path(@user), class: 'btn yellow user-edit') %>
     <% else %>
-      <%= link_to("Edit", edit_user_path(@user), class: 'btn yellow user-edit') %>
+      <%= link_to("Edit Your Information", edit_user_path(@user), class: 'btn yellow user-edit') %>
     <% end %>
   </div>
 
