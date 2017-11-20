@@ -1,0 +1,18 @@
+<%= simple_form_for [@event, @registration] do |f| %>
+  <%= f.hidden_field :form_source, value: "admin" %>
+  <%= f.hidden_field :event_id %>
+  <%= simple_fields_for :user do |o| %>
+    <%= o.input :fname, label: 'First Name' %>
+    <%= o.input :lname, label: 'Last Name' %>
+    <%= o.input :email, label: 'Email' %>
+    <p>Room for <%= pluralize(@event.registrations_remaining - 1, 'more guest') %></p>
+    <%= f.input :guests_registered, label: 'Guests', input_html: { min: 0, max: @event.registrations_remaining - 1 } %>
+    <%= f.input :accommodations, label: 'Notes', as: :text %>
+    <div>
+      <h4>
+        <%= f.hidden_field :waiver_accepted, value: '1' %>
+      </h4>
+    </div>
+  <% end %>
+  <%= f.submit 'Register', class: 'btn yellow' %>
+<% end %>
