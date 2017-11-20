@@ -87,7 +87,7 @@ class RegistrationMailer < ApplicationMailer
     cal.append_custom_property('METHOD', 'REQUEST')
     mail.attachments[@attachment_title] = { mime_type: 'text/calendar', content: cal.to_ical }
 
-    mail(to: @recipient, subject: '[20 Liters] NOTICE: Build Event Changed')
+    mail(to: @recipient.email, subject: '[20 Liters] NOTICE: Build Event Changed')
   end
 
   def reminder(registration)

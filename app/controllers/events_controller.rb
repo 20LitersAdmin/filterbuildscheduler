@@ -63,24 +63,44 @@ class EventsController < ApplicationController
     @event = Event.find(params[:id])
     authorize @event
 
-    if @event.start_time > Time.now && (@event.start_time_changed? || @event.end_time_changed? || @event.location_id_changed? || @event.technology_id_changed? || @event.is_private_changed?)
+    @event.start_time         = params[:event][:start_time]
+    @event.end_time           = params[:event][:end_time]
+    @event.title              = params[:event][:title]
+    @event.description        = params[:event][:description]
+    @event.min_registrations  = params[:event][:min_registrations]
+    @event.max_registrations  = params[:event][:max_registrations]
+    @event.min_leaders        = params[:event][:min_leaders]
+    @event.max_leaders        = params[:event][:max_leaders]
+    @event.location_id        = params[:event][:location_id]
+    @event.technology_id      = params[:event][:technology_id]
+    @event.is_private         = params[:event][:is_private]
+    @event.item_goal          = params[:event][:item_goal]
+    @event.technologies_built = params[:event][:technologies_built]
+    @event.attendance         = params[:event][:attendance]
+    @event.boxes_packed       = params[:event][:boxes_packed]
+
+    @admins_notified = ""
+    @users_notified = ""
+
+    if @event.start_time_was > Time.now && (@event.start_time_changed? || @event.end_time_changed? || @event.location_id_changed? || @event.technology_id_changed? || @event.is_private_changed?)
       # EventMailer.delay.changed(@event, current_user)
       EventMailer.changed(@event, current_user).deliver!
+      @admins_notified = "Admins notified."
       if @event.registrations.exists? && ( @event.start_time_changed? || @event.end_time_changed? || @event.location_id_changed? || @event.technology_id_changed? )
         @event.registrations.each do |registration|
           # RegistrationMailer.delay.event_changed(registration, @event)
           RegistrationMailer.event_changed(registration, @event).deliver!
+          @users_notified = "All registered builders notified."
         end
       end
     end
 
-    @event.update(event_params)
-
-    if @event.errors.any?
+    if @event.save
+      flash[:success] = "Event updated"
+      redirect_to event_path(@event)
+    else
       flash[:warning] = @event.errors.first.join(": ")
       redirect_to edit_event_path(@event)
-    else
-      redirect_to event_path(@event)
     end
   end
 
