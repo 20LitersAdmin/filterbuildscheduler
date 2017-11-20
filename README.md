@@ -2,6 +2,7 @@
 
 ## Things to do
 4. Cancelled event sends email to all registrants && users.where(send_notification_emails: true)
+4.5 Cancelled events can be restored by Admins
 5. Allow leadership to email all registrants from registration#index
 6. Allow leadership to CRUD registrants for events.in_the_past
 
