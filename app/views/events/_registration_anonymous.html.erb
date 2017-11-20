@@ -1,5 +1,5 @@
 <%= simple_form_for [@event, @registration] do |f| %>
-  <%= f.hidden_field :form_source, input_html: { value: "anon" } %>
+  <%= f.hidden_field :form_source, value: "anon" %>
   <%= f.hidden_field :event_id %>
   <%= simple_fields_for :user do |o| %>
     <%= o.input :fname, label: 'First Name' %>

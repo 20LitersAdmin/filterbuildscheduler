@@ -1,9 +1,6 @@
 # README
 
 ## Things to do
-1. event/:id/registration actions -- new: PUNDIT NotAuthorizedError
-
-1. Post-registration: supress email if event.end_time < Time.now -- needs to be tested
 3. Updated event sends email when datetime/location changes
 
 1. Need paper event evaluation forms
@@ -27,7 +24,9 @@
 
 ## The Future
 1. Use Paperclip to add part and component images
-1. Wait for live testing - do builders and admins get reminder emails?
+1. Wait for live testing:
+  * Do builders and admins get reminder emails?
+  * Do people get emails if the event is in the past?
 
 ## BUGS! AHH! BUGS!
 1. Registration capping is not working... registration.rb validate :under_max_registration
