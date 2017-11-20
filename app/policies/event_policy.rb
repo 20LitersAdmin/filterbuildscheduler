@@ -3,8 +3,8 @@ class EventPolicy < ApplicationPolicy
     user.admin_or_leader?
   end
 
-  def delete?
-    user.admin?
+  def destroy?
+    user.admin_or_leader?
   end
 
   def update?

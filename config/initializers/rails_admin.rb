@@ -51,7 +51,7 @@ RailsAdmin.config do |config|
       field :title
       field :location
       field :is_private
-      field :users
+      field :leaders_names_full
     end
   end
 
