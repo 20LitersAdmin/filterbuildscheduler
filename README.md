@@ -1,14 +1,12 @@
 # README
 
 ## Things to do
-1. Add location.photo_url to event#show and all registration_mailers
-
-5. Allow leadership to email all registrants from registration#index
-6. Allow leadership to CRUD registrants for events.in_the_past
-
 1. Add inventory system functionality
   * Needs views / printable
   * Needs variance check
+
+2. Allow leadership to email all registrants from registration#index
+3. Allow leadership to CRUD registrants for events.in_the_past
 
 4. Add a Stripe Webhook / API for CauseVox to replace Zapier
   * Accepting & reading Stripe webhook is working
