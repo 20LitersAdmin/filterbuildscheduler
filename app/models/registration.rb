@@ -1,5 +1,6 @@
 class Registration < ApplicationRecord
   include ActiveModel::Dirty
+  acts_as_paranoid
   belongs_to :user
   belongs_to :event, inverse_of: :registrations
   scope :registered_as_leader, -> {where(leader: true)}

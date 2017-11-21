@@ -17,4 +17,8 @@ class EventMailerPreview < ActionMailer::Preview
 
     EventMailer.changed(event, User.first)
   end
+
+  def cancelled
+    EventMailer.cancelled(Event.first, User.first)
+  end
 end

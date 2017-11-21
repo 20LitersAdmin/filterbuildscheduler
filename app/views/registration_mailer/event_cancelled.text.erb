@@ -1,0 +1,29 @@
+Hello <%= @recipient.fname %>,
+
+Unfortunately, this filter build was cancelled:
+=========================
+<%= @event.format_time_range %>
+<%= @event.title %>
+
+Location:
+<%= @location.name %>
+<%= @location.address1 %>
+<% if @location.map_url %>
+<%= @location.address2 %>
+<% end %>
+<%= @location.city %>, <%= @location.state %>  <%= @location.zip %>
+=========================
+
+<% if !@registration.guests_registered.nil? && @registration.guests_registered > 0 %>
+You registered to bring <%= pluralize(@registration.guests_registered, 'guest') %>.
+Please share this information with them.
+<% end %>
+
+<% if @recipient.encrypted_password.present? %>
+If you want to register for a different build, sign in to your account:
+https://make.20liters.org/users/sign_in
+<% else %>
+If you want to register for a different build, please visit
+https://make.20liters.org
+<% end %>
+

@@ -80,4 +80,20 @@ class EventMailer < ApplicationMailer
     mail(to: @recipients, subject: '[20 Liters] NOTICE: Build Event Changed')
   end
 
+  def cancelled(event, user)
+    @event = event
+    @user = user
+    @recipients = User.where(send_notification_emails: true).map { |r| r.email }
+    @location = @event.location
+    @registrations = @event.registrations
+
+    if @event.leaders_registered.count == 1
+      @leader_count_text = "The leader was:"
+    elsif @event.leaders_registered.count > 1
+      @leader_count_text = "The leaders were:"
+    end
+
+    mail(to: @recipients, subject: '[20 Liters] NOTICE: Build Event Cancelled')
+  end
+
 end

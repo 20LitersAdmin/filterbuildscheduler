@@ -3,7 +3,7 @@ class Event < ApplicationRecord
 
   belongs_to :location
   belongs_to :technology
-  has_many :registrations, inverse_of: :event
+  has_many :registrations, inverse_of: :event, dependent: :destroy
   has_many :users, through: :registrations
 
   validates :start_time, :end_time, :title, :min_leaders, :max_leaders, :min_registrations, :max_registrations, presence: true
