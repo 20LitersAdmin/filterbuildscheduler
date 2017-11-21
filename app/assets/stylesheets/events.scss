@@ -20,14 +20,6 @@
   .waiver_click label {
     cursor: pointer;
   }
-  .tech-img {
-    width: 100%;
-  }
-
-  .hidden {
-    visibility: hidden;
-  }
-
   .mt-10 {
     margin-top: 10px;
   }
@@ -45,6 +37,10 @@
       text-align: right;
     }
   }
+}
+
+img {
+  width: 100%;
 }
 
 .event-form {

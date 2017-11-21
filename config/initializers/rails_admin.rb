@@ -8,6 +8,20 @@ RailsAdmin.config do |config|
   end
   config.current_user_method(&:current_user)
 
+  #
+  # Monkey patch to remove default_scope
+  #
+  require 'rails_admin/adapters/active_record'
+  module RailsAdmin::Adapters::ActiveRecord
+    def get(id)
+      return unless object = scoped.where(primary_key => id).first
+      AbstractObject.new object
+    end
+    def scoped
+      model.unscoped
+    end
+  end
+
   ## == Cancan ==
   # config.authorize_with :cancan
 
@@ -40,6 +54,9 @@ RailsAdmin.config do |config|
       field :sign_in_count
       field :last_sign_in_at
     end
+    configure :deleted_at do
+      show
+    end
   end
 
   config.model Event do
@@ -53,6 +70,9 @@ RailsAdmin.config do |config|
       field :is_private
       field :leaders_names_full
     end
+    configure :deleted_at do
+      show
+    end
   end
 
   config.model Location do
@@ -62,6 +82,9 @@ RailsAdmin.config do |config|
       field :address1
       field :address2
       field :zip
+    end
+    configure :deleted_at do
+      show
     end
   end
 
@@ -75,6 +98,9 @@ RailsAdmin.config do |config|
       field :ideal_group_size
       field :ideal_leaders
     end
+    configure :deleted_at do
+      show
+    end
   end
 
   config.model Component do
@@ -85,6 +111,9 @@ RailsAdmin.config do |config|
       field :technologies
       field :completed_tech
       field :completed_tech_boxed
+    end
+    configure :deleted_at do
+      show
     end
   end
 
@@ -103,6 +132,9 @@ RailsAdmin.config do |config|
       end
       field :min_order
     end
+    configure :deleted_at do
+      show
+    end
   end
 
   config.model Part do
@@ -119,6 +151,9 @@ RailsAdmin.config do |config|
         end
       end
     end
+    configure :deleted_at do
+      show
+    end
   end
 
   config.model Registration do
@@ -130,6 +165,9 @@ RailsAdmin.config do |config|
       field :leader
       field :guests_registered
       field :guests_attended
+    end
+    configure :deleted_at do
+      show
     end
   end
 
@@ -143,10 +181,13 @@ RailsAdmin.config do |config|
       field :loose_count
       field :unopened_boxes_count
     end
+    configure :deleted_at do
+      show
+    end
   end
 
   config.model Inventory do
-    exclude_fields :id, :deleted_at, :created_at, :updated_at
+    exclude_fields :id, :created_at, :updated_at
     list do
       scopes [nil, :only_deleted]
     end

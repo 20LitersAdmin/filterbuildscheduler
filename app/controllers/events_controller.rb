@@ -39,6 +39,7 @@ class EventsController < ApplicationController
   def show
     @event = Event.find(params[:id])
     @registration = Registration.where(user: current_user, event: @event).first_or_initialize
+    @location = @event.location
 
     # decide whether or not to show the event with a stupidly complicated nested if
     if @event.in_the_past?
@@ -59,12 +60,12 @@ class EventsController < ApplicationController
       if @technology.img_url.present?
         @tech_img = @technology.img_url
       end
-
       if @technology.info_url.present?
         @tech_info = @technology.info_url
       end
-
-
+      if @location.photo_url.present?
+        @location_img = @location.photo_url
+      end
 
       if (current_user&.is_admin || @registration&.leader?) && @event.incomplete? && @event.start_time < Time.now
         @show_report = true
@@ -178,7 +179,7 @@ class EventsController < ApplicationController
       end
     end
 
-    if @event.delete
+    if @event.destroy
       flash[:success] = "Event cancelled. #{@admins_notified} #{@users_notified}"
       redirect_to root_path
     else

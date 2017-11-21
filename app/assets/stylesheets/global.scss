@@ -102,6 +102,10 @@ html {
     box-shadow: 0 0 5px $light-blue;
     border: 1px solid $light-grey;
   }
+
+  .hidden {
+    visibility: hidden;
+  }
 }
 
 .action-container {
