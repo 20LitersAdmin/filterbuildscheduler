@@ -13,6 +13,7 @@ class RegistrationMailerPreview < ActionMailer::Preview
     event.start_time = DateTime.new(2017, 11, 8, 16, 0, 0, '-05:00')
     event.end_time = DateTime.new(2017, 11, 8, 21, 0, 0, '-05:00')
     event.technology_id = 2
+    event.location_id = 2
     event.is_private = true
 
     RegistrationMailer.event_changed(Registration.first, event)

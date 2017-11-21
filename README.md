@@ -1,14 +1,12 @@
 # README
 
 ## Things to do
-4. Cancelled event sends email to all registrants && users.where(send_notification_emails: true)
-4.5 Cancelled events can be restored by Admins
-5. Allow leadership to email all registrants from registration#index
-6. Allow leadership to CRUD registrants for events.in_the_past
-
 1. Add inventory system functionality
   * Needs views / printable
   * Needs variance check
+
+2. Allow leadership to email all registrants from registration#index
+3. Allow leadership to CRUD registrants for events.in_the_past
 
 4. Add a Stripe Webhook / API for CauseVox to replace Zapier
   * Accepting & reading Stripe webhook is working
@@ -33,5 +31,8 @@
 ## BUGS! AHH! BUGS!
 1. Registration.rb validations not working  ( eg. :under_max_registration)
   * Patched my own solution into RegistrationController
+
+## Things that will annoy only me (and maybe Ross)
+1. Links have "btn #color# devise" to stretch across screen. Should rename to "fullwidth"
 
 

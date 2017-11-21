@@ -3,7 +3,7 @@ class Event < ApplicationRecord
 
   belongs_to :location
   belongs_to :technology
-  has_many :registrations, inverse_of: :event, dependent: :destroy
+  has_many :registrations, dependent: :destroy
   has_many :users, through: :registrations
 
   validates :start_time, :end_time, :title, :min_leaders, :max_leaders, :min_registrations, :max_registrations, presence: true
@@ -75,40 +75,77 @@ class Event < ApplicationRecord
     end
   end
 
-  def total_registered
-    if registrations.present?
-      registrations.map { |r| r.guests_registered }.sum + non_leaders_registered.count
+  # pass total_registered("only_deleted") to get access to registrations.only_deleted
+  def total_registered(scope = "")
+    if scope == "only_deleted"
+      if registrations.only_deleted.present?
+        registrations.only_deleted.map { |r| r.guests_registered }.sum + non_leaders_registered.count
+      else
+        0
+      end
     else
-      0
+      if registrations.present?
+        registrations.map { |r| r.guests_registered }.sum + non_leaders_registered.count
+      else
+        0
+      end
     end
   end
 
-  def non_leaders_registered
-    registrations.non_leader
+  def non_leaders_registered(scope = "")
+    if scope == "only_deleted"
+      registrations.only_deleted.non_leader
+    else
+      registrations.non_leader
+    end
   end
 
-  def leaders_registered
-    registrations.registered_as_leader
+  def leaders_registered(scope = "")
+    if scope == "only_deleted"
+      registrations.only_deleted.registered_as_leader
+    else
+      registrations.registered_as_leader
+    end
   end
 
-  def registrations_filled?
-    total_registered >= max_registrations
+  def registrations_filled?(scope = "")
+    if scope == "only_deleted"
+      total_registered("only_deleted") >= max_registrations
+    else
+      total_registered >= max_registrations
+    end
   end
 
-  def registrations_remaining
-    max_registrations - total_registered
+  def registrations_remaining(scope = "")
+    if scope == "only_deleted"
+      max_registrations - total_registered("only_deleted")
+    else
+      max_registrations - total_registered
+    end
   end
 
-  def does_not_need_leaders?
-    leaders_registered.count >= max_leaders
+  def does_not_need_leaders?(scope = "")
+    if scope == "only_deleted"
+      leaders_registered("only_deleted").count >= max_leaders
+    else
+      leaders_registered.count >= max_leaders
+    end
   end
 
-  def really_needs_leaders?
-    leaders_registered.count < min_leaders
+  def really_needs_leaders?(scope = "")
+    if scope == "only_deleted"
+      leaders_registered("only_deleted").count < min_leaders
+    else
+      leaders_registered.count < min_leaders
+    end
   end
 
-  def needs_leaders?
-    leaders_registered.count < max_leaders
+  def needs_leaders?(scope = "")
+    if scope == "only_deleted"
+      leaders_registered("only_deleted").count < max_leaders
+    else
+      leaders_registered.count < max_leaders
+    end
   end
 
   def incomplete?
@@ -143,15 +180,27 @@ class Event < ApplicationRecord
     end
   end
 
-  def you_are_attendee(user)
-    if user && registrations.where(user_id: user.id).where(leader: false).present?
-      " (including you)"
+  def you_are_attendee(user, scope = "")
+    if scope == "only_deleted"
+      if user && registrations.only_deleted.where(user_id: user.id).where(leader: false).present?
+        " (including you)"
+      end
+    else
+      if user && registrations.where(user_id: user.id).where(leader: false).present?
+        " (including you)"
+      end
     end
   end
 
-  def you_are_leader(user)
-    if user&.is_leader && registrations.where(user_id: user.id).where(leader: true).present?
-      " (including you)"
+  def you_are_leader(user, scope = "")
+    if scope == "only_deleted"
+      if user&.is_leader && registrations.only_deleted.where(user_id: user.id).where(leader: true).present?
+        " (including you)"
+      end
+    else
+      if user&.is_leader && registrations.where(user_id: user.id).where(leader: true).present?
+        " (including you)"
+      end
     end
   end
 end
