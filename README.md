@@ -1,8 +1,8 @@
 # README
 
 ## Things to do
-4. Cancelled event sends email to all registrants && users.where(send_notification_emails: true)
-4.5 Cancelled events can be restored by Admins
+1. Add location.photo_url to event#show and all registration_mailers
+
 5. Allow leadership to email all registrants from registration#index
 6. Allow leadership to CRUD registrants for events.in_the_past
 
@@ -29,9 +29,14 @@
 1. Wait for live testing:
   * Do builders and admins get reminder emails?
   * Do registrants not get registration#created emails if the event is in the past?
+1. Manage :only_deleted records
+  * https://stackoverflow.com/questions/20069425/how-do-i-show-unscoped-models-in-rails-admin
 
 ## BUGS! AHH! BUGS!
 1. Registration.rb validations not working  ( eg. :under_max_registration)
   * Patched my own solution into RegistrationController
+
+## Mole hills
+1. Links have "btn #color# devise" to stretch across screen. Should rename to "fullwidth"
 
 
