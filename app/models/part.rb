@@ -6,4 +6,5 @@ class Part < ApplicationRecord
   has_and_belongs_to_many :counts
 
   monetize :price_cents
+  monetize :additional_costs_cents
 end

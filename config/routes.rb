@@ -16,6 +16,10 @@ Rails.application.routes.draw do
     resources :registrations
   end
 
+  resources :inventories do
+    resources :counts
+  end
+
   # mount StripeEvent::Engine, at: '/stripe-events'
 
   if Rails.env.development?
