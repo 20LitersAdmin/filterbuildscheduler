@@ -1,13 +1,12 @@
 # README
 
 ## Things to do
-4. Cancelled event sends email to all registrants && users.where(send_notification_emails: true)
-5. Allow leadership to email all registrants from registration#index
-6. Allow leadership to CRUD registrants for events.in_the_past
-
 1. Add inventory system functionality
   * Needs views / printable
   * Needs variance check
+
+3. Allow leadership to CRUD registrants for events.in_the_past
+2. Allow leadership to email all registrants from registration#index
 
 4. Add a Stripe Webhook / API for CauseVox to replace Zapier
   * Accepting & reading Stripe webhook is working
