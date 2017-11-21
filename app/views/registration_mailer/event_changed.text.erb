@@ -25,8 +25,8 @@ Now: <%= format_changed_time_range(@event.start_time, @event.end_time) %>
 
 <% if @location_id %>
 * The location was changed:
-Original: <%= @location_was %>
-Now: <%= @location %>
+Original: <%= @location_was.name %>
+Now: <%= @location.name %>
 <% end %>
 
 <% if @technology_id %>

@@ -15,6 +15,10 @@ Location:
 Map: <%= @location.map_url %>
 <% end %>
 
+<% if @location.photo_url %>
+Photo: <%= @location.photo_url %>
+<% end %>
+
 <% if @location.instructions.present? %>
 Instructions:
 <%= @location.instructions %>
