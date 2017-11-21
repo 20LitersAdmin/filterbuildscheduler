@@ -167,13 +167,13 @@ class EventsController < ApplicationController
 
     # send emails to registrations and leaders before cancelling
     if @event.start_time > Time.now
-      #EventMailer.delay.cancelled(@event, current_user)
-      EventMailer.cancelled(@event, current_user).deliver!
+      EventMailer.delay.cancelled(@event, current_user)
+      #EventMailer.cancelled(@event, current_user).deliver!
       @admins_notified = "Admins notified."
       if @event.registrations.exists?
         @event.registrations.each do |registration|
-          #RegistrationMailer.delay.event_cancelled(registration)
-          RegistrationMailer.event_cancelled(registration).deliver!
+          RegistrationMailer.delay.event_cancelled(registration)
+          #RegistrationMailer.event_cancelled(registration).deliver!
           @users_notified = "All registered builders notified."
         end
       end

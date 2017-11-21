@@ -98,8 +98,10 @@
         </div>
         <% if @location_img.present? %>
           <div class='col-xs-4'>
-            <img src="<%= @location_img  %>" class="location-img">
-            <a id="photoClick" class="btn blue devise" data-toggle="modal" data-target="#photoModal">Larger Image</a>
+            <a data-toggle="modal" data-target="#photoModal">
+              <img src="<%= @location_img  %>" class="location-img">
+            </a>
+            <a class="btn blue devise" data-toggle="modal" data-target="#photoModal">Larger Image</a>
           </div>
         <% end %>
         <div class="col-xs-12">
