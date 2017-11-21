@@ -7,12 +7,33 @@ class EventsController < ApplicationController
     end
     @user = current_user
 
-    @deleted_events = Event.only_deleted
+    @cancelled_events = Event.only_deleted
   end
 
   def cancelled
-    @deleted_events = Event.only_deleted
+    @cancelled_events = Event.only_deleted
     @user = current_user
+  end
+
+  def restore
+    @event = Event.only_deleted.find(params[:id])
+    authorize @event
+    if params[:recursive] == "false"
+      # Registrations are never getting deleted, so they can't NOT be restored.
+      Event.restore(@event.id)
+      flash[:success] = "Event restored but not registrations."
+    else
+      Event.restore(@event.id, recursive: true)
+      flash[:success] = "Event and associated registrations restored."
+    end
+
+
+
+    if Event.only_deleted.exists?
+      redirect_to cancelled_events_path
+    else
+      redirect_to events_path
+    end
   end
 
   def show

@@ -1,6 +1,6 @@
 <% if current_user && current_user.admin_or_leader? %>
   <div class="action-container">
-    <% if current_user.is_admin? && @deleted_events.exists? %>
+    <% if current_user.is_admin? && @cancelled_events.exists? %>
       <div class="col-sm-6">
         <%= link_to "Schedue a New Build", new_event_path, class: 'btn yellow' %>
       </div>
