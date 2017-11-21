@@ -58,151 +58,116 @@
   }
 }
 
-.event-index {
-.hero-img {
-    text-align: center;
-    background-image: url(https://20liters.org/wp-content/uploads/2016/07/cta-bg.jpg);
-    padding: 50px 0 12px 0;
-    margin: -20px auto 20px auto;
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-position: center ;
-    box-sizing: border-box;
-    color: white;
-    h2 {
-      font-weight: bold;
-    }
-    p {
-      font-size: 1.375em;
-      font-weight: normal;
-      margin-bottom: 24px;
-    }
+.event-container {
+  @extend .row;
+  margin-bottom: 30px;
+  .heading {
+    font-weight: bold;
+    border-bottom: 2px solid $light-blue;
+    padding-left: 1em;
+    padding-bottom: 0.5em;
   }
+  .event {
+    @extend .col-sm-6;
+    @extend .col-md-4;
+    margin-top: 15px;
+    margin-bottom: 15px;
+    img.registered-badge {
+      float: right;
+      margin-bottom: -120px;
+    }
+    .location {
+      padding-left: 8px;
+      padding-right: 8px;
+      border-bottom: 2px solid $yellow;
+      padding-bottom: 12px;
+    }
+    .date {
+      font-weight: bold;
+      padding-top: 20px;
+    }
+    .time {
+      margin-top: 6px;
+    }
+    .title {
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      margin-top: 12px;
+      font-weight: bolder;
+    }
+    .top-part-wrapper {
+      height: 290px;
+    }
+    .bar-outer-wrapper {
+      position: relative;
+      height: 50px;
+      margin-left: -2em;
+      margin-right: -2em;
+      &.is_leader {
+        height: 125px;
+      }
+    }
+    .bar-inner-wrapper{
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+    }
+    .bar {
+      background-color: $grey;
 
-  .btn.hero {
-    border: 1px solid white !important;
-    color: white !important;
-    display: block;
-    width: 12em;
-    margin: 1em auto !important;
-    transition: all 0.14s ease-in-out;
-
-    &.collapse {
+      color: white;
+      padding: 0.8em 0.5em 0.8em 0.5em ;
+      &.yellow {
+        background-color: $yellow;
+        color: $grey;
+      }
+      &.red {
+        background-color: $red;
+      }
+      &.blue {
+        background-color: $light-blue;
+      }
+    }
+    .learn-more {
+      margin: 2em;
       margin-top: 1em;
     }
-  }
-
-  .event-container {
-    @extend .row;
-    margin-bottom: 30px;
-    .heading {
-      font-weight: bold;
-      border-bottom: 2px solid $light-blue;
-      padding-left: 1em;
-      padding-bottom: 0.5em;
+    a {
+      text-align: center;
+      background-color: white;
+      display: block;
+      color: black;
+      text-decoration: none;
+      padding: 2em 2em 0 2em;
+      box-shadow: 0 0 5px #888;
+      &:hover {
+        color: black;
+        background-color: $light-grey;
+        box-shadow: 0 0 18px #888;
+      }
+      button {
+        margin-top: 10px;
+      }
     }
-    .event {
-      @extend .col-sm-6;
-      @extend .col-md-4;
-      margin-top: 15px;
-      margin-bottom: 15px;
-      img.registered-badge {
-        float: right;
-        margin-bottom: -120px;
-      }
-      .location {
-        padding-left: 8px;
-        padding-right: 8px;
-        border-bottom: 2px solid $yellow;
-        padding-bottom: 12px;
-      }
-      .date {
-        font-weight: bold;
-        padding-top: 20px;
-      }
-      .time {
-        margin-top: 6px;
-      }
-      .title {
-        white-space: nowrap;
-        text-overflow: ellipsis;
-        overflow: hidden;
-        margin-top: 12px;
-        font-weight: bolder;
-      }
-      .top-part-wrapper {
-        height: 290px;
-      }
-      .bar-outer-wrapper {
-        position: relative;
-        height: 50px;
-        margin-left: -2em;
-        margin-right: -2em;
-        &.is_leader {
-          height: 125px;
-        }
-      }
-      .bar-inner-wrapper{
-        position: absolute;
-        bottom: 0;
-        width: 100%;
-      }
-      .bar {
-        background-color: $grey;
-
-        color: white;
-        padding: 0.8em 0.5em 0.8em 0.5em ;
-        &.yellow {
-          background-color: $yellow;
-          color: $grey;
-        }
-        &.red {
-          background-color: $red;
-        }
-        &.blue {
-          background-color: $light-blue;
-        }
-      }
-      .learn-more {
-        margin: 2em;
-        margin-top: 1em;
-      }
-      a {
-        text-align: center;
-        background-color: white;
-        display: block;
+    &.cancelled {
+      display: block;
+      margin: 1em;
+      text-align: center;
+      background-color: white;
+      color: black;
+      padding: 2em;
+      box-shadow: 0 0 5px #888;
+      padding: 2em 2em 0 2em;
+      &:hover {
         color: black;
-        text-decoration: none;
-        padding: 2em 2em 0 2em;
-        box-shadow: 0 0 5px #888;
-        &:hover {
-          color: black;
-          background-color: $light-grey;
-          box-shadow: 0 0 18px #888;
-        }
-        button {
-          margin-top: 10px;
-        }
+        background-color: $light-grey;
+        box-shadow: 0 0 18px #888;
       }
-      &.cancelled {
-        display: block;
-        margin: 1em;
-        text-align: center;
-        background-color: white;
-        color: black;
-        padding: 2em;
-        box-shadow: 0 0 5px #888;
-        padding: 2em 2em 0 2em;
-        &:hover {
-          color: black;
-          background-color: $light-grey;
-          box-shadow: 0 0 18px #888;
-        }
-        a.restore {
-          margin-top: 10px;
-          padding: 6px;
-          box-shadow: none;
-        }
+      a.restore {
+        margin-top: 10px;
+        padding: 6px;
+        box-shadow: none;
       }
     }
   }
