@@ -27,14 +27,12 @@
 1. Wait for live testing:
   * Do builders and admins get reminder emails?
   * Do registrants not get registration#created emails if the event is in the past?
-1. Manage :only_deleted records
-  * https://stackoverflow.com/questions/20069425/how-do-i-show-unscoped-models-in-rails-admin
 
 ## BUGS! AHH! BUGS!
 1. Registration.rb validations not working  ( eg. :under_max_registration)
   * Patched my own solution into RegistrationController
 
-## Mole hills
+## Things that will annoy only me (and maybe Ross)
 1. Links have "btn #color# devise" to stretch across screen. Should rename to "fullwidth"
 
 
