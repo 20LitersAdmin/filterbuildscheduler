@@ -1,8 +1,8 @@
 class AddEvenMoreFieldsForInventory < ActiveRecord::Migration[5.1]
   def change
-    add_column :parts, :additional_cost_cents, :float, default: 0
+    add_column :parts, :additional_cost_cents, :integer, default: 0
     add_column :parts, :additional_cost_currency, :string, default: "USD", null: false
-    add_column :materials, :additional_cost_cents, :float, default: 0
+    add_column :materials, :additional_cost_cents, :integer, default: 0
     add_column :materials, :additional_cost_currency, :string, default: "USD", null: false
 
     # add_foreign_key "components", "counts"
