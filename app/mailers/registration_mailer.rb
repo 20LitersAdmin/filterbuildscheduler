@@ -8,6 +8,7 @@ class RegistrationMailer < ApplicationMailer
     @recipient = registration.user
     @event = registration.event
     @location = @event.location
+    @technology = @event.technology
     @summary = "[20 Liters] Filter Build: " + @event.technology.name
     @attachment_title = "20Liters_filterbuild_" + @event.start_time.strftime("%Y%m%dT%H%M") + ".ical"
 
@@ -95,6 +96,7 @@ class RegistrationMailer < ApplicationMailer
     @recipient = registration.user
     @event = registration.event
     @location = @event.location
+    @technology = @event.technology
 
     if @event.leaders_registered.count == 1
       @leader_count_text = "Your leader is:"
@@ -104,5 +106,15 @@ class RegistrationMailer < ApplicationMailer
 
     mail(to: @recipient.email, subject: "[20 Liters] Reminder: Filter build on #{@event.mailer_time}")
   end
+
+  def event_cancelled(registration)
+    @registration = registration
+    @recipient = registration.user
+    @event = registration.event
+    @location = @event.location
+
+    mail(to: @recipient.email, subject: '[20 Liters] NOTICE: Build Event Cancelled')
+  end
+
 
 end

@@ -35,4 +35,7 @@
 1. Registration.rb validations not working  ( eg. :under_max_registration)
   * Patched my own solution into RegistrationController
 
+## Things that will annoy only me (and maybe Ross)
+1. Links have "btn #color# devise" to stretch across screen. Should rename to "fullwidth"
+
 
