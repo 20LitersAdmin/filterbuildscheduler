@@ -8,4 +8,25 @@
   .col-sm-4 {
     text-align: center;
   }
+
+  .inventory {
+    background-color: $slightly-darker-light-grey;
+    height: 10em;
+    margin: .8em 2em;
+    padding: .8em;
+    text-align: center;
+    box-shadow: 0 0 6px #888;
+    &:hover {
+      background-color: $light-grey;
+      box-shadow: 0 0 12px #888;
+    }
+    h4 {
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
+    .btn {
+      margin-top: 12px;
+    }
+  }
 }

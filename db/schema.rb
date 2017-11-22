@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171122155452) do
+ActiveRecord::Schema.define(version: 20171122195620) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -62,8 +62,10 @@ ActiveRecord::Schema.define(version: 20171122155452) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "user_id"
+    t.bigint "inventory_id"
     t.index ["components_id"], name: "index_counts_on_components_id"
     t.index ["deleted_at"], name: "index_counts_on_deleted_at"
+    t.index ["inventory_id"], name: "index_counts_on_inventory_id"
     t.index ["materials_id"], name: "index_counts_on_materials_id"
     t.index ["parts_id"], name: "index_counts_on_parts_id"
     t.index ["user_id"], name: "index_counts_on_user_id"
@@ -122,13 +124,14 @@ ActiveRecord::Schema.define(version: 20171122155452) do
   end
 
   create_table "inventories", force: :cascade do |t|
-    t.datetime "date", null: false
     t.boolean "receiving", default: false, null: false
-    t.boolean "shipping", default: false, null: false
     t.datetime "deleted_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "event_id"
+    t.boolean "shipping", default: false, null: false
+    t.boolean "manual", default: false, null: false
+    t.date "date", default: "2017-11-22", null: false
     t.index ["deleted_at"], name: "index_inventories_on_deleted_at"
     t.index ["event_id"], name: "index_inventories_on_event_id"
   end
