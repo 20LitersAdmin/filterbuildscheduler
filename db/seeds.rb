@@ -11,7 +11,7 @@
 #     map_url: "https://goo.gl/maps/ZgfJaae3ReJ2",
 #     photo_url: "photo_url-filler-data",
 #     instructions: "Park on West side of building, watch out for the alligator"
-#},
+#   },
 #   { name: 'Middle of Nowhere',
 #     address1: "220 Alderman St",
 #     address2: "West side of the building",
@@ -32,7 +32,7 @@
 #     ideal_leaders: 2,
 #     family_friendly: true,
 #     unit_rate: 2.13
-#},
+#   },
 #   { name: "Facility Filter",
 #     description: "Got the engineering bug? Like to cut and glue PVC in complicated ways? Then this is the event for you.",
 #     ideal_build_length: 4,
@@ -40,7 +40,7 @@
 #     ideal_leaders: 1,
 #     family_friendly: false,
 #     unit_rate: 0.125
-#},
+#   }
 # ])
 
 # Event.create!([
@@ -55,7 +55,7 @@
 #     location: Location.first,
 #     item_goal: 20,
 #     technology_id: Technology.first.id
-#},
+#   },
 #   { start_time: 6.days.from_now,
 #     end_time: 6.days.from_now,
 #     title: "6 days from now",
@@ -67,7 +67,7 @@
 #     location: Location.second,
 #     item_goal: 20,
 #     technology_id: Technology.first.id
-#},
+#   },
 #   { start_time: 10.days.ago,
 #     end_time: 9.days.ago,
 #     title: "10 days ago",
@@ -89,39 +89,39 @@
 #     lname: "Boss",
 #     is_leader: true,
 #     is_admin: true
-#},
+#   },
 #   { email: "leader1@email.com",
 #     password: "password", password_confirmation: "password",
 #     fname: "Leader",
 #     lname: "One",
 #     is_leader: true
-#},
+#   },
 #   { email: "leader2@email.com",
 #     password: "password", password_confirmation: "password",
 #     fname: "Leader",
 #     lname: "Two",
 #     is_leader: true
-#},
+#   },
 #   { email: "builder1@email.com",
 #     password: "password", password_confirmation: "password",
 #     fname: "Builder",
 #     lname: "One"
-#},
+#   },
 #   { email: "builder2@email.com",
 #     password: "password", password_confirmation: "password",
 #     fname: "Builder",
 #     lname: "Two"
-#},
+#   },
 #   { email: "builderMissing@email.com",
 #     password: "password", password_confirmation: "password",
 #     fname: "Builder",
 #     lname: "Archived",
 #     deleted_at: '2017-11-03 00:00:00'
-#},
+#   },
 #   { email: "builderNoPW@email.com",
 #     fname: "Builder",
 #     lname: "No Password"
-#},
+#   },
 # ])
 # Registration.create!([
 #   {
@@ -129,32 +129,32 @@
 #     guests_registered: 2,
 #     event_id: 1,
 #     leader: true
-#},
+#   },
 #   {
 #     user_id: 2,
 #     guests_registered: 4,
 #     event_id: 1
-#},
+#   },
 #   {
 #     user_id: 3,
 #     guests_registered: 0,
 #     event_id: 1
-#},
+#   },
 #   {
 #     user_id: 4,
 #     guests_registered: 6,
 #     event_id: 1
-#},
+#   },
 #   {
 #     user_id: 5,
 #     guests_registered: 3,
 #     event_id: 1
-#},
+#   },
 #   {
 #     user_id: 7,
 #     guests_registered: 5,
 #     event_id: 1
-#},
+#   },
 # ])
 # Material.create!([
 #   {
@@ -164,7 +164,7 @@
 #     min_order: 1,
 #     order_id: "PLB213-45",
 #     weeks_to_deliver: 1.5
-#},
+#   },
 #   {
 #     name: 'PVC 1/2-inch schd 40',
 #     supplier: 'Lowes',
@@ -172,7 +172,7 @@
 #     min_order: 1,
 #     order_id: "PLB213-40",
 #     weeks_to_deliver: 1.2
-#},
+#   },
 #   {
 #     name: 'Hose 1/2-inch-ID clear flexible',
 #     supplier: 'Hoses Online',
@@ -180,7 +180,7 @@
 #     min_order: 1,
 #     order_id: "HO-2345",
 #     weeks_to_deliver: 3
-#},
+#   },
 #   {
 #     name: 'Lumber 2x4x8 pine',
 #     supplier: 'Lowes',
@@ -203,7 +203,7 @@
 #     weeks_to_deliver: 2,
 #     sample_size: 10,
 #     sample_weight: 1.125
-#},
+#   },
 #   {
 #     name: "PVC Endcaps 1/2-inch drilled",
 #     common_id: "half inch endcaps drilled",
@@ -211,7 +211,7 @@
 #     weeks_to_deliver: 2,
 #     sample_size: 10,
 #     sample_weight: 1.025
-#},
+#   },
 #   {
 #     name: "Backwash hose",
 #     common_id: "backwash hose cut",
@@ -219,7 +219,7 @@
 #     sample_size: 10,
 #     sample_weight: 3,
 #     made_from_materials: true,
-#},
+#   },
 #   {
 #     name: "Filter Cartridge 3-inch",
 #     supplier: 'NOK',
@@ -229,7 +229,7 @@
 #     weeks_to_deliver: 16,
 #     sample_size: 50,
 #     sample_weight: 5.25
-#},
+#   },
 #   {
 #     name: "35-mm O-ring",
 #     supplier: 'NOK',
@@ -240,7 +240,7 @@
 #     weeks_to_deliver: 16,
 #     sample_size: 100,
 #     sample_weight: 0.125
-#},
+#   },
 #   {
 #     name: "32-mm O-ring",
 #     supplier: 'NOK',
@@ -251,7 +251,7 @@
 #     weeks_to_deliver: 16,
 #     sample_size: 100,
 #     sample_weight: 0.125
-#},
+#   },
 #   {
 #     name: "Molded long filter housing component blue",
 #     supplier: 'WeMakeYourPlastics',
@@ -262,7 +262,7 @@
 #     weeks_to_deliver: 10,
 #     sample_size: 5,
 #     sample_weight: 1.6
-#},
+#   },
 #   {
 #     name: "Molded short filter housing component blue",
 #     supplier: 'WeMakeYourPlastics',
@@ -367,4 +367,89 @@ Component.create!([
   { name: 'VFF500 cartridge section', quantity_per_box: 1, sample_size: 1},
   { name: 'VFF500 drain pieces', quantity_per_box: 1, sample_size: 1},
   { name: 'VFF500 stem pipe - 405mm', quantity_per_box: 1, sample_size: 1 }
+=======
+# User.create!([
+#   { email:  'andrew@20liters.org' , fname:  'Andrew'  , lname:  'Vantimmeren' , phone:  '616.710.6392' },
+#   { email:  'lizzylouwho@gmail.com' , fname:  'Liz' , lname:  'Sitte' , phone:  '6164027949'  , is_leader: true },
+#   { email:  'bjlong5@hotmail.com' , fname:  'Bob' , lname:  'Long'  , phone:  '6169016615'  , is_leader:  true },
+#   { email:  'cmjohnson177@gmail.com'  , fname:  'Chris' , lname:  'Johnson' , phone:  '616-490-0356' },
+#   { email:  'codye@foreway.com' , fname:  'Cody'  , lname:  'Ensing'  , phone:  '616-401-9862'      , does_inventory: true },
+#   { email:  'dlathrop@steelcase.com'  , fname:  'Dave'  , lname:  'Lathrop' , phone:  '616-901-2912'  , is_leader:  true  , does_inventory: true },
+#   { email:  'dougv@cqlcorp.com' , fname:  'Doug'  , lname:  'VandenHoek'  , phone:  '616.307.0018'  , is_leader:  true },
+#   { email:  'jrcardinal@highpointelectric.us' , fname:  'Jon' , lname:  'Cardinal'  , phone:  '231.638.6089'  , is_leader:  true },
+#   { email:  'lmont71@comcast.net' , fname:  'Linda' , lname:  'Montgomery'  , phone:  '6164194256'  , is_leader:  true  , does_inventory: true },
+#   { email:  'liz.jasperse@gmail.com'  , fname:  'Liz' , lname:  'Jaspers' , phone:  '616-990-4402'      , does_inventory: true },
+#   { email:  'peter.vandentoorn@gmail.com' , fname:  'Peter' , lname:  'VandenToorn' , phone:  '616.822.7498'      , is_admin:   true },
+#   { email:  'snauta74@hotmail.com'  , fname:  'Steve' , lname:  'Nauta' , phone:  '6164467674'  , is_leader:  true  , does_inventory: true },
+#   { email:  'thadcummings@gmail.com'  , fname:  'Thad'  , lname:  'Cummings'  , phone:  '248-982-7024'  , is_leader:  true },
+#   { email:  'ta3jwiersma@gmail.com' , fname:  'Tim' , lname:  'Wiersma' , phone:  '616-914-7971'      , does_inventory: true },
+#   { email:  'thamel53@gmail.com'  , fname:  'Tom' , lname:  'Hamel' , phone:  '231.301.2957'  , is_leader:  true },
+#   { email:  'tommaas@hotmail.com' , fname:  'Tom' , lname:  'Maas'  , phone:  '616.901.6113'  , is_leader:  true },
+#   { email:  'tonytheclimber@gmail.com'  , fname:  'Tony'  , lname:  'Kelly' , phone:  '6163899936'  , is_leader:  true  , does_inventory: true },
+#   { email:  'bullers_us@yahoo.com'  , fname:  'Vern'  , lname:  'Bullers' , phone:  '541-221-8579'  , is_leader:  true }
+# ])
+Registration.create!([
+  {
+    user_id: 1,
+    guests_registered: 2,
+    event_id: 5,
+    leader: true
+  },
+  {
+    user_id: 2,
+    guests_registered: 4,
+    event_id: 5
+  },
+  {
+    user_id: 3,
+    guests_registered: 0,
+    event_id: 5
+  },
+  {
+    user_id: 4,
+    guests_registered: 6,
+    event_id: 5
+  },
+  {
+    user_id: 5,
+    guests_registered: 3,
+    event_id: 5
+  },
+  {
+    user_id: 7,
+    guests_registered: 5,
+    event_id: 5
+  },
+  {
+    user_id: 1,
+    guests_registered: 2,
+    event_id: 6,
+    leader: true
+  },
+  {
+    user_id: 2,
+    guests_registered: 4,
+    event_id: 6,
+    leader: true
+  },
+  {
+    user_id: 3,
+    guests_registered: 0,
+    event_id: 6
+  },
+  {
+    user_id: 4,
+    guests_registered: 6,
+    event_id: 6
+  },
+  {
+    user_id: 5,
+    guests_registered: 3,
+    event_id: 6
+  },
+  {
+    user_id: 7,
+    guests_registered: 5,
+    event_id: 6
+  }
 ])

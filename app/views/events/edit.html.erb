@@ -5,9 +5,9 @@
       <h4 class="center-align">Private Event</h4>
     <% end %>
   </div>
-  <% if @event.registrations.exists? %>
+  <% if @event.registrations.exists? && !@event.in_the_past? %>
     <div class="event-edit-warning">
-      <h4 class="center-align alert danger">WARNING! People have registered for this event.<br>If you change the location, times, or technology, everyone registered will be notified.</h4>
+      <h4 class="center-align alert danger">WARNING! People have registered for this event.<br>Everyone who registered will be notified if you change the location, times, or technology, or cancel the event.</h4>
     </div>
   <% end %>
   <div>

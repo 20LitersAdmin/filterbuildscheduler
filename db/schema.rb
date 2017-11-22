@@ -227,6 +227,7 @@ ActiveRecord::Schema.define(version: 20171121205214) do
     t.datetime "updated_at", null: false
     t.datetime "deleted_at"
     t.index ["deleted_at"], name: "index_registrations_on_deleted_at"
+
     t.index ["user_id", "event_id"], name: "index_registrations_on_user_id_and_event_id", unique: true
   end
 

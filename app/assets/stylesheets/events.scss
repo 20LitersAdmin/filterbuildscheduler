@@ -17,17 +17,6 @@
   .share-container > div {
     padding-right: 1em;
   }
-  .waiver_click label {
-    cursor: pointer;
-  }
-  .tech-img {
-    width: 100%;
-  }
-
-  .hidden {
-    visibility: hidden;
-  }
-
   .mt-10 {
     margin-top: 10px;
   }
@@ -45,7 +34,20 @@
       text-align: right;
     }
   }
+  img {
+    width: 100%;
+    height: auto;
+  }
+  .location-img, .waiver_click {
+    cursor: pointer;
+  }
 }
+
+.location-img {
+  width: 100%;
+  height: auto;
+}
+
 
 .event-form {
   .height-75 {
@@ -53,39 +55,6 @@
     .event_is_private {
       margin-top: 28px;
     }
-  }
-}
-
-.hero-img {
-  text-align: center;
-  background-image: url(https://20liters.org/wp-content/uploads/2016/07/cta-bg.jpg);
-  padding: 50px 0 12px 0;
-  margin: -20px auto 20px auto;
-  background-size: cover;
-  background-repeat: no-repeat;
-  background-position: center ;
-  box-sizing: border-box;
-  color: white;
-  h2 {
-    font-weight: bold;
-  }
-  p {
-    font-size: 1.375em;
-    font-weight: normal;
-    margin-bottom: 24px;
-  }
-}
-
-.btn.hero {
-  border: 1px solid white !important;
-  color: white !important;
-  display: block;
-  width: 12em;
-  margin: 1em auto !important;
-  transition: all 0.14s ease-in-out;
-
-  &.collapse {
-    margin-top: 1em;
   }
 }
 
@@ -181,69 +150,89 @@
         margin-top: 10px;
       }
     }
-  }
-}
-
-.btn-yellow-filled {
-  border: 2px solid #FCE000;
-  background-color: #FCE000;
-  color: #4A4A4A;
-  display: inline-block;
-  position: relative;
-  font-family: "DINPro","Helvetica Neue",Helvetica,Arial,sans-serif;
-  font-weight: bold;
-  margin: 7px 0;
-  text-align: center;
-  padding: 7px 19px;
-  font-size: 0.8em;
-}
-
-.solicit-div {
-  .dark-box {
-    background-color: #4A4A4A;
-    color: white;
-  }
-
-  .inner {
-    padding: 24px;
-  }
-
-  .solicit-button {
-    margin-top: 18px;
-    margin-bottom: 25px;
-    a {
-      color: #4a4a4a;
+    &.cancelled {
+      display: block;
+      margin: 1em;
+      text-align: center;
+      background-color: white;
+      color: black;
+      padding: 2em;
+      box-shadow: 0 0 5px #888;
+      padding: 2em 2em 0 2em;
       &:hover {
-        text-decoration: none;
-        color: #4a4a4a;
-        background-color: lighten($yellow, 10%)
+        color: black;
+        background-color: $light-grey;
+        box-shadow: 0 0 18px #888;
+      }
+      a.restore {
+        margin-top: 10px;
+        padding: 6px;
+        box-shadow: none;
       }
     }
   }
-}
 
-.solicit-title {
-  font-weight: bold;
-  text-transform: uppercase;
-  line-height: 18px;
-  margin-top: 16px;
-  margin-bottom: 6px;
-  font-size: 1.125em;
-  box-sizing: border-box;
-  min-height: 36px;
-}
+  .btn-yellow-filled {
+    border: 2px solid #FCE000;
+    background-color: #FCE000;
+    color: #4A4A4A;
+    display: inline-block;
+    position: relative;
+    font-family: "DINPro","Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-weight: bold;
+    margin: 7px 0;
+    text-align: center;
+    padding: 7px 19px;
+    font-size: 0.8em;
+  }
 
-.solicit-text {
-  font-size: .875em;
-  line-height: 18px;
-  margin-top: 14px;
-  margin-bottom: 6px;
-  min-height: 72px;
-  hyphens: auto;
-}
+  .solicit-div {
+    .dark-box {
+      background-color: #4A4A4A;
+      color: white;
+    }
 
-.family-friendly{
-	margin-top:.2rem;
+    .inner {
+      padding: 24px;
+    }
+
+    .solicit-button {
+      margin-top: 18px;
+      margin-bottom: 25px;
+      a {
+        color: #4a4a4a;
+        &:hover {
+          text-decoration: none;
+          color: #4a4a4a;
+          background-color: lighten($yellow, 10%)
+        }
+      }
+    }
+  }
+
+  .solicit-title {
+    font-weight: bold;
+    text-transform: uppercase;
+    line-height: 18px;
+    margin-top: 16px;
+    margin-bottom: 6px;
+    font-size: 1.125em;
+    box-sizing: border-box;
+    min-height: 36px;
+  }
+
+  .solicit-text {
+    font-size: .875em;
+    line-height: 18px;
+    margin-top: 14px;
+    margin-bottom: 6px;
+    min-height: 72px;
+    hyphens: auto;
+  }
+
+  .family-friendly{
+  	margin-top:.2rem;
+  }
 }
 
 @media (max-width: 768px) {

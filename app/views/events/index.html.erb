@@ -1,31 +1,44 @@
-<% if current_user and current_user.is_leader? %>
-  <div class="action-container">
-    <%= link_to "Schedue a New Build", new_event_path, class: 'btn yellow' %>
-  </div>
-<% end %>
-<div class='container'>
-  <div class="event-container">
-    <h2 class="heading">Upcoming Builds</h2>
-    <% if @events.count > 0 %>
-      <%= render partial: 'events/event', collection: @events %>
+<div class="event-index">
+  <% if current_user && current_user.admin_or_leader? %>
+    <div class="action-container">
+      <% if current_user.is_admin? && @cancelled_events.exists? %>
+        <div class="col-sm-6">
+          <%= link_to "Schedue a New Build", new_event_path, class: 'btn yellow' %>
+        </div>
+        <div class="col-sm-6">
+          <%= link_to "Manage Cancelled Events", cancelled_events_path, class: 'btn blue' %>
+        </div>
+      <% else %>
+        <div class="col-sm-12">
+          <%= link_to "Schedue a New Build", new_event_path, class: 'btn yellow' %>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+  <div class='container'>
+    <div class="event-container">
+      <h2 class="heading">Upcoming Builds</h2>
+      <% if @events.count > 0 %>
+        <%= render partial: 'events/event', collection: @events %>
+      <% else %>
+        <div class="center-align action-container">
+          <h4>No upcoming events.</h4>
+          <p>Want to get notified when new build events are available?</p>
+          <a href="https://20liters.kindful.com/register/volunteer" class="btn yellow">Join the Email List</a>
+        </div>
+      <% end %>
+    </div>
+
+    <% if @past_events.present? %>
+      <div class="event-container">
+        <h2 class="heading">Past Builds</h2>
+        <%= render partial: 'events/event', collection: @past_events %>
+      </div>
     <% else %>
-      <div class="center-align action-container">
-        <h4>No upcoming events.</h4>
-        <p>Want to get notified when new build events are available?</p>
-        <a href="https://20liters.kindful.com/register/volunteer" class="btn yellow">Join the Email List</a>
+      <div class="event-container">
+        <h2 class="heading">Don't just build, lead!</h2>
+        <%= render partial: 'events/solicit'  %>
       </div>
     <% end %>
   </div>
-
-  <% if @past_events.present? %>
-    <div class="event-container">
-      <h2 class="heading">Past Builds</h2>
-      <%= render partial: 'events/event', collection: @past_events %>
-    </div>
-  <% else %>
-    <div class="event-container">
-      <h2 class="heading">Don't just build, lead!</h2>
-      <%= render partial: 'events/solicit'  %>
-    </div>
-  <% end %>
 </div>
