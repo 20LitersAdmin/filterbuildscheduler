@@ -1,7 +1,8 @@
 class InventoriesController < ApplicationController
 
   def index
-    @inventories = Inventory.all
+    @latest = Inventory.latest
+    @former = Inventory.former
   end
 
   def create
@@ -32,7 +33,7 @@ class InventoriesController < ApplicationController
   private
 
   def inventory_params
-    params.require(:inventory).permit :date, :reported, :receiving, :deleted_at,
-        counts_attributes: [:id, :components_id, :parts_id, :materials_id, :loose_count, :unopened_boxes_count, :deleted_at]
+    params.require(:inventory).permit :date, :reported, :receiving, :shipping, :deleted_at, :event_id,
+        counts_attributes: [:id, :user_id, :components_id, :parts_id, :materials_id, :loose_count, :unopened_boxes_count, :deleted_at]
   end
 end
