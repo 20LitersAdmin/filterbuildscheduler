@@ -163,8 +163,6 @@ ActiveRecord::Schema.define(version: 20171121205214) do
     t.string "name", null: false
     t.string "supplier"
     t.string "order_url"
-    t.integer "price_cents"
-    t.string "price_currency", default: "USD", null: false
     t.integer "min_order"
     t.string "order_id"
     t.float "weeks_to_deliver"
@@ -172,8 +170,10 @@ ActiveRecord::Schema.define(version: 20171121205214) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "quantity_per_box", default: 1
-    t.integer "additional_cost_cents", default: 0
+    t.integer "additional_cost_cents", default: 0, null: false
     t.string "additional_cost_currency", default: "USD", null: false
+    t.integer "price_cents", default: 0, null: false
+    t.string "price_currency", default: "USD", null: false
     t.index ["deleted_at"], name: "index_materials_on_deleted_at"
   end
 
@@ -189,8 +189,6 @@ ActiveRecord::Schema.define(version: 20171121205214) do
     t.string "name", null: false
     t.string "supplier"
     t.string "order_url"
-    t.integer "price_cents"
-    t.string "price_currency", default: "USD", null: false
     t.integer "min_order"
     t.string "order_id"
     t.string "common_id"
@@ -202,8 +200,10 @@ ActiveRecord::Schema.define(version: 20171121205214) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "quantity_per_box", default: 1
-    t.integer "additional_cost_cents", default: 0
+    t.integer "additional_cost_cents", default: 0, null: false
     t.string "additional_cost_currency", default: "USD", null: false
+    t.integer "price_cents", default: 0, null: false
+    t.string "price_currency", default: "USD", null: false
     t.index ["deleted_at"], name: "index_parts_on_deleted_at"
   end
 
