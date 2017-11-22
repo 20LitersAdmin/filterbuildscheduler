@@ -1,9 +1,17 @@
 # README
 
+## WHAT IF Inventory:
+* New inventory copies all previous Inventory's counts each time: Variance / prediction / history (save at most 12 inventories...)
+* Event report creates a new inventory and updates the counts based on technology: extrapolate
+* Inventory can be manually asserted through the view (by users): create a record in inventories_users based on current_user whenever a count is added to an inventory
+* OR Counts have a t.references :user instead of the HABTM on inventory && user
+
+
+
 ## Things to do
 1. Add inventory system functionality
   * Figure out how join tables work when CRUDing a record (HABTM)
-  * Create seeds from spreadsheet
+
   * Needs views / printable
   * Needs variance check
 

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171121205214) do
+ActiveRecord::Schema.define(version: 20171122041138) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -126,7 +126,9 @@ ActiveRecord::Schema.define(version: 20171121205214) do
     t.datetime "deleted_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "event_id"
     t.index ["deleted_at"], name: "index_inventories_on_deleted_at"
+    t.index ["event_id"], name: "index_inventories_on_event_id"
   end
 
   create_table "inventories_technologies", id: false, force: :cascade do |t|
@@ -227,7 +229,6 @@ ActiveRecord::Schema.define(version: 20171121205214) do
     t.datetime "updated_at", null: false
     t.datetime "deleted_at"
     t.index ["deleted_at"], name: "index_registrations_on_deleted_at"
-
     t.index ["user_id", "event_id"], name: "index_registrations_on_user_id_and_event_id", unique: true
   end
 
