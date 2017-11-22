@@ -3,7 +3,10 @@ module ApplicationHelper
     h = {
       success: "success",
       danger: "danger",
-      warning: "warning"
+      error: "danger",
+      warning: "warning",
+      alert: "warning",
+      notice: "warning"
     }
     return h[flash_type.to_sym] || flash_type.to_s
   end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171120195549) do
+ActiveRecord::Schema.define(version: 20171121205214) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -20,11 +20,13 @@ ActiveRecord::Schema.define(version: 20171120195549) do
     t.integer "sample_size"
     t.float "sample_weight"
     t.string "common_id"
-    t.boolean "completed_tech"
-    t.boolean "completed_tech_boxed"
+    t.boolean "completed_tech", default: false
     t.datetime "deleted_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "quantity_per_box", default: 1
+    t.float "tare_weight", default: 0.0
+    t.index ["deleted_at"], name: "index_components_on_deleted_at"
   end
 
   create_table "components_counts", id: false, force: :cascade do |t|
@@ -60,6 +62,7 @@ ActiveRecord::Schema.define(version: 20171120195549) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["components_id"], name: "index_counts_on_components_id"
+    t.index ["deleted_at"], name: "index_counts_on_deleted_at"
     t.index ["materials_id"], name: "index_counts_on_materials_id"
     t.index ["parts_id"], name: "index_counts_on_parts_id"
   end
@@ -123,6 +126,7 @@ ActiveRecord::Schema.define(version: 20171120195549) do
     t.datetime "deleted_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["deleted_at"], name: "index_inventories_on_deleted_at"
   end
 
   create_table "inventories_technologies", id: false, force: :cascade do |t|
@@ -159,14 +163,18 @@ ActiveRecord::Schema.define(version: 20171120195549) do
     t.string "name", null: false
     t.string "supplier"
     t.string "order_url"
-    t.integer "price_cents"
-    t.string "price_currency", default: "USD", null: false
     t.integer "min_order"
     t.string "order_id"
     t.float "weeks_to_deliver"
     t.datetime "deleted_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "quantity_per_box", default: 1
+    t.integer "additional_cost_cents", default: 0, null: false
+    t.string "additional_cost_currency", default: "USD", null: false
+    t.integer "price_cents", default: 0, null: false
+    t.string "price_currency", default: "USD", null: false
+    t.index ["deleted_at"], name: "index_materials_on_deleted_at"
   end
 
   create_table "materials_parts", id: false, force: :cascade do |t|
@@ -181,8 +189,6 @@ ActiveRecord::Schema.define(version: 20171120195549) do
     t.string "name", null: false
     t.string "supplier"
     t.string "order_url"
-    t.integer "price_cents"
-    t.string "price_currency", default: "USD", null: false
     t.integer "min_order"
     t.string "order_id"
     t.string "common_id"
@@ -193,6 +199,12 @@ ActiveRecord::Schema.define(version: 20171120195549) do
     t.datetime "deleted_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "quantity_per_box", default: 1
+    t.integer "additional_cost_cents", default: 0, null: false
+    t.string "additional_cost_currency", default: "USD", null: false
+    t.integer "price_cents", default: 0, null: false
+    t.string "price_currency", default: "USD", null: false
+    t.index ["deleted_at"], name: "index_parts_on_deleted_at"
   end
 
   create_table "parts_technologies", id: false, force: :cascade do |t|
@@ -214,6 +226,8 @@ ActiveRecord::Schema.define(version: 20171120195549) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.datetime "deleted_at"
+    t.index ["deleted_at"], name: "index_registrations_on_deleted_at"
+
     t.index ["user_id", "event_id"], name: "index_registrations_on_user_id_and_event_id", unique: true
   end
 
@@ -265,6 +279,7 @@ ActiveRecord::Schema.define(version: 20171120195549) do
     t.string "authentication_token", limit: 30
     t.boolean "does_inventory"
     t.boolean "send_notification_emails", default: false
+    t.boolean "send_inventory_emails", default: false
     t.index ["authentication_token"], name: "index_users_on_authentication_token", unique: true
     t.index ["deleted_at"], name: "index_users_on_deleted_at"
     t.index ["email"], name: "index_users_on_email", unique: true
