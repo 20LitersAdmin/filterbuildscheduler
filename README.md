@@ -2,11 +2,13 @@
 
 ## Things to do
 1. Add inventory system functionality
+  * Figure out how join tables work when CRUDing a record (HABTM)
+  * Create seeds from spreadsheet
   * Needs views / printable
   * Needs variance check
 
-2. Allow leadership to email all registrants from registration#index
 3. Allow leadership to CRUD registrants for events.in_the_past
+2. Allow leadership to email all registrants from registration#index
 
 4. Add a Stripe Webhook / API for CauseVox to replace Zapier
   * Accepting & reading Stripe webhook is working
@@ -24,6 +26,7 @@
 
 ## The Future
 1. Use Paperclip to add part and component images
+1. Send email with weekly product availability (by user.primary_location == Business Connect?)
 1. Wait for live testing:
   * Do builders and admins get reminder emails?
   * Do registrants not get registration#created emails if the event is in the past?

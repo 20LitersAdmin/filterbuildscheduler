@@ -27,6 +27,10 @@ class User < ApplicationRecord
     is_admin? || is_leader?
   end
 
+  def does_inventory?
+    does_inventory || is_admin
+  end
+
   def name
     "#{fname} #{lname}"
   end
