@@ -1,0 +1,46 @@
+<div class="event cancelled">
+  <div class="top-part-wrapper">
+    <div>
+      <span class="location">Hosted by <%= event_cancelled.location.name %></span>
+    </div>
+    <h2 class="date"><%= event_cancelled.format_date_only %></h2>
+    <h3 class="time"><%= event_cancelled.format_time_only %></h3>
+    <h3 class="title"><%= event_cancelled.title %></h3>
+    <div class='family-friendly'>
+      <% if event_cancelled.technology.family_friendly %>
+        <i>Family Friendly</i>
+      <% else %>
+        <i>Ages 12+</i>
+      <% end %>
+    </div>
+
+    <%= link_to "Restore Event & Registrations", restore_event_path(event_cancelled, recursive: "true"), class: "btn btn-primary empty restore" %>
+    <%= link_to "Restore Event Only", restore_event_path(event_cancelled, recursive: "false"), class: "btn btn-primary empty restore" %>
+  </div>
+
+  <div class="bar-outer-wrapper <%= 'is_leader' if current_user&.is_leader %>">
+    <div class="bar-inner-wrapper">
+      <div class="bar">
+        <%= event_cancelled.total_registered("only_deleted") %> of <%= event_cancelled.max_registrations %> Registered<%= event_cancelled.you_are_attendee(@user, "only_deleted") %>.
+      </div>
+
+      <% if current_user&.is_leader %>
+        <% if event_cancelled.does_not_need_leaders?("only_deleted") %>
+          <div class="bar blue">
+        <% elsif event_cancelled.really_needs_leaders?("only_deleted") %>
+          <div class="bar red">
+        <% elsif event_cancelled.needs_leaders?("only_deleted") %>
+          <div class="bar yellow">
+        <% end %>
+
+          <%= event_cancelled.leaders_registered("only_deleted").count %> of <%= event_cancelled.max_leaders %> Leaders Registered<%= event_cancelled.you_are_leader(@user, "only_deleted") %>.
+
+        </div>
+      <% end %>
+
+      <% if event_cancelled.is_private %>
+        <div class="bar blue">This event is private</div>
+      <% end %>
+    </div>
+  </div>
+</div>
