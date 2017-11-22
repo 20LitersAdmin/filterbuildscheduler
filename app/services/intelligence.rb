@@ -28,4 +28,8 @@ class Intellegence < ApplicationRecord
     # look at past Event.where(technology_id: event.technology_id) and average item_results
   end
 
+  def update_inventory_from_event_results(event)
+    # create a new Inventory and Count(where: event-based: true)
+  end
+
 end
