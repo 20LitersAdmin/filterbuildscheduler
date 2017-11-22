@@ -1,8 +1,9 @@
 class Inventory < ApplicationRecord
   acts_as_paranoid
 
-  has_many :counts
+  has_many :counts, dependent: :destroy
   accepts_nested_attributes_for :counts
+  belongs_to :event, optional: true
 
   #has_and_belongs_to_many :technologies
   #has_and_belongs_to_many :users
@@ -15,21 +16,20 @@ class Inventory < ApplicationRecord
   end
 
   def name
-    "#" + id.to_s + ": " + date.strftime("%-m/%-d/%y") + ": " + type
+    date.strftime("%-m/%-d/%y") + ": " + type
   end
 
   def type
     if event_id.present?
       type = "Event Based"
-    end
-    if receiving
+    elsif receiving
       type = "Items Received"
-    end
-    if shipping
+    elsif shipping
       type = "Items Shipped"
-    end
-    if !event_id.present? && !receiving && !shipping
+    elsif manual
       type = "Manual Inventory"
+    else
+      type = "Unknown"
     end
     type
   end
