@@ -8,7 +8,7 @@
   <% end %>
 
   <div class="whole" style="position: relative; min-height: 1px; float: left; width: 100%; margin: auto 16px;">
-    <h2 style="margin-bottom: 6px"><strong>Here's what changed</strong></h2>
+    <h3 style="margin-bottom: 6px"><strong>Here's what changed:</strong></h3>
     <div class="whole" style="position: relative; min-height: 1px; float: left; width: 100%; margin: auto 16px;">
       <% if @start_time || @end_time %>
         <p style="margin-bottom: 6px"><strong>The time was changed:</strong></p>
@@ -26,10 +26,10 @@
         <p style="margin-bottom: 6px"><strong>The location was changed:</strong></p>
         <ul style="margin-top: 6px">
           <li><strong>Original:</strong>
-            <%= @location_was %>
+            <%= @location_was.name %>
           </li>
           <li><strong>Now:</strong>
-            <%= @location %>
+            <%= @location.name %>
           </li>
         </ul>
       <% end %>
@@ -50,7 +50,7 @@
 
   <div class="whole" style="position: relative; min-height: 16px; padding-left: 15px; padding-right: 15px; float: left; width: 100%; text-align: left;">
     <p><strong>Need to change or cancel your registration?</strong> No worries, just follow this link.</p>
-    <%= link_to "Change / Cancel my registration", edit_event_registration_url(@event, @registration, user_token: @recipient.authentication_token, user_email: @recipient.email ), class: "btn blue", style: "display: inline-block; margin-bottom: 0; font-weight: normal; text-align: center; vertical-align: middle; border: 1px solid transparent; white-space: nowrap; padding: 6px 12px; font-size: 14px; text-decoration: none; color: #4a4a4a; background-color: #9bb4c8; border-color: #91a0c8;" %>
+    <%= link_to "Change / Cancel my registration", edit_event_registration_url(@event, @registration, user_token: @recipient.authentication_token, user_email: @recipient.email ), class: "btn blue", target: "_blank", style: "display: inline-block; margin-bottom: 0; font-weight: normal; text-align: center; vertical-align: middle; border: 1px solid transparent; white-space: nowrap; padding: 6px 12px; font-size: 14px; text-decoration: none; color: #4a4a4a; background-color: #9bb4c8; border-color: #91a0c8;" %>
   </div>
 
 
@@ -64,7 +64,7 @@
     <div class="whole" style="position: relative; min-height: 1px; padding-left: 15px; padding-right: 15px; float: left; width: 50%; text-align: left;">
       <p><strong>Calendars:</strong></p>
       <p>While we can't delete the old calendar appointment for you, we have created a new one. Use the link to add this to your Google Calendar. Use the attached iCal for other calendar types.</p>
-      <%= link_to "Add to my Google Calendar", url_for_registration_gcal, class: "btn yellow", style: "display: inline-block; margin-bottom: 0; font-weight: normal; text-align: center; vertical-align: middle; border: 1px solid transparent; white-space: nowrap; padding: 6px 12px; font-size: 14px; text-decoration: none; color: #4a4a4a; background-color: #fce000; border-color: ##fcc900;" %>
+      <%= link_to "Add to my Google Calendar", url_for_registration_gcal, class: "btn yellow", target: "_blank", style: "display: inline-block; margin-bottom: 0; font-weight: normal; text-align: center; vertical-align: middle; border: 1px solid transparent; white-space: nowrap; padding: 6px 12px; font-size: 14px; text-decoration: none; color: #4a4a4a; background-color: #fce000; border-color: ##fcc900;" %>
     </div>
     <div class="whole" style="position: relative; min-height: 16px; padding-left: 15px; padding-right: 15px; float: left; width: 100%; text-align: left; margin-top: 24px;">
       <p><strong>Have a Question?</strong> Just reply to this email.</p>
@@ -72,9 +72,9 @@
     <div class="whole" style="position: relative; min-height: 16px; padding-left: 15px; padding-right: 15px; float: left; width: 100%; text-align: left;">
       <% if @token %>
         <p><strong>If you plan to build often</strong>, you might want to save time by logging in. You can finish setting up your account here:</p>
-        <%= link_to "Create my account", edit_password_url(@recipient, reset_password_token: @token), class: "btn yellow", style: "display: inline-block; margin-bottom: 0; font-weight: normal; text-align: center; vertical-align: middle; border: 1px solid transparent; white-space: nowrap; padding: 6px 12px; font-size: 14px; text-decoration: none; color: #4a4a4a; background-color: #fce000; border-color: ##fcc900;" %>
+        <%= link_to "Create my account", edit_password_url(@recipient, reset_password_token: @token), class: "btn yellow", target: "_blank", style: "display: inline-block; margin-bottom: 0; font-weight: normal; text-align: center; vertical-align: middle; border: 1px solid transparent; white-space: nowrap; padding: 6px 12px; font-size: 14px; text-decoration: none; color: #4a4a4a; background-color: #fce000; border-color: ##fcc900;" %>
       <% else %>
-          <%= link_to "Go to make.20liters.org", "https://make.20liters.org", class: "btn yellow", style: "display: inline-block; margin-bottom: 0; font-weight: normal; text-align: center; vertical-align: middle; border: 1px solid transparent; white-space: nowrap; padding: 6px 12px; font-size: 14px; text-decoration: none; color: #4a4a4a; background-color: #fce000; border-color: ##fcc900;" %>
+          <%= link_to "Go to make.20liters.org", "https://make.20liters.org", class: "btn yellow", target: "_blank", style: "display: inline-block; margin-bottom: 0; font-weight: normal; text-align: center; vertical-align: middle; border: 1px solid transparent; white-space: nowrap; padding: 6px 12px; font-size: 14px; text-decoration: none; color: #4a4a4a; background-color: #fce000; border-color: ##fcc900;" %>
       <% end %>
     </div>
   </div>
