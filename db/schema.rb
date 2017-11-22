@@ -172,7 +172,7 @@ ActiveRecord::Schema.define(version: 20171121205214) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "quantity_per_box", default: 1
-    t.float "additional_cost_cents", default: 0.0
+    t.integer "additional_cost_cents", default: 0
     t.string "additional_cost_currency", default: "USD", null: false
     t.index ["deleted_at"], name: "index_materials_on_deleted_at"
   end
@@ -202,7 +202,7 @@ ActiveRecord::Schema.define(version: 20171121205214) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "quantity_per_box", default: 1
-    t.float "additional_cost_cents", default: 0.0
+    t.integer "additional_cost_cents", default: 0
     t.string "additional_cost_currency", default: "USD", null: false
     t.index ["deleted_at"], name: "index_parts_on_deleted_at"
   end
