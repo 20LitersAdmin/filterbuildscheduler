@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171122041138) do
+ActiveRecord::Schema.define(version: 20171122155452) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -61,10 +61,12 @@ ActiveRecord::Schema.define(version: 20171122041138) do
     t.datetime "deleted_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "user_id"
     t.index ["components_id"], name: "index_counts_on_components_id"
     t.index ["deleted_at"], name: "index_counts_on_deleted_at"
     t.index ["materials_id"], name: "index_counts_on_materials_id"
     t.index ["parts_id"], name: "index_counts_on_parts_id"
+    t.index ["user_id"], name: "index_counts_on_user_id"
   end
 
   create_table "counts_materials", id: false, force: :cascade do |t|
@@ -121,28 +123,14 @@ ActiveRecord::Schema.define(version: 20171122041138) do
 
   create_table "inventories", force: :cascade do |t|
     t.datetime "date", null: false
-    t.boolean "reported", default: false, null: false
     t.boolean "receiving", default: false, null: false
+    t.boolean "shipping", default: false, null: false
     t.datetime "deleted_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "event_id"
     t.index ["deleted_at"], name: "index_inventories_on_deleted_at"
     t.index ["event_id"], name: "index_inventories_on_event_id"
-  end
-
-  create_table "inventories_technologies", id: false, force: :cascade do |t|
-    t.bigint "inventory_id", null: false
-    t.bigint "technology_id", null: false
-    t.index ["inventory_id", "technology_id"], name: "index_inventories_technologies_on_inventory"
-    t.index ["technology_id", "inventory_id"], name: "index_inventories_technologies_on_technology"
-  end
-
-  create_table "inventories_users", id: false, force: :cascade do |t|
-    t.bigint "inventory_id", null: false
-    t.bigint "user_id", null: false
-    t.index ["inventory_id", "user_id"], name: "index_inventories_users_on_inventory_id_and_user_id"
-    t.index ["user_id", "inventory_id"], name: "index_inventories_users_on_user_id_and_inventory_id"
   end
 
   create_table "locations", force: :cascade do |t|
