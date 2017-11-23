@@ -1,3 +1,6 @@
-<div class="inventory">
-  <%= inventory.name %>
+<div class="inventory col-sm-3">
+  <h4><%= inventory.name %></h4>
+  <p><%= pluralize(inventory.item_count, "item") %> included.</p>
+  <%= link_to "View", inventory_path(inventory), class: "btn yellow" %>
+  <%= link_to "Edit", edit_inventory_path(inventory), class: "btn blue" %>
 </div>

@@ -20,7 +20,8 @@
         <div class="row">
           <div class="inventory col-sm-3">
             <h4><%= @latest.name %></h4>
-            <%= link_to "View", inventory_path(@latest), class: "btn yellow" %> <br>
+            <p><%= pluralize(@latest.item_count, "item") %> included.</p>
+            <%= link_to "View", inventory_path(@latest), class: "btn yellow" %>
             <%= link_to "Edit", edit_inventory_path(@latest), class: "btn blue" %>
           </div>
         </div>
@@ -32,7 +33,9 @@
     <div class="inv-latest row">
       <div class="col-xs-12">
         <h2>Past Inventories:</h2>
-        <%= render 'inventory', collection: @inventories %>
+        <div class="row">
+          <%= render @inventories %>
+        </div>
       </div>
     </div>
   <% end %>

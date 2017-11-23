@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171122195620) do
+ActiveRecord::Schema.define(version: 20171123015203) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -27,13 +27,6 @@ ActiveRecord::Schema.define(version: 20171122195620) do
     t.integer "quantity_per_box", default: 1
     t.float "tare_weight", default: 0.0
     t.index ["deleted_at"], name: "index_components_on_deleted_at"
-  end
-
-  create_table "components_counts", id: false, force: :cascade do |t|
-    t.bigint "component_id", null: false
-    t.bigint "count_id", null: false
-    t.index ["component_id", "count_id"], name: "index_components_counts_on_component_id_and_count_id"
-    t.index ["count_id", "component_id"], name: "index_components_counts_on_count_id_and_component_id"
   end
 
   create_table "components_parts", id: false, force: :cascade do |t|
@@ -53,36 +46,20 @@ ActiveRecord::Schema.define(version: 20171122195620) do
   end
 
   create_table "counts", force: :cascade do |t|
-    t.bigint "components_id"
-    t.bigint "parts_id"
-    t.bigint "materials_id"
+    t.bigint "user_id"
+    t.bigint "inventory_id", null: false
+    t.bigint "component_id"
+    t.bigint "part_id"
+    t.bigint "material_id"
     t.integer "loose_count", default: 0, null: false
     t.integer "unopened_boxes_count", default: 0, null: false
     t.datetime "deleted_at"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.bigint "user_id"
-    t.bigint "inventory_id"
-    t.index ["components_id"], name: "index_counts_on_components_id"
+    t.index ["component_id"], name: "index_counts_on_component_id"
     t.index ["deleted_at"], name: "index_counts_on_deleted_at"
     t.index ["inventory_id"], name: "index_counts_on_inventory_id"
-    t.index ["materials_id"], name: "index_counts_on_materials_id"
-    t.index ["parts_id"], name: "index_counts_on_parts_id"
+    t.index ["material_id"], name: "index_counts_on_material_id"
+    t.index ["part_id"], name: "index_counts_on_part_id"
     t.index ["user_id"], name: "index_counts_on_user_id"
-  end
-
-  create_table "counts_materials", id: false, force: :cascade do |t|
-    t.bigint "count_id", null: false
-    t.bigint "material_id", null: false
-    t.index ["count_id", "material_id"], name: "index_counts_materials_on_count_id_and_material_id"
-    t.index ["material_id", "count_id"], name: "index_counts_materials_on_material_id_and_count_id"
-  end
-
-  create_table "counts_parts", id: false, force: :cascade do |t|
-    t.bigint "count_id", null: false
-    t.bigint "part_id", null: false
-    t.index ["count_id", "part_id"], name: "index_counts_parts_on_count_id_and_part_id"
-    t.index ["part_id", "count_id"], name: "index_counts_parts_on_part_id_and_count_id"
   end
 
   create_table "delayed_jobs", force: :cascade do |t|

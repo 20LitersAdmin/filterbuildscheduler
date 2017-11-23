@@ -1,20 +1,18 @@
 # README
 
-## WHAT IF Inventory:
-* New inventory copies all previous Inventory's counts each time: Variance / prediction / history (delete inventories older than 365 days)
-* Event report creates a new inventory and updates the counts based on technology: extrapolate
-* Inventory can be manually asserted through the view (by users): create a record in inventories_users based on current_user whenever a count is added to an inventory
-* OR Counts have a t.references :user instead of the HABTM on inventory && user
-
-
-
 ## Things to do
 1. Add inventory system functionality
-  * Figure out how join tables work when CRUDing a record (HABTM)
+  * DONE: inventory is being amoeba_dup'd, but I could be doing .build instead?
+  * DONE: inventories#index, inventories#show
+  * InProgress: inventories#edit -- Instead submit 1 count record at a time?
+    * | name | loose: ## | box: ## | update ( or edit when updated_at == Date.today )
+  * Throw variance check ( against Inventory.latest )
+  * Extrapolate items from components
+  * Event#report creates inventory and extrapolates items
+  * Mark inventory complete && send emails
 
-  * Needs views / printable
-  * Needs variance check
-
+1. Those HABTMs with Material/Part/Component/Tech
+  * Need models - https://www.sitepoint.com/complex-rails-forms-with-nested-attributes/
 3. Allow leadership to CRUD registrants for events.in_the_past
 2. Allow leadership to email all registrants from registration#index
 
@@ -35,6 +33,7 @@
 ## The Future
 1. Use Paperclip to add part and component images
 1. Send email with weekly product availability (by user.primary_location == Business Connect?)
+1. Track item inventory/count over time
 1. Wait for live testing:
   * Do builders and admins get reminder emails?
   * Do registrants not get registration#created emails if the event is in the past?

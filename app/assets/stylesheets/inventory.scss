@@ -26,7 +26,16 @@
       overflow: hidden;
     }
     .btn {
-      margin-top: 12px;
+      margin-top: 8px;
     }
+  }
+}
+
+#inventory_edit {
+  .text-align-right {
+    text-align: right;
+  }
+  .match-h2 {
+    height: 63px;
   }
 }
