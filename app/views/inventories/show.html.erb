@@ -1,1 +1,18 @@
-Hello World
+<div class="col-xs-12">
+  <h2><%= @inventory.name %></h2>
+</div>
+<div class="col-xs-12">
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Loose Count</th>
+        <th>Box Count</th>
+      </tr>
+    </thead>
+    <tbody>
+        <%= render partial: "count_show", collection: @counts %>
+    </tbody>
+  </table>
+
+</div>

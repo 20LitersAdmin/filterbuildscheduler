@@ -8,13 +8,14 @@ class InventoriesController < ApplicationController
   def create
     @date = inventory_params[:date]
     if Inventory.all.present? # amoeba_dup
-      if Inventory.latest.date == @date
-        flash[:warning] = "An inventory exists for #{inventory_params[:date]}, please use that one."
+      binding.pry
+      if Inventory.latest.date == Date.parse(@date)
+        flash[:warning] = "An inventory already exists for #{inventory_params[:date]}, please use that one."
         return redirect_to inventories_path
       else #new date = new inventory
         # copy all the previous counts over
         @latest = Inventory.latest
-        @inventory = @latests.amoeba_dup
+        @inventory = @latest.amoeba_dup
 
         # set the new inventory type && date
         @inventory.date = inventory_params[:date]
@@ -30,17 +31,17 @@ class InventoriesController < ApplicationController
     end
 
     ### Make all the counts, unless they already exist from the amoeba_dup
-    @parts_ids = Part.all.map { |o| o.id }
-    @parts_ids.each do |p|
-      Count.where(inventory_id: @inventory.id).where(parts_id: p).first_or_create(user_id: current_user.id)
+    @part_ids = Part.all.map { |o| o.id }
+    @part_ids.each do |p|
+      Count.where(inventory_id: @inventory.id).where(part_id: p).first_or_create(user_id: current_user.id)
     end
-    @materials_ids = Material.all.map { |o| o.id }
-    @materials_ids.each do |m|
-      Count.where(inventory_id: @inventory.id).where(materials_id: m).first_or_create(user_id: current_user.id)
+    @material_ids = Material.all.map { |o| o.id }
+    @material_ids.each do |m|
+      Count.where(inventory_id: @inventory.id).where(material_id: m).first_or_create(user_id: current_user.id)
     end
-    @components_ids = Component.all.map { |o| o.id }
-    @components_ids.each do |c|
-      Count.where(inventory_id: @inventory.id).where(components_id: c).first_or_create(user_id: current_user.id)
+    @component_ids = Component.all.map { |o| o.id }
+    @component_ids.each do |c|
+      Count.where(inventory_id: @inventory.id).where(component_id: c).first_or_create(user_id: current_user.id)
     end
 
     if @inventory.errors.any?
@@ -55,6 +56,7 @@ class InventoriesController < ApplicationController
   def new
     @inventory = Inventory.new()
     # What kind of inventory to make?
+    # Inventories created by Events#update won't hit this action
     case params[:type]
     when "receiving"
       @inventory.receiving = true
@@ -71,6 +73,7 @@ class InventoriesController < ApplicationController
 
   def show
     @inventory = Inventory.find(params[:id])
+    @counts = @inventory.counts.sort_by {|c| - c.name }
   end
 
   def update
@@ -86,6 +89,7 @@ class InventoriesController < ApplicationController
   private
 
   def inventory_params
-    params.require(:inventory).permit :date, :reported, :receiving, :shipping, :manual, :deleted_at, :event_id
+    params.require(:inventory).permit :date, :reported, :receiving, :shipping, :manual, :deleted_at, :event_id,
+                                      counts_attributes: [:id, :user_id, :inventory_id, :component_id, :part_id, :material_id, :loose_count, :unopened_boxes_count, :deleted_at]
   end
 end

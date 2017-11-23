@@ -5,9 +5,6 @@ class Inventory < ApplicationRecord
   accepts_nested_attributes_for :counts
   belongs_to :event, optional: true
 
-  #has_and_belongs_to_many :technologies
-  #has_and_belongs_to_many :users
-
   scope :latest, -> { order(date: :desc).first }
   scope :former, -> { order(date: :desc).drop(1)}
 
@@ -32,5 +29,9 @@ class Inventory < ApplicationRecord
       type = "Unknown"
     end
     type
+  end
+
+  def item_count
+    counts.where("loose_count > ?", 0).where("unopened_boxes_count > ?", 0).count
   end
 end
