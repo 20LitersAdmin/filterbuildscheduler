@@ -8,7 +8,6 @@ class InventoriesController < ApplicationController
   def create
     @date = inventory_params[:date]
     if Inventory.all.present? # amoeba_dup
-      binding.pry
       if Inventory.latest.date == Date.parse(@date)
         flash[:warning] = "An inventory already exists for #{inventory_params[:date]}, please use that one."
         return redirect_to inventories_path
@@ -69,6 +68,7 @@ class InventoriesController < ApplicationController
 
   def edit
     @inventory = Inventory.find(params[:id])
+    @counts = @inventory.counts.sort_by {|c| - c.name }
   end
 
   def show

@@ -31,11 +31,16 @@
   }
 }
 
+.match-h2 {
+  height: 63px;
+  text-align: right;
+  a.btn {
+    margin-top: 15px;
+  }
+}
+
 #inventory_edit {
   .text-align-right {
     text-align: right;
-  }
-  .match-h2 {
-    height: 63px;
   }
 }
