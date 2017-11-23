@@ -1,30 +1,19 @@
-<div class="col-xs-12" id="inventory_edit">
-  <%= simple_form_for(@inventory, html: { class: 'form-horizontal' }, wrapper: :horizontal_form) do |f| %>
-  <div class="row">
-    <div class="col-sm-9">
-      <h2><%= @inventory.name %></h2>
-    </div>
-    <div class="col-sm-3 text-align-right">
-      <%= f.submit "Update Inventory", class: "btn yellow match-h2" %>
-    </div>
-  </div>
+<div class="col-xs-12">
+  <h2>Edit <%= @inventory.name %></h2>
+</div>
+<div class="col-xs-12">
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th class="center-align">Loose Count</th>
+        <th class="center-align">Box Count</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+        <%= render partial: "count", collection: @counts %>
+    </tbody>
+  </table>
 
-
-  <div class="col-xs-12">
-    <table class="table">
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Loose Count</th>
-          <th>Box Count</th>
-        </tr>
-      </thead>
-      <tbody>
-        <%= f.simple_fields_for(:counts) do |count| %>
-          <%= render "count", { f: count, inventory: @inventory } %>
-        <% end %>
-      </tbody>
-    </table>
-    <% end %>
-  </div>
 </div>

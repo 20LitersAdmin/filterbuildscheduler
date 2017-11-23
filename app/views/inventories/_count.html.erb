@@ -1,7 +1,10 @@
 <tr>
-  <%= f.input :inventory_id, as: :hidden %>
-  <%= f.input :user_id, as: :hidden, input_html: { value: current_user.id } %>
-  <td><%= f.object.name %></td>
-  <td><%= f.input :loose_count, label: "Loose" %></td>
-  <td><%= f.input :unopened_boxes_count, label: "Boxes" %></td>
+  <td><%= count.name %></td>
+  <td class="center-align"><%= count.loose_count %></td>
+  <td class="center-align"><%= count.unopened_boxes_count %></td>
+  <% if current_page?(action: 'edit') %>
+    <td>
+      <%= link_to "Edit", edit_inventory_count_path(@inventory, count), class: "btn yellow" %>
+    </td>
+  <% end %>
 </tr>
