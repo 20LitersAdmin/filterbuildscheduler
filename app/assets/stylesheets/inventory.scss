@@ -40,7 +40,50 @@
 }
 
 #inventory_edit {
-  .text-align-right {
-    text-align: right;
+  .count-div {
+    background-color: $slightly-darker-light-grey;
+    height: 156px;
+    margin: .8em .2em;
+    padding: .8em;
+    text-align: center;
+    box-shadow: 0 0 6px #888;
+    &:hover {
+      background-color: $light-grey;
+      box-shadow: 0 0 12px #888;
+    }
+    .count-title {
+      font-weight: bold;
+      padding-bottom: 6px;
+      border-bottom: 2px solid #fce000;
+    }
+    .count-tech, .current-count {
+      margin: 0;
+    }
+    a {
+      position: absolute;
+      bottom: 20px;
+      left: 0;
+      right: 0;
+      width: 60%;
+      margin: 0 auto;
+    }
   }
 }
+
+@media (max-width: 590px) {
+  #inventory_show_table {
+    display: none;
+  }
+
+  #inventory_show_div {
+    display: inline;
+  }
+}
+
+@media (min-width: 591px) {
+  #inventory_show_div {
+    display: none;
+  }
+}
+
+

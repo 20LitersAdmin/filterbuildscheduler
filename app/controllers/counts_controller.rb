@@ -30,6 +30,11 @@ class CountsController < ApplicationController
     @count = Count.find(params[:id])
     @inventory = @count.inventory
 
+    binding.pry
+    if @count.item.class.name == "Component"
+      # extrapolate!!!!
+    end
+
     if @count.update_attributes(count_params)
       flash[:success] = "Item count submitted"
       redirect_to edit_inventory_path(@inventory)

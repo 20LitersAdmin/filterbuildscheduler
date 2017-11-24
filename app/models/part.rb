@@ -1,8 +1,15 @@
 class Part < ApplicationRecord
   acts_as_paranoid
-  has_and_belongs_to_many :materials
-  has_and_belongs_to_many :technologies
-  has_and_belongs_to_many :components
+
+  has_many :extrapolate_technology_parts
+  has_many :technologies, through: :extrapolate_technology_parts
+
+  has_many :extrapolate_component_parts
+  has_many :components, through: :extrapolate_component_parts
+
+  has_many :extrapolate_material_parts
+  has_many :materials, through: :extrapolate_material_parts
+
   has_many :counts, dependent: :destroy
 
   monetize :price_cents, allow_nil: true, numericality: { greater_than_or_equal_to: 0 }

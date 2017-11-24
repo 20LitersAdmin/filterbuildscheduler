@@ -2,17 +2,13 @@
 
 ## Things to do
 1. Add inventory system functionality
-  * DONE: inventory is being amoeba_dup'd
-  * DONE: inventories#index, inventories#show, count#edit , count#update
-  * Inventory#show and inventory#edit need mobile views (different divs?)
   * Use DataTables for searching and sorting? (desktop views)
   * Throw variance check ( against Inventory.latest )
   * Extrapolate items from components
   * Event#report creates inventory and extrapolates items
   * Mark inventory complete && send emails
+  * Add a reorder_level field to parts && materials instead of predicting?
 
-1. Those HABTMs with Material/Part/Component/Tech
-  * Need models - https://www.sitepoint.com/complex-rails-forms-with-nested-attributes/
 3. Allow leadership to CRUD registrants for events.in_the_past
 2. Allow leadership to email all registrants from registration#index
 
@@ -39,6 +35,7 @@
   * Do registrants not get registration#created emails if the event is in the past?
 
 ## BUGS! AHH! BUGS!
+1. Extrap tables in RailsAdmin -- "desc" does not exist
 1. Registration.rb validations not working  ( eg. :under_max_registration)
   * Patched my own solution into RegistrationController
 
