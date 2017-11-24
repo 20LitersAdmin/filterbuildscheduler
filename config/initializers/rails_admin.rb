@@ -10,7 +10,6 @@ RailsAdmin.config do |config|
 
   #
   # Monkey patch to remove default_scope
-  #
   require 'rails_admin/adapters/active_record'
   module RailsAdmin::Adapters::ActiveRecord
     def get(id)
@@ -110,7 +109,6 @@ RailsAdmin.config do |config|
       field :common_id
       field :technologies
       field :completed_tech
-      field :completed_tech_boxed
     end
     configure :deleted_at do
       show

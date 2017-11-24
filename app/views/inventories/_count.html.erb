@@ -1,19 +1,15 @@
-<tr>
-  <td><%= count.item.id.to_s + ": " + count.name %></td>
-  <td><%= count.tech_names %></td>
-  <td class="center-align"><%= count.loose_count %></td>
-  <td class="center-align"><%= count.unopened_boxes_count %></td>
-  <td class="center-align"><%= count.item.quantity_per_box %></td>
-  <td class="center-align"><%= count.box_count %></td>
-  <td class="center-align"><%= count.available %></td>
-  <td class="center-align"><%= count.total %></td>
-  <% if current_page?(action: 'edit') %>
-    <td class="right-align">
-      <% if count.user_id == nil %>
-        <%= link_to "Count", edit_inventory_count_path(@inventory, count), class: "btn yellow" %>
-      <% else %>
-        <%= link_to "Edit", edit_inventory_count_path(@inventory, count), class: "btn blue" %>
-      <% end %>
-    </td>
-  <% end %>
-</tr>
+<div class="col-md-3 col-sm-4">
+  <div class="count-div">
+    <p class="count-title"><%= count.name %></p>
+    <p class="count-tech"><strong>For:</strong> <%= count.tech_names %></p>
+    <% if count.user_id == nil %>
+      <%= link_to "Count", edit_inventory_count_path(@inventory, count), class: "btn yellow devise" %>
+    <% else %>
+      <p class="current-count">
+        <strong>Avail:</strong> <%= count.available %>
+      </p>
+      <%= link_to "Edit", edit_inventory_count_path(@inventory, count), class: "btn blue devise" %>
+    <% end %>
+  </div>
+</div>
+

@@ -27,7 +27,7 @@ class Count < ApplicationRecord
     if self.item.technologies.map { |t| t.name }.empty?
       "not associated"
     else
-      self.item.technologies.map { |t| t.name }.join(",")
+      self.item.technologies.map { |t| t.name }.join(", ")
     end
   end
 
@@ -44,5 +44,12 @@ class Count < ApplicationRecord
     "TBD"
   end
 
+  def sort_by_user
+    if user_id.present?
+      1
+    else
+      0
+    end
+  end
 
 end

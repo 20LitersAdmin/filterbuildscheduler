@@ -1,24 +1,16 @@
-<div class="col-xs-12">
-  <h2>Edit <%= @inventory.name %></h2>
-</div>
-<div class="col-xs-12">
-  <table class="table">
-    <thead>
-      <tr>
-        <th>Item</th>
-        <th>For Tech</th>
-        <th class="center-align">Loose Count</th>
-        <th class="center-align">Unopened Boxes</th>
-        <th class="center-align"># per box</th>
-        <th class="center-align">Unopened Count</th>
-        <th class="center-align">Available Count</th>
-        <th class="center-align">Total Count</th>
-        <th></th>
-      </tr>
-    </thead>
-    <tbody>
-        <%= render partial: "count", collection: @counts %>
-    </tbody>
-  </table>
+<div id="inventory_edit">
+  <div class="col-xs-9">
+    <h2>Edit <%= @inventory.name %></h2>
 
+  </div>
+  <div class="col-xs-3 match-h2">
+    <%= link_to "Back", inventories_path, class: "btn blue" %>
+    <p class="right-align"><%= pluralize(@uncounted, "item") %> uncounted.</p>
+  </div>
+
+  <div class="col-xs-12">
+    <div class="row">
+      <%= render partial: "count", collection: @counts %>
+    </div>
+  </div>
 </div>
