@@ -34,4 +34,8 @@ class Inventory < ApplicationRecord
   def item_count
     counts.where("loose_count > ?", 0).where("unopened_boxes_count > ?", 0).count
   end
+
+  def count_summary
+    self.item_count.to_s + " of " + self.counts.count.to_s + " items counted."
+  end
 end

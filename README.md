@@ -2,10 +2,10 @@
 
 ## Things to do
 1. Add inventory system functionality
-  * DONE: inventory is being amoeba_dup'd, but I could be doing .build instead?
-  * DONE: inventories#index, inventories#show
-  * InProgress: inventories#edit -- Instead submit 1 count record at a time?
-    * | name | loose: ## | box: ## | update ( or edit when updated_at == Date.today )
+  * DONE: inventory is being amoeba_dup'd
+  * DONE: inventories#index, inventories#show, count#edit , count#update
+  * Inventory#show and inventory#edit need mobile views (different divs?)
+  * Use DataTables for searching and sorting? (desktop views)
   * Throw variance check ( against Inventory.latest )
   * Extrapolate items from components
   * Event#report creates inventory and extrapolates items

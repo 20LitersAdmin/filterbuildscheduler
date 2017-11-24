@@ -1,10 +1,19 @@
 <tr>
-  <td><%= count.name %></td>
+  <td><%= count.item.id.to_s + ": " + count.name %></td>
+  <td><%= count.tech_names %></td>
   <td class="center-align"><%= count.loose_count %></td>
   <td class="center-align"><%= count.unopened_boxes_count %></td>
+  <td class="center-align"><%= count.item.quantity_per_box %></td>
+  <td class="center-align"><%= count.box_count %></td>
+  <td class="center-align"><%= count.available %></td>
+  <td class="center-align"><%= count.total %></td>
   <% if current_page?(action: 'edit') %>
-    <td>
-      <%= link_to "Edit", edit_inventory_count_path(@inventory, count), class: "btn yellow" %>
+    <td class="right-align">
+      <% if count.user_id == nil %>
+        <%= link_to "Count", edit_inventory_count_path(@inventory, count), class: "btn yellow" %>
+      <% else %>
+        <%= link_to "Edit", edit_inventory_count_path(@inventory, count), class: "btn blue" %>
+      <% end %>
     </td>
   <% end %>
 </tr>

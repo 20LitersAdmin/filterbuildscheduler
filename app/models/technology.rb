@@ -4,7 +4,7 @@ class Technology < ApplicationRecord
   has_and_belongs_to_many :users
   has_and_belongs_to_many :components
   has_and_belongs_to_many :parts
-  #has_and_belongs_to_many :inventories
+  has_and_belongs_to_many :materials
 
   def leaders
     users.where(is_leader: true)

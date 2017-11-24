@@ -7,15 +7,42 @@ class Count < ApplicationRecord
   belongs_to :part, optional: true
   belongs_to :material, optional: true
 
-  def name
+  validates :inventory_id, :loose_count, :unopened_boxes_count, presence: true, numericality: { only_integer: true }
+
+  def item
     if part_id.present?
-      self.part.name
+      part
     elsif material_id.present?
-      self.material.name
-    elsif component_id.present?
-      self.component.name
+      material
     else
-      "UNKNOWN"
+      component
     end
   end
+
+  def name
+    self.item.name
+  end
+
+  def tech_names
+    if self.item.technologies.map { |t| t.name }.empty?
+      "not associated"
+    else
+      self.item.technologies.map { |t| t.name }.join(",")
+    end
+  end
+
+  def box_count
+    self.item.quantity_per_box * unopened_boxes_count
+  end
+
+  def available
+    loose_count + box_count
+  end
+
+  def total
+    # available + ( # per unit -- is a component? * # of completed un-boxed units)
+    "TBD"
+  end
+
+
 end
