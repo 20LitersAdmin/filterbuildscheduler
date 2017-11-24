@@ -1,1 +1,12 @@
-Hello world
+<div class="col-xs-12">
+  <%= simple_form_for([@inventory, @count])  do |f| %>
+    <%= @count.name %>
+    <%= @count.tech_names %>
+    <%= f.input :loose_count %>
+    <%= f.input :unopened_boxes_count, label: "Unopened boxes:" %>
+    <%= f.input :user_id, as: :hidden, input_html: { value: current_user.id } %>
+    <%= f.submit "Submit", class: "btn yellow devise" %>
+  <% end %>
+  <%= link_to "Back", edit_inventory_path(@inventory), class: "btn blue devise" %>
+</div>
+

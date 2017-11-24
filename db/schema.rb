@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171123015203) do
+ActiveRecord::Schema.define(version: 20171124030944) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -153,6 +153,13 @@ ActiveRecord::Schema.define(version: 20171123015203) do
     t.integer "parts_per_material", null: false
     t.index ["material_id", "part_id"], name: "index_materials_parts_on_material_id_and_part_id"
     t.index ["part_id", "material_id"], name: "index_materials_parts_on_part_id_and_material_id"
+  end
+
+  create_table "materials_technologies", id: false, force: :cascade do |t|
+    t.bigint "material_id", null: false
+    t.bigint "technology_id", null: false
+    t.index ["material_id", "technology_id"], name: "index_materials_technologies_on_material"
+    t.index ["technology_id", "material_id"], name: "index_materials_technologies_on_technology"
   end
 
   create_table "parts", force: :cascade do |t|

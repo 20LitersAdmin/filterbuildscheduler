@@ -24,6 +24,12 @@ class InventoriesController < ApplicationController
         @inventory.event_id = inventory_params[:event_id]
 
         @inventory.save
+
+        ### Clear out all the user_ids from the original, this is used to keep track of which fields get updated later.
+        @inventory.counts.each do |c|
+          c.user_id = nil
+          c.save
+        end
       end
     else # very first inventory
       @inventory = Inventory.create(inventory_params)
@@ -32,16 +38,18 @@ class InventoriesController < ApplicationController
     ### Make all the counts, unless they already exist from the amoeba_dup
     @part_ids = Part.all.map { |o| o.id }
     @part_ids.each do |p|
-      Count.where(inventory_id: @inventory.id).where(part_id: p).first_or_create(user_id: current_user.id)
+      Count.where(inventory_id: @inventory.id).where(part_id: p).first_or_create
     end
     @material_ids = Material.all.map { |o| o.id }
     @material_ids.each do |m|
-      Count.where(inventory_id: @inventory.id).where(material_id: m).first_or_create(user_id: current_user.id)
+      Count.where(inventory_id: @inventory.id).where(material_id: m).first_or_create
     end
     @component_ids = Component.all.map { |o| o.id }
     @component_ids.each do |c|
-      Count.where(inventory_id: @inventory.id).where(component_id: c).first_or_create(user_id: current_user.id)
+      Count.where(inventory_id: @inventory.id).where(component_id: c).first_or_create
     end
+
+
 
     if @inventory.errors.any?
       flash[:warning] = @inventory.errors.first.join(": ")
