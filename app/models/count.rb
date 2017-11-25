@@ -7,7 +7,8 @@ class Count < ApplicationRecord
   belongs_to :part, optional: true
   belongs_to :material, optional: true
 
-  validates :inventory_id, :loose_count, :unopened_boxes_count, presence: true, numericality: { only_integer: true }
+  validates :inventory_id, :loose_count, :unopened_boxes_count, presence: true
+  validates :loose_count, :unopened_boxes_count, :extrapolated_count, numericality: { only_integer: true }
 
   def item
     if part_id.present?

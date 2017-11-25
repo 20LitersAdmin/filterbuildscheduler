@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171125035301) do
+ActiveRecord::Schema.define(version: 20171125150517) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -38,6 +38,7 @@ ActiveRecord::Schema.define(version: 20171125035301) do
     t.integer "loose_count", default: 0, null: false
     t.integer "unopened_boxes_count", default: 0, null: false
     t.datetime "deleted_at"
+    t.integer "extrapolated_count", default: 0, null: false
     t.index ["component_id"], name: "index_counts_on_component_id"
     t.index ["deleted_at"], name: "index_counts_on_deleted_at"
     t.index ["inventory_id"], name: "index_counts_on_inventory_id"
@@ -124,7 +125,8 @@ ActiveRecord::Schema.define(version: 20171125035301) do
     t.bigint "event_id"
     t.boolean "shipping", default: false, null: false
     t.boolean "manual", default: false, null: false
-    t.date "date", default: "2017-11-22", null: false
+    t.date "date", null: false
+    t.datetime "completed_at"
     t.index ["deleted_at"], name: "index_inventories_on_deleted_at"
     t.index ["event_id"], name: "index_inventories_on_event_id"
   end

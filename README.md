@@ -2,12 +2,13 @@
 
 ## Things to do
 1. Add inventory system functionality
-  * Use DataTables for searching and sorting? (desktop views)
   * Throw variance check ( against Inventory.latest )
   * Extrapolate items from components eg "count.part.extrapolate_component_parts.first.parts_per_component" -- but how to adjust for 2nd round edits?
 
   * Event#report creates inventory and extrapolates items
   * Mark inventory complete && send emails
+    - Link to current inventory#show
+    - List of supplies needing re-order
   * Add a reorder_level field to parts && materials instead of predicting?
 
 3. Allow leadership to CRUD registrants for events.in_the_past

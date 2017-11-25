@@ -1,6 +1,6 @@
 class Intellegence < ApplicationRecord
 
-  def extrapolate(component)
+  def extrapolate(inventory)
     # calculate the number of parts in a component
     # adjust the count accordingly
   end

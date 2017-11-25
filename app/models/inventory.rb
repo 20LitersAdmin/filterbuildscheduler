@@ -8,6 +8,8 @@ class Inventory < ApplicationRecord
   scope :latest, -> { order(date: :desc).first }
   scope :former, -> { order(date: :desc).drop(1)}
 
+  validates :date, presence: true
+
   amoeba do
     include_association :counts
   end
