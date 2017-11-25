@@ -88,7 +88,20 @@ class InventoriesController < ApplicationController
   def update
     @inventory = Inventory.find(params[:id])
 
-    # Mail out inventory upon update. Maybe use @inventory.complete? field?
+    @inventory.update(inventory_params)
+
+    if inventory_params[:completed_at].present?
+      # Extrapolate components through Intelligence::extrapolate(@inventory)
+      # Mail out inventory upon update.
+    end
+
+    if @inventory.errors.any?
+      flash[:warning] = @inventory.errors.first.join(": ")
+    else
+      flash[:success] = "Inventory updated"
+    end
+
+    redirect_to inventories_path
   end
 
   def destroy
