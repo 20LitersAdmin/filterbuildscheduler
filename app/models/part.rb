@@ -1,10 +1,10 @@
 class Part < ApplicationRecord
   acts_as_paranoid
 
-  has_many :extrapolate_technology_parts
+  has_many :extrapolate_technology_parts, dependent: :destroy
   has_many :technologies, through: :extrapolate_technology_parts
 
-  has_many :extrapolate_component_parts
+  has_many :extrapolate_component_parts, dependent: :destroy
   has_many :components, through: :extrapolate_component_parts
 
   has_many :extrapolate_material_parts

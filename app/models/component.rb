@@ -1,11 +1,12 @@
 class Component < ApplicationRecord
   acts_as_paranoid
 
-  has_many :extrapolate_technology_components
+  has_many :extrapolate_technology_components, dependent: :destroy
   has_many :technologies, through: :extrapolate_technology_components
 
-  has_many :extrapolate_component_parts
+  has_many :extrapolate_component_parts, dependent: :destroy
   has_many :parts, through: :extrapolate_component_parts
+
 
   has_many :counts, dependent: :destroy
 

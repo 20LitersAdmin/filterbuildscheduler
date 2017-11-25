@@ -18,6 +18,16 @@ html {
   }
 }
 
+.no-overflow {
+  overflow: hidden;
+}
+
+.center {
+  text-align: center;
+  margin-right: auto;
+  margin-left: auto;
+}
+
 .twentyliters {
   text-rendering: optimizelegibility;
   -webkit-font-smoothing: antialiased;
@@ -60,29 +70,38 @@ html {
     border: 0;
     color: $grey;
     font-weight: bold;
+    &:hover {
+      color: lighten($grey, 10%);
+    }
   }
 
   .btn.yellow {
     color: $grey;
     background-color: $yellow;
+    border: 1px solid darken($yellow, 5%);
     &:hover {
-      background-color: lighten($yellow, 10%)
+      background-color: lighten($yellow, 10%);
+      border: 1px solid $yellow;
     }
   }
 
   .btn.red {
     color: white;
     background-color: $red;
+    border: 1px solid darken($red, 5%);
     &:hover {
-      background-color: lighten($red, 10%)
+      background-color: lighten($red, 10%);
+      border: 1px solid $red;
     }
   }
 
   .btn.blue {
     color: white;
     background-color: $light-blue;
+    border: 1px solid darken($light-blue, 5%);
     &:hover {
-      background-color: lighten($light-blue, 10%)
+      background-color: lighten($light-blue, 10%);
+      border: 1px solid $light-blue;
     }
   }
 

@@ -9,20 +9,17 @@
     <%= link_to "Back", inventories_path, class: "btn blue" %>
   </div>
   <div class="col-xs-12">
-    <div id="inventory_show_div">
-      <h3>It's really hard to see the full inventory on small screens.</h3>
-    </div>
-    <table class="table" id="inventory_show_table">
+    <table class="table datatable" id="inventory_show_table">
       <thead>
         <tr>
-          <th>Item</th>
-          <th>For Tech</th>
+          <th data-priority="1">Item</th>
+          <th data-priority="2">For Tech</th>
           <th class="center-align">Loose Count</th>
           <th class="center-align">Unopened Boxes</th>
           <th class="center-align"># per box</th>
           <th class="center-align">Unopened Count</th>
-          <th class="center-align">Available Count</th>
-          <th class="center-align">Total Count</th>
+          <th class="center-align" data-priority="2">Available Count</th>
+          <th class="center-align" data-priority="2">Total Count</th>
         </tr>
       </thead>
       <tbody>

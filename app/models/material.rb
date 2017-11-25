@@ -1,10 +1,9 @@
 class Material < ApplicationRecord
   acts_as_paranoid
 
-  has_many :extrapolate_technology_materials
-  has_many :technologies, through: :extrapolate_technology_materials
+  has_and_belongs_to_many :technologies
 
-  has_many :extrapolate_material_parts
+  has_many :extrapolate_material_parts, dependent: :destroy
   has_many :parts, through: :extrapolate_material_parts
 
   has_many :counts, dependent: :destroy

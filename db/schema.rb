@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171124210838) do
+ActiveRecord::Schema.define(version: 20171125035301) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -84,7 +84,7 @@ ActiveRecord::Schema.define(version: 20171124210838) do
     t.index ["deleted_at"], name: "index_events_on_deleted_at"
   end
 
-  create_table "extrapolate_component_parts", id: false, force: :cascade do |t|
+  create_table "extrapolate_component_parts", force: :cascade do |t|
     t.bigint "component_id", null: false
     t.bigint "part_id", null: false
     t.integer "parts_per_component", default: 1, null: false
@@ -92,15 +92,15 @@ ActiveRecord::Schema.define(version: 20171124210838) do
     t.index ["part_id", "component_id"], name: "by_part_and_component", unique: true
   end
 
-  create_table "extrapolate_material_parts", id: false, force: :cascade do |t|
+  create_table "extrapolate_material_parts", force: :cascade do |t|
     t.bigint "material_id", null: false
     t.bigint "part_id", null: false
-    t.integer "parts_per_material", null: false
+    t.integer "parts_per_material", default: 1, null: false
     t.index ["material_id", "part_id"], name: "by_material_and_part", unique: true
     t.index ["part_id", "material_id"], name: "by_part_and_material", unique: true
   end
 
-  create_table "extrapolate_technology_components", id: false, force: :cascade do |t|
+  create_table "extrapolate_technology_components", force: :cascade do |t|
     t.bigint "component_id", null: false
     t.bigint "technology_id", null: false
     t.integer "components_per_technology", default: 1, null: false
@@ -108,14 +108,7 @@ ActiveRecord::Schema.define(version: 20171124210838) do
     t.index ["technology_id", "component_id"], name: "by_technology_and_component", unique: true
   end
 
-  create_table "extrapolate_technology_materials", id: false, force: :cascade do |t|
-    t.bigint "material_id", null: false
-    t.bigint "technology_id", null: false
-    t.index ["material_id", "technology_id"], name: "by_material_and_technology", unique: true
-    t.index ["technology_id", "material_id"], name: "by_technology_and_material", unique: true
-  end
-
-  create_table "extrapolate_technology_parts", id: false, force: :cascade do |t|
+  create_table "extrapolate_technology_parts", force: :cascade do |t|
     t.bigint "part_id", null: false
     t.bigint "technology_id", null: false
     t.integer "parts_per_technology", default: 1, null: false
@@ -168,6 +161,13 @@ ActiveRecord::Schema.define(version: 20171124210838) do
     t.integer "price_cents", default: 0, null: false
     t.string "price_currency", default: "USD", null: false
     t.index ["deleted_at"], name: "index_materials_on_deleted_at"
+  end
+
+  create_table "materials_technologies", id: false, force: :cascade do |t|
+    t.bigint "material_id", null: false
+    t.bigint "technology_id", null: false
+    t.index ["material_id"], name: "index_materials_technologies_on_material_id"
+    t.index ["technology_id"], name: "index_materials_technologies_on_technology_id"
   end
 
   create_table "parts", force: :cascade do |t|
@@ -264,6 +264,14 @@ ActiveRecord::Schema.define(version: 20171124210838) do
 
   add_foreign_key "events", "locations"
   add_foreign_key "events", "technologies"
+  add_foreign_key "extrapolate_component_parts", "components"
+  add_foreign_key "extrapolate_component_parts", "parts"
+  add_foreign_key "extrapolate_material_parts", "materials"
+  add_foreign_key "extrapolate_material_parts", "parts"
+  add_foreign_key "extrapolate_technology_components", "components"
+  add_foreign_key "extrapolate_technology_components", "technologies"
+  add_foreign_key "extrapolate_technology_parts", "parts"
+  add_foreign_key "extrapolate_technology_parts", "technologies"
   add_foreign_key "registrations", "events"
   add_foreign_key "registrations", "users"
 end

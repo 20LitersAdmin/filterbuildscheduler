@@ -4,7 +4,8 @@
 1. Add inventory system functionality
   * Use DataTables for searching and sorting? (desktop views)
   * Throw variance check ( against Inventory.latest )
-  * Extrapolate items from components
+  * Extrapolate items from components eg "count.part.extrapolate_component_parts.first.parts_per_component" -- but how to adjust for 2nd round edits?
+
   * Event#report creates inventory and extrapolates items
   * Mark inventory complete && send emails
   * Add a reorder_level field to parts && materials instead of predicting?
@@ -35,7 +36,6 @@
   * Do registrants not get registration#created emails if the event is in the past?
 
 ## BUGS! AHH! BUGS!
-1. Extrap tables in RailsAdmin -- "desc" does not exist
 1. Registration.rb validations not working  ( eg. :under_max_registration)
   * Patched my own solution into RegistrationController
 
