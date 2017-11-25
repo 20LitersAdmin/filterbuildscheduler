@@ -39,6 +39,29 @@
   }
 }
 
+#inventory_show {
+  .btn-default {
+    color: $grey;
+    background-color: $yellow;
+    border: 1px solid darken($yellow, 10%);
+    &:hover {
+      background-color: lighten($yellow, 10%);
+      border: 1px solid $yellow;
+      span {
+        color: lighten($grey, 10%);
+      }
+    }
+    &:first-child {
+      border-top-left-radius: 6px;
+      border-bottom-left-radius: 6px;
+    }
+    &:last-child {
+      border-top-right-radius: 6px;
+      border-bottom-right-radius: 6px;
+    }
+  }
+}
+
 #inventory_edit {
   .count-div {
     background-color: $slightly-darker-light-grey;
@@ -67,22 +90,6 @@
       width: 60%;
       margin: 0 auto;
     }
-  }
-}
-
-@media (max-width: 590px) {
-  #inventory_show_table {
-    display: none;
-  }
-
-  #inventory_show_div {
-    display: inline;
-  }
-}
-
-@media (min-width: 591px) {
-  #inventory_show_div {
-    display: none;
   }
 }
 
