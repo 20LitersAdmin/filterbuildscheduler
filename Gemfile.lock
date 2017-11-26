@@ -40,8 +40,6 @@ GEM
       tzinfo (~> 1.1)
     addressable (2.5.2)
       public_suffix (>= 2.0.2, < 4.0)
-    amoeba (3.1.0)
-      activerecord (>= 3.2.6)
     arel (8.0.0)
     ast (2.3.0)
     autoprefixer-rails (7.1.6)
@@ -353,7 +351,6 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  amoeba
   bootstrap-sass
   bootstrap3-datetimepicker-rails
   delayed_cron_job (~> 0.7.2)
