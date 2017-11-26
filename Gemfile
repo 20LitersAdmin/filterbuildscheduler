@@ -34,7 +34,6 @@ gem 'stripe_event'
 gem 'pry-byebug'
 gem 'money-rails'
 gem 'icalendar'
-gem 'amoeba'
 gem 'jquery-datatables-rails'
 
 group :production do
