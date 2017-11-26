@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171121205214) do
+ActiveRecord::Schema.define(version: 20171125150517) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -29,56 +29,22 @@ ActiveRecord::Schema.define(version: 20171121205214) do
     t.index ["deleted_at"], name: "index_components_on_deleted_at"
   end
 
-  create_table "components_counts", id: false, force: :cascade do |t|
-    t.bigint "component_id", null: false
-    t.bigint "count_id", null: false
-    t.index ["component_id", "count_id"], name: "index_components_counts_on_component_id_and_count_id"
-    t.index ["count_id", "component_id"], name: "index_components_counts_on_count_id_and_component_id"
-  end
-
-  create_table "components_parts", id: false, force: :cascade do |t|
-    t.bigint "component_id", null: false
-    t.bigint "part_id", null: false
-    t.integer "parts_per_component", default: 1, null: false
-    t.index ["component_id", "part_id"], name: "index_components_parts_on_component_id_and_part_id"
-    t.index ["part_id", "component_id"], name: "index_components_parts_on_part_id_and_component_id"
-  end
-
-  create_table "components_technologies", id: false, force: :cascade do |t|
-    t.bigint "component_id", null: false
-    t.bigint "technology_id", null: false
-    t.integer "components_per_technology", default: 1, null: false
-    t.index ["component_id", "technology_id"], name: "index_components_technologies_on_component_id_and_technology_id"
-    t.index ["technology_id", "component_id"], name: "index_components_technologies_on_technology_id_and_component_id"
-  end
-
   create_table "counts", force: :cascade do |t|
-    t.bigint "components_id"
-    t.bigint "parts_id"
-    t.bigint "materials_id"
+    t.bigint "user_id"
+    t.bigint "inventory_id", null: false
+    t.bigint "component_id"
+    t.bigint "part_id"
+    t.bigint "material_id"
     t.integer "loose_count", default: 0, null: false
     t.integer "unopened_boxes_count", default: 0, null: false
     t.datetime "deleted_at"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["components_id"], name: "index_counts_on_components_id"
+    t.integer "extrapolated_count", default: 0, null: false
+    t.index ["component_id"], name: "index_counts_on_component_id"
     t.index ["deleted_at"], name: "index_counts_on_deleted_at"
-    t.index ["materials_id"], name: "index_counts_on_materials_id"
-    t.index ["parts_id"], name: "index_counts_on_parts_id"
-  end
-
-  create_table "counts_materials", id: false, force: :cascade do |t|
-    t.bigint "count_id", null: false
-    t.bigint "material_id", null: false
-    t.index ["count_id", "material_id"], name: "index_counts_materials_on_count_id_and_material_id"
-    t.index ["material_id", "count_id"], name: "index_counts_materials_on_material_id_and_count_id"
-  end
-
-  create_table "counts_parts", id: false, force: :cascade do |t|
-    t.bigint "count_id", null: false
-    t.bigint "part_id", null: false
-    t.index ["count_id", "part_id"], name: "index_counts_parts_on_count_id_and_part_id"
-    t.index ["part_id", "count_id"], name: "index_counts_parts_on_part_id_and_count_id"
+    t.index ["inventory_id"], name: "index_counts_on_inventory_id"
+    t.index ["material_id"], name: "index_counts_on_material_id"
+    t.index ["part_id"], name: "index_counts_on_part_id"
+    t.index ["user_id"], name: "index_counts_on_user_id"
   end
 
   create_table "delayed_jobs", force: :cascade do |t|
@@ -119,28 +85,50 @@ ActiveRecord::Schema.define(version: 20171121205214) do
     t.index ["deleted_at"], name: "index_events_on_deleted_at"
   end
 
+  create_table "extrapolate_component_parts", force: :cascade do |t|
+    t.bigint "component_id", null: false
+    t.bigint "part_id", null: false
+    t.integer "parts_per_component", default: 1, null: false
+    t.index ["component_id", "part_id"], name: "by_component_and_part", unique: true
+    t.index ["part_id", "component_id"], name: "by_part_and_component", unique: true
+  end
+
+  create_table "extrapolate_material_parts", force: :cascade do |t|
+    t.bigint "material_id", null: false
+    t.bigint "part_id", null: false
+    t.integer "parts_per_material", default: 1, null: false
+    t.index ["material_id", "part_id"], name: "by_material_and_part", unique: true
+    t.index ["part_id", "material_id"], name: "by_part_and_material", unique: true
+  end
+
+  create_table "extrapolate_technology_components", force: :cascade do |t|
+    t.bigint "component_id", null: false
+    t.bigint "technology_id", null: false
+    t.integer "components_per_technology", default: 1, null: false
+    t.index ["component_id", "technology_id"], name: "by_component_and_technology", unique: true
+    t.index ["technology_id", "component_id"], name: "by_technology_and_component", unique: true
+  end
+
+  create_table "extrapolate_technology_parts", force: :cascade do |t|
+    t.bigint "part_id", null: false
+    t.bigint "technology_id", null: false
+    t.integer "parts_per_technology", default: 1, null: false
+    t.index ["part_id", "technology_id"], name: "by_part_and_technology", unique: true
+    t.index ["technology_id", "part_id"], name: "by_technology_and_part", unique: true
+  end
+
   create_table "inventories", force: :cascade do |t|
-    t.datetime "date", null: false
-    t.boolean "reported", default: false, null: false
     t.boolean "receiving", default: false, null: false
     t.datetime "deleted_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "event_id"
+    t.boolean "shipping", default: false, null: false
+    t.boolean "manual", default: false, null: false
+    t.date "date", null: false
+    t.datetime "completed_at"
     t.index ["deleted_at"], name: "index_inventories_on_deleted_at"
-  end
-
-  create_table "inventories_technologies", id: false, force: :cascade do |t|
-    t.bigint "inventory_id", null: false
-    t.bigint "technology_id", null: false
-    t.index ["inventory_id", "technology_id"], name: "index_inventories_technologies_on_inventory"
-    t.index ["technology_id", "inventory_id"], name: "index_inventories_technologies_on_technology"
-  end
-
-  create_table "inventories_users", id: false, force: :cascade do |t|
-    t.bigint "inventory_id", null: false
-    t.bigint "user_id", null: false
-    t.index ["inventory_id", "user_id"], name: "index_inventories_users_on_inventory_id_and_user_id"
-    t.index ["user_id", "inventory_id"], name: "index_inventories_users_on_user_id_and_inventory_id"
+    t.index ["event_id"], name: "index_inventories_on_event_id"
   end
 
   create_table "locations", force: :cascade do |t|
@@ -177,12 +165,11 @@ ActiveRecord::Schema.define(version: 20171121205214) do
     t.index ["deleted_at"], name: "index_materials_on_deleted_at"
   end
 
-  create_table "materials_parts", id: false, force: :cascade do |t|
+  create_table "materials_technologies", id: false, force: :cascade do |t|
     t.bigint "material_id", null: false
-    t.bigint "part_id", null: false
-    t.integer "parts_per_material", null: false
-    t.index ["material_id", "part_id"], name: "index_materials_parts_on_material_id_and_part_id"
-    t.index ["part_id", "material_id"], name: "index_materials_parts_on_part_id_and_material_id"
+    t.bigint "technology_id", null: false
+    t.index ["material_id"], name: "index_materials_technologies_on_material_id"
+    t.index ["technology_id"], name: "index_materials_technologies_on_technology_id"
   end
 
   create_table "parts", force: :cascade do |t|
@@ -207,14 +194,6 @@ ActiveRecord::Schema.define(version: 20171121205214) do
     t.index ["deleted_at"], name: "index_parts_on_deleted_at"
   end
 
-  create_table "parts_technologies", id: false, force: :cascade do |t|
-    t.bigint "part_id", null: false
-    t.bigint "technology_id", null: false
-    t.integer "parts_per_technology", default: 1, null: false
-    t.index ["part_id", "technology_id"], name: "index_parts_technologies_on_part_id_and_technology_id"
-    t.index ["technology_id", "part_id"], name: "index_parts_technologies_on_technology_id_and_part_id"
-  end
-
   create_table "registrations", force: :cascade do |t|
     t.integer "user_id", null: false
     t.integer "event_id", null: false
@@ -227,7 +206,6 @@ ActiveRecord::Schema.define(version: 20171121205214) do
     t.datetime "updated_at", null: false
     t.datetime "deleted_at"
     t.index ["deleted_at"], name: "index_registrations_on_deleted_at"
-
     t.index ["user_id", "event_id"], name: "index_registrations_on_user_id_and_event_id", unique: true
   end
 
@@ -288,6 +266,14 @@ ActiveRecord::Schema.define(version: 20171121205214) do
 
   add_foreign_key "events", "locations"
   add_foreign_key "events", "technologies"
+  add_foreign_key "extrapolate_component_parts", "components"
+  add_foreign_key "extrapolate_component_parts", "parts"
+  add_foreign_key "extrapolate_material_parts", "materials"
+  add_foreign_key "extrapolate_material_parts", "parts"
+  add_foreign_key "extrapolate_technology_components", "components"
+  add_foreign_key "extrapolate_technology_components", "technologies"
+  add_foreign_key "extrapolate_technology_parts", "parts"
+  add_foreign_key "extrapolate_technology_parts", "technologies"
   add_foreign_key "registrations", "events"
   add_foreign_key "registrations", "users"
 end

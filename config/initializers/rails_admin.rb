@@ -1,4 +1,5 @@
 RailsAdmin.config do |config|
+  config.main_app_name = ["20 Liters", "Admin"]
 
   ### Popular gems integration
 
@@ -10,7 +11,6 @@ RailsAdmin.config do |config|
 
   #
   # Monkey patch to remove default_scope
-  #
   require 'rails_admin/adapters/active_record'
   module RailsAdmin::Adapters::ActiveRecord
     def get(id)
@@ -57,6 +57,8 @@ RailsAdmin.config do |config|
     configure :deleted_at do
       show
     end
+
+    exclude_fields :registrations, :counts
   end
 
   config.model Event do
@@ -73,9 +75,12 @@ RailsAdmin.config do |config|
     configure :deleted_at do
       show
     end
+
+    exclude_fields :registrations, :users, :inventory
   end
 
   config.model Location do
+    parent Event
     list do
       scopes [nil, :only_deleted]
       field :name
@@ -101,23 +106,28 @@ RailsAdmin.config do |config|
     configure :deleted_at do
       show
     end
+
+    exclude_fields :extrapolate_technology_parts, :extrapolate_technology_components
   end
 
   config.model Component do
+    parent Technology
     list do
       scopes [nil, :only_deleted]
       field :name
       field :common_id
       field :technologies
       field :completed_tech
-      field :completed_tech_boxed
     end
     configure :deleted_at do
       show
     end
+
+    exclude_fields :extrapolate_technology_components, :extrapolate_component_parts, :counts
   end
 
   config.model Material do
+    parent Technology
     list do
       scopes [nil, :only_deleted]
       field :name
@@ -135,9 +145,12 @@ RailsAdmin.config do |config|
     configure :deleted_at do
       show
     end
+
+    exclude_fields :extrapolate_material_parts, :counts
   end
 
   config.model Part do
+    parent Technology
     list do
       scopes [nil, :only_deleted]
       field :name
@@ -154,9 +167,12 @@ RailsAdmin.config do |config|
     configure :deleted_at do
       show
     end
+
+    exclude_fields :extrapolate_technology_parts, :extrapolate_component_parts, :extrapolate_material_parts, :counts
   end
 
   config.model Registration do
+    parent Event
     list do
       scopes [nil, :only_deleted]
       field :event
@@ -172,25 +188,35 @@ RailsAdmin.config do |config|
   end
 
   config.model Count do
-    list do
-      scopes [nil, :only_deleted]
-      field :inventory
-      field :component
-      field :part
-      field :material
-      field :loose_count
-      field :unopened_boxes_count
-    end
-    configure :deleted_at do
-      show
-    end
+    visible false
   end
 
   config.model Inventory do
-    exclude_fields :id, :created_at, :updated_at
-    list do
-      scopes [nil, :only_deleted]
-    end
+    visible false
+  end
+
+  config.model ExtrapolateComponentPart do
+    parent Component
+    label "Component <-> Part"
+    label_plural "Components <-> Parts"
+  end
+
+  config.model ExtrapolateMaterialPart do
+    parent Material
+    label "Material <-> Part"
+    label_plural "Materials <-> Parts"
+  end
+
+  config.model ExtrapolateTechnologyComponent do
+    parent Technology
+    label "Technology <-> Component"
+    label_plural "Technologies <-> Components"
+  end
+
+  config.model ExtrapolateTechnologyPart do
+    parent Technology
+    label "Technology <-> Part"
+    label_plural "Technologies <-> Parts"
   end
 
   config.actions do

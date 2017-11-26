@@ -1,0 +1,36 @@
+<div id="inventory_edit">
+  <div class="col-xs-9">
+    <h2>Edit <%= @inventory.name %></h2>
+  </div>
+  <div class="col-xs-3 match-h2">
+    <%= link_to "Back", inventories_path, class: "btn yellow" %>
+    <a id="show_finalize_form" class="btn blue" href="#">Finalize</a>
+    <p class="right-align"><%= pluralize(@uncounted, "item") %> uncounted.</p>
+  </div>
+
+  <div class="col-xs-12" id="finalize_form">
+    <div class="row">
+      <div class="col-sm-12 center-align">
+        <h4>When all items have been counted and verified, click "Finalize Inventory" to mark the inventory complete, extrapolate parts from components, calculate values, and send notfications.</h4>
+        <% if @uncounted > 0 %>
+          <p>There are still <%= pluralize(@uncounted, "item") %> uncounted. Do you really want to proceed?</p>
+        <% end %>
+        <%= simple_form_for @inventory do |f| %>
+          <%= f.input :completed_at, as: :hidden, input_html: { value: Time.now } %>
+      </div>
+      <div class="col-sm-12 center-align">
+        <%= f.submit "Finalize Inventory", class: "btn yellow" %>
+        <a id="hide_finalize_form" class="btn blue" href="#">Cancel</a>
+      </div>
+    </div>
+    <% end %>
+  </div>
+
+  <div class="col-xs-12" id="counts_div">
+    <div class="row">
+      <%= render partial: "count", collection: @counts %>
+    </div>
+  </div>
+</div>
+
+

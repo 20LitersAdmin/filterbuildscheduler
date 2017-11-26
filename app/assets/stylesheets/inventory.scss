@@ -1,0 +1,99 @@
+@import 'variables';
+
+#inventory_index {
+  .btn-group .btn {
+    margin: 1em;
+  }
+
+  .col-sm-4 {
+    text-align: center;
+  }
+
+  .inventory {
+    background-color: $slightly-darker-light-grey;
+    height: 10em;
+    margin: .8em 2em;
+    padding: .8em;
+    text-align: center;
+    box-shadow: 0 0 6px #888;
+    &:hover {
+      background-color: $light-grey;
+      box-shadow: 0 0 12px #888;
+    }
+    h4 {
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
+    .btn {
+      margin-top: 8px;
+    }
+  }
+}
+
+.match-h2 {
+  height: 63px;
+  text-align: right;
+  a.btn {
+    margin-top: 15px;
+  }
+}
+
+#inventory_show {
+  .btn-default {
+    color: $grey;
+    background-color: $yellow;
+    border: 1px solid darken($yellow, 10%);
+    &:hover {
+      background-color: lighten($yellow, 10%);
+      border: 1px solid $yellow;
+      span {
+        color: lighten($grey, 10%);
+      }
+    }
+    &:first-child {
+      border-top-left-radius: 6px;
+      border-bottom-left-radius: 6px;
+    }
+    &:last-child {
+      border-top-right-radius: 6px;
+      border-bottom-right-radius: 6px;
+    }
+  }
+}
+
+#inventory_edit {
+  .count-div {
+    background-color: $slightly-darker-light-grey;
+    height: 156px;
+    margin: .8em .2em;
+    padding: .8em;
+    text-align: center;
+    box-shadow: 0 0 6px #888;
+    &:hover {
+      background-color: $light-grey;
+      box-shadow: 0 0 12px #888;
+    }
+    .count-title {
+      font-weight: bold;
+      padding-bottom: 6px;
+      border-bottom: 2px solid #fce000;
+    }
+    .count-tech, .current-count {
+      margin: 0;
+    }
+    a {
+      position: absolute;
+      bottom: 20px;
+      left: 0;
+      right: 0;
+      width: 60%;
+      margin: 0 auto;
+    }
+  }
+
+  #finalize_form {
+    display: none;
+  }
+}
+

@@ -25,8 +25,8 @@ gem "delayed_job", "~> 4.1"
 gem "delayed_job_active_record", "~> 4.1"
 gem "delayed_cron_job", "~> 0.7.2"
 gem "paranoia", "~> 2.4"
-gem 'momentjs-rails', '>= 2.9.0'
-gem 'bootstrap3-datetimepicker-rails', '~> 4.14.30'
+gem 'momentjs-rails'
+gem 'bootstrap3-datetimepicker-rails'
 gem 'font-awesome-rails'
 gem 'rest-client'
 gem 'stripe'
@@ -34,6 +34,8 @@ gem 'stripe_event'
 gem 'pry-byebug'
 gem 'money-rails'
 gem 'icalendar'
+gem 'amoeba'
+gem 'jquery-datatables-rails'
 
 group :production do
   gem 'puma'

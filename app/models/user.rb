@@ -11,7 +11,8 @@ class User < ApplicationRecord
   has_many :registrations
   has_many :events, through: :registrations
   has_and_belongs_to_many :technologies
-  has_and_belongs_to_many :inventories
+  #has_and_belongs_to_many :inventories
+  has_many :counts
   belongs_to :primary_location, class_name: "Location", primary_key: "id", foreign_key: "primary_location_id", optional: true
   attr_accessor :waiver_accepted
 

@@ -1,6 +1,6 @@
 class Intellegence < ApplicationRecord
 
-  def extrapolate(component)
+  def extrapolate(inventory)
     # calculate the number of parts in a component
     # adjust the count accordingly
   end
@@ -26,6 +26,10 @@ class Intellegence < ApplicationRecord
   def suggest_goal(event)
     # What should the event's goal be?
     # look at past Event.where(technology_id: event.technology_id) and average item_results
+  end
+
+  def update_inventory_from_event_results(event)
+    # create a new Inventory and Count(where: event-based: true)
   end
 
 end
