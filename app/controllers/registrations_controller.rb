@@ -35,7 +35,7 @@ class RegistrationsController < ApplicationController
       when "self"
         @user = current_user
         @user.update_attributes!(signed_waiver_on: Time.now) unless current_user.waiver_accepted
-        @leader = params[:registration][:leader]
+        @leader = params[:registration][:leader] || false
 
         @duplicate_registration_risk = false
 
@@ -63,7 +63,6 @@ class RegistrationsController < ApplicationController
           redirect_to event_path @event and return
         end
       end
-
       @registration = Registration.new(event: @event,
                               user: @user,
                             leader: @leader,

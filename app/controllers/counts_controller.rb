@@ -30,19 +30,20 @@ class CountsController < ApplicationController
     @count = Count.find(params[:id])
     @inventory = @count.inventory
 
-    binding.pry
-    if @count.item.class.name == "Component"
-      # extrapolate!!!!
+    @count.update_attributes(count_params)
+
+    if @inventory.shipping == false && (@count.loose_count < 0 || @count.unopened_boxes_count < 0)
+      # only one type of inventory can have negative numbers.
+      flash[:danger] = "Can't submit negative numbers for this type of inventory."
+      return redirect_to edit_inventory_count_path(@inventory, @count)
     end
 
-    if @count.update_attributes(count_params)
+    if @count.errors.any?
+      render 'edit'
+    else
       flash[:success] = "Item count submitted"
       redirect_to edit_inventory_path(@inventory)
-    else
-      render 'edit'
     end
-
-
   end
 
   def destroy

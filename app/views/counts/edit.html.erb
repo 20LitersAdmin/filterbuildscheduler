@@ -1,7 +1,7 @@
 <div class="col-xs-12">
   <%= simple_form_for([@inventory, @count])  do |f| %>
-    <%= @count.name %>
-    <%= @count.tech_names %>
+  <h3><%= @count.name %></h3>
+  <h4>For: <%= @count.tech_names %></h4>
     <%= f.input :loose_count %>
     <%= f.input :unopened_boxes_count, label: "Unopened boxes:" %>
     <%= f.input :user_id, as: :hidden, input_html: { value: current_user.id } %>
