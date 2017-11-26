@@ -7,57 +7,80 @@ class InventoriesController < ApplicationController
 
   def create
     @date = inventory_params[:date]
-    if Inventory.all.present? # amoeba_dup
-      if Inventory.latest.date == Date.parse(@date)
-        flash[:warning] = "An inventory already exists for #{inventory_params[:date]}, please use that one."
-        return redirect_to inventories_path
-      else #new date = new inventory
-        # copy all the previous counts over
-        @latest = Inventory.latest
-        @inventory = @latest.amoeba_dup
-
-        # set the new inventory type && date
-        @inventory.date = inventory_params[:date]
-        @inventory.receiving = inventory_params[:receiving]
-        @inventory.shipping = inventory_params[:shipping]
-        @inventory.manual = inventory_params[:manual]
-        @inventory.event_id = inventory_params[:event_id]
-
-        @inventory.save
-
-        ### Clear out all the user_ids from the original, this is used to keep track of which fields get updated later.
-        @inventory.counts.each do |c|
-          c.user_id = nil
-          c.save
-        end
-      end
-    else # very first inventory
-      @inventory = Inventory.create(inventory_params)
+    @latest = Inventory.latest
+    if @latest.present?
+      @latest_id = @latest.id
+    else
+      @latest_id = nil
     end
 
-    ### Make all the counts, unless they already exist from the amoeba_dup
+    @matching = Inventory.where(date: Date.parse(@date)).last
+
+    if inventory_params[:receiving] == "true"
+      @type = "receiving"
+    elsif inventory_params[:shipping] == "true"
+      @type = "shipping"
+    elsif inventory_params[:manual] == "true"
+      @type = "manual"
+    else
+      @type = "unknown"
+    end
+
+    if @matching&.type_for_params == @type
+      # No two inventories of the same type on the same day
+      flash[:warning] = "An #{@type} inventory already exists for #{inventory_params[:date]}, please use that one."
+      return redirect_to inventories_path
+    end
+
+    @inventory = Inventory.create(inventory_params)
+    @inventory.save
+
+    ### Make all the counts
     @part_ids = Part.all.map { |o| o.id }
     @part_ids.each do |p|
-      Count.where(inventory_id: @inventory.id).where(part_id: p).first_or_create
+      old_part_count = Count.where(inventory_id: @latest_id).where(part_id: p).last
+      if old_part_count.present?
+        new_part_count = old_part_count
+        new_part_count.inventory_id = @inventory.id
+        new_part_count.user_id = nil
+        new_part_count.save
+      else
+        Count.create(inventory_id: @inventory.id, part_id: p)
+      end
     end
+
     @material_ids = Material.all.map { |o| o.id }
     @material_ids.each do |m|
-      Count.where(inventory_id: @inventory.id).where(material_id: m).first_or_create
+      old_material_count = Count.where(inventory_id: @latest_id).where(material_id: m).last
+      if old_material_count.present?
+        new_material_count = old_material_count
+        new_material_count.inventory_id = @inventory.id
+        new_material_count.user_id = nil
+        new_material_count.save
+      else
+        Count.create(inventory_id: @inventory.id, material_id: m)
+      end
     end
+
     @component_ids = Component.all.map { |o| o.id }
     @component_ids.each do |c|
-      Count.where(inventory_id: @inventory.id).where(component_id: c).first_or_create
+      old_component_count = Count.where(inventory_id: @latest_id).where(component_id: c).last
+      if old_component_count.present?
+        new_component_count = old_component_count
+        new_component_count.inventory_id = @inventory.id
+        new_component_count.user_id = nil
+        new_component_count.save
+      else
+        Count.create(inventory_id: @inventory.id, component_id: c)
+      end
     end
-
-
 
     if @inventory.errors.any?
       flash[:warning] = @inventory.errors.first.join(": ")
     else
       flash[:success] = "The inventory has been created."
+      redirect_to inventories_path
     end
-
-    redirect_to inventories_path
   end
 
   def new
