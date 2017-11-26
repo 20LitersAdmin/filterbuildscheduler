@@ -1,6 +1,7 @@
 # README
 
 ## Things to do
+1. Registrations need to be paranoid -- but handle PG:duplicateError
 1. Add inventory system functionality
   * Throw variance check ( against Inventory.latest )
   * Extrapolate items from components eg "count.part.extrapolate_component_parts.first.parts_per_component" -- but how to adjust for 2nd round edits?
@@ -15,6 +16,8 @@
 2. Allow leadership to email all registrants from registration#index
 
 7. RailsAdmin: hide Extrapolate joins on #new
+8. Technologies views:
+  - list components and parts with quantities
 
 4. Add a Stripe Webhook / API for CauseVox to replace Zapier
   * Accepting & reading Stripe webhook is working
