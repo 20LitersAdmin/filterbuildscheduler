@@ -10,10 +10,6 @@ class Inventory < ApplicationRecord
 
   validates :date, presence: true
 
-  amoeba do
-    include_association :counts
-  end
-
   def name
     date.strftime("%-m/%-d/%y") + ": " + type
   end
@@ -33,6 +29,19 @@ class Inventory < ApplicationRecord
       type = "Manual Inventory"
     else
       type = "Unknown"
+    end
+    type
+  end
+
+  def type_for_params
+    if receiving
+      type = "receiving"
+    elsif shipping
+      type = "shipping"
+    elsif manual
+      type = "manual"
+    else
+      type = "unknown"
     end
     type
   end
