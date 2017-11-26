@@ -18,6 +18,10 @@ class Inventory < ApplicationRecord
     date.strftime("%-m/%-d/%y") + ": " + type
   end
 
+  def name_title
+    date.strftime("%m-%d-%y") + " " + type
+  end
+
   def type
     if event_id.present?
       type = "Event Based"
@@ -34,7 +38,7 @@ class Inventory < ApplicationRecord
   end
 
   def item_count
-    counts.where("loose_count > ?", 0).where("unopened_boxes_count > ?", 0).count
+    counts.count - counts.where(user_id: nil).count
   end
 
   def count_summary
