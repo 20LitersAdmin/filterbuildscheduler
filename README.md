@@ -14,6 +14,8 @@
 3. Allow leadership to CRUD registrants for events.in_the_past
 2. Allow leadership to email all registrants from registration#index
 
+7. RailsAdmin: hide Extrapolate joins on #new
+
 4. Add a Stripe Webhook / API for CauseVox to replace Zapier
   * Accepting & reading Stripe webhook is working
   * Sending to Kindful is not
