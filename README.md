@@ -2,13 +2,19 @@
 
 ## Things to do
 1. Add inventory system functionality
-  * Figure out how join tables work when CRUDing a record (HABTM)
-  * Create seeds from spreadsheet
-  * Needs views / printable
-  * Needs variance check
+  * Throw variance check ( against Inventory.latest )
+  * Extrapolate items from components eg "count.part.extrapolate_component_parts.first.parts_per_component" -- but how to adjust for 2nd round edits?
+
+  * Event#report creates inventory and extrapolates items
+  * Mark inventory complete && send emails
+    - Link to current inventory#show
+    - List of supplies needing re-order
+  * Add a reorder_level field to parts && materials instead of predicting?
 
 3. Allow leadership to CRUD registrants for events.in_the_past
 2. Allow leadership to email all registrants from registration#index
+
+7. RailsAdmin: hide Extrapolate joins on #new
 
 4. Add a Stripe Webhook / API for CauseVox to replace Zapier
   * Accepting & reading Stripe webhook is working
@@ -27,6 +33,7 @@
 ## The Future
 1. Use Paperclip to add part and component images
 1. Send email with weekly product availability (by user.primary_location == Business Connect?)
+1. Track item inventory/count over time
 1. Wait for live testing:
   * Do builders and admins get reminder emails?
   * Do registrants not get registration#created emails if the event is in the past?

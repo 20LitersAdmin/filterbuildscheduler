@@ -1,0 +1,42 @@
+<div class="col-xs-12" id="inventory_index">
+  <div class="inv-header row">
+    <div class="btn-group col-xs-12" role="group">
+      <div class="col-sm-4">
+        <%= link_to "New Inventory", new_inventory_path(type: "manual"), class: "btn yellow"  %>
+      </div>
+      <div class="col-sm-4">
+        <%= link_to "Receive Supplies", new_inventory_path(type: "receiving"), class: "btn blue" %>
+      </div>
+      <div class="col-sm-4">
+        <%= link_to "Ship Supplies", new_inventory_path(type: "shipping"), class: "btn blue" %>
+      </div>
+    </div>
+  </div>
+
+  <% if @latest.present? %>
+    <div class="inv-latest row">
+      <div class="col-xs-12">
+        <h2>Current Inventory:</h2>
+        <div class="row">
+          <div class="inventory col-sm-3">
+            <h4><%= @latest.name %></h4>
+            <p><%= @latest.count_summary %></p>
+            <%= link_to "View", inventory_path(@latest), class: "btn yellow" %>
+            <%= link_to "Edit", edit_inventory_path(@latest), class: "btn blue" %>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <% if @inventories.present? %>
+    <div class="inv-latest row">
+      <div class="col-xs-12">
+        <h2>Past Inventories:</h2>
+        <div class="row">
+          <%= render @inventories %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div>

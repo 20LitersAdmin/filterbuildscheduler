@@ -89,6 +89,9 @@ class EventsController < ApplicationController
   end
 
   def update
+    #
+    # Needs to trigger the Intelligence::update_inventory_from_event_results(event) if technologies_built || boxes_packed was 0 || nil
+    #
     @event = Event.find(params[:id])
     authorize @event
 
