@@ -190,7 +190,7 @@
 #     weeks_to_deliver: 1.5
 #   }
 # ])
-
+#
 # Part.create!([
 #   {
 #     name: "PVC Endcaps 1/2-inch",
@@ -273,6 +273,72 @@
 #     weeks_to_deliver: 10,
 #     sample_size: 8,
 #     sample_weight: 1.2
+#   }
+# ])
+#
+# Registration.create!([
+#   {
+#     user_id: 1,
+#     guests_registered: 2,
+#     event_id: 5,
+#     leader: true
+#   },
+#   {
+#     user_id: 2,
+#     guests_registered: 4,
+#     event_id: 5
+#   },
+#   {
+#     user_id: 3,
+#     guests_registered: 0,
+#     event_id: 5
+#   },
+#   {
+#     user_id: 4,
+#     guests_registered: 6,
+#     event_id: 5
+#   },
+#   {
+#     user_id: 5,
+#     guests_registered: 3,
+#     event_id: 5
+#   },
+#   {
+#     user_id: 7,
+#     guests_registered: 5,
+#     event_id: 5
+#   },
+#   {
+#     user_id: 1,
+#     guests_registered: 2,
+#     event_id: 6,
+#     leader: true
+#   },
+#   {
+#     user_id: 2,
+#     guests_registered: 4,
+#     event_id: 6,
+#     leader: true
+#   },
+#   {
+#     user_id: 3,
+#     guests_registered: 0,
+#     event_id: 6
+#   },
+#   {
+#     user_id: 4,
+#     guests_registered: 6,
+#     event_id: 6
+#   },
+#   {
+#     user_id: 5,
+#     guests_registered: 3,
+#     event_id: 6
+#   },
+#   {
+#     user_id: 7,
+#     guests_registered: 5,
+#     event_id: 6
 #   }
 # ])
 #
@@ -367,89 +433,4 @@ Component.create!([
   { name: 'VFF500 cartridge section', quantity_per_box: 1, sample_size: 1},
   { name: 'VFF500 drain pieces', quantity_per_box: 1, sample_size: 1},
   { name: 'VFF500 stem pipe - 405mm', quantity_per_box: 1, sample_size: 1 }
-=======
-# User.create!([
-#   { email:  'andrew@20liters.org' , fname:  'Andrew'  , lname:  'Vantimmeren' , phone:  '616.710.6392' },
-#   { email:  'lizzylouwho@gmail.com' , fname:  'Liz' , lname:  'Sitte' , phone:  '6164027949'  , is_leader: true },
-#   { email:  'bjlong5@hotmail.com' , fname:  'Bob' , lname:  'Long'  , phone:  '6169016615'  , is_leader:  true },
-#   { email:  'cmjohnson177@gmail.com'  , fname:  'Chris' , lname:  'Johnson' , phone:  '616-490-0356' },
-#   { email:  'codye@foreway.com' , fname:  'Cody'  , lname:  'Ensing'  , phone:  '616-401-9862'      , does_inventory: true },
-#   { email:  'dlathrop@steelcase.com'  , fname:  'Dave'  , lname:  'Lathrop' , phone:  '616-901-2912'  , is_leader:  true  , does_inventory: true },
-#   { email:  'dougv@cqlcorp.com' , fname:  'Doug'  , lname:  'VandenHoek'  , phone:  '616.307.0018'  , is_leader:  true },
-#   { email:  'jrcardinal@highpointelectric.us' , fname:  'Jon' , lname:  'Cardinal'  , phone:  '231.638.6089'  , is_leader:  true },
-#   { email:  'lmont71@comcast.net' , fname:  'Linda' , lname:  'Montgomery'  , phone:  '6164194256'  , is_leader:  true  , does_inventory: true },
-#   { email:  'liz.jasperse@gmail.com'  , fname:  'Liz' , lname:  'Jaspers' , phone:  '616-990-4402'      , does_inventory: true },
-#   { email:  'peter.vandentoorn@gmail.com' , fname:  'Peter' , lname:  'VandenToorn' , phone:  '616.822.7498'      , is_admin:   true },
-#   { email:  'snauta74@hotmail.com'  , fname:  'Steve' , lname:  'Nauta' , phone:  '6164467674'  , is_leader:  true  , does_inventory: true },
-#   { email:  'thadcummings@gmail.com'  , fname:  'Thad'  , lname:  'Cummings'  , phone:  '248-982-7024'  , is_leader:  true },
-#   { email:  'ta3jwiersma@gmail.com' , fname:  'Tim' , lname:  'Wiersma' , phone:  '616-914-7971'      , does_inventory: true },
-#   { email:  'thamel53@gmail.com'  , fname:  'Tom' , lname:  'Hamel' , phone:  '231.301.2957'  , is_leader:  true },
-#   { email:  'tommaas@hotmail.com' , fname:  'Tom' , lname:  'Maas'  , phone:  '616.901.6113'  , is_leader:  true },
-#   { email:  'tonytheclimber@gmail.com'  , fname:  'Tony'  , lname:  'Kelly' , phone:  '6163899936'  , is_leader:  true  , does_inventory: true },
-#   { email:  'bullers_us@yahoo.com'  , fname:  'Vern'  , lname:  'Bullers' , phone:  '541-221-8579'  , is_leader:  true }
-# ])
-Registration.create!([
-  {
-    user_id: 1,
-    guests_registered: 2,
-    event_id: 5,
-    leader: true
-  },
-  {
-    user_id: 2,
-    guests_registered: 4,
-    event_id: 5
-  },
-  {
-    user_id: 3,
-    guests_registered: 0,
-    event_id: 5
-  },
-  {
-    user_id: 4,
-    guests_registered: 6,
-    event_id: 5
-  },
-  {
-    user_id: 5,
-    guests_registered: 3,
-    event_id: 5
-  },
-  {
-    user_id: 7,
-    guests_registered: 5,
-    event_id: 5
-  },
-  {
-    user_id: 1,
-    guests_registered: 2,
-    event_id: 6,
-    leader: true
-  },
-  {
-    user_id: 2,
-    guests_registered: 4,
-    event_id: 6,
-    leader: true
-  },
-  {
-    user_id: 3,
-    guests_registered: 0,
-    event_id: 6
-  },
-  {
-    user_id: 4,
-    guests_registered: 6,
-    event_id: 6
-  },
-  {
-    user_id: 5,
-    guests_registered: 3,
-    event_id: 6
-  },
-  {
-    user_id: 7,
-    guests_registered: 5,
-    event_id: 6
-  }
 ])
