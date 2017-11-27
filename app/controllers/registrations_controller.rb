@@ -11,84 +11,79 @@ class RegistrationsController < ApplicationController
     waiver_accepted = params[:registration].delete(:waiver_accepted)
     @event = Event.find(params[:event_id])
 
+    case params[:registration][:form_source]
+      # Admin registering for user      <- find_or_initialize user && save
+      # Anon user registering for self  <-- find_or_initialize user && save && signin
+      # Current_user self-registering   <-- current_user
+    when "admin"
+      @user = User.find_or_initialize_by(email: user_params[:email])
+      @user.fname ||= user_params[:fname]
+      @user.lname ||= user_params[:lname]
+      @user.signed_waiver_on ||= Time.now
+      @user.save!
+      @leader = false
+      @duplicate_registration_risk = false
+    when "self"
+      @user = current_user
+      @leader = params[:registration][:leader] || false
+      @duplicate_registration_risk = false
+    else # == "anon" or anything else
+      @user = User.find_or_initialize_by(email: user_params[:email])
+      @user.fname = user_params[:fname]
+      @user.lname = user_params[:lname]
+      #@user.signed_waiver_on ||= Time.now
+      @user.save!
+      if !current_user
+        sign_in(:user, @user)
+      end
+      @leader = false
+
+      @duplicate_registration_risk = true
+    end # case params[:registration][:form_source]
+
+    # A user who exists but isn't signed in shouldn't be able to register for an event more than once.
+    if @duplicate_registration_risk
+      registration = Registration.where(event: @event, user: @user)
+      if registration.exists?
+        @registration.errors.add(:email, "This email address has already registered for this event.")
+      end
+    end
+
+    @registration = Registration.new(event: @event,
+                            user: @user,
+                          leader: @leader,
+               guests_registered: params[:registration][:guests_registered],
+                  accommodations: params[:registration][:accommodations])
+
+    authorize @registration
+
     if waiver_accepted == '0'
-      flash[:danger] = "You must review and sign the Liability Waiver first"
-    elsif @event.max_registrations < (@event.total_registered + params[:registration][:guests_registered].to_i + 1) #count up the totals and validate
-      # This should be handled by Registration.under_max_registrations?
-      flash[:danger] = "There is only room for #{@event.registrations_remaining - 1} guests at this event."
-    else # stop hacking validations
+      @registration.errors.add(:waiver_accepted, "You must review and sign the Liability Waiver first")
+    end
 
-      case params[:registration][:form_source]
-        # Admin registering for user      <- find_or_initialize user && save
-        # Anon user registering for self  <-- find_or_initialize user && save && signin
-        # Current_user self-registering   <-- current_user
-      when "admin"
-        @user = User.find_or_initialize_by(email: user_params[:email])
-        @user.fname ||= user_params[:fname]
-        @user.lname ||= user_params[:lname]
-        @user.signed_waiver_on ||= Time.now
-        @user.save!
-        @leader = false
+    if @event.max_registrations < (@event.total_registered + params[:registration][:guests_registered].to_i + 1) #count up the totals and validate
+      @registration.errors.add(:guests_registered, "You can only bring up to #{@event.registrations_remaining - 1} guests at this event.")
+    end
 
-        @duplicate_registration_risk = false
-
-      when "self"
-        @user = current_user
-        @user.update_attributes!(signed_waiver_on: Time.now) unless current_user.waiver_accepted
-        @leader = params[:registration][:leader] || false
-
-        @duplicate_registration_risk = false
-
-      else # == "anon" or anything else
-        @user = User.find_or_initialize_by(email: user_params[:email])
-        @user.fname = user_params[:fname]
-        @user.lname = user_params[:lname]
-        @user.signed_waiver_on ||= Time.now
-        @user.save!
-        if !current_user
-          sign_in(:user, @user)
-        end
-        @leader = false
-
-        @duplicate_registration_risk = true
-
-      end # case params[:registration][:form_source]
-
-      # A user who exists but isn't signed in shouldn't be able to register for an event more than once.
-      if @duplicate_registration_risk
-        registration = Registration.where(event: @event, user: @user)
-
-        if registration.exists?
-          flash[:danger] = "You are already registered."
-          redirect_to event_path @event and return
-        end
-      end
-      @registration = Registration.new(event: @event,
-                              user: @user,
-                            leader: @leader,
-                 guests_registered: params[:registration][:guests_registered],
-                    accommodations: params[:registration][:accommodations])
-
-      authorize @registration
-      @registration.save!
-
-      if @registration.errors.any?
-        flash[:danger] = @registration.errors.first.join(": ")
-      else
-        if @event.start_time > Time.now # don't send emails for past events.
-          RegistrationMailer.delay.created @registration
-          # RegistrationMailer.created(@registration).deliver!
-        end
-        flash[:success] = "Registration successful!"
+    if @registration.errors.any?
+      flash[:danger] = @registration.errors.messages.map { |k,v| v }.join(', ')
+    else
+      @registration.save
+      if @event.start_time > Time.now # don't send emails for past events.
+        RegistrationMailer.delay.created @registration
+        # RegistrationMailer.created(@registration).deliver!
       end
 
-      if params[:registration][:form_source] == "admin"
-        redirect_to event_registrations_path @event
-      else
-        redirect_to event_path @event
-      end
+      @user.update_attributes!(signed_waiver_on: Time.now) unless current_user.waiver_accepted
+      flash[:success] = "Registration successful!"
+    end
 
-    end # hacked validations
+    if params[:registration][:form_source] == "admin"
+      redirect_to event_registrations_path @event
+    else
+      redirect_to event_path @event
+    end
+
   end
 
   def new
@@ -106,7 +101,7 @@ class RegistrationsController < ApplicationController
     authorize @registration
     @registration.update(registration_params)
     if @registration.errors.any?
-      flash[:danger] = @registration.errors.first.join(": ")
+      flash[:danger] = @registration.errors.first.messages.map { |k,v| v }.join(', ')
     end
     redirect_to event_path(@registration.event)
   end
