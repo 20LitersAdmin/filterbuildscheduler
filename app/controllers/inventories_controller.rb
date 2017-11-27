@@ -40,7 +40,7 @@ class InventoriesController < ApplicationController
     @part_ids.each do |p|
       old_part_count = Count.where(inventory_id: @latest_id).where(part_id: p).last
       if old_part_count.present?
-        new_part_count = old_part_count
+        new_part_count = old_part_count.dup
         new_part_count.inventory_id = @inventory.id
         new_part_count.user_id = nil
         new_part_count.save
@@ -53,7 +53,7 @@ class InventoriesController < ApplicationController
     @material_ids.each do |m|
       old_material_count = Count.where(inventory_id: @latest_id).where(material_id: m).last
       if old_material_count.present?
-        new_material_count = old_material_count
+        new_material_count = old_material_count.dup
         new_material_count.inventory_id = @inventory.id
         new_material_count.user_id = nil
         new_material_count.save
@@ -66,7 +66,7 @@ class InventoriesController < ApplicationController
     @component_ids.each do |c|
       old_component_count = Count.where(inventory_id: @latest_id).where(component_id: c).last
       if old_component_count.present?
-        new_component_count = old_component_count
+        new_component_count = old_component_count.dup
         new_component_count.inventory_id = @inventory.id
         new_component_count.user_id = nil
         new_component_count.save
