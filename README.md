@@ -1,7 +1,6 @@
 # README
 
 ## Things to do
-1. Registrations need to be paranoid -- but handle PG:duplicateError
 1. Add inventory system functionality
   * Throw variance check ( against Inventory.latest )
   * Extrapolate items from components eg "count.part.extrapolate_component_parts.first.parts_per_component" -- but how to adjust for 2nd round edits?
@@ -12,10 +11,9 @@
     - List of supplies needing re-order
   * Add a reorder_level field to parts && materials instead of predicting?
 
-3. Allow leadership to CRUD registrants for events.in_the_past
-2. Allow leadership to email all registrants from registration#index
+2. Allow leadership to CRUD registrants for events.in_the_past
+3. Allow leadership to email all registrants from registration#index
 
-7. RailsAdmin: hide Extrapolate joins on #new
 8. Technologies views:
   - list components and parts with quantities
 
@@ -31,21 +29,24 @@
   * Event importing (w/ matching [use "name", let Kindful create the ID])
   * Create POROs (update_contact, update_event)
   * Trigger POROs from controllers (user#create, user#update, event#create, event#update, registration#report)
-6. Roll in monthly reporting?
+
 
 ## The Future
 1. Use Paperclip to add part and component images
-1. Send email with weekly product availability (by user.primary_location == Business Connect?)
-1. Track item inventory/count over time
-1. Wait for live testing:
-  * Do builders and admins get reminder emails?
-  * Do registrants not get registration#created emails if the event is in the past?
+2. Send email with weekly product availability (by user.primary_location == Business Connect?)
+3. Track item inventory/count over time
+4. Roll in monthly reporting?
 
-## BUGS! AHH! BUGS!
-1. Registration.rb validations not working  ( eg. :under_max_registration)
-  * Patched my own solution into RegistrationController
 
 ## Things that will annoy only me (and maybe Ross)
 1. Links have "btn #color# devise" to stretch across screen. Should rename to "fullwidth"
+
+
+## ROSS: These things aren't pretty:
+1. Registration.rb validations not working ( eg. :under_max_registration)
+  * Patched my own solution into RegistrationController
+2. Inventory stuff has a few join tables (e.g. extrapolate_technology_parts) which pose some challenges in RailsAdmin:
+  * Creating a new record and trying to create the join record at the same time fails validation.
+3. Registrations were paranoid, but I didn't have a rescue for PG:duplicateError, so I had to un-paranid them. But I want it back.
 
 
