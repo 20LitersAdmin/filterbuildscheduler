@@ -73,7 +73,6 @@ class RegistrationsController < ApplicationController
         RegistrationMailer.delay.created @registration
         # RegistrationMailer.created(@registration).deliver!
       end
-
       @user.update_attributes!(signed_waiver_on: Time.now) unless current_user.waiver_accepted
       flash[:success] = "Registration successful!"
     end
