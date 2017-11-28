@@ -2,9 +2,10 @@
 
 ## Things to do
 1. Add inventory system functionality
-  * Throw variance check ( against Inventory.latest )
+  * Start with zeros. Throw variance check ( against Inventory.latest w/ Events in between )
   * Extrapolate items from components eg "count.part.extrapolate_component_parts.first.parts_per_component" -- but how to adjust for 2nd round edits?
-
+  * Handle count form has null value. Set to 0
+  * Counts: add button for partial count ( don't set user_id )
   * Event#report creates inventory and extrapolates items
   * Mark inventory complete && send emails
     - Link to current inventory#show
