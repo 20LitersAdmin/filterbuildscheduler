@@ -1,12 +1,30 @@
-<div class="col-xs-12">
+<div id="counts_edit" class="col-xs-12">
   <%= simple_form_for([@inventory, @count])  do |f| %>
   <h3><%= @count.name %></h3>
   <h4>For: <%= @count.tech_names %></h4>
-    <%= f.input :loose_count %>
-    <%= f.input :unopened_boxes_count, label: "Unopened boxes:" %>
+    <%= f.input :loose_count, input_html: { value: 0} %>
+    <div class="row">
+      <div class="col-xs-12 right-align expectation">
+        <span id="expected_loose_count_parent" class="highlight red empty right-align">
+          Expected to be:
+          <span id="expected_loose_count"><%= @count.loose_count %></span>
+        </span>
+      </div>
+    </div>
+
+    <%= f.input :unopened_boxes_count, label: "Unopened boxes:", input_html: { value: 0}  %>
+    <div class="row">
+      <div class="col-xs-12 right-align expectation">
+        <span id="expected_box_count_parent" class="highlight red empty right-align">
+          Expected to be:
+          <span id="expected_box_count"><%= @count.unopened_boxes_count %></span>
+        </span>
+      </div>
+    </div>
     <%= f.input :user_id, as: :hidden, input_html: { value: current_user.id } %>
     <%= f.submit "Submit", class: "btn yellow devise" %>
+    <%= f.button :submit, name: "partial", value: "Partial Count", class: "btn blue devise" %>
   <% end %>
-  <%= link_to "Back", edit_inventory_path(@inventory), class: "btn blue devise" %>
+  <%= link_to "Back", edit_inventory_path(@inventory), class: "btn yellow empty devise" %>
 </div>
 

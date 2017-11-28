@@ -18,19 +18,6 @@
 8. Technologies views:
   - list components and parts with quantities
 
-4. Add a Stripe Webhook / API for CauseVox to replace Zapier
-  * Accepting & reading Stripe webhook is working
-  * Sending to Kindful is not
-5. Figure out Kindful API (Rails: RestClient gem)
-  * https://github.com/delongtj/kindful_constant_contact
-  * head: https://developer.kindful.com/docs/direct-access
-  * Need to build confirm attendance (to trigger 'user attended event [instead of registering]')
-  * KINDFUL_API/imports
-  * Contact importing (w/ matching & group assignment)
-  * Event importing (w/ matching [use "name", let Kindful create the ID])
-  * Create POROs (update_contact, update_event)
-  * Trigger POROs from controllers (user#create, user#update, event#create, event#update, registration#report)
-
 
 ## The Future
 1. Use Paperclip to add part and component images
@@ -49,5 +36,19 @@
 2. Inventory stuff has a few join tables (e.g. extrapolate_technology_parts) which pose some challenges in RailsAdmin:
   * Creating a new record and trying to create the join record at the same time fails validation.
 3. Registrations were paranoid, but I didn't have a rescue for PG:duplicateError, so I had to un-paranid them. But I want it back.
+
+## ROSS: What would this cost?
+4. Add a Stripe Webhook / API for CauseVox to replace Zapier
+  * Accepting & reading Stripe webhook is working
+  * Sending to Kindful is not
+5. Figure out Kindful API (Rails: RestClient gem)
+  * https://github.com/delongtj/kindful_constant_contact
+  * head: https://developer.kindful.com/docs/direct-access
+  * Need to build confirm attendance (to trigger 'user attended event [instead of registering]')
+  * KINDFUL_API/imports
+  * Contact importing (w/ matching & group assignment)
+  * Event importing (w/ matching [use "name", let Kindful create the ID])
+  * Create POROs (update_contact, update_event)
+  * Trigger POROs from controllers (user#create, user#update, event#create, event#update, registration#report)
 
 
