@@ -13,6 +13,6 @@ class DeviseMailer < Devise::Mailer
   def reset_password_instructions(user, token, opts={})
     @user = user
     @token = token
-    mail(to: @email, subject: "[20 Liters] Reset your password" )
+    mail(to: @user.email, subject: "[20 Liters] Reset your password" )
   end
 end
