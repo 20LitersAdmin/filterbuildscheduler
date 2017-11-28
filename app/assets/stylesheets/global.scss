@@ -74,7 +74,6 @@ html {
       color: lighten($grey, 10%);
     }
   }
-
   .btn.yellow {
     color: $grey;
     background-color: $yellow;
@@ -114,6 +113,34 @@ html {
     &:hover {
       background-color: $yellow;
       color:#fff;
+    }
+  }
+
+  .highlight {
+    border-radius: 0;
+    border: 0;
+    color: $grey;
+    font-weight: bold;
+    padding: 6px;
+    &.yellow {
+      color: $grey;
+      background-color: $yellow;
+      border: 1px solid darken($yellow, 5%);
+    }
+    &.blue {
+      color: white;
+      background-color: $light-blue;
+      border: 1px solid darken($light-blue, 5%);
+    }
+    &.red {
+      color: white;
+      background-color: $red;
+      border: 1px solid darken($red, 5%);
+    }
+    &.empty {
+      color: $grey;
+      background-color: transparent;
+      transition: all 0.14s ease-in-out;
     }
   }
 
