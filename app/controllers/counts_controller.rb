@@ -30,16 +30,32 @@ class CountsController < ApplicationController
     @count = Count.find(params[:id])
     @inventory = @count.inventory
 
-    @count.update_attributes(count_params)
+    modified_params = count_params.dup
+
+    # Partial counts are not complete, thus user_id should be set to nil
+    if params[:partial].present?
+      modified_params[:user_id] = ""
+    end
+
+    # Ignore null field values, default to previous values
+    if count_params[:loose_count] == ""
+      modified_params.delete(:loose_count)
+    end
+    if count_params[:unopened_boxes_count] == ""
+      modified_params.delete(:unopened_boxes_count)
+    end
+
+    @count.update_attributes(modified_params)
 
     if @inventory.shipping == false && (@count.loose_count < 0 || @count.unopened_boxes_count < 0)
       # only one type of inventory can have negative numbers.
-      flash[:danger] = "Can't submit negative numbers for this type of inventory."
-      return redirect_to edit_inventory_count_path(@inventory, @count)
+      #flash[:danger] = "Can't submit negative numbers for this type of inventory."
+      @count.errors.add(:loose_count, "Can't submit negative numbers for this type of inventory.")
+      #return redirect_to edit_inventory_count_path(@inventory, @count)
     end
 
     if @count.errors.any?
-      render 'edit'
+      flash[:danger] = @registration.errors.messages.map { |k,v| v }.join(', ')
     else
       flash[:success] = "Item count submitted"
       redirect_to edit_inventory_path(@inventory)
