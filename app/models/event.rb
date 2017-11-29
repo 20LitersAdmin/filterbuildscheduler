@@ -7,7 +7,7 @@ class Event < ApplicationRecord
   has_many :users, through: :registrations
   has_one :inventory
 
-  validates :start_time, :end_time, :title, :min_leaders, :max_leaders, :min_registrations, :max_registrations, presence: true
+  validates :start_time, :end_time, :title, :min_leaders, :max_leaders, :min_registrations, :max_registrations, :location_id, presence: true
   validates :min_registrations, :max_registrations, :min_leaders, :max_leaders, numericality: { only_integer: true, greater_than: 0 }
   validate :dates_are_valid?
   validate :registrations_are_valid?

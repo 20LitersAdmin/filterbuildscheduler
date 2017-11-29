@@ -28,4 +28,7 @@ function attendanceCounter(){
   $(document).on("change", ".event_registrations_guests_attended input[type=number]", function() {
     attendanceCounter();
   });
+  $(document).on("turbolinks:load", function(){
+    attendanceCounter();
+  })
 }());

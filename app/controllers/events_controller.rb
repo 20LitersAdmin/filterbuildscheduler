@@ -67,7 +67,7 @@ class EventsController < ApplicationController
         @location_img = @location.photo_url
       end
 
-      if (current_user&.is_admin || @registration&.leader?) && @event.incomplete? && @event.start_time < Time.now
+      if (current_user&.is_admin || @registration&.leader?) && @event.start_time < Time.now
         @show_report = true
       else
         @show_report = false
@@ -95,21 +95,23 @@ class EventsController < ApplicationController
     @event = Event.find(params[:id])
     authorize @event
 
-    @event.start_time         = params[:event][:start_time]
-    @event.end_time           = params[:event][:end_time]
-    @event.title              = params[:event][:title]
-    @event.description        = params[:event][:description]
-    @event.min_registrations  = params[:event][:min_registrations]
-    @event.max_registrations  = params[:event][:max_registrations]
-    @event.min_leaders        = params[:event][:min_leaders]
-    @event.max_leaders        = params[:event][:max_leaders]
-    @event.location_id        = params[:event][:location_id]
-    @event.technology_id      = params[:event][:technology_id]
-    @event.is_private         = params[:event][:is_private]
-    @event.item_goal          = params[:event][:item_goal]
-    @event.technologies_built = params[:event][:technologies_built]
-    @event.attendance         = params[:event][:attendance]
-    @event.boxes_packed       = params[:event][:boxes_packed]
+    @event.update_attributes(event_params)
+
+    # @event.start_time         = params[:event][:start_time]
+    # @event.end_time           = params[:event][:end_time]
+    # @event.title              = params[:event][:title]
+    # @event.description        = params[:event][:description]
+    # @event.min_registrations  = params[:event][:min_registrations]
+    # @event.max_registrations  = params[:event][:max_registrations]
+    # @event.min_leaders        = params[:event][:min_leaders]
+    # @event.max_leaders        = params[:event][:max_leaders]
+    # @event.location_id        = params[:event][:location_id]
+    # @event.technology_id      = params[:event][:technology_id]
+    # @event.is_private         = params[:event][:is_private]
+    # @event.item_goal          = params[:event][:item_goal]
+    # @event.technologies_built = params[:event][:technologies_built]
+    # @event.attendance         = params[:event][:attendance]
+    # @event.boxes_packed       = params[:event][:boxes_packed]
 
     @admins_notified = ""
     @users_notified = ""
