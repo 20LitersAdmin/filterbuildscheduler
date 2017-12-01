@@ -49,11 +49,17 @@ class RegistrationsController < ApplicationController
       end
     end
 
-    @registration = Registration.new(event: @event,
-                            user: @user,
-                          leader: @leader,
-               guests_registered: params[:registration][:guests_registered],
-                  accommodations: params[:registration][:accommodations])
+    # check for a deleted record before creating a new one.
+    if Registration.with_deleted.where(user_id: @user.id, event_id: @event.id).exists?
+      @registration = Registration.with_deleted.where(user_id: @user.id, event_id: @event.id).first
+      @registration.restore
+    else
+      @registration = Registration.new(event: @event,
+                              user: @user,
+                            leader: @leader,
+                 guests_registered: params[:registration][:guests_registered],
+                    accommodations: params[:registration][:accommodations])
+    end
 
     authorize @registration
 

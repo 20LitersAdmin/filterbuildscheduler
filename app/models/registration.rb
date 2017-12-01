@@ -1,4 +1,6 @@
 class Registration < ApplicationRecord
+  acts_as_paranoid
+  
   belongs_to :user
   belongs_to :event
   scope :registered_as_leader, -> {where(leader: true)}
