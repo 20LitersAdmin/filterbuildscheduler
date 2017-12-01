@@ -235,6 +235,27 @@
   }
 }
 
+.event-poster {
+  .poster-logo {
+    width: 100%;
+  }
+  .poster-title {
+    margin-top: 2em;
+    text-align: center;
+  }
+  .event-title {
+    font-size: 4em;
+    border: 2px solid #4a4a4a;
+    color: #4a4a4a;
+    text-transform: uppercase;
+    padding: 12px;
+    margin: 24px;
+  }
+  .location-row {
+    margin-top: 64px;
+  }
+}
+
 @media (max-width: 768px) {
   .solicit-title {
     min-height: 18px;
@@ -258,4 +279,18 @@
   .solicit-text {
     min-height: 48px;
   }
+}
+
+@media print {
+  .poster-logo {
+    width: 130px !important;
+    float: right;
+    margin-top: 18px;
+  }
+
+  .signup-row {
+    position: absolute;
+    bottom: 0;
+  }
+
 }
