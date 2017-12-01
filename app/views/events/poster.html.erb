@@ -4,7 +4,7 @@
       <%= image_tag "logo-horizontal-417-208.png", class: "poster-logo" %>
     </div>
     <div class="col-md-9 poster-title">
-      <h1>Roll up your sleeves to solve the global water crisis.</h1>
+      <h2>Roll up your sleeves to solve the global water crisis.</h2>
       <h4>Take a global problem personally and solve it for the next decade.</h4>
     </div>
     <div class="col-xs-12">
@@ -17,7 +17,7 @@
         <% if @tech_img.present? %>
           <div class="col-xs-4">
         <% else %>
-          <div class="col-xs-12">
+          <div class="col-xs-6">
         <% end %>
           <h2>We're Building <%= @technology.name %>s</h2>
           <% if @technology.family_friendly %>
@@ -37,7 +37,7 @@
         <% if @tech_img.present? %>
           <div class="col-xs-4">
         <% else %>
-          <div class="col-xs-12">
+          <div class="col-xs-6">
         <% end %>
           <h2>What to expect:</h2>
           <ul>
@@ -87,7 +87,15 @@
     <% end %>
   </div>
   <div class="row signup-row">
-    How to sign up
+    <h2>You in? Ready to build?</h2>
+    <% if @event.is_private? %>
+      <% if @event.contact_name.present? %>
+        <h4>Talk to <%= @event.contact_name %></h4>
+        <h4><%= @event.contact_email %></h4>
+      <% end %>
+    <% else %>
+      <h3>https://make.20liters.org</h3>
+    <% end %>
   </div>
     
 </div>

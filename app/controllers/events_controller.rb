@@ -229,6 +229,8 @@ class EventsController < ApplicationController
                                   :technologies_built,
                                   :boxes_packed,
                                   :attendance,
+                                  :contact_name,
+                                  :contact_email,
                                   registrations_attributes: [ :id, :user_id, :event_id, :attended, :leader, :guests_registered, :guests_attended ]
   end
 end
