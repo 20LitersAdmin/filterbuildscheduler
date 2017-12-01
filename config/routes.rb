@@ -17,6 +17,7 @@ Rails.application.routes.draw do
     member do
       get 'attendance'
       get 'restore'
+      get 'poster'
     end
     resources :registrations
   end

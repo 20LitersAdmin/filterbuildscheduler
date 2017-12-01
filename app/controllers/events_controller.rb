@@ -84,6 +84,30 @@ class EventsController < ApplicationController
     end
   end
 
+  def poster
+    @event = Event.find(params[:id])
+    @technology = @event.technology
+    @tech_img = @technology.img_url
+    @location = @event.location
+    @location_img = @location.photo_url
+
+    if @technology.owner == "Village Water Filters"
+      @tech_blurb = "Sold at or below cost in over 60 developing countries, this filter is designed to be affordable for those making $2 a day."
+    elsif @technology.owner == "20 Liters"
+      @tech_blurb = "Distributed to the rural poor in Rwanda, this filter handles the muddy, disgusting water from the Nyabarongo River. Each filter is supported by a network of village-based volunteers, community health workers and local leaders."
+    else
+      @tech_blurb = ''
+    end
+
+    if @technology.family_friendly
+      @child_statement_email = "children as young as 4 can participate"
+    else
+      @child_statement_email = "this event is best for ages 12 and up"
+    end
+
+    @print_navbar = true
+  end
+
   def new
     @event = Event.new
   end
@@ -96,22 +120,6 @@ class EventsController < ApplicationController
     authorize @event
 
     @event.update_attributes(event_params)
-
-    # @event.start_time         = params[:event][:start_time]
-    # @event.end_time           = params[:event][:end_time]
-    # @event.title              = params[:event][:title]
-    # @event.description        = params[:event][:description]
-    # @event.min_registrations  = params[:event][:min_registrations]
-    # @event.max_registrations  = params[:event][:max_registrations]
-    # @event.min_leaders        = params[:event][:min_leaders]
-    # @event.max_leaders        = params[:event][:max_leaders]
-    # @event.location_id        = params[:event][:location_id]
-    # @event.technology_id      = params[:event][:technology_id]
-    # @event.is_private         = params[:event][:is_private]
-    # @event.item_goal          = params[:event][:item_goal]
-    # @event.technologies_built = params[:event][:technologies_built]
-    # @event.attendance         = params[:event][:attendance]
-    # @event.boxes_packed       = params[:event][:boxes_packed]
 
     @admins_notified = ""
     @users_notified = ""
@@ -200,6 +208,7 @@ class EventsController < ApplicationController
     @registrations = @event.registrations.ordered_by_user_lname
 
     @print_blanks = @event.max_registrations - @event.total_registered + 5
+    @print_navbar = true
   end
 
   private
@@ -220,6 +229,8 @@ class EventsController < ApplicationController
                                   :technologies_built,
                                   :boxes_packed,
                                   :attendance,
+                                  :contact_name,
+                                  :contact_email,
                                   registrations_attributes: [ :id, :user_id, :event_id, :attended, :leader, :guests_registered, :guests_attended ]
   end
 end
