@@ -35,7 +35,6 @@
   * Patched my own solution into RegistrationController
 2. Inventory stuff has a few join tables (e.g. extrapolate_technology_parts) which pose some challenges in RailsAdmin:
   * Creating a new record and trying to create the join record at the same time fails validation.
-3. Registrations were paranoid, but I didn't have a rescue for PG:duplicateError, so I had to un-paranid them. But I want it back.
 
 ## ROSS: What would this cost?
 4. Add a Stripe Webhook / API for CauseVox to replace Zapier
