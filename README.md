@@ -2,8 +2,9 @@
 
 ## Things to do
 1. Add inventory system functionality
-  * Start with zeros. BUT AFTER FIRST SUBMIT: Show val (need solution for shipping && receiving)
-  * If receiving, add the val, if shipping, subtract the val.
+  * IF editing a count that has already been submitted when shipping or receiving && the val matches: don't re-submit the value again. -- DONE
+  * IF editing a count that has already been submitted when shipping or receiving && the val doesn't match: adjust based upon difference
+
   * Extrapolate items from components eg "count.part.extrapolate_component_parts.first.parts_per_component" -- but how to adjust for 2nd round edits?
   * Handle count form has null value. Set to 0
   * Counts: add button for partial count ( don't set user_id )

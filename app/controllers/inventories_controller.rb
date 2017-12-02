@@ -106,6 +106,16 @@ class InventoriesController < ApplicationController
     @inventory = Inventory.find(params[:id])
     @counts = @inventory.counts.sort_by { |c| [c.sort_by_user, c.tech_names, - c.name] }
     @uncounted = @inventory.counts.where(user_id: nil).count
+
+    case @inventory.type_for_params
+    when "receiving"
+      @btn_text = "Receive"
+    when "shipping"
+      @btn_text = "Ship"
+    when "manual"
+      @btn_text = "Count"
+    end
+
   end
 
   def update
