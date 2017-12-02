@@ -1,7 +1,9 @@
 <%= simple_form_for [@event, @registration] do |f| %>
+  <%= f.error_notification %>
   <%= f.hidden_field :form_source, value: "anon" %>
   <%= f.hidden_field :event_id %>
-  <%= simple_fields_for :user do |o| %>
+  <%= f.simple_fields_for :user do |o| %>
+    <%= o.error_notification %>
     <%= o.input :fname, label: 'First Name' %>
     <%= o.input :lname, label: 'Last Name' %>
     <%= o.input :email, label: 'Email' %>

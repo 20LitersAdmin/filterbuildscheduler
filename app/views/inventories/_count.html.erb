@@ -3,12 +3,12 @@
     <p class="count-title"><%= count.name %></p>
     <p class="count-tech"><strong>For:</strong> <%= count.tech_names %></p>
     <% if count.user_id == nil %>
-      <%= link_to "Count", edit_inventory_count_path(@inventory, count), class: "btn yellow devise" %>
+      <%= link_to "Count", edit_inventory_count_path(@inventory, count), class: "btn yellow fullwidth" %>
     <% else %>
       <p class="current-count">
         <strong>Avail:</strong> <%= count.available %>
       </p>
-      <%= link_to "Edit", edit_inventory_count_path(@inventory, count), class: "btn blue devise" %>
+      <%= link_to "Edit", edit_inventory_count_path(@inventory, count), class: "btn blue fullwidth" %>
     <% end %>
   </div>
 </div>

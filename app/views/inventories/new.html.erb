@@ -4,11 +4,12 @@
 
 <div class="col-xs-12">
   <%= simple_form_for @inventory do |f| %>
+    <%= f.error_notification %>
     <%= f.input :date, label: "Select date when inventory occured:", as: :string, input_html: { class: "datepicker", value: Date.today } %>
     <%= f.input :manual, as: :hidden %>
     <%= f.input :receiving, as: :hidden %>
     <%= f.input :shipping, as: :hidden %>
     <%= f.input :event_id, as: :hidden %>
-    <%= f.button :submit, class: 'btn yellow devise' %>
+    <%= f.button :submit, class: 'btn yellow fullwidth' %>
   <% end %>
 </div>

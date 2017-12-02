@@ -65,7 +65,7 @@
           <div class='col-xs-4'>
             <img src="<%= @tech_img  %>" class="tech-img">
             <% if @tech_info.present? %>
-              <%= link_to "Learn more", @tech_info, target: "_blank", class: "btn blue devise" %>
+              <%= link_to "Learn more", @tech_info, target: "_blank", class: "btn blue fullwidth" %>
             <% end %>
           </div>
         <% end %>
@@ -101,7 +101,7 @@
             <a data-toggle="modal" data-target="#photoModal">
               <img src="<%= @location_img  %>" class="location-img">
             </a>
-            <a class="btn blue devise" data-toggle="modal" data-target="#photoModal">Larger Image</a>
+            <a class="btn blue fullwidth" data-toggle="modal" data-target="#photoModal">Larger Image</a>
           </div>
         <% end %>
         <div class="col-xs-12">
@@ -146,7 +146,7 @@
         <img src="<%= @location_img  %>" class="location-img">
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn yellow devise" data-dismiss="modal">Close</button>
+        <button type="button" class="btn yellow fullwidth" data-dismiss="modal">Close</button>
       </div>
     </div>
   </div>
