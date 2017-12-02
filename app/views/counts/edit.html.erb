@@ -1,8 +1,10 @@
 <div id="counts_edit" class="col-xs-12">
+  <h3><%= @count.name %></h3>
+  <h4>For: <%= @count.tech_names %></h4>
+  <h4><%= @context %></h4>
   <%= simple_form_for([@inventory, @count])  do |f| %>
     <%= f.error_notification %>
-    <h3><%= @count.name %></h3>
-    <h4>For: <%= @count.tech_names %></h4>
+
     <%= f.input :loose_count, input_html: { value: @loose_val} %>
     <div class="row">
       <div class="col-xs-12 right-align expectation">
