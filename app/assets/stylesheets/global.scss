@@ -12,12 +12,6 @@ html {
   background-color: $grey;
 }
 
-@media print {
-  .no-print, .no-print * {
-    display: none !important;
-  }
-}
-
 .no-overflow {
   overflow: hidden;
 }
@@ -26,6 +20,12 @@ html {
   text-align: center;
   margin-right: auto;
   margin-left: auto;
+}
+
+.btn.fullwidth {
+  margin-top: .5em;
+  margin-bottom: .5em;
+  width: 100%;
 }
 
 .twentyliters {
@@ -231,4 +231,11 @@ html {
   border-color: $light-blue;
   color: $grey;
   text-align: center;
+}
+
+
+@media print {
+  .no-print, .no-print * {
+    display: none !important;
+  }
 }

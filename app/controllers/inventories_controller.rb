@@ -5,6 +5,25 @@ class InventoriesController < ApplicationController
     @inventories = Inventory.former
   end
 
+  def show
+    @inventory = Inventory.find(params[:id])
+    @counts = @inventory.counts.sort_by {|c| - c.name }
+  end
+
+  def new
+    @inventory = Inventory.new()
+    # What kind of inventory to make?
+    # Inventories created by Events#update won't hit this action
+    case params[:type]
+    when "receiving"
+      @inventory.receiving = true
+    when "shipping"
+      @inventory.shipping = true
+    else # created manually
+      @inventory.manual = true
+    end
+  end
+
   def create
     @date = inventory_params[:date]
     @latest = Inventory.latest
@@ -83,29 +102,10 @@ class InventoriesController < ApplicationController
     end
   end
 
-  def new
-    @inventory = Inventory.new()
-    # What kind of inventory to make?
-    # Inventories created by Events#update won't hit this action
-    case params[:type]
-    when "receiving"
-      @inventory.receiving = true
-    when "shipping"
-      @inventory.shipping = true
-    else # created manually
-      @inventory.manual = true
-    end
-  end
-
   def edit
     @inventory = Inventory.find(params[:id])
     @counts = @inventory.counts.sort_by { |c| [c.sort_by_user, c.tech_names, - c.name] }
     @uncounted = @inventory.counts.where(user_id: nil).count
-  end
-
-  def show
-    @inventory = Inventory.find(params[:id])
-    @counts = @inventory.counts.sort_by {|c| - c.name }
   end
 
   def update

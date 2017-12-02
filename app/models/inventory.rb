@@ -51,6 +51,12 @@ class Inventory < ApplicationRecord
   end
 
   def count_summary
-    self.item_count.to_s + " of " + self.counts.count.to_s + " items counted."
+    if self.receiving
+      self.item_count.to_s + " of " + self.counts.count.to_s + " items received."
+    elsif self.shipping
+      self.item_count.to_s + " of " + self.counts.count.to_s + " items shipped."
+    else
+      self.item_count.to_s + " of " + self.counts.count.to_s + " items counted."
+    end
   end
 end

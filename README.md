@@ -2,7 +2,7 @@
 
 ## Things to do
 1. Add inventory system functionality
-  * Start with zeros. Throw variance check ( against Inventory.latest w/ Events in between )
+  * Start with zeros. BUT AFTER FIRST SUBMIT: Show val (need solution for shipping && receiving)
   * Extrapolate items from components eg "count.part.extrapolate_component_parts.first.parts_per_component" -- but how to adjust for 2nd round edits?
   * Handle count form has null value. Set to 0
   * Counts: add button for partial count ( don't set user_id )
@@ -26,15 +26,12 @@
 4. Roll in monthly reporting?
 
 
-## Things that will annoy only me (and maybe Ross)
-1. Links have "btn #color# devise" to stretch across screen. Should rename to "fullwidth"
-
-
 ## ROSS: These things aren't pretty:
 1. Registration.rb validations not working ( eg. :under_max_registration)
   * Patched my own solution into RegistrationController
 2. Inventory stuff has a few join tables (e.g. extrapolate_technology_parts) which pose some challenges in RailsAdmin:
   * Creating a new record and trying to create the join record at the same time fails validation.
+3. Registration#create (via Event#show): registration_anonymous partial: How to handle form errors with f.error_notifiction and o.error_notification?
 
 ## ROSS: What would this cost?
 4. Add a Stripe Webhook / API for CauseVox to replace Zapier

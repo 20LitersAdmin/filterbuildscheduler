@@ -7,6 +7,11 @@ class RegistrationsController < ApplicationController
     @registrations = @event.registrations
   end
 
+  def new
+    @event = Event.find(params[:event_id])
+    @registration = Registration.new(event_id: @event.id)
+  end
+
   def create
     waiver_accepted = params[:registration].delete(:waiver_accepted)
     @event = Event.find(params[:event_id])
@@ -83,6 +88,16 @@ class RegistrationsController < ApplicationController
       flash[:success] = "Registration successful!"
     end
 
+    # This is what's needed to use f.error_notification, but how within nested model && with user_params??
+    # if @registration.save
+    #   if @event.start_time > Time.now # don't send emails for past events.
+    #     RegistrationMailer.delay.created @registration
+    #     # RegistrationMailer.created(@registration).deliver!
+    #   end
+    #   @user.update_attributes!(signed_waiver_on: Time.now) unless current_user.waiver_accepted
+    #   flash[:success] = "Registration successful!"
+    # end
+
     if params[:registration][:form_source] == "admin"
       redirect_to event_registrations_path @event
     else
@@ -91,10 +106,7 @@ class RegistrationsController < ApplicationController
 
   end
 
-  def new
-    @event = Event.find(params[:event_id])
-    @registration = Registration.new(event_id: @event.id)
-  end
+
 
   def edit
   end
