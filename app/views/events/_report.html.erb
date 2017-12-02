@@ -1,5 +1,6 @@
 <h2>Report</h2>
 <%= simple_form_for @event  do |f| %>
+  <%= f.error_notification %>
   <%= f.label :item_goal, label: "Build Goal: #{@event.item_goal}" %>
   <%= f.input :technologies_built, label: "Filters built (but not boxed): " %>
   <%= f.input :boxes_packed, label: "Boxes packed (ready to ship): " %>
@@ -26,5 +27,5 @@
       <hr>
     </div>
   <% end %>
-    <%= f.submit "Submit Report", class: 'btn yellow devise' %>
+    <%= f.submit "Submit Report", class: 'btn yellow fullwidth' %>
 <% end %>

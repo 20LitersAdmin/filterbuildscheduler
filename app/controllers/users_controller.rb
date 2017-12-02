@@ -37,9 +37,12 @@ class UsersController < ApplicationController
   end
 
   def update
-    @user.update user_params
-    flash[:success] = "Info updated!"
-    redirect_to events_path
+    if @user.update(user_params)
+      flash[:success] = "Info updated!"
+      redirect_to events_path
+    else
+      render 'edit'
+    end
   end
 
   def delete

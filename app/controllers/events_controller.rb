@@ -10,32 +10,6 @@ class EventsController < ApplicationController
     @cancelled_events = Event.only_deleted
   end
 
-  def cancelled
-    @cancelled_events = Event.only_deleted
-    @user = current_user
-  end
-
-  def restore
-    @event = Event.only_deleted.find(params[:id])
-    authorize @event
-    if params[:recursive] == "false"
-      # Registrations are never getting deleted, so they can't NOT be restored.
-      Event.restore(@event.id)
-      flash[:success] = "Event restored but not registrations."
-    else
-      Event.restore(@event.id, recursive: true)
-      flash[:success] = "Event and associated registrations restored."
-    end
-
-
-
-    if Event.only_deleted.exists?
-      redirect_to cancelled_events_path
-    else
-      redirect_to events_path
-    end
-  end
-
   def show
     @event = Event.find(params[:id])
     @registration = Registration.where(user: current_user, event: @event).first_or_initialize
@@ -112,6 +86,30 @@ class EventsController < ApplicationController
     @event = Event.new
   end
 
+  def create
+    @event = Event.new(event_params)
+    authorize @event
+
+    if @event.save
+      flash[:success] = "The event has been created."
+      EventMailer.delay.created(@event, current_user)
+      redirect_to action: :index
+    else
+      render 'new'
+    end
+  end
+
+  def edit
+    @event = Event.find(params[:id])
+    authorize @event
+
+    if (current_user&.is_admin || @registration&.leader?) && @event.start_time < Time.now
+      @show_advanced = true
+    else
+      @show_advanced = false
+    end
+  end
+
   def update
     #
     # Needs to trigger the Intelligence::update_inventory_from_event_results(event) if technologies_built || boxes_packed was 0 || nil
@@ -141,33 +139,7 @@ class EventsController < ApplicationController
       flash[:success] = "Event updated. #{@admins_notified} #{@users_notified}"
       redirect_to event_path(@event)
     else
-      flash[:warning] = @event.errors.first.join(": ")
-      redirect_to edit_event_path(@event)
-    end
-  end
-
-  def edit
-    @event = Event.find(params[:id])
-    authorize @event
-
-    if (current_user&.is_admin || @registration&.leader?) && @event.start_time < Time.now
-      @show_advanced = true
-    else
-      @show_advanced = false
-    end
-  end
-
-  def create
-    @event = Event.create(event_params)
-    authorize @event
-
-    if @event.errors.any?
-      flash[:warning] = @event.errors.first.join(": ")
-      redirect_to new_event_path
-    else
-      flash[:success] = "The event has been created."
-      EventMailer.delay.created(@event, current_user)
-      redirect_to action: :index
+      render 'edit'
     end
   end
 
@@ -198,6 +170,32 @@ class EventsController < ApplicationController
     else
       flash[:warning] = @event.errors.first.join(": ")
       redirect_to edit_event_path(@event)
+    end
+  end
+
+  def cancelled
+    @cancelled_events = Event.only_deleted
+    @user = current_user
+  end
+
+  def restore
+    @event = Event.only_deleted.find(params[:id])
+    authorize @event
+    if params[:recursive] == "false"
+      # Registrations are never getting deleted, so they can't NOT be restored.
+      Event.restore(@event.id)
+      flash[:success] = "Event restored but not registrations."
+    else
+      Event.restore(@event.id, recursive: true)
+      flash[:success] = "Event and associated registrations restored."
+    end
+
+
+
+    if Event.only_deleted.exists?
+      redirect_to cancelled_events_path
+    else
+      redirect_to events_path
     end
   end
 
