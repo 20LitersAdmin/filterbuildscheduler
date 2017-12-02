@@ -1,30 +1,36 @@
 <div id="counts_edit" class="col-xs-12">
   <%= simple_form_for([@inventory, @count])  do |f| %>
-  <h3><%= @count.name %></h3>
-  <h4>For: <%= @count.tech_names %></h4>
-    <%= f.input :loose_count, input_html: { value: 0} %>
+    <%= f.error_notification %>
+    <h3><%= @count.name %></h3>
+    <h4>For: <%= @count.tech_names %></h4>
+    <%= f.input :loose_count, input_html: { value: @loose_val} %>
     <div class="row">
       <div class="col-xs-12 right-align expectation">
-        <span id="expected_loose_count_parent" class="highlight red empty right-align">
-          Expected to be:
-          <span id="expected_loose_count"><%= @count.loose_count %></span>
-        </span>
+        <% if !@inventory.receiving %>
+          <span id="expected_loose_count_parent" class="highlight red empty right-align">
+            <%= if @inventory.type_for_params == "shipping" then "Current:" else "Expecte to be:" end %>
+            <span id="expected_loose_count"><%= @count.loose_count %></span>
+          </span>
+        <% end %>
       </div>
     </div>
 
-    <%= f.input :unopened_boxes_count, label: "Unopened boxes:", input_html: { value: 0}  %>
+    <%= f.input :unopened_boxes_count, label: "Unopened boxes:", input_html: { value: @box_val}  %>
     <div class="row">
       <div class="col-xs-12 right-align expectation">
-        <span id="expected_box_count_parent" class="highlight red empty right-align">
-          Expected to be:
-          <span id="expected_box_count"><%= @count.unopened_boxes_count %></span>
-        </span>
+        <% if !@inventory.receiving %>
+          <span id="expected_box_count_parent" class="highlight red empty right-align">
+            <%= if @inventory.type_for_params == "shipping" then "Current:" else "Expecte to be:" end %>
+            <span id="expected_box_count"><%= @count.unopened_boxes_count %></span>
+          </span>
+        <% end %>
       </div>
     </div>
     <%= f.input :user_id, as: :hidden, input_html: { value: current_user.id } %>
-    <%= f.submit "Submit", class: "btn yellow devise" %>
-    <%= f.button :submit, name: "partial", value: "Partial Count", class: "btn blue devise" %>
+    <%= f.submit "Submit", class: "btn yellow fullwidth" %>
+    <% if @inventory.type_for_params == "manual" %>
+      <%= f.button :submit, name: "partial", value: "Partial Count", class: "btn blue fullwidth" %>
+    <% end %>
   <% end %>
-  <%= link_to "Back", edit_inventory_path(@inventory), class: "btn yellow empty devise" %>
+  <%= link_to "Back", edit_inventory_path(@inventory), class: "btn yellow empty fullwidth" %>
 </div>
-

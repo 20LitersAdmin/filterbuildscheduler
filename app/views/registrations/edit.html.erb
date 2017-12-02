@@ -16,14 +16,14 @@
     </div>
 
     <div class="form-actions">
-      <%= f.button :submit, "Update", class: 'btn yellow devise' %>
+      <%= f.button :submit, "Update", class: 'btn yellow fullwidth' %>
       <%= link_to 'Cancel Registration', event_registration_path(@registration.event, @registration),
           data: {:confirm => 'Are you sure?'},
           :method => :delete,
-          class: 'btn red devise' %>
+          class: 'btn red fullwidth' %>
     </div>
   <% end %>
 
   <br>
-  <%= link_to "Back", :back, class: "btn blue devise" %>
+  <%= link_to "Back", :back, class: "btn blue fullwidth" %>
 </div>
