@@ -8,6 +8,12 @@ class InventoriesController < ApplicationController
   def show
     @inventory = Inventory.find(params[:id])
     @counts = @inventory.counts.sort_by {|c| - c.name }
+
+    # if @inventory.type_for_params == "manual"
+    #   @counts = @inventory.counts.sort_by {|c| - c.name }
+    # else
+    #   @counts = @inventory.counts.where.not(user_id: nil).sort_by {|c| - c.name }
+    # end
   end
 
   def new
@@ -107,6 +113,11 @@ class InventoriesController < ApplicationController
     @counts = @inventory.counts.sort_by { |c| [c.sort_by_user, c.tech_names, - c.name] }
     @uncounted = @inventory.counts.where(user_id: nil).count
 
+    if params[:unlock] == "true"
+      @inventory.completed_at = nil
+      @inventory.save
+    end
+
     case @inventory.type_for_params
     when "receiving"
       @btn_text = "Receive"
@@ -121,14 +132,8 @@ class InventoriesController < ApplicationController
   def update
     @inventory = Inventory.find(params[:id])
 
-    Extrapolate.new(@inventory)
-
-    if inventory_params[:completed_at].present?
-      # Extrapolate components through Intelligence::extrapolate(@inventory)
-      # Mail out inventory upon update.
-    end
-
     @inventory.update(inventory_params)
+    Extrapolate.new(@inventory)
     redirect_to inventories_path
   end
 
@@ -139,7 +144,7 @@ class InventoriesController < ApplicationController
   private
 
   def inventory_params
-    params.require(:inventory).permit :date, :reported, :receiving, :shipping, :manual, :deleted_at, :event_id,
+    params.require(:inventory).permit :date, :reported, :receiving, :shipping, :manual, :deleted_at, :event_id, :completed_at,
                                       counts_attributes: [:id, :user_id, :inventory_id, :component_id, :part_id, :material_id, :loose_count, :unopened_boxes_count, :deleted_at]
   end
 end

@@ -1,10 +1,10 @@
 <tr>
   <td><%= count_tbl.name %></td>
   <td><%= count_tbl.tech_names %></td>
-  <td class="center-align"><%= count_tbl.loose_count %></td>
-  <td class="center-align"><%= count_tbl.unopened_boxes_count %></td>
-  <td class="center-align"><%= count_tbl.item.quantity_per_box %></td>
-  <td class="center-align"><%= count_tbl.box_count %></td>
-  <td class="center-align"><%= count_tbl.available %></td>
-  <td class="center-align"><%= count_tbl.total %></td>
+  <td class="center-align"><%= number_with_delimiter(count_tbl.loose_count, delimiter: ',') %></td>
+  <td class="center-align"><%= number_with_delimiter(count_tbl.unopened_boxes_count, delimiter: ',') %></td>
+  <td class="center-align"><%= number_with_delimiter(count_tbl.item.quantity_per_box, delimiter: ',') %></td>
+  <td class="center-align"><%= number_with_delimiter(count_tbl.box_count, delimiter: ',') %></td>
+  <td class="center-align"><%= number_with_delimiter(count_tbl.available, delimiter: ',') %></td>
+  <td class="center-align"><%= number_with_delimiter(count_tbl.total, delimiter: ',') %></td>
 </tr>
