@@ -75,7 +75,7 @@ class Count < ApplicationRecord
 
   def total
     # available + ( # per unit -- is a component? * # of completed un-boxed units)
-    "TBD"
+    available + extrapolated_count
   end
 
   def sort_by_user
