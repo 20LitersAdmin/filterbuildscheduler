@@ -21,8 +21,15 @@
           <div class="inventory col-sm-3">
             <h4><%= @latest.name %></h4>
             <p><%= @latest.count_summary %></p>
+            <p>
+              <strong><%= if @latest.completed_at.present? then "FINALIZED" end %></strong> &nbsp;
+            </p>
             <%= link_to "View", inventory_path(@latest), class: "btn yellow" %>
-            <%= link_to "Edit", edit_inventory_path(@latest), class: "btn blue" %>
+            <% if !@latest.completed_at.present? %>
+              <%= link_to "Edit", edit_inventory_path(@latest), class: "btn blue" %>
+            <% elsif current_user.is_admin? %>
+              <%= link_to "Unlock", edit_inventory_path(@latest, unlock: "true"), class: "btn blue" %>
+            <% end %>
           </div>
         </div>
       </div>

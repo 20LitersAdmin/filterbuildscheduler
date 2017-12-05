@@ -2,9 +2,7 @@
 
 ## Things to do
 1. Add inventory system functionality
-  * Extrapolate items from components eg "count.part.extrapolate_component_parts.first.parts_per_component" -- but how to adjust for 2nd round edits?
-  * Handle count form has null value. Set to 0
-  * Counts: add button for partial count ( don't set user_id )
+  * On inventory#show - when shipping || receiving, only show changed items && show what is was before being changed. reuse diff_from_previous?
   * Event#report creates inventory and extrapolates items
   * Mark inventory complete && send emails
     - Link to current inventory#show
