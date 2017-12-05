@@ -37,10 +37,13 @@ class CountsController < ApplicationController
     case @inventory.type_for_params
     when "receiving"
       @context = "Add to inventory: Use positive numbers"
+      @expected_msg = "Current:"
     when "shipping"
       @context = "Remove from inventory: Use negative numbers"
+      @expected_msg = "Current:"
     when "manual"
       @context = "Count inventory: Use positive numbers or 0"
+      @expected_msg = "Expected to be:"
     end
 
     if @count.user_id.present? #after a record is submitted, show the submitted value

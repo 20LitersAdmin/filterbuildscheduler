@@ -121,19 +121,14 @@ class InventoriesController < ApplicationController
   def update
     @inventory = Inventory.find(params[:id])
 
-    @inventory.update(inventory_params)
+    Extrapolate.new(@inventory)
 
     if inventory_params[:completed_at].present?
       # Extrapolate components through Intelligence::extrapolate(@inventory)
       # Mail out inventory upon update.
     end
 
-    if @inventory.errors.any?
-      flash[:warning] = @inventory.errors.first.join(": ")
-    else
-      flash[:success] = "Inventory updated"
-    end
-
+    @inventory.update(inventory_params)
     redirect_to inventories_path
   end
 

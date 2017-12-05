@@ -15,15 +15,15 @@
         <% if @uncounted > 0 %>
           <p>There are still <%= pluralize(@uncounted, "item") %> uncounted. Do you really want to proceed?</p>
         <% end %>
-        <%= simple_form_for @inventory do |f| %>
-          <%= f.input :completed_at, as: :hidden, input_html: { value: Time.now } %>
       </div>
       <div class="col-sm-12 center-align">
-        <%= f.submit "Finalize Inventory", class: "btn yellow" %>
-        <a id="hide_finalize_form" class="btn blue" href="#">Cancel</a>
+        <%= simple_form_for @inventory do |f| %>
+          <%= f.input :completed_at, as: :hidden, input_html: { value: Time.now } %>
+          <%= f.submit "Finalize Inventory", class: "btn yellow" %>
+          <a id="hide_finalize_form" class="btn blue" href="#">Cancel</a>
+        <% end %>
       </div>
     </div>
-    <% end %>
   </div>
 
   <div class="col-xs-12" id="counts_div">
