@@ -3,7 +3,13 @@
     <h2><%= @inventory.name %></h2>
   </div>
   <div class="col-xs-2 match-h2">
-    <%= link_to "Edit", edit_inventory_path(@inventory), class: "btn yellow" %>
+    <% if !@inventory.completed_at.present? %>
+      <%= link_to "Edit", edit_inventory_path(@inventory), class: "btn yellow" %>
+    <% else %>
+      <% if current_user.is_admin? %>
+        <%= link_to "Unlock", edit_inventory_path(@inventory, unlock: "true"), class: "btn yellow" %>
+      <% end %>
+    <% end %>
   </div>
   <div class="col-xs-2 match-h2">
     <%= link_to "Back", inventories_path, class: "btn blue" %>

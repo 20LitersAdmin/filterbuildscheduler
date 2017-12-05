@@ -9,7 +9,7 @@
     <% if !inventory.completed_at.present? %>
       <%= link_to "Edit", edit_inventory_path(inventory), class: "btn blue" %>
     <% else %>
-      <%= link_to "Unlock", edit_inventory_path(@latest, unlock: "true"), class: "btn blue" %>
+      <%= link_to "Unlock", edit_inventory_path(inventory, unlock: "true"), class: "btn blue" %>
     <% end %>
   <% end %>
 </div>
