@@ -24,6 +24,16 @@ class Count < ApplicationRecord
     self.item.name
   end
 
+  def type
+    if part_id.present?
+      "part"
+    elsif material_id.present?
+      "material"
+    else
+      "component"
+    end
+  end
+
   def tech_names
     if self.item.technologies.map { |t| t.name }.empty?
       "not associated"
@@ -38,6 +48,29 @@ class Count < ApplicationRecord
 
   def available
     loose_count + box_count
+  end
+
+  def diff_from_previous(field)
+    prev_inv = Inventory.where("date < ?", self.inventory.date).order(date: :desc).first
+
+    case self.type
+    when "part"
+      prev = prev_inv.counts.where(part_id: self.part_id).first
+    when "material"
+      prev = prev_inv.counts.where(material_id: self.material_id).first
+    when "component"
+      prev = prev_inv.counts.where(component_id: self.component_id).first
+    end
+
+    if field == "loose"
+      val = self.loose_count - prev.loose_count
+    elsif field == "box"
+      val = self.unopened_boxes_count - prev.unopened_boxes_count
+    else
+      val = 0
+    end
+
+    return val
   end
 
   def total
