@@ -50,7 +50,7 @@ class Count < ApplicationRecord
     loose_count + box_count
   end
 
-  def diff_from_previous(type)
+  def diff_from_previous(field)
     prev_inv = Inventory.where("date < ?", self.inventory.date).order(date: :desc).first
 
     case self.type
@@ -62,9 +62,9 @@ class Count < ApplicationRecord
       prev = prev_inv.counts.where(component_id: self.component_id).first
     end
 
-    if type == "loose"
+    if field == "loose"
       val = self.loose_count - prev.loose_count
-    elsif type == "box"
+    elsif field == "box"
       val = self.unopened_boxes_count - prev.unopened_boxes_count
     else
       val = 0
