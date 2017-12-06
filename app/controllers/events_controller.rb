@@ -114,10 +114,20 @@ class EventsController < ApplicationController
     #
     # Needs to trigger the Intelligence::update_inventory_from_event_results(event) if technologies_built || boxes_packed was 0 || nil
     #
+
     @event = Event.find(params[:id])
     authorize @event
 
     @event.update_attributes(event_params)
+
+    if event_params[:technologies_built].present? || event_params[:boxes_packed].present?
+      @inventory = Inventory.new(event_id: @event.id, date: Date.today)
+      @inventory.save
+
+      InventoriesController::CountCreate.new(@inventory)
+      CountPopulate.new(@event, @inventory, current_user.id)
+      InventoriesController::Extrapolate.new(@inventory)
+    end
 
     @admins_notified = ""
     @users_notified = ""
