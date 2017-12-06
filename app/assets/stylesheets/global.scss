@@ -36,6 +36,10 @@ html {
     color: $light-blue;
     &:hover {
       color: darken($light-blue, 10%);
+      text-decoration: none;
+    }
+    &:link, &:visited, &:focus, &:hover, &:active {
+      text-decoration: none;
     }
   }
 
