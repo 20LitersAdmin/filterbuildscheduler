@@ -17,6 +17,26 @@
   .share-container > div {
     padding-right: 1em;
   }
+  .twitter-div {
+    margin-top: 1px;
+  }
+  .poster-div {
+    margin-top: -1px;
+  }
+  .btn-poster {
+    background-color: $yellow;
+    border: 1px solid $yellow;
+    color: $grey;
+    border-radius: 4px;
+    font-weight: 800;
+    font-size: 11px;
+    padding: 3px 6px;
+    &:hover {
+      text-decoration: none;
+      background-color: darken($yellow, 5%);
+      color: white;
+    }
+  }
   .mt-10 {
     margin-top: 10px;
   }
