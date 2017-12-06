@@ -60,6 +60,10 @@
       border-bottom-right-radius: 6px;
     }
   }
+  .bar-above {
+    border-top: 2px solid $yellow;
+    margin-top: 12px;
+  }
 }
 
 #inventory_edit {
