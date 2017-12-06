@@ -35,10 +35,28 @@
         </tbody>
       </table>
     </div>
-    <div class="col-xs-12 bar-above">
-      <h3>Full inventory:</h3>
+  <% else %>
+    <div class="col-xs-12">
+      <h3>Completed technologies:</h3>
+    </div>
+    <div class="col-xs-12">
+      <table class="table table-striped table-bordered datatable-slim">
+        <thead>
+          <tr>
+            <th data-priority="1">Technology</th>
+            <th class="center-align" data-priority="1">Loose items</th>
+            <th class="center-align" data-priority="1">Boxes</th>
+          </tr>
+        </thead>
+        <tbody>
+          <%= render partial: "comp_tbl", collection: @primary_component_counts %>
+        </tbody>
+      </table>
     </div>
   <% end %>
+  <div class="col-xs-12 bar-above">
+    <h3>Full inventory:</h3>
+  </div>
   <div class="col-xs-12">
     <table class="table table-striped datatable" id="inventory_show_table">
       <thead>

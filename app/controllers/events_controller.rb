@@ -58,30 +58,6 @@ class EventsController < ApplicationController
     end
   end
 
-  def poster
-    @event = Event.find(params[:id])
-    @technology = @event.technology
-    @tech_img = @technology.img_url
-    @location = @event.location
-    @location_img = @location.photo_url
-
-    if @technology.owner == "Village Water Filters"
-      @tech_blurb = "Sold at or below cost in over 60 developing countries, this filter is designed to be affordable for those making $2 a day."
-    elsif @technology.owner == "20 Liters"
-      @tech_blurb = "Distributed to the rural poor in Rwanda, this filter handles the muddy, disgusting water from the Nyabarongo River. Each filter is supported by a network of village-based volunteers, community health workers and local leaders."
-    else
-      @tech_blurb = ''
-    end
-
-    if @technology.family_friendly
-      @child_statement_email = "children as young as 4 can participate"
-    else
-      @child_statement_email = "this event is best for ages 12 and up"
-    end
-
-    @print_navbar = true
-  end
-
   def new
     @event = Event.new
   end
@@ -118,10 +94,12 @@ class EventsController < ApplicationController
 
     if event_params[:technologies_built].present? || event_params[:boxes_packed].present?
       # what if values are adjusted?
-      @inventory = Inventory.new(event_id: @event.id, date: Date.today, completed_at: Time.now)
-      @inventory.save
+      @inventory = Inventory.where(event_id: @event.id).first_or_initialize
+      @inventory.update(date: Date.today, completed_at: Time.now)
 
-      InventoriesController::CountCreate.new(@inventory)
+      if @inventory.counts.count == 0
+        InventoriesController::CountCreate.new(@inventory)
+      end
       CountPopulate.new(@event, @inventory, current_user.id)
       InventoriesController::Extrapolate.new(@inventory)
 
@@ -212,6 +190,30 @@ class EventsController < ApplicationController
     @registrations = @event.registrations.ordered_by_user_lname
 
     @print_blanks = @event.max_registrations - @event.total_registered + 5
+    @print_navbar = true
+  end
+
+  def poster
+    @event = Event.find(params[:id])
+    @technology = @event.technology
+    @tech_img = @technology.img_url
+    @location = @event.location
+    @location_img = @location.photo_url
+
+    if @technology.owner == "Village Water Filters"
+      @tech_blurb = "Sold at or below cost in over 60 developing countries, this filter is designed to be affordable for those making $2 a day."
+    elsif @technology.owner == "20 Liters"
+      @tech_blurb = "Distributed to the rural poor in Rwanda, this filter handles the muddy, disgusting water from the Nyabarongo River. Each filter is supported by a network of village-based volunteers, community health workers and local leaders."
+    else
+      @tech_blurb = ''
+    end
+
+    if @technology.family_friendly
+      @child_statement_email = "children as young as 4 can participate"
+    else
+      @child_statement_email = "this event is best for ages 12 and up"
+    end
+
     @print_navbar = true
   end
 
