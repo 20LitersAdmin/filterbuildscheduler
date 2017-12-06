@@ -6,7 +6,7 @@ class Inventory < ApplicationRecord
   belongs_to :event, optional: true
 
   scope :latest, -> { order(date: :desc).first }
-  scope :former, -> { order(date: :desc).drop(1)}
+  scope :former, -> { order(date: :desc).drop(1) }
 
   validates :date, presence: true
 
@@ -40,6 +40,8 @@ class Inventory < ApplicationRecord
       type = "shipping"
     elsif manual
       type = "manual"
+    elsif event_id.present?
+      type = "event"
     else
       type = "unknown"
     end

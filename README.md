@@ -2,10 +2,12 @@
 
 ## Things to do
 1. Add inventory system functionality
-  * Event#report creates inventory and extrapolates items
+  * Handle event reports being adjusted (using _was)
+  * Don't auto-finalize && extrapolate the inventory?
   * Mark inventory complete && send emails
     - Link to current inventory#show
     - List of supplies needing re-order
+    - Price values?
   * Add a reorder_level field to parts && materials instead of predicting?
 
 2. Allow leadership to CRUD registrants for events.in_the_past
@@ -14,11 +16,9 @@
 8. Technologies views:
   - list components and parts with quantities
 
-
 ## The Future
 1. Use Paperclip to add part and component images
-2. Send email with weekly product availability (by user.primary_location == Business Connect?)
-3. Track item inventory/count over time
+3. Track item inventory/count over time with a cool graph
 4. Roll in monthly reporting?
 
 

@@ -76,7 +76,11 @@ class Count < ApplicationRecord
 
   def total
     # available + ( # per unit -- is a component? * # of completed un-boxed units)
-    available + extrapolated_count
+    if self.inventory.completed_at == nil
+      "Not Finalized"
+    else
+      available + extrapolated_count
+    end
   end
 
   def sort_by_user

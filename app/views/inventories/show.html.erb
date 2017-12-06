@@ -2,7 +2,7 @@
   <div class="col-xs-8">
     <h2><%= @inventory.name %></h2>
   </div>
-  <div class="col-xs-2 match-h2">
+  <div class="col-xs-4 match-h2">
     <% if !@inventory.completed_at.present? %>
       <%= link_to "Edit", edit_inventory_path(@inventory), class: "btn yellow" %>
     <% else %>
@@ -10,8 +10,6 @@
         <%= link_to "Unlock", edit_inventory_path(@inventory, unlock: "true"), class: "btn yellow" %>
       <% end %>
     <% end %>
-  </div>
-  <div class="col-xs-2 match-h2">
     <%= link_to "Back", inventories_path, class: "btn blue" %>
   </div>
   <% if @inventory.type_for_params != "manual" %>
