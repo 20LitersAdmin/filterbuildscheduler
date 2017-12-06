@@ -8,7 +8,7 @@
       <h4>Take a global problem personally and solve it for the next decade.</h4>
     </div>
     <div class="col-xs-12">
-      <h1 class="center-align event-title"><%= @event.title %></h1>  
+      <h1 class="center-align event-title"><%= @event.title %></h1>
     </div>
   </div>
   <div class="row technology-row">
@@ -65,7 +65,7 @@
       <h2>You Should Come.</h2>
       <h3><%= @event.format_time_range %></h3>
       <h4><%= @event.location.name %></h4>
-      <div><%= @event.location.address1 %></div>
+      <h4><%= @event.location.address1 %></h4>
       <% if @event.location.address2 %>
         <div><%= @event.location.address2 %></div>
       <% end %>
@@ -94,8 +94,8 @@
         <h4><%= @event.contact_email %></h4>
       <% end %>
     <% else %>
-      <h3>https://make.20liters.org</h3>
+      <h3>Visit https://make.20liters.org</h3>
     <% end %>
   </div>
-    
+
 </div>
