@@ -2,7 +2,6 @@
 
 ## Things to do
 1. Add inventory system functionality
-  * On inventory#show - when shipping || receiving, only show changed items && show what is was before being changed. reuse diff_from_previous?
   * Event#report creates inventory and extrapolates items
   * Mark inventory complete && send emails
     - Link to current inventory#show

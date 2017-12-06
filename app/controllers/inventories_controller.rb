@@ -9,10 +9,14 @@ class InventoriesController < ApplicationController
     @inventory = Inventory.find(params[:id])
     @counts = @inventory.counts.sort_by {|c| - c.name }
 
+    if @inventory.type_for_params != "manual"
+      @diff_counts = @inventory.counts.where.not(user_id: nil).sort_by {|c| - c.name }
+    end
+
     # if @inventory.type_for_params == "manual"
     #   @counts = @inventory.counts.sort_by {|c| - c.name }
     # else
-    #   @counts = @inventory.counts.where.not(user_id: nil).sort_by {|c| - c.name }
+    #
     # end
   end
 

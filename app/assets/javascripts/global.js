@@ -41,4 +41,22 @@ $(document).on("turbolinks:load", function(){
       }
     }
   });
+  $('.datatable-slim').DataTable({
+    order: [[0, "asc"]],
+    paging: false,
+    responsive: true,
+    autoWidth: false,
+    info: false,
+    dom:
+      "<'row'"+
+        "<'col-xs-12 no-overflow center'>"+
+        "<'col-xs-4 no-overflow'l>"+
+        "<'col-xs-8 no-overflow'f>"+
+      "r>"+
+      "t"+
+      "<'row'"+
+      "<'col-xs-8'p>"+
+      "<'col-xs-12 no-overflow center'>"+
+      ">"
+  });
 });
