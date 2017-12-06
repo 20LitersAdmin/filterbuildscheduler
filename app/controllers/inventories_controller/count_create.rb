@@ -2,6 +2,7 @@ class InventoriesController
   class CountCreate
     def initialize(inventory)
       @inventory = inventory
+      # Is there a previous inventory?
       @latest = Inventory.former.first
       if @latest.present?
         @latest_id = @latest.id
@@ -9,7 +10,7 @@ class InventoriesController
         @latest_id = nil
       end
 
-      ### Make all the parts
+      ### Make all the parts, use the previous Inventory's values if present.
       @part_ids = Part.all.map { |o| o.id }
       @part_ids.each do |p|
         old_part_count = Count.where(inventory_id: @latest_id).where(part_id: p).last
@@ -24,6 +25,7 @@ class InventoriesController
         end
       end
 
+      ### Make all the materials, use the previous Inventory's values if present.
       @material_ids = Material.all.map { |o| o.id }
       @material_ids.each do |m|
         old_material_count = Count.where(inventory_id: @latest_id).where(material_id: m).last
@@ -38,6 +40,7 @@ class InventoriesController
         end
       end
 
+      ### Make all the components, use the previous Inventory's values if present.
       @component_ids = Component.all.map { |o| o.id }
       @component_ids.each do |c|
         old_component_count = Count.where(inventory_id: @latest_id).where(component_id: c).last

@@ -1,6 +1,9 @@
 <tr>
   <td><%= diff_tbl.name %></td>
   <td><%= diff_tbl.tech_names %></td>
-  <td class="center-align"><%= number_with_delimiter(diff_tbl.diff_from_previous("loose"), delimiter: ',') %></td>
-  <td class="center-align"><%= number_with_delimiter(diff_tbl.diff_from_previous("box"), delimiter: ',') %></td>
+  <td class="center-align">
+    <%= number_with_delimiter(diff_tbl.diff_from_previous("loose"), delimiter: ',') %>
+  </td>
+  <td class="center-align"><%= number_with_delimiter(diff_tbl.diff_from_previous("box"), delimiter: ',') %>
+  </td>
 </tr>

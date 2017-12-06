@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171201204111) do
+ActiveRecord::Schema.define(version: 20171206184732) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -77,11 +77,11 @@ ActiveRecord::Schema.define(version: 20171201204111) do
     t.integer "location_id", null: false
     t.integer "technology_id", null: false
     t.boolean "is_private", default: false, null: false
-    t.integer "item_goal"
-    t.integer "technologies_built"
+    t.integer "item_goal", default: 0, null: false
+    t.integer "technologies_built", default: 0, null: false
     t.datetime "deleted_at"
     t.integer "attendance"
-    t.integer "boxes_packed"
+    t.integer "boxes_packed", default: 0, null: false
     t.string "contact_name"
     t.string "contact_email"
     t.index ["deleted_at"], name: "index_events_on_deleted_at"
@@ -164,6 +164,7 @@ ActiveRecord::Schema.define(version: 20171201204111) do
     t.string "additional_cost_currency", default: "USD", null: false
     t.integer "price_cents", default: 0, null: false
     t.string "price_currency", default: "USD", null: false
+    t.integer "reorder_when", default: 0, null: false
     t.index ["deleted_at"], name: "index_materials_on_deleted_at"
   end
 
@@ -193,6 +194,7 @@ ActiveRecord::Schema.define(version: 20171201204111) do
     t.string "additional_cost_currency", default: "USD", null: false
     t.integer "price_cents", default: 0, null: false
     t.string "price_currency", default: "USD", null: false
+    t.integer "reorder_when", default: 0, null: false
     t.index ["deleted_at"], name: "index_parts_on_deleted_at"
   end
 
