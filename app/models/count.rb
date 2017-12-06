@@ -51,6 +51,7 @@ class Count < ApplicationRecord
   end
 
   def diff_from_previous(field)
+    # field == "loose" || "box"
     prev_inv = Inventory.where("date < ?", self.inventory.date).order(date: :desc).first
 
     case self.type
