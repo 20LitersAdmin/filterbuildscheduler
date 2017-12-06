@@ -90,20 +90,58 @@ class EventsController < ApplicationController
     @event = Event.find(params[:id])
     authorize @event
 
-    @event.update_attributes(event_params)
+    modified_params = event_params.dup
 
-    if event_params[:technologies_built].present? || event_params[:boxes_packed].present?
-      # what if values are adjusted?
+    if event_params[:technologies_built] == ''
+      modified_params[:technologies_built] = 0
+    end
+    if event_params[:boxes_packed] == ''
+      modified_params[:boxes_packed] = 0
+    end
+    if event_params[:item_goal] == ''
+      modified_params[:item_goal] = 0
+    end
+
+    @event.assign_attributes(modified_params)
+
+    # CREATE AN INVENTORY WHEN AN EVENT REPORT IS SUBMITTED.
+    # Fields in question: technologies_built, boxes_packed
+    # Conditions: They're greater than 0, they weren't zero but now they are.
+
+    # Condition: they weren't zero, but now they are:
+    @changed_to_zero = false
+    if @event.technologies_built_was != 0 && @event.technologies_built == 0
+      @changed_to_zero = true
+    end
+    if @event.boxes_packed_was != 0 && @event.boxes_packed == 0
+      @changed_to_zero = true
+    end
+
+    # Condition: They're greater than 0
+    if @event.technologies_built > 0 || @event.boxes_packed > 0 || @changed_to_zero
       @inventory = Inventory.where(event_id: @event.id).first_or_initialize
       @inventory.update(date: Date.today, completed_at: Time.now)
 
       if @inventory.counts.count == 0
         InventoriesController::CountCreate.new(@inventory)
       end
-      CountPopulate.new(@event, @inventory, current_user.id)
-      InventoriesController::Extrapolate.new(@inventory)
 
-      # send an email! (maybe only if low??)
+      # determine the values to use when populating the count
+      if @event.technologies_built_changed?
+        @loose = @event.technologies_built - @event.technologies_built_was
+      else
+        @loose = @event.technologies_built
+      end
+
+      if @event.boxes_packed_changed?
+        @box = @event.boxes_packed - @event.boxes_packed_was
+      else
+        @box = @event.boxes_packed
+      end
+
+      CountPopulate.new(@loose, @box, @event, @inventory, current_user.id)
+
+      InventoriesController::Extrapolate.new(@inventory)
     end
 
     @admins_notified = ""
@@ -126,7 +164,21 @@ class EventsController < ApplicationController
       flash[:success] = "Event updated. #{@admins_notified} #{@users_notified}"
       redirect_to event_path(@event)
     else
-      render 'edit'
+      if event_params[:technologies_built].present?
+        flash[:danger] = "There was a problem saving this event report."
+        @registration = Registration.where(user: current_user, event: @event).first_or_initialize
+        @location = @event.location
+        @technology = @event.technology
+        @tech_img = @technology.img_url
+        @tech_info = @technology.info_url
+        @location_img = @location.photo_url
+        @show_event = true
+        @show_report = true
+        render 'show'
+      else
+        @show_advanced = true
+        render 'edit'
+      end
     end
   end
 

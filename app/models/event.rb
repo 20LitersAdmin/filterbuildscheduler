@@ -9,6 +9,7 @@ class Event < ApplicationRecord
 
   validates :start_time, :end_time, :title, :min_leaders, :max_leaders, :min_registrations, :max_registrations, :location_id, presence: true
   validates :min_registrations, :max_registrations, :min_leaders, :max_leaders, numericality: { only_integer: true, greater_than: 0 }
+  validates :technologies_built, :boxes_packed, presence: true, numericality: { greater_than_or_equal_to: 0 }
   validate :dates_are_valid?
   validate :registrations_are_valid?
   validate :leaders_are_valid?
@@ -74,6 +75,10 @@ class Event < ApplicationRecord
     else
       " "
     end
+  end
+
+  def full_title
+    start_time.strftime("%-m/%-d") + " - " + title
   end
 
   # pass total_registered("only_deleted") to get access to registrations.only_deleted

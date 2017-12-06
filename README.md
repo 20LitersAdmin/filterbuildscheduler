@@ -3,7 +3,6 @@
 ## Things to do
 1. Add inventory system functionality
   * Handle event reports being adjusted (using _was)
-  * Don't auto-finalize && extrapolate the inventory?
   * Mark inventory complete && send emails
     - Link to current inventory#show
     - List of supplies needing re-order
@@ -17,7 +16,7 @@
   - list components and parts with quantities
 
 ## The Future
-1. Use Paperclip to add part and component images
+1. Scenario: During a build event, we box technologies that we didn't build at that event. This will skew the inventory. (would need extra fields: boxes_packed_from_tech_we_made && boxes_packed_from_preexisting_tech )
 3. Track item inventory/count over time with a cool graph
 4. Roll in monthly reporting?
 
