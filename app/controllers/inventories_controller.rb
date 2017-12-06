@@ -12,12 +12,6 @@ class InventoriesController < ApplicationController
     if @inventory.type_for_params != "manual"
       @diff_counts = @inventory.counts.where.not(user_id: nil).sort_by {|c| - c.name }
     end
-
-    # if @inventory.type_for_params == "manual"
-    #   @counts = @inventory.counts.sort_by {|c| - c.name }
-    # else
-    #
-    # end
   end
 
   def new
@@ -36,12 +30,12 @@ class InventoriesController < ApplicationController
 
   def create
     @date = inventory_params[:date]
-    @latest = Inventory.latest
-    if @latest.present?
-      @latest_id = @latest.id
-    else
-      @latest_id = nil
-    end
+    # @latest = Inventory.latest
+    # if @latest.present?
+    #   @latest_id = @latest.id
+    # else
+    #   @latest_id = nil
+    # end
 
     @matching = Inventory.where(date: Date.parse(@date)).last
 
@@ -64,45 +58,7 @@ class InventoriesController < ApplicationController
     @inventory = Inventory.create(inventory_params)
     @inventory.save
 
-    ### Make all the counts
-    @part_ids = Part.all.map { |o| o.id }
-    @part_ids.each do |p|
-      old_part_count = Count.where(inventory_id: @latest_id).where(part_id: p).last
-      if old_part_count.present?
-        new_part_count = old_part_count.dup
-        new_part_count.inventory_id = @inventory.id
-        new_part_count.user_id = nil
-        new_part_count.save
-      else
-        Count.create(inventory_id: @inventory.id, part_id: p)
-      end
-    end
-
-    @material_ids = Material.all.map { |o| o.id }
-    @material_ids.each do |m|
-      old_material_count = Count.where(inventory_id: @latest_id).where(material_id: m).last
-      if old_material_count.present?
-        new_material_count = old_material_count.dup
-        new_material_count.inventory_id = @inventory.id
-        new_material_count.user_id = nil
-        new_material_count.save
-      else
-        Count.create(inventory_id: @inventory.id, material_id: m)
-      end
-    end
-
-    @component_ids = Component.all.map { |o| o.id }
-    @component_ids.each do |c|
-      old_component_count = Count.where(inventory_id: @latest_id).where(component_id: c).last
-      if old_component_count.present?
-        new_component_count = old_component_count.dup
-        new_component_count.inventory_id = @inventory.id
-        new_component_count.user_id = nil
-        new_component_count.save
-      else
-        Count.create(inventory_id: @inventory.id, component_id: c)
-      end
-    end
+    CountCreate.new(@inventory)
 
     if @inventory.errors.any?
       flash[:warning] = @inventory.errors.first.join(": ")
@@ -129,6 +85,8 @@ class InventoriesController < ApplicationController
       @btn_text = "Ship"
     when "manual"
       @btn_text = "Count"
+    else
+      @btn_text = "Adjust"
     end
 
   end

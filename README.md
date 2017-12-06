@@ -2,10 +2,10 @@
 
 ## Things to do
 1. Add inventory system functionality
-  * Event#report creates inventory and extrapolates items
   * Mark inventory complete && send emails
     - Link to current inventory#show
     - List of supplies needing re-order
+    - Price values?
   * Add a reorder_level field to parts && materials instead of predicting?
 
 2. Allow leadership to CRUD registrants for events.in_the_past
