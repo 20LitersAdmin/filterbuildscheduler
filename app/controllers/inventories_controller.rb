@@ -105,6 +105,11 @@ class InventoriesController < ApplicationController
 
     @inventory.update(inventory_params)
     Extrapolate.new(@inventory)
+
+    if @inventory.type_for_params == "manual"
+      #InventoryMailer.notify(@inventory, current_user).deliver!
+      InventoryMailer.delay.notify(@inventory, current_user)
+    end
     redirect_to inventories_path
   end
 
