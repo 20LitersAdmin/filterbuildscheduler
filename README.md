@@ -1,11 +1,10 @@
 # README
 
 ## Things to do
-1. Add inventory system functionality
-  * Add a reorder_level field to parts && materials instead of predicting?
-  * Mark inventory complete && send emails
-    - List of supplies needing re-order
-
+1. Reorder_level field on parts && materials
+   * First calculate vals: 2 months == 6k bucket filters && 10 facility filters. && 3k prefilters
+   * On Inventory#show at the top
+   * In the Inventory notify email
 2. Allow leadership to CRUD registrants for events.in_the_past
 3. Allow leadership to email all registrants from registration#index
 
