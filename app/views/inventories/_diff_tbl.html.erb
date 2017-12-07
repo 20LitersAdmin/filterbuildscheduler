@@ -1,6 +1,8 @@
 <tr>
   <td><%= diff_tbl.name %></td>
-  <td><%= diff_tbl.tech_names %></td>
+  <% if @inventory.type_for_params != "event" %>
+    <td><%= diff_tbl.tech_names %></td>
+  <% end %>
   <td class="center-align">
     <%= number_with_delimiter(diff_tbl.diff_from_previous("loose"), delimiter: ',') %>
   </td>

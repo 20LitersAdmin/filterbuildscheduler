@@ -93,20 +93,29 @@ class EventsController < ApplicationController
     modified_params = event_params.dup
 
     if event_params[:technologies_built] == ''
-      modified_params[:technologies_built] = 0
+      modified_params[:technologies_built] = @event.technologies_built || 0
     end
     if event_params[:boxes_packed] == ''
-      modified_params[:boxes_packed] = 0
+      modified_params[:boxes_packed] = @event.boxes_packed || 0
     end
     if event_params[:item_goal] == ''
-      modified_params[:item_goal] = 0
+      modified_params[:item_goal] = @event.item_goal || 0
     end
 
     @event.assign_attributes(modified_params)
 
     # CREATE AN INVENTORY WHEN AN EVENT REPORT IS SUBMITTED.
     # Fields in question: technologies_built, boxes_packed
-    # Conditions: They're greater than 0, they weren't zero but now they are.
+    # Conditions: They're not negative AND ( they're not both 0 OR they weren't zero but now they are. )
+
+    # Condition: Neither number is negative
+    @positive_numbers = false
+    if @event.technologies_built >= 0 && @event.boxes_packed >= 0
+      @positive_numbers = true
+    end
+
+    # Condition: they're not both 0
+    @more_than_zero = @event.technologies_built + @event.boxes_packed
 
     # Condition: they weren't zero, but now they are:
     @changed_to_zero = false
@@ -117,8 +126,8 @@ class EventsController < ApplicationController
       @changed_to_zero = true
     end
 
-    # Condition: They're greater than 0
-    if @event.technologies_built > 0 || @event.boxes_packed > 0 || @changed_to_zero
+    # combine conditions
+    if @positive_numbers && ( @more_than_zero > 0 || @changed_to_zero )
       @inventory = Inventory.where(event_id: @event.id).first_or_initialize
       @inventory.update(date: Date.today, completed_at: Time.now)
 
@@ -127,13 +136,17 @@ class EventsController < ApplicationController
       end
 
       # determine the values to use when populating the count
-      if @event.technologies_built_changed?
+      if event_params[:technologies_built] == ''
+        @loose = nil
+      elsif @event.technologies_built_changed?
         @loose = @event.technologies_built - @event.technologies_built_was
       else
         @loose = @event.technologies_built
       end
 
-      if @event.boxes_packed_changed?
+      if event_params[:boxes_packed] == ''
+        @box = nil
+      elsif @event.boxes_packed_changed?
         @box = @event.boxes_packed - @event.boxes_packed_was
       else
         @box = @event.boxes_packed
