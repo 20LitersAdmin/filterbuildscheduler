@@ -1,19 +1,29 @@
 class EventsController
   class CountPopulate
-    def initialize(event, inventory, user_id)
+    def initialize(loose, box, event, inventory, user_id)
+      @loose = loose
+      @box = box
       @event = event
       @inventory = inventory
       @technology = @event.technology
       @user_id = user_id
 
       # Find the component that represents the completed technology
-      @component_ids = @technology.extrapolate_technology_components.map { |c| c.component_id }
-      @tech_component = Component.where(id: @component_ids).where(completed_tech: true).first
+      @tech_component = @technology.primary_component
 
-      # Find that component among the newly created counts
-      @count_component = @inventory.counts.where(component_id: @tech_component.id).first
-      @count_component.loose_count += @event.technologies_built
-      @count_component.unopened_boxes_count += @event.boxes_packed
+      # Find that component among the counts
+      @count_component = @inventory.counts.where(component_id: @tech_component.id).first_or_initialize
+
+      # If the loose value is nil or it matches the current value, do nothing
+      if @loose != nil && @count_component.diff_from_previous("loose") != @loose
+        @count_component.loose_count += @loose
+      end
+
+      # If the box value is nil or it matches the current value, do nothing
+      if @box != nil && @count_component.diff_from_previous("box") != @box
+        @count_component.unopened_boxes_count += @box
+      end
+
       @count_component.user_id = @user_id
       @count_component.save
     end

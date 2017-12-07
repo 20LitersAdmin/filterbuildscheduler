@@ -15,4 +15,9 @@ class Technology < ApplicationRecord
   def leaders
     users.where(is_leader: true)
   end
+
+  def primary_component
+    # find the component related to this technology that represents the completed tech
+    self.components.where(completed_tech: true).first
+  end
 end

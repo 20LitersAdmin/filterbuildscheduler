@@ -5,8 +5,8 @@ class Inventory < ApplicationRecord
   accepts_nested_attributes_for :counts
   belongs_to :event, optional: true
 
-  scope :latest, -> { order(date: :desc).first }
-  scope :former, -> { order(date: :desc).drop(1) }
+  scope :latest, -> { order(date: :desc, created_at: :desc).first }
+  scope :former, -> { order(date: :desc, created_at: :desc).drop(1) }
 
   validates :date, presence: true
 
