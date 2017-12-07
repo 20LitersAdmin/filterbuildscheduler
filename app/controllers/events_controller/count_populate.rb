@@ -13,11 +13,14 @@ class EventsController
 
       # Find that component among the counts
       @count_component = @inventory.counts.where(component_id: @tech_component.id).first_or_initialize
-      if @event.technologies_built != nil
+
+      # If the loose value is nil or it matches the current value, do nothing
+      if @loose != nil && @count_component.diff_from_previous("loose") != @loose
         @count_component.loose_count += @loose
       end
 
-      if @event.boxes_packed != nil
+      # If the box value is nil or it matches the current value, do nothing
+      if @box != nil && @count_component.diff_from_previous("box") != @box
         @count_component.unopened_boxes_count += @box
       end
 
