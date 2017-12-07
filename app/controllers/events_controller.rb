@@ -58,30 +58,6 @@ class EventsController < ApplicationController
     end
   end
 
-  def poster
-    @event = Event.find(params[:id])
-    @technology = @event.technology
-    @tech_img = @technology.img_url
-    @location = @event.location
-    @location_img = @location.photo_url
-
-    if @technology.owner == "Village Water Filters"
-      @tech_blurb = "Sold at or below cost in over 60 developing countries, this filter is designed to be affordable for those making $2 a day."
-    elsif @technology.owner == "20 Liters"
-      @tech_blurb = "Distributed to the rural poor in Rwanda, this filter handles the muddy, disgusting water from the Nyabarongo River. Each filter is supported by a network of village-based volunteers, community health workers and local leaders."
-    else
-      @tech_blurb = ''
-    end
-
-    if @technology.family_friendly
-      @child_statement_email = "children as young as 4 can participate"
-    else
-      @child_statement_email = "this event is best for ages 12 and up"
-    end
-
-    @print_navbar = true
-  end
-
   def new
     @event = Event.new
   end
@@ -114,18 +90,71 @@ class EventsController < ApplicationController
     @event = Event.find(params[:id])
     authorize @event
 
-    @event.update_attributes(event_params)
+    modified_params = event_params.dup
 
-    if event_params[:technologies_built].present? || event_params[:boxes_packed].present?
-      # what if values are adjusted?
-      @inventory = Inventory.new(event_id: @event.id, date: Date.today, completed_at: Time.now)
-      @inventory.save
+    if event_params[:technologies_built] == ''
+      modified_params[:technologies_built] = @event.technologies_built || 0
+    end
+    if event_params[:boxes_packed] == ''
+      modified_params[:boxes_packed] = @event.boxes_packed || 0
+    end
+    if event_params[:item_goal] == ''
+      modified_params[:item_goal] = @event.item_goal || 0
+    end
 
-      InventoriesController::CountCreate.new(@inventory)
-      CountPopulate.new(@event, @inventory, current_user.id)
+    @event.assign_attributes(modified_params)
+
+    # CREATE AN INVENTORY WHEN AN EVENT REPORT IS SUBMITTED.
+    # Fields in question: technologies_built, boxes_packed
+    # Conditions: They're not negative AND ( they're not both 0 OR they weren't zero but now they are. )
+
+    # Condition: Neither number is negative
+    @positive_numbers = false
+    if @event.technologies_built >= 0 && @event.boxes_packed >= 0
+      @positive_numbers = true
+    end
+
+    # Condition: they're not both 0
+    @more_than_zero = @event.technologies_built + @event.boxes_packed
+
+    # Condition: they weren't zero, but now they are:
+    @changed_to_zero = false
+    if @event.technologies_built_was != 0 && @event.technologies_built == 0
+      @changed_to_zero = true
+    end
+    if @event.boxes_packed_was != 0 && @event.boxes_packed == 0
+      @changed_to_zero = true
+    end
+
+    # combine conditions
+    if @positive_numbers && ( @more_than_zero > 0 || @changed_to_zero )
+      @inventory = Inventory.where(event_id: @event.id).first_or_initialize
+      @inventory.update(date: Date.today, completed_at: Time.now)
+
+      if @inventory.counts.count == 0
+        InventoriesController::CountCreate.new(@inventory)
+      end
+
+      # determine the values to use when populating the count
+      if event_params[:technologies_built] == ''
+        @loose = nil
+      elsif @event.technologies_built_changed?
+        @loose = @event.technologies_built - @event.technologies_built_was
+      else
+        @loose = @event.technologies_built
+      end
+
+      if event_params[:boxes_packed] == ''
+        @box = nil
+      elsif @event.boxes_packed_changed?
+        @box = @event.boxes_packed - @event.boxes_packed_was
+      else
+        @box = @event.boxes_packed
+      end
+
+      CountPopulate.new(@loose, @box, @event, @inventory, current_user.id)
+
       InventoriesController::Extrapolate.new(@inventory)
-
-      # send an email! (maybe only if low??)
     end
 
     @admins_notified = ""
@@ -148,7 +177,21 @@ class EventsController < ApplicationController
       flash[:success] = "Event updated. #{@admins_notified} #{@users_notified}"
       redirect_to event_path(@event)
     else
-      render 'edit'
+      if event_params[:technologies_built].present?
+        flash[:danger] = "There was a problem saving this event report."
+        @registration = Registration.where(user: current_user, event: @event).first_or_initialize
+        @location = @event.location
+        @technology = @event.technology
+        @tech_img = @technology.img_url
+        @tech_info = @technology.info_url
+        @location_img = @location.photo_url
+        @show_event = true
+        @show_report = true
+        render 'show'
+      else
+        @show_advanced = true
+        render 'edit'
+      end
     end
   end
 
@@ -212,6 +255,30 @@ class EventsController < ApplicationController
     @registrations = @event.registrations.ordered_by_user_lname
 
     @print_blanks = @event.max_registrations - @event.total_registered + 5
+    @print_navbar = true
+  end
+
+  def poster
+    @event = Event.find(params[:id])
+    @technology = @event.technology
+    @tech_img = @technology.img_url
+    @location = @event.location
+    @location_img = @location.photo_url
+
+    if @technology.owner == "Village Water Filters"
+      @tech_blurb = "Sold at or below cost in over 60 developing countries, this filter is designed to be affordable for those making $2 a day."
+    elsif @technology.owner == "20 Liters"
+      @tech_blurb = "Distributed to the rural poor in Rwanda, this filter handles the muddy, disgusting water from the Nyabarongo River. Each filter is supported by a network of village-based volunteers, community health workers and local leaders."
+    else
+      @tech_blurb = ''
+    end
+
+    if @technology.family_friendly
+      @child_statement_email = "children as young as 4 can participate"
+    else
+      @child_statement_email = "this event is best for ages 12 and up"
+    end
+
     @print_navbar = true
   end
 
