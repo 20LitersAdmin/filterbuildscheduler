@@ -1,0 +1,46 @@
+<div class="whole" style="position: relative; min-height: 1px; padding-left: 15px; padding-right: 15px; float: left; width: 100%;">
+  <h2>An inventory was just finalized</h2>
+  <p style="margin-bottom: 6px"><strong>Here are the details:</strong></p>
+
+  <h3 style="margin-bottom: 6px;"><%= @inventory.name %></h3>
+  <p>Finalized by: <%= @user.name %></p>
+
+  <p><strong>Completed Technologies:</strong></p>
+</div>
+<div class="whole" style="position: relative; min-height: 1px; padding-left: 15px; padding-right: 15px; float: left; width: 100%;">
+  <table style="border: 1px solid #4a4a4a; border-collapse: collapse;">
+    <thead>
+      <tr style="border: 1px solid #4a4a4a; border-collapse: collapse;">
+        <th style="text-align: left; border: 1px solid #4a4a4a; border-collapse: collapse; padding: 6px;">
+          Technology
+        </th>
+        <th style="text-align: center; border: 1px solid #4a4a4a; border-collapse: collapse; padding: 6px;">
+          Loose Count
+        </th>
+        <th style="text-align: center; border: 1px solid #4a4a4a; border-collapse: collapse; padding: 6px;">
+          Packed Boxes
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @inventory.primary_counts.each do |c| %>
+        <tr style="border: 1px solid #4a4a4a; border-collapse: collapse; padding: 6px;">
+          <td style="border: 1px solid #4a4a4a; border-collapse: collapse; padding: 6px;">
+            <%= c.component.name %>
+          </td>
+          <td style="text-align: center; border: 1px solid #4a4a4a; border-collapse: collapse; padding: 6px;">
+            <%= number_with_delimiter(c.loose_count, delimiter: ',') %>
+          </td>
+          <td style="text-align: center; border: 1px solid #4a4a4a; border-collapse: collapse; padding: 6px;">
+            <%= number_with_delimiter(c.unopened_boxes_count, delimiter: ',') %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
+<div class="whole" style="position: relative; min-height: 1px; padding-left: 15px; padding-right: 15px; float: left; width: 50%; text-align: center; margin-top: 32px;">
+  <%= link_to "See the full inventory", inventory_url(@inventory), class: "btn yellow", target: "_blank", style: "display: inline-block; margin-bottom: 0; font-weight: normal; text-align: center; vertical-align: middle; border: 1px solid transparent; white-space: nowrap; padding: 6px 12px; font-size: 14px; text-decoration: none; color: #4a4a4a; background-color: #fce000; border-color: ##fcc900;" %>
+</div>
+
+
