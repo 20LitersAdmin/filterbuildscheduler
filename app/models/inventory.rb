@@ -61,4 +61,11 @@ class Inventory < ApplicationRecord
       self.item_count.to_s + " of " + self.counts.count.to_s + " items counted."
     end
   end
+
+  def primary_counts
+    # find the components that represent completed technologies
+    @primary_comp_ids = Component.where(completed_tech: true).map { |c| c.id }
+    # get the count records of these components
+    self.counts.where(component_id: @primary_comp_ids)
+  end
 end
