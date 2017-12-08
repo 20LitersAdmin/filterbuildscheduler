@@ -5,6 +5,8 @@ class RegistrationsController < ApplicationController
   def index
     @event = Event.find(params[:event_id])
     @registrations = @event.registrations
+
+    @deleted = @registrations.only_deleted
   end
 
   def new
@@ -26,7 +28,11 @@ class RegistrationsController < ApplicationController
       @user.lname ||= user_params[:lname]
       @user.signed_waiver_on ||= Time.now
       @user.save!
-      @leader = false
+      if @user.can_lead_event?(@event)
+        @leader = true
+      else
+        @leader = false
+      end
       @duplicate_registration_risk = false
     when "self"
       @user = current_user
@@ -58,12 +64,20 @@ class RegistrationsController < ApplicationController
     if Registration.with_deleted.where(user_id: @user.id, event_id: @event.id).exists?
       @registration = Registration.with_deleted.where(user_id: @user.id, event_id: @event.id).first
       @registration.restore
+      @registration.guests_registered = registration_params[:guests_registered]
+      @registration.accommodations = registration_params[:accommodations]
+      @registration.leader = registration_params[:leader] || false
+      @registration.save
     else
       @registration = Registration.new(event: @event,
                               user: @user,
                             leader: @leader,
                  guests_registered: params[:registration][:guests_registered],
                     accommodations: params[:registration][:accommodations])
+    end
+
+    if registration_params[:leader] == "1" && !@user.can_lead_event?(@event)
+      @registration.errors.add(:fname, "This user isn't qualified to lead this event.")
     end
 
     authorize @registration
@@ -78,6 +92,7 @@ class RegistrationsController < ApplicationController
 
     if @registration.errors.any?
       flash[:danger] = @registration.errors.messages.map { |k,v| v }.join(', ')
+      render 'new'
     else
       @registration.save
       if @event.start_time > Time.now # don't send emails for past events.
@@ -86,6 +101,12 @@ class RegistrationsController < ApplicationController
       end
       @user.update_attributes!(signed_waiver_on: Time.now) unless current_user.waiver_accepted
       flash[:success] = "Registration successful!"
+
+      if params[:registration][:form_source] == "admin"
+        redirect_to event_registrations_path @event
+      else
+        redirect_to event_path @event
+      end
     end
 
     # This is what's needed to use f.error_notification, but how within nested model && with user_params??
@@ -96,19 +117,19 @@ class RegistrationsController < ApplicationController
     #   end
     #   @user.update_attributes!(signed_waiver_on: Time.now) unless current_user.waiver_accepted
     #   flash[:success] = "Registration successful!"
+    # else
+    #   render 'new'
     # end
-
-    if params[:registration][:form_source] == "admin"
-      redirect_to event_registrations_path @event
-    else
-      redirect_to event_path @event
-    end
-
   end
 
 
 
   def edit
+    if params[:admin] == "true"
+      @cancel_btn_admin = true
+    else
+      @cancel_btn_admin = false
+    end
   end
 
   def show
@@ -126,8 +147,27 @@ class RegistrationsController < ApplicationController
   def destroy
     authorize @registration
     @registration.delete
-    flash[:warning] = "You are no longer registered."
-    redirect_to event_path(@registration.event)
+    if params[:admin] == "true"
+      flash[:warning] = "Registration deleted."
+      redirect_to event_registrations_path(@registration.event)
+    else
+      flash[:warning] = "You are no longer registered."
+      redirect_to event_path(@registration.event)
+    end
+  end
+
+  def restore
+    @event = Event.find(params[:event_id])
+
+    @count = @event.registrations.only_deleted.count
+
+    @event.registrations.only_deleted.each do |r|
+      r.restore
+      r.save
+    end
+
+    flash[:success] = "#{view_context.pluralize(@count, "deleted registration")} restored!"
+    redirect_to event_registrations_path(@event)
   end
 
   private

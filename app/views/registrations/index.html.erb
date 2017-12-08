@@ -1,20 +1,36 @@
-<div class="container event-show">
-  <div class="page-header">
-    <h1>Registrations for <%= @event.title %></h1>
-    <% if @event.is_private %>
-      <h4 class="center-align">Private Event</h4>
-    <% end %>
-  </div>
+<div class="col-xs-12">
+  <h1>Registrations for <%= @event.full_title %></h1>
+  <% if @event.is_private %>
+    <h4 class="center-align">Private Event</h4>
+  <% end %>
+</div>
+<div class="col-xs-12">
+  <%= link_to "New Registration", new_event_registration_path(@event), class: "btn yellow" %>
+  <% if @deleted.count > 0 %>
+    <%= link_to "Restore deleted", restore_event_registrations_path(@event), class: "btn blue" %>
+  <% end %>
 </div>
 
 <div class="col-xs-12">
   <% if @registrations.count.positive? %>
-    <%= render partial: "registration", collection: @registrations %>
+    <table class="datatable table table-striped table-bordered">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Registered at</th>
+          <th>Guests</th>
+          <th></th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <%= render partial: "registration", collection: @registrations %>
+      </tbody>
+    </table>
   <% else %>
     <h3>No registrations found.</h3>
   <% end %>
 </div>
 
-<div class="col-xs-12">
-  <%= link_to "New Registration", new_event_registration_path(@event), class: "btn yellow" %>
-</div>
+
