@@ -17,10 +17,17 @@
 
     <div class="form-actions">
       <%= f.button :submit, "Update", class: 'btn yellow fullwidth' %>
-      <%= link_to 'Cancel Registration', event_registration_path(@registration.event, @registration),
-          data: {:confirm => 'Are you sure?'},
-          :method => :delete,
-          class: 'btn red fullwidth' %>
+      <% if @cancel_btn_admin %>
+        <%= link_to 'Cancel Registration', event_registration_path(@registration.event, @registration, admin: true),
+            data: {:confirm => 'Are you sure?'},
+            :method => :delete,
+            class: 'btn red fullwidth' %>
+      <% else %>
+        <%= link_to 'Cancel Registration', event_registration_path(@registration.event, @registration),
+            data: {:confirm => 'Are you sure?'},
+            :method => :delete,
+            class: 'btn red fullwidth' %>
+      <% end %>
     </div>
   <% end %>
 

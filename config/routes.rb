@@ -19,7 +19,11 @@ Rails.application.routes.draw do
       get 'restore'
       get 'poster'
     end
-    resources :registrations
+    resources :registrations do
+      collection do
+        get 'restore'
+      end
+    end
   end
 
   resources :inventories do
