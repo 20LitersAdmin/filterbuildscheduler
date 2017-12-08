@@ -1,0 +1,16 @@
+<h3>Reorder Items:</h3>
+<table class="table table-striped table-bordered datatable-slim">
+  <thead>
+    <tr>
+      <th data-priority="1">Item</th>
+      <th data-priority="2">For Tech</th>
+      <th class="center-align" data-priority="1">Minimum to Order</th>
+      <th class="center-align" data-priority="1">Available Count</th>
+      <th class="center-align" data-priority="2">Minimum to keep on Hand</th>
+      <th class="center-align" data-priority="2">Weeks to Deliver</th>
+    </tr>
+  </thead>
+  <tbody>
+    <%= render partial: "low_tbl", collection: @low_items %>
+  </tbody>
+</table>
