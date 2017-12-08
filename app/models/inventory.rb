@@ -48,6 +48,14 @@ class Inventory < ApplicationRecord
     type
   end
 
+  def has_items_below_minimum?
+    if counts.select{ |count| count.reorder? }.count > 0
+      true
+    else
+      false
+    end
+  end
+
   def item_count
     counts.count - counts.where(user_id: nil).count
   end

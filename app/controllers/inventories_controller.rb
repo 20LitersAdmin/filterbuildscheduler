@@ -9,17 +9,21 @@ class InventoriesController < ApplicationController
     @inventory = Inventory.find(params[:id])
     @counts = @inventory.counts.sort_by {|c| - c.name }
 
-    if @inventory.type_for_params != "manual"
-      # show only what's changed
-      @diff_counts = @inventory.counts.where.not(user_id: nil).sort_by {|c| - c.name }
-    else
+    if @inventory.type_for_params == "manual"
       # show only what's ready for shipping
       @primary_components = Component.where(completed_tech: true).map { |c| c.id }
       @primary_component_counts = @inventory.counts.where(component_id: @primary_components).sort_by {|c| - c.name }
+    else
+      # show only what's changed
+      @diff_counts = @inventory.counts.where.not(user_id: nil).sort_by {|c| - c.name }
     end
 
     if @inventory.type_for_params == "event"
       @event = Event.find(@inventory.event_id)
+    end
+
+    if @inventory.has_items_below_minimum?
+      @low_items = @inventory.counts.select{ |count| count.reorder? }
     end
   end
 

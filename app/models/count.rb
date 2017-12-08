@@ -1,6 +1,8 @@
 class Count < ApplicationRecord
   acts_as_paranoid
 
+  attr_accessor :reorder
+
   belongs_to :inventory
   belongs_to :user, optional: true
   belongs_to :component, optional: true
@@ -91,4 +93,11 @@ class Count < ApplicationRecord
     end
   end
 
+  def reorder?
+    @answer = false
+    if self.type != "component" && self.available < self.item.minimum_on_hand
+      @answer = true
+    end
+    @answer
+  end
 end
