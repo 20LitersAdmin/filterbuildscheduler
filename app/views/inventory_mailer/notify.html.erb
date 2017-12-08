@@ -4,10 +4,54 @@
 
   <h3 style="margin-bottom: 6px;"><%= @inventory.name %></h3>
   <p>Finalized by: <%= @user.name %></p>
-
-  <p><strong>Completed Technologies:</strong></p>
 </div>
 <div class="whole" style="position: relative; min-height: 1px; padding-left: 15px; padding-right: 15px; float: left; width: 100%;">
+  <p><strong>Reorder Items:</strong></p>
+  <table style="border: 1px solid #4a4a4a; border-collapse: collapse;">
+    <thead>
+      <tr style="border: 1px solid #4a4a4a; border-collapse: collapse;">
+        <th style="text-align: left; border: 1px solid #4a4a4a; border-collapse: collapse; padding: 6px;">
+          Item
+        </th>
+        <th style="text-align: center; border: 1px solid #4a4a4a; border-collapse: collapse; padding: 6px;">
+          For Tech
+        </th>
+        <th style="text-align: center; border: 1px solid #4a4a4a; border-collapse: collapse; padding: 6px;">
+          Available
+        </th>
+        <th style="text-align: center; border: 1px solid #4a4a4a; border-collapse: collapse; padding: 6px;">
+          Minimum
+        </th>
+        <th style="text-align: center; border: 1px solid #4a4a4a; border-collapse: collapse; padding: 6px;">
+          Weeks to deliver
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @low_items.each do |i| %>
+        <tr style="border: 1px solid #4a4a4a; border-collapse: collapse; padding: 6px;">
+          <td style="border: 1px solid #4a4a4a; border-collapse: collapse; padding: 6px;">
+            <%= i.name %>
+          </td>
+          <td style="border: 1px solid #4a4a4a; border-collapse: collapse; padding: 6px;">
+            <%= i.tech_names %>
+          </td>
+          <td style="border: 1px solid #4a4a4a; border-collapse: collapse; padding: 6px;">
+            <%= number_with_delimiter(i.available, delimiter: ',') %>
+          </td>
+          <td style="border: 1px solid #4a4a4a; border-collapse: collapse; padding: 6px;">
+            <%= number_with_delimiter(i.item.minimum_on_hand, delimiter: ',') %>
+          </td>
+          <td style="border: 1px solid #4a4a4a; border-collapse: collapse; padding: 6px;">
+            <%= number_with_delimiter(i.item.weeks_to_deliver, delimiter: ',') %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
+<div class="whole" style="position: relative; min-height: 1px; padding-left: 15px; padding-right: 15px; float: left; width: 100%;">
+  <p><strong>Completed Technologies:</strong></p>
   <table style="border: 1px solid #4a4a4a; border-collapse: collapse;">
     <thead>
       <tr style="border: 1px solid #4a4a4a; border-collapse: collapse;">

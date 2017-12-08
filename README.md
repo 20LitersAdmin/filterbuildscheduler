@@ -1,15 +1,9 @@
 # README
 
 ## Things to do
-1. Add inventory system functionality
-  * Add a reorder_level field to parts && materials instead of predicting?
-  * Mark inventory complete && send emails
-    - List of supplies needing re-order
-
 2. Allow leadership to CRUD registrants for events.in_the_past
 3. Allow leadership to email all registrants from registration#index
-
-8. Technologies views:
+4. Technologies views:
   - list components and parts with quantities
 
 ## The Future
