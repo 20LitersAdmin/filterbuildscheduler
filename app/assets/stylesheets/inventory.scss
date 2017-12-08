@@ -40,26 +40,6 @@
 }
 
 #inventory_show {
-  .btn-default {
-    color: $grey;
-    background-color: $yellow;
-    border: 1px solid darken($yellow, 10%);
-    &:hover {
-      background-color: lighten($yellow, 10%);
-      border: 1px solid $yellow;
-      span {
-        color: lighten($grey, 10%);
-      }
-    }
-    &:first-child {
-      border-top-left-radius: 6px;
-      border-bottom-left-radius: 6px;
-    }
-    &:last-child {
-      border-top-right-radius: 6px;
-      border-bottom-right-radius: 6px;
-    }
-  }
   .bar-above {
     border-top: 2px solid $yellow;
     margin-top: 12px;

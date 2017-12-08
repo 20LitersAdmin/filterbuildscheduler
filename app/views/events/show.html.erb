@@ -4,7 +4,7 @@
     <% if @event.is_private %>
       <h4 class="center-align">Private Event</h4>
     <% end %>
-    <% if @show_admin_registration %>
+    <% if @show_admin_registration || current_user&.is_admin %>
       <%= link_to "Manage / Register Builders", event_registrations_path(@event), class: "btn blue" %>
     <% end %>
   </div>
