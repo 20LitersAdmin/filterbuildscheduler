@@ -1,13 +1,9 @@
 # README
 
 ## Things to do
-1. Reorder_level field on parts && materials
-   * On Inventory#show at the top - DONE
-   * In the Inventory notify email
 2. Allow leadership to CRUD registrants for events.in_the_past
 3. Allow leadership to email all registrants from registration#index
-
-8. Technologies views:
+4. Technologies views:
   - list components and parts with quantities
 
 ## The Future
