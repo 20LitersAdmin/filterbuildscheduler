@@ -1,7 +1,6 @@
 # README
 
 ## Things to do
-2. Allow leadership to CRUD registrants for events.in_the_past
 3. Allow leadership to email all registrants from registration#index
 4. Technologies views:
   - list components and parts with quantities
