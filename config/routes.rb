@@ -22,6 +22,8 @@ Rails.application.routes.draw do
     resources :registrations do
       collection do
         get 'restore'
+        get 'messenger'
+        post 'sender'
       end
     end
   end
