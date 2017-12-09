@@ -32,4 +32,12 @@ class RegistrationPolicy < ApplicationPolicy
   def show?
     user.admin_or_leader?
   end
+
+  def messenger?
+    user.admin_or_leader?
+  end
+
+  def sender?
+    user.admin_or_leader?
+  end
 end

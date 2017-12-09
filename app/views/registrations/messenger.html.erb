@@ -1,0 +1,14 @@
+<div class="col-xs-12">
+  <h2>Send a message to all <%= pluralize(@event.registrations.count, "builder") %>?</h2>
+  <h4><i>Administrators will also receive the message, and know you sent it.</i></h4>
+</div>
+<div class="col-xs-12">
+  <p><strong>FROM:</strong> <i>filterbuilds@20liters.org</i></p>
+  <p><strong>SUBJECT:</strong></p>
+  <%= form_tag({controller: "registrations", action: "sender"}, method: "post") do %>
+    [20 Liters] <%= text_field_tag :subject %>
+    <p><strong>MESSAGE:</strong></p>
+    <%= text_area_tag :message, "",size: "24x6" %>
+    <%= submit_tag "Send Message", class: "btn yellow empty" %>
+  <% end %>
+</div>

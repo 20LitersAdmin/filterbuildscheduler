@@ -5,6 +5,10 @@
 4. Technologies views:
   - list components and parts with quantities
 
+## BUGS!! AH BUGS!!!
+1. RegistrationController::Update -- need error handling line #30 and #46
+2. accepts_nested_attributes_for seems to break event#show, at least for anon view
+
 ## The Future
 1. Scenario: During a build event, we box technologies that we didn't build at that event. This will skew the inventory. (would need extra fields: boxes_packed_from_tech_we_made && boxes_packed_from_preexisting_tech )
 3. Track item inventory/count over time with a cool graph
@@ -31,5 +35,3 @@
   * Event importing (w/ matching [use "name", let Kindful create the ID])
   * Create POROs (update_contact, update_event)
   * Trigger POROs from controllers (user#create, user#update, event#create, event#update, registration#report)
-
-
