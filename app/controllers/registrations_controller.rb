@@ -17,6 +17,7 @@ class RegistrationsController < ApplicationController
   def create
     waiver_accepted = params[:registration].delete(:waiver_accepted)
     @event = Event.find(params[:event_id])
+    badbad
 
     case params[:registration][:form_source]
       # Admin registering for user      <- find_or_initialize user && save
@@ -28,6 +29,9 @@ class RegistrationsController < ApplicationController
       @user.lname ||= user_params[:lname]
       @user.signed_waiver_on ||= Time.now
       @user.save!
+      # if !@user.save
+      #   render 'edit' and return
+      # end
       if @user.can_lead_event?(@event)
         @leader = true
       else
@@ -44,6 +48,10 @@ class RegistrationsController < ApplicationController
       @user.lname = user_params[:lname]
       #@user.signed_waiver_on ||= Time.now
       @user.save!
+      # if !@user.save
+      #   @registration = Registration.new(event: @event)
+      #   render 'events/show' and return
+      # end
       if !current_user
         sign_in(:user, @user)
       end
@@ -51,14 +59,6 @@ class RegistrationsController < ApplicationController
 
       @duplicate_registration_risk = true
     end # case params[:registration][:form_source]
-
-    # A user who exists but isn't signed in shouldn't be able to register for an event more than once.
-    if @duplicate_registration_risk
-      registration = Registration.where(event: @event, user: @user)
-      if registration.exists?
-        @registration.errors.add(:email, "This email address has already registered for this event.")
-      end
-    end
 
     # check for a deleted record before creating a new one.
     if Registration.with_deleted.where(user_id: @user.id, event_id: @event.id).exists?
@@ -76,11 +76,19 @@ class RegistrationsController < ApplicationController
                     accommodations: params[:registration][:accommodations])
     end
 
+    authorize @registration
+
+    # A user who exists but isn't signed in shouldn't be able to register for an event more than once.
+    if @duplicate_registration_risk
+      registration = Registration.where(event: @event, user: @user)
+      if registration.exists?
+        @registration.errors.add(:email, "This email address has already registered for this event.")
+      end
+    end
+
     if registration_params[:leader] == "1" && !@user.can_lead_event?(@event)
       @registration.errors.add(:fname, "This user isn't qualified to lead this event.")
     end
-
-    authorize @registration
 
     if waiver_accepted == '0'
       @registration.errors.add(:waiver_accepted, "You must review and sign the Liability Waiver first")
@@ -92,7 +100,11 @@ class RegistrationsController < ApplicationController
 
     if @registration.errors.any?
       flash[:danger] = @registration.errors.messages.map { |k,v| v }.join(', ')
-      render 'new'
+      if params[:registration][:form_source] == "admin"
+        render 'new'
+      else
+        render 'events/show'
+      end
     else
       @registration.save
       if @event.start_time > Time.now # don't send emails for past events.
@@ -170,10 +182,25 @@ class RegistrationsController < ApplicationController
     redirect_to event_registrations_path(@event)
   end
 
+  def messenger
+    @event = Event.find(params[:event_id])
+  end
+
+  def sender
+    @event = Event.find(params[:event_id])
+    @subject = params[:subject]
+    @message = params[:message]
+    @sender = current_user
+    @event.registrations.each do |registration|
+      EventMailer.messenger(registration, @event, @subject, @message, @sender).deliver!
+    end
+    EventMailer.messenger_reporter(@event, @subject, @message, @sender).deliver!
+  end
+
   private
 
   def user_params
-    params.require(:user).permit(:fname, :lname, :email)
+    params[:registration].require(:user).permit(:fname, :lname, :email)
   end
 
   def registration_params

@@ -6,11 +6,13 @@
 </div>
 <div class="col-xs-12">
   <%= link_to "New Registration", new_event_registration_path(@event), class: "btn yellow" %>
+  <% if @registrations.count > 0 %>
+    <%= link_to "Send Message", messenger_event_registrations_path(@event), class: "btn yellow empty" %>
+  <% end %>
   <% if @deleted.count > 0 %>
     <%= link_to "Restore deleted", restore_event_registrations_path(@event), class: "btn blue" %>
   <% end %>
 </div>
-
 <div class="col-xs-12">
   <% if @registrations.count.positive? %>
     <table class="datatable table table-striped table-bordered">
@@ -32,5 +34,3 @@
     <h3>No registrations found.</h3>
   <% end %>
 </div>
-
-

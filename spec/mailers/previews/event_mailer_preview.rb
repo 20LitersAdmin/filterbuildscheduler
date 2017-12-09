@@ -22,4 +22,12 @@ class EventMailerPreview < ActionMailer::Preview
   def cancelled
     EventMailer.cancelled(Event.first, User.first)
   end
+
+  def messenger
+    EventMailer.messenger(Event.first.registrations.second, "The Subject", "The Message goes a little something like this", User.first)
+  end
+
+  def messenger_reporter
+    EventMailer.messenger_reporter(Event.first, "The Subject", "The Message goes a litle something like this", User.first)
+  end
 end

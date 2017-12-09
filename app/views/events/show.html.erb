@@ -1,6 +1,6 @@
 <div class="container event-show">
   <div class="page-header">
-    <h1><%= @event.title %></h1>
+    <h1><%= @event.full_title %></h1>
     <% if @event.is_private %>
       <h4 class="center-align">Private Event</h4>
     <% end %>
@@ -53,8 +53,8 @@
           <div class="col-xs-12">
         <% end %>
           <h2>The Filter</h2>
-          <h3><%= @technology.name %></h3>
-          <% if @technology.family_friendly %>
+          <h3><%= @event.technology.name %></h3>
+          <% if @event.technology.family_friendly %>
             <h4>Family-friendly! Ages 4 - 104!</h4>
           <% else %>
             <h4>Grown-up build</h4>

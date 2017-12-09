@@ -96,4 +96,24 @@ class EventMailer < ApplicationMailer
     mail(to: @recipients, subject: '[20 Liters] NOTICE: Build Event Cancelled')
   end
 
+  def messenger(registration, subject, message, sender)
+    @registration = registration
+    @event = @registration.event
+    @subject = '[20 Liters] ' + subject
+    @message = message
+    @sender = sender
+
+    mail(to: @registration.user.email, subject: @subject)
+  end
+
+  def messenger_reporter(event, subject, message, sender)
+    @event = event
+    @subject = '[20 Liters] ' + subject
+    @message = message
+    @sender = sender
+    @admins = User.where(is_admin: true).map { |u| u.email }
+
+    mail(to: @admins, subject: "[20 Liters] A Leader sent a message")
+  end
+
 end
