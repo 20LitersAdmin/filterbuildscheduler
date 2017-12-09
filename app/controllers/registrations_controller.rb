@@ -17,7 +17,6 @@ class RegistrationsController < ApplicationController
   def create
     waiver_accepted = params[:registration].delete(:waiver_accepted)
     @event = Event.find(params[:event_id])
-    badbad
 
     case params[:registration][:form_source]
       # Admin registering for user      <- find_or_initialize user && save
