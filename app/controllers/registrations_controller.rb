@@ -191,15 +191,23 @@ class RegistrationsController < ApplicationController
     @message = params[:message]
     @sender = current_user
     @event.registrations.each do |registration|
-      EventMailer.messenger(registration, @event, @subject, @message, @sender).deliver!
+      EventMailer.messenger(registration, @subject, @message, @sender).deliver!
     end
     EventMailer.messenger_reporter(@event, @subject, @message, @sender).deliver!
+
+    flash[:success] = "Message sent!"
+    redirect_to event_registrations_path(@event)
   end
 
   private
 
   def user_params
-    params[:registration].require(:user).permit(:fname, :lname, :email)
+    # If the form comes from Event#show, the user is nested in the params.
+    if params[:registration][:form_source] == "admin"
+      params.require(:user).permit(:fname, :lname, :email)
+    else
+      params[:registration].require(:user).permit(:fname, :lname, :email)
+    end
   end
 
   def registration_params
