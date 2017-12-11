@@ -5,8 +5,8 @@ class RegistrationMailer < ApplicationMailer
 
   def created(registration)
     @registration = registration
-    @recipient = registration.user
-    @event = registration.event
+    @recipient = @registration.user
+    @event = @registration.event
     @location = @event.location
     @technology = @event.technology
     @summary = "[20 Liters] Filter Build: " + @event.technology.name
