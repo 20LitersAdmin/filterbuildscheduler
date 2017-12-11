@@ -1,7 +1,7 @@
 <tr>
   <td><%= registration.user.name %></td>
   <td><%= registration.user.email %></td>
-  <td><%= registration.created_at %></td>
+  <td><%= registration.human_date %></td>
   <td><%= registration.guests_registered %></td>
   <td><%= link_to "Edit", edit_event_registration_path(@event, registration, admin: true), class: "btn blue" %></td>
   <td><%= link_to "Delete", event_registration_path(@event, registration, admin: true), method: :delete, class: "btn red" %></td>
