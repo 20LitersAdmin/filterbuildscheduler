@@ -1,6 +1,6 @@
 class Registration < ApplicationRecord
   acts_as_paranoid
-  
+
   belongs_to :user
   belongs_to :event
   scope :registered_as_leader, -> {where(leader: true)}
@@ -45,6 +45,10 @@ class Registration < ApplicationRecord
   end
 
   def form_source
+  end
+
+  def human_date
+    created_at.strftime("%-m/%-d/%Y %H:%M")
   end
 
 end
