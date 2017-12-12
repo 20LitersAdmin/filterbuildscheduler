@@ -250,7 +250,7 @@ class EventsController < ApplicationController
     @event = Event.find(params[:id])
     authorize @event, :edit?
 
-    @registrations = @event.registrations.ordered_by_user_lname
+    @registrations = @event.registrations.where.not(leader: true).ordered_by_user_lname
 
     @print_blanks = @event.max_registrations - @event.total_registered + 5
     @print_navbar = true
