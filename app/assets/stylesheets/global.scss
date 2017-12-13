@@ -120,7 +120,7 @@ html {
     }
   }
 
-  .btn-default {
+  .btn-group > .btn-default {
     color: $grey;
     background-color: $yellow;
     border: 1px solid darken($yellow, 10%);
