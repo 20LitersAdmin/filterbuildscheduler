@@ -14,7 +14,8 @@ class KindfulClient
       email: user.email,
       phone: user.phone
     }
-    self.class.post("/imports", headers: headers, body: body(**body_args) )
+    self.class.post("/imports", {headers: headers, body: body(**body_args).to_json} )
+    puts "I SHOULD HAVE FIRED ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
   end
 
   def token
