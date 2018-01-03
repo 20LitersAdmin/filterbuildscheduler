@@ -6,7 +6,7 @@ class KindfulClient
     base_uri "https://app-sandbox.kindful.com/api/v1"
   end
 
-  def update_user(user)
+  def import_user(user)
     body_args = {
       id: user.id,
       fname: user.fname,
@@ -14,8 +14,11 @@ class KindfulClient
       email: user.email,
       phone: user.phone
     }
-    self.class.post("/imports", {headers: headers, body: body(**body_args).to_json} )
-    puts "I SHOULD HAVE FIRED ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+    self.class.post("/imports", {headers: headers, body: contact(**body_args).to_json} )
+  end
+
+  def import_transaction
+    #causevox
   end
 
   def token
@@ -29,22 +32,26 @@ class KindfulClient
     }
   end
 
-  def body(id:, fname:, lname:, email:, phone:)
+  def contact_w_transaction()
+    #causevox
+  end
+
+  def contact(id:, fname:, lname:, email:, phone:)
     {
       "data_format": "contact",
       "action_type": "update",
       "data_type": "json",
       "match_by": {
-        "contact": "first_name_last_name_email"
+        "contact": "first_name_last_name_email",
+        "group": "name"
       },
       "groups": ["Volunteer: Filter Builders"],
       "data": [
         {
-          "external_id": id,
+          "id": id.to_s,
           "first_name": fname,
           "last_name": lname,
           "email": email,
-          "primary_phone": phone,
           "Volunteer: Filter Builders": "yes"
         }
       ]

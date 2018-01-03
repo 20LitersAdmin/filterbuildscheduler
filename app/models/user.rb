@@ -81,6 +81,6 @@ class User < ApplicationRecord
   end
 
   def update_kindful
-    KindfulClient.new.update_user(self)
+    KindfulClient.new.import_user(self)
   end
 end
