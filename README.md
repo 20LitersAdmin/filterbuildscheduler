@@ -1,12 +1,16 @@
 # README
 
 ## Things to do
+1. Destroy phone #.
 4. Technologies views:
   - list components and parts with quantities
+5. Do more testing on kindful push
+6. Mess with reminder emails more...
 
 ## BUGS!! AH BUGS!!!
 1. RegistrationController::Update -- need error handling line #30 and #46
 2. accepts_nested_attributes_for seems to break event#show, at least for anon view
+3. Reminder emails not sending: cron not firing? Postico
 
 ## The Future
 1. Scenario: During a build event, we box technologies that we didn't build at that event. This will skew the inventory. (would need extra fields: boxes_packed_from_tech_we_made && boxes_packed_from_preexisting_tech )
@@ -26,11 +30,5 @@
   * Accepting & reading Stripe webhook is working
   * Sending to Kindful is not
 5. Figure out Kindful API (Rails: RestClient gem)
-  * https://github.com/delongtj/kindful_constant_contact
-  * head: https://developer.kindful.com/docs/direct-access
-  * Need to build confirm attendance (to trigger 'user attended event [instead of registering]')
-  * KINDFUL_API/imports
-  * Contact importing (w/ matching & group assignment)
-  * Event importing (w/ matching [use "name", let Kindful create the ID])
-  * Create POROs (update_contact, update_event)
-  * Trigger POROs from controllers (user#create, user#update, event#create, event#update, registration#report)
+  * make it a background job?
+  * Get rid of phone #s (user model, forms, API call)
