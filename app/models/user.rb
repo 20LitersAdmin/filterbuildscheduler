@@ -21,7 +21,7 @@ class User < ApplicationRecord
 
   before_save :ensure_authentication_token
 
-  after_save :update_kindful, if: Proc.new { |user| user.saved_change_to_fname? || user.saved_change_to_lname? || user.saved_change_to_email? }
+  after_save :update_kindful
 
   def admin_or_leader?
     is_admin? || is_leader?
