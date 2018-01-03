@@ -5,7 +5,7 @@
     <strong><%= if inventory.completed_at.present? then "FINALIZED" end %></strong> &nbsp;
   </p>
   <%= link_to "View", inventory_path(inventory), class: "btn yellow" %>
-  <% if current_user.is_admin? %>
+  <% if current_user&.is_admin? %>
     <% if !inventory.completed_at.present? %>
       <%= link_to "Edit", edit_inventory_path(inventory), class: "btn blue" %>
     <% else %>
