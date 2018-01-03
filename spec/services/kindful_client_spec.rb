@@ -5,7 +5,7 @@ RSpec.describe KindfulClient do
   let(:client) { KindfulClient.new }
 
   describe "update_user" do
-    fit 'takes user data and sends it to kindful' do
+    it 'takes user data and sends it to kindful' do
       http_spy = spy
       body_args = {
         id: 1,
