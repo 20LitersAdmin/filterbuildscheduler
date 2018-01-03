@@ -11,7 +11,7 @@ class EventsController < ApplicationController
   end
 
   def show
-    @event = Event.find(params[:id])
+    authorize @event = Event.find(params[:id])
     @registration = Registration.where(user: current_user, event: @event).first_or_initialize
 
     # decide whether or not to show the event with a stupidly complicated nested if
@@ -51,17 +51,17 @@ class EventsController < ApplicationController
         @show_edit = false
       end
     else
-      flash[:warning] = "You don't have permission"
+      flash[:warning] = "That event is not available, Sorry."
       redirect_to action: :index
     end
   end
 
   def new
-    @event = Event.new
+    authorize @event = Event.new
   end
 
   def create
-    @event = Event.new(event_params)
+    authorize @event = Event.new(event_params)
     authorize @event
 
     if @event.save
@@ -74,8 +74,7 @@ class EventsController < ApplicationController
   end
 
   def edit
-    @event = Event.find(params[:id])
-    authorize @event
+    authorize @event = Event.find(params[:id])
 
     if (current_user&.is_admin || @registration&.leader?) && @event.start_time < Time.now
       @show_advanced = true
@@ -85,8 +84,7 @@ class EventsController < ApplicationController
   end
 
   def update
-    @event = Event.find(params[:id])
-    authorize @event
+    authorize @event = Event.find(params[:id])
 
     modified_params = event_params.dup
 
@@ -194,8 +192,7 @@ class EventsController < ApplicationController
   end
 
   def destroy
-    @event = Event.find(params[:id])
-    authorize @event
+    authorize @event = Event.find(params[:id])
 
     @admins_notified = ""
     @users_notified = ""
@@ -224,13 +221,12 @@ class EventsController < ApplicationController
   end
 
   def cancelled
-    @cancelled_events = Event.only_deleted
+    authorize @cancelled_events = Event.only_deleted
     @user = current_user
   end
 
   def restore
-    @event = Event.only_deleted.find(params[:id])
-    authorize @event
+    authorize @event = Event.only_deleted.find(params[:id])
     if params[:recursive] == "false"
       Event.restore(@event.id)
       flash[:success] = "Event restored but not registrations."

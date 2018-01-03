@@ -1,7 +1,7 @@
 class CountsController < ApplicationController
 
   def edit
-    @count = Count.find(params[:id])
+    authorize @count = Count.find(params[:id])
     @inventory = @count.inventory
 
     case @inventory.type_for_params
@@ -31,7 +31,7 @@ class CountsController < ApplicationController
   end
 
   def update
-    @count = Count.find(params[:id])
+    authorize @count = Count.find(params[:id])
     @inventory = @count.inventory
 
     case @inventory.type_for_params
@@ -132,7 +132,7 @@ class CountsController < ApplicationController
   end
 
   def destroy
-    @count = Count.find(params[:id])
+    authorize @count = Count.find(params[:id])
     @inventory = @count.inventory
   end
 
