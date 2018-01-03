@@ -3,10 +3,12 @@ class InventoriesController < ApplicationController
   def index
     @latest = Inventory.latest
     @inventories = Inventory.former
+
+    authorize @latest
   end
 
   def show
-    @inventory = Inventory.find(params[:id])
+    authorize @inventory = Inventory.find(params[:id])
     @counts = @inventory.counts.sort_by {|c| - c.name }
 
     if @inventory.type_for_params == "manual"
@@ -28,7 +30,7 @@ class InventoriesController < ApplicationController
   end
 
   def new
-    @inventory = Inventory.new()
+    authorize @inventory = Inventory.new()
     # What kind of inventory to make?
     # Inventories created by Events#update won't hit this action
     case params[:type]
@@ -68,7 +70,7 @@ class InventoriesController < ApplicationController
       return redirect_to inventories_path
     end
 
-    @inventory = Inventory.create(inventory_params)
+    authorize @inventory = Inventory.create(inventory_params)
     @inventory.save
 
     CountCreate.new(@inventory)
@@ -82,7 +84,7 @@ class InventoriesController < ApplicationController
   end
 
   def edit
-    @inventory = Inventory.find(params[:id])
+    authorize @inventory = Inventory.find(params[:id])
     @counts = @inventory.counts.sort_by { |c| [c.sort_by_user, c.tech_names, - c.name] }
     @uncounted = @inventory.counts.where(user_id: nil).count
 
@@ -105,7 +107,7 @@ class InventoriesController < ApplicationController
   end
 
   def update
-    @inventory = Inventory.find(params[:id])
+    authorize @inventory = Inventory.find(params[:id])
 
     @inventory.update(inventory_params)
     Extrapolate.new(@inventory)
@@ -118,7 +120,7 @@ class InventoriesController < ApplicationController
   end
 
   def destroy
-    @inventory = Inventory.find(params[:id])
+    authorize @inventory = Inventory.find(params[:id])
   end
 
   private

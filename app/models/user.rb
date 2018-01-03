@@ -28,7 +28,7 @@ class User < ApplicationRecord
   end
 
   def does_inventory?
-    does_inventory || is_admin
+    does_inventory || is_admin || send_inventory_emails
   end
 
   def name
@@ -69,6 +69,9 @@ class User < ApplicationRecord
     if authentication_token.blank?
       self.authentication_token = generate_authentication_token
     end
+  end
+
+  def custom_path
   end
 
   private

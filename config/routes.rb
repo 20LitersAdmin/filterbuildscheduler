@@ -2,7 +2,7 @@ Rails.application.routes.draw do
   root to: 'events#index'
   mount RailsAdmin::Engine => '/admin', as: 'rails_admin'
 
-  devise_for :users
+  devise_for :users, controllers: { sessions: "sessions" }
   get 'users/:id/show', to: 'users#show', as: 'show_user'
   get 'users/:id/edit', to: 'users#edit', as: 'edit_user'
   patch 'users/:id', to: 'users#update', as: 'update_user'
