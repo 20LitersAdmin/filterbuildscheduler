@@ -1,4 +1,4 @@
-class Intellegence < ApplicationRecord
+class Intelligence < ApplicationRecord
 
   def extrapolate(inventory)
     # calculate the number of parts in a component

@@ -18,7 +18,6 @@ gem 'turbolinks', '~> 5'
 gem "rails_admin_clone", "~> 0.0.6"
 gem 'rails_admin'
 gem 'devise'
-#gem 'simple_token_authentication', '~> 1.0'
 gem 'bootstrap-sass'
 gem 'jquery-rails'
 gem "delayed_job", "~> 4.1"
@@ -35,6 +34,7 @@ gem 'pry-byebug'
 gem 'money-rails'
 gem 'icalendar'
 gem 'jquery-datatables-rails'
+gem 'httparty'
 
 group :production do
   gem 'puma'
