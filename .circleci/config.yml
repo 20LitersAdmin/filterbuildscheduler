@@ -1,29 +1,20 @@
-# Ruby CircleCI 2.0 configuration file
-#
-# Check https://circleci.com/docs/2.0/language-ruby/ for more details
-#
 version: 2
 jobs:
   build:
     parallelism: 3
-    working_directory: ~/filterbuildscheduler
     docker:
-       - image: circleci/ruby:2.4.3-node-browsers
+      - image: circleci/ruby:2.4-node
         environment:
           BUNDLE_JOBS: 3
           BUNDLE_RETRY: 3
           BUNDLE_PATH: vendor/bundle
           PGHOST: 127.0.0.1
-          PGUSER: circleci-user
+          PGUSER: circleci-demo-ruby
           RAILS_ENV: test
-      
-      # Specify service dependencies here if necessary
-      # CircleCI maintains a library of pre-built images
-      # documented at https://circleci.com/docs/2.0/circleci-images/
-       - image: circleci/postgres:latest
+      - image: circleci/postgres:9.5-alpine
         environment:
-          POSTGRES_USER: circleci-user
-          POSTGRES_DB: circleci_filterbuildscheduler
+          POSTGRES_USER: circleci-demo-ruby
+          POSTGRES_DB: rails_blog
           POSTGRES_PASSWORD: ""
     steps:
       - checkout
@@ -36,8 +27,8 @@ jobs:
       # Restore bundle cache
       - restore_cache:
           keys:
-            - filterbuildscheduler-{{ checksum "Gemfile.lock" }}
-            - filterbuildscheduler-
+            - rails-demo-bundle-v2-{{ checksum "Gemfile.lock" }}
+            - rails-demo-bundle-v2-
 
       - run:
           name: Bundle Install
@@ -45,15 +36,15 @@ jobs:
 
       # Store bundle cache
       - save_cache:
-          key: filterbuildscheduler-{{ checksum "Gemfile.lock" }}
+          key: rails-demo-bundle-v2-{{ checksum "Gemfile.lock" }}
           paths:
             - vendor/bundle
 
       # Only necessary if app uses webpacker or yarn in some other way
       - restore_cache:
           keys:
-            - filterbuildscheduler-yarn-{{ checksum "yarn.lock" }}
-            - filterbuildscheduler-yarn-
+            - rails-demo-yarn-{{ checksum "yarn.lock" }}
+            - rails-demo-yarn-
 
       - run:
           name: Yarn Install
@@ -61,7 +52,7 @@ jobs:
 
       # Store yarn / webpacker cache
       - save_cache:
-          key: filterbuildscheduler-yarn-{{ checksum "yarn.lock" }}
+          key: rails-demo-yarn-{{ checksum "yarn.lock" }}
           paths:
             - ~/.cache/yarn
 
