@@ -51,6 +51,7 @@ RailsAdmin.config do |config|
       field :is_leader
       field :does_inventory
       field :is_admin
+      field :send_notification_emails
       field :sign_in_count
       field :last_sign_in_at
     end
