@@ -7,6 +7,7 @@ FactoryBot.define do
     max_leaders 2
     min_registrations 5
     max_registrations 25
+    technology
     location
   end
 end

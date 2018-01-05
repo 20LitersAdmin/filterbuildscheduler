@@ -84,13 +84,13 @@ class Event < ApplicationRecord
   # pass total_registered("only_deleted") to get access to registrations.only_deleted
   def total_registered(scope = "")
     if scope == "only_deleted"
-      if registrations.only_deleted.present?
+      if registrations.only_deleted.exists?
         registrations.only_deleted.map { |r| r.guests_registered }.sum + non_leaders_registered.count
       else
         0
       end
     else
-      if registrations.present?
+      if registrations.exists?
         registrations.map { |r| r.guests_registered }.sum + non_leaders_registered.count
       else
         0

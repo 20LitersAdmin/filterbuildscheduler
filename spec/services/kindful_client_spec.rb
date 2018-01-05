@@ -4,7 +4,7 @@ RSpec.describe KindfulClient do
   let(:user1) { build :user }
   let(:client) { KindfulClient.new }
 
-  describe "update_user" do
+  describe "import_user" do
     it 'takes user data and sends it to kindful' do
       http_spy = spy
       body_args = {
@@ -17,7 +17,7 @@ RSpec.describe KindfulClient do
 
       arguments = {
         headers: client.headers,
-        body: client.body(**body_args)
+        body: client.contact(**body_args).to_json
       }
       expect(KindfulClient).to receive(:post).with('/imports', arguments).and_return(http_spy)
       user2 = User.new(body_args)
