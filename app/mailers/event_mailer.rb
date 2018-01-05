@@ -34,7 +34,7 @@ class EventMailer < ApplicationMailer
     mail(to: @recipients, subject: '[20 Liters] New Filter Build Scheduled')
   end
 
-  def reminder(event)
+  def remind_admins(event)
     @event = event
     @recipients = User.where(send_notification_emails: true).map { |r| r.email }
     @location = event.location
