@@ -8,7 +8,7 @@
 1. RegistrationController::Update -- need error handling line #30 and #46
 2. accepts_nested_attributes_for seems to break event#show, at least for anon view
 3. Inventory#show -- issue with policy, Jereme can't see it.
-4. Registration#Edit always goes ba k to Event#Show
+4. Registration#Edit always goes back to Event#Show
 5. Registration#Edit -- checking the as_leader? box leads to error. Eg: Event/3/Registration/26
 
 ## The Future

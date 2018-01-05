@@ -4,14 +4,14 @@ class RegistrationsController < ApplicationController
 
   def index
     @event = Event.find(params[:event_id])
-    @registrations = @event.registrations
+    authorize @registrations = @event.registrations
 
     @deleted = @registrations.only_deleted
   end
 
   def new
     @event = Event.find(params[:event_id])
-    @registration = Registration.new(event_id: @event.id)
+    authorize @registration = Registration.new(event_id: @event.id)
   end
 
   def create
@@ -136,6 +136,7 @@ class RegistrationsController < ApplicationController
 
 
   def edit
+    authorize @registration = Registration.find(params[:id])
     if params[:admin] == "true"
       @cancel_btn_admin = true
     else
@@ -150,7 +151,7 @@ class RegistrationsController < ApplicationController
     authorize @registration
     @registration.update(registration_params)
     if @registration.errors.any?
-      flash[:danger] = @registration.errors.first.messages.map { |k,v| v }.join(', ')
+      flash[:danger] = @registration.errors.map { |k,v| v }.join(', ')
     end
     redirect_to event_path(@registration.event)
   end
@@ -182,11 +183,11 @@ class RegistrationsController < ApplicationController
   end
 
   def messenger
-    @event = Event.find(params[:event_id])
+    authorize @event = Event.find(params[:event_id])
   end
 
   def sender
-    @event = Event.find(params[:event_id])
+    authorize @event = Event.find(params[:event_id])
     @subject = params[:subject]
     @message = params[:message]
     @sender = current_user
