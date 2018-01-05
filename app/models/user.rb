@@ -11,7 +11,6 @@ class User < ApplicationRecord
   has_many :registrations
   has_many :events, through: :registrations
   has_and_belongs_to_many :technologies
-  #has_and_belongs_to_many :inventories
   has_many :counts
   belongs_to :primary_location, class_name: "Location", primary_key: "id", foreign_key: "primary_location_id", optional: true
   attr_accessor :waiver_accepted
@@ -22,14 +21,14 @@ class User < ApplicationRecord
 
   before_save :ensure_authentication_token
 
-  # after_save :notify_email_changed, if: :encrypted_password_changed?
+  after_save :update_kindful, if: Proc.new { |user| user.saved_change_to_fname? || user.saved_change_to_lname? || user.saved_change_to_email? }
 
   def admin_or_leader?
     is_admin? || is_leader?
   end
 
   def does_inventory?
-    does_inventory || is_admin
+    does_inventory || is_admin || send_inventory_emails
   end
 
   def name
@@ -72,6 +71,9 @@ class User < ApplicationRecord
     end
   end
 
+  def custom_path
+  end
+
   private
 
   def generate_authentication_token
@@ -79,5 +81,9 @@ class User < ApplicationRecord
       token = Devise.friendly_token
       break token unless User.where(authentication_token: token).first
     end
+  end
+
+  def update_kindful
+    KindfulClient.new.import_user(self)
   end
 end

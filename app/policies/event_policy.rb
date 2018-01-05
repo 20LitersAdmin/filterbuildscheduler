@@ -1,30 +1,42 @@
 class EventPolicy < ApplicationPolicy
   def create?
-    user.admin_or_leader?
+    user&.admin_or_leader?
   end
 
   def destroy?
-    user.admin_or_leader?
+    user&.admin_or_leader?
   end
 
   def update?
-    user.admin_or_leader?
+    user&.admin_or_leader?
   end
 
   def new?
-    user.admin_or_leader?
+    user&.admin_or_leader?
   end
 
   def show?
-    user.admin_or_leader?
+    true
+  end
+
+  def edit?
+    user&.admin_or_leader?
   end
 
   def cancelled?
-    user.admin_or_leader?
+    user&.is_admin?
   end
 
   def restore?
-    user.admin_or_leader?
+    user&.admin_or_leader?
+  end
+
+  def messenger?
+    user&.admin_or_leader?
+  end
+
+  def sender?
+    user&.admin_or_leader?
   end
 
   class Scope
