@@ -4,5 +4,5 @@ task schedule: :environment do
     job.destroy if job.name == "RegistrationReminderJob" || job.name == "ActiveJob::QueueAdapters::DelayedJobAdapter::JobWrapper"
   end
 
-  Delayed::Job.enqueue(RegistrationReminderJob.new, cron: '23 13 * * *' )
+  RegistrationReminderJob.set(cron: '49 16 * * *').perform_later
 end
