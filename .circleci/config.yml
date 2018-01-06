@@ -41,6 +41,7 @@ jobs:
             - vendor/bundle
 
       # Only necessary if app uses webpacker or yarn in some other way
+      # FAILS EVERY TIME
       - restore_cache:
           keys:
             - rails-demo-yarn-{{ checksum "yarn.lock" }}
@@ -51,6 +52,7 @@ jobs:
           command: yarn install --cache-folder ~/.cache/yarn
 
       # Store yarn / webpacker cache
+      # FAILS EVERY TIME
       - save_cache:
           key: rails-demo-yarn-{{ checksum "yarn.lock" }}
           paths:

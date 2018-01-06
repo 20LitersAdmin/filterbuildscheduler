@@ -20,7 +20,6 @@ RSpec.describe User, type: :model do
       expect(no_lname.save).to eq false
       expect(no_email.save).to eq false
     end
-
   end
 
   describe "#ensure_authentication_token" do
