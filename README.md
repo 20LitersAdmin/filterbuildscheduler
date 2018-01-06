@@ -3,6 +3,7 @@
 ## Things to do
 4. Technologies views:
   - list components and parts with quantities
+5. Write tests until everyone is happy (*Ross*) because TDD is real.
 
 ## BUGS!! AH BUGS!!!
 1. RegistrationController::Update -- need error handling line #30 and #46
