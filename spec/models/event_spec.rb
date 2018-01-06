@@ -139,7 +139,10 @@ RSpec.describe Event, type: :model do
       Registration.create user: user3, event: event, guests_registered: 3, deleted_at: Time.now
       expect(event.total_registered("only_deleted")).to eq(4)
     end
+  end
 
+  describe "#non_leaders_registered" do
+    
     
   end
 end
