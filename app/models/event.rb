@@ -26,7 +26,9 @@ class Event < ApplicationRecord
 
   def dates_are_valid?
     return if start_time.nil? || end_time.nil?
-    if start_time > end_time
+    # accuracy to within a minute
+    diff = ((end_time - start_time) / 1.minute).round
+    if !diff.positive?
       errors.add(:end_time, 'must be after start time')
     end
   end
@@ -85,7 +87,7 @@ class Event < ApplicationRecord
   def total_registered(scope = "")
     if scope == "only_deleted"
       if registrations.only_deleted.exists?
-        registrations.only_deleted.map { |r| r.guests_registered }.sum + non_leaders_registered.count
+        registrations.only_deleted.map { |r| r.guests_registered }.sum + non_leaders_registered("only_deleted").count
       else
         0
       end
@@ -159,7 +161,7 @@ class Event < ApplicationRecord
   end
 
   def complete?
-    technologies_built.present? && attendance.present?
+    (technologies_built.present? || attendance.present?) && start_time < Time.now
   end
 
   def privacy_humanize

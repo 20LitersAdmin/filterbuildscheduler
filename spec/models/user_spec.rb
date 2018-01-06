@@ -10,12 +10,9 @@ RSpec.describe User, type: :model do
     let(:no_lname) { build :user, lname: nil }
     let(:no_email) { build :user, email: nil }
     
-    it "only saves when valid" do
+    it "in order to save" do
       expect(good_user.save).to eq true
       expect(blank_password.save).to eq true 
-    end
-
-    it "doesn't save if not valid" do
       expect(no_fname.save).to eq false
       expect(no_lname.save).to eq false
       expect(no_email.save).to eq false
