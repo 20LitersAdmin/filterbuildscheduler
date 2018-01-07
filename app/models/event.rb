@@ -100,6 +100,22 @@ class Event < ApplicationRecord
     end
   end
 
+  def total_registered_w_leaders(scope = "")
+    if scope == "only_deleted"
+      if registrations.only_deleted.exists?
+        registrations.only_deleted.map { |r| r.guests_registered }.sum + registrations.only_deleted.count
+      else
+        0
+      end
+    else
+      if registrations.exists?
+        registrations.map { |r| r.guests_registered }.sum + registrations.count
+      else
+        0
+      end
+    end
+  end
+
   def non_leaders_registered(scope = "")
     if scope == "only_deleted"
       registrations.only_deleted.non_leader

@@ -25,7 +25,8 @@ RSpec.describe User, type: :model do
   end
 
   describe "#update_kindful" do
-    pending 'takes user data and sends it to kindful_client' do
+    it 'takes user data and sends it to kindful_client' do
+      pending("I don't understand spy")
       @kindful_spy = spy
       expect(KindfulClient).to receive(:new).and_return(@kindful_spy)
       user1

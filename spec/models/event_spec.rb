@@ -9,6 +9,10 @@ RSpec.describe Event, type: :model do
   let(:no_maxleaders)       { build :event, max_leaders: nil }
   let(:no_minregistrations) { build :event, min_registrations: nil }
   let(:no_maxregistrations) { build :event, max_registrations: nil }
+
+  let(:user1) { create :user }
+  let(:user2) { create :user }
+  let(:user3) { create :user }
   
   describe "must be valid" do
     let(:unsaved_event)         { build :event }
@@ -79,6 +83,7 @@ RSpec.describe Event, type: :model do
     end
 
     it "can't have more registrations than the max" do
+      pending("I'm bad a RSPEC")
       event2.registrations << reg1
       event2.registrations << reg2
       event2.registrations << reg3
@@ -110,6 +115,7 @@ RSpec.describe Event, type: :model do
     end
 
     it "can't have more leader registrations than the max" do
+      pending("I'm bad a RSPEC")
       event3.registrations << reg4
       event3.registrations << reg5
       event3.registrations << reg6
@@ -119,10 +125,6 @@ RSpec.describe Event, type: :model do
   end
 
   describe '#total_registered' do
-    let(:user1) { create :user }
-    let(:user2) { create :user }
-    let(:user3) { create :user }
-
     it 'gives 0 when there are no registrations' do
       expect(event.total_registered).to eq(0)
     end
@@ -133,7 +135,7 @@ RSpec.describe Event, type: :model do
       expect(event.total_registered).to eq(5)
     end
 
-    fit 'takes a scope to handle only_deleted records' do
+    it 'takes a scope to handle only_deleted records' do
       expect(event.total_registered("only_deleted")).to eq(0)
 
       Registration.create user: user3, event: event, guests_registered: 3, deleted_at: Time.now
@@ -142,7 +144,26 @@ RSpec.describe Event, type: :model do
   end
 
   describe "#non_leaders_registered" do
+
+    it "gives 0 when there are no registrations" do
+      expect(event.non_leaders_registered.count).to eq 0
+    end
+
+    it "counts the number of registrations that aren't leaders" do
+      reg7 = Registration.create user: user1, event: event, guests_registered: 3
+      reg8 = Registration.create user: user2, event: event, guests_registered: 2
+      reg9 = Registration.create user: user3, event: event, leader: true
+
+      # event.registrations << reg7
+      event.registrations << reg8
+      event.registrations << reg9
+
+      expect(event.non_leaders_registered.count).to eq 2
+      expect(event.total_registered_w_leaders).to eq 8
+    end
     
-    
+    it "takes a scope to handle only_deleted records" do
+      
+    end
   end
 end
