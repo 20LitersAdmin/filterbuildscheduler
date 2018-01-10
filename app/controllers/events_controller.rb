@@ -41,6 +41,7 @@ class EventsController < ApplicationController
 
       if (current_user&.is_admin || @registration&.leader?) && @event.start_time < Time.now
         @show_report = true
+        @registrations = @event.registrations.includes(:user).order("users.lname")
       else
         @show_report = false
       end
