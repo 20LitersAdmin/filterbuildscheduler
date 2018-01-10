@@ -159,6 +159,7 @@ class EventsController < ApplicationController
 
     @admins_notified = ""
     @users_notified = ""
+    @results_emails_sent = ""
 
     if @event.start_time_was > Time.now && (@event.start_time_changed? || @event.end_time_changed? || @event.location_id_changed? || @event.technology_id_changed? || @event.is_private_changed?)
       EventMailer.delay.changed(@event, current_user)
@@ -174,14 +175,13 @@ class EventsController < ApplicationController
     end
     
     @send_results_emails = false
-
-    if (@event.attendance_was == nil || @event.attendance_was == 0 ) && @event.attendance > 0
+    if (@event.attendance_was == nil || @event.attendance_was == 0 ) && @event.attendance > 0 && @more_than_zero > 0
       @send_results_emails = true
-      
+      @results_emails_sent = "Attendees notified of results."
     end
 
     if @event.save
-      flash[:success] = "Event updated. #{@admins_notified} #{@users_notified}"
+      flash[:success] = "Event updated. #{@admins_notified} #{@users_notified} #{@results_emails_sent}"
 
       if @send_results_emails == true
         @event.registrations.where(attended: true).each do |r|
