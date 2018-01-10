@@ -28,7 +28,26 @@ function attendanceCounter(){
   $(document).on("change", ".event_registrations_guests_attended input[type=number]", function() {
     attendanceCounter();
   });
+  $(document).on("click", "#btn_check_all", function() {
+    var booleans = $(".event_registrations_attended input[type=checkbox]").get();
+    for( i = 0; i < booleans.length; i++ ) {
+      booleans[i].checked = true;
+    };
+    $("#btn_check_all").hide();
+    $("#btn_uncheck_all").show();
+    event.preventDefault();
+  });
+  $(document).on("click", "#btn_uncheck_all", function() {
+    var booleans = $(".event_registrations_attended input[type=checkbox]").get();
+    for( i = 0; i < booleans.length; i++ ) {
+      booleans[i].checked = false;
+    };
+    $("#btn_uncheck_all").hide();
+    $("#btn_check_all").show();
+    event.preventDefault();
+  });
   $(document).on("turbolinks:load", function(){
     attendanceCounter();
+    $("#btn_uncheck_all").hide();
   })
 }());
