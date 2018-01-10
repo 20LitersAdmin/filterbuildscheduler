@@ -11,7 +11,7 @@
       <h3>Registration-based attendance: <span id="attendance_counter">0</span></h3>
     </div>
   </div>
-  <%= f.simple_fields_for :registrations do |r| %>
+  <%= f.simple_fields_for :registrations, @registrations do |r| %>
     <div class="row">
       <div class="col-sm-6">
         <%= r.input :attended, label: "#{r.object.user.name} (with #{r.object.guests_registered} guests)", input_html: { tabindex: '-1' } %>
