@@ -100,7 +100,7 @@ class EventsController < ApplicationController
 
     @event.assign_attributes(modified_params)
 
-    # CREATE AN INVENTORY WHEN AN EVENT REPORT IS SUBMITTED.
+    # CREATE AN INVENTORY WHEN AN EVENT REPORT IS SUBMITTED UNDER CERTAIN CONDITIONS.
     # Fields in question: technologies_built, boxes_packed
     # Conditions: They're not negative AND ( they're not both 0 OR they weren't zero but now they are. )
 
@@ -148,9 +148,12 @@ class EventsController < ApplicationController
         @box = @event.boxes_packed
       end
 
+      # record the results of the event in the inventory
       CountPopulate.new(@loose, @box, @event, @inventory, current_user.id)
-
+      # extrapolate out the full inventory given the new results
       InventoriesController::Extrapolate.new(@inventory)
+
+      
     end
 
     @admins_notified = ""
@@ -168,9 +171,25 @@ class EventsController < ApplicationController
         end
       end
     end
+    
+    @send_results_emails = false
+
+    if (@event.attendance_was == nil || @event.attendance_was == 0 ) && @event.attendance > 0
+      @send_results_emails = true
+      
+    end
 
     if @event.save
       flash[:success] = "Event updated. #{@admins_notified} #{@users_notified}"
+
+      if @send_results_emails == true
+        @event.registrations.where(attended: true).each do |r|
+          # RegistrationMailer.delay.event_results(r)
+          RegistrationMailer.event_results(r).deliver!
+        end
+      end
+
+
       redirect_to event_path(@event)
     else
       if event_params[:technologies_built].present?

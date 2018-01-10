@@ -115,5 +115,4 @@ class EventMailer < ApplicationMailer
 
     mail(to: @admins, subject: "[20 Liters] A Leader sent a message")
   end
-
 end
