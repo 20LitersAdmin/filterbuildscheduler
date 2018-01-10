@@ -22,4 +22,8 @@ class RegistrationMailerPreview < ActionMailer::Preview
   def event_cancelled
     RegistrationMailer.event_cancelled(Registration.first)
   end
+
+  def event_results
+    RegistrationMailer.event_results(Registration.first)
+  end
 end

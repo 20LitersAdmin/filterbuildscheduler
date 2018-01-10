@@ -1,0 +1,54 @@
+<div class="whole" style="position: relative; min-height: 1px; padding-left: 15px; padding-right: 15px; float: left; width: 100%;">
+    <p>Hello <%= @recipient.fname %>,</p>
+
+    <p>Thanks for coming to the filter build on <%= @event.format_date_only %>!</p>
+
+    <p style="margin-bottom: 6px"><strong>We built <%= pluralize(@event.technology_results, @technology.name) %>!</strong></p>
+    <ul style="margin-top: 0px">
+      <li>Your work will impact <%= pluralize(number_with_delimiter(@event.results_people, delimiter: ','), 'people') %></li>
+      <li>These filters will produce <%= pluralize(number_with_delimiter(@event.results_liters_per_day, delimiter: ','), 'liter') %> of clean water every day</li>
+      <li>These results will last <%= pluralize(number_with_delimiter(@event.results_timespan, delimiter: ','), 'year') %> or more</li>
+    </ul>
+
+    <p style="margin-bottom: 6px">Not only did you make these filters more affordable by volunteering your time, these filters will have a real impact. Less waterborne diseases means:</p>
+    <ul style="margin-top: 0px">
+      <li>Less money spent at health clinics and hospitals</li>
+      <li>Less days sick and more days at work and school</li>
+      <li>Overall health, nutrition, and immune system improvements</li>
+    </ul>
+
+    <p style="margin-bottom: 6px">Thanks for providing <strong>life, health and prosperity</strong> to people you'll probably never meet in this lifetime.</p>
+
+    <% if @registration.guests_attended.present? %>
+      <p style="margin-bottom: 6px">You brought <%= pluralize(@registration.guests_attended, 'guest') %>. Please share these results with them.</p>
+    <% end %>
+
+  <div class="row" style="margin-top: 14px; margin-left: -15px; margin-right: -15px; ">
+    <div class="whole" style="position: relative; min-height: 16px; padding-left: 15px; padding-right: 15px; float: left; width: 100%; text-align: left; margin-top: 0px;">
+      <% if @token %>
+        <p><strong>If you plan to build often</strong>, you might want to save time by logging in. You can finish setting up your account here:</p>
+        <%= link_to "Create my account", edit_password_url(@recipient, reset_password_token: @token), class: "btn yellow", target: "_blank", style: "display: inline-block; margin-bottom: 0; font-weight: bold; text-align: center; vertical-align: middle; border: 1px solid transparent; white-space: nowrap; padding: 6px 12px; font-size: 14px; text-decoration: none; color: #4a4a4a; background-color: #fce000; border-color: ##fcc900;" %>
+      <% else %>
+          <p><strong>Want to do it again?</strong> Check out more builds or request a custom event online:</p>
+          <%= link_to "Go to make.20liters.org", "https://make.20liters.org", class: "btn yellow", target: "_blank", style: "display: inline-block; margin-bottom: 0; font-weight: bold; text-align: center; vertical-align: middle; border: 1px solid transparent; white-space: nowrap; padding: 6px 12px; font-size: 14px; text-decoration: none; color: #4a4a4a; background-color: #fce000; border-color: ##fcc900;" %>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="row" style="margin-top: 28px; margin-left: -15px; margin-right: -15px; ">
+    <div class="whole" style="position: relative; min-height: 16px; padding-left: 15px; padding-right: 15px; float: left; width: 100%; text-align: left; margin-top: 28px;">
+      <p style="margin-bottom: 6px; text-decoration: underline;">
+        <strong>One more thing!</strong>
+      </p>
+      <p>You've already shown a desire to make dirty water clean. We share your passion.</p>
+      <p><strong>$20 is all it takes</strong> to provide a person with access to a filter for the next decade.</p>
+      <p>Can you help get our filters to the people who need them?</p>
+      <%= link_to "Donate Now", "https://20liters.org/get-involved/#organize", class: "btn yellow", target: "_blank", style: "display: inline-block; margin-bottom: 0; font-weight: bold; text-align: center; vertical-align: middle; border: 1px solid transparent; white-space: nowrap; padding: 8px 16px; font-size: 14px; text-decoration: none; color: #4a4a4a; background-color: #fce000; border-color: ##fcc900;" %>
+    </div>
+  </div>
+</div>
+
+
+
+
+

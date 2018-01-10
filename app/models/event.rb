@@ -24,6 +24,10 @@ class Event < ApplicationRecord
     return end_time <= Time.now
   end
 
+  def has_begun?
+    return start_time < Time.now
+  end
+
   def dates_are_valid?
     return if start_time.nil? || end_time.nil?
     # accuracy to within a minute
@@ -227,4 +231,26 @@ class Event < ApplicationRecord
       end
     end
   end
+
+  def technology_results
+    return 0 if !self.complete?
+    (boxes_packed * technology.primary_component.quantity_per_box) + technologies_built
+  end
+
+  def results_people
+    return 0 if technology.people == 0 || technology_results == 0
+     technology_results * technology.people
+  end
+
+  def results_timespan
+    return 0 if technology.lifespan_in_years == 0 || technology_results == 0
+    technology.lifespan_in_years
+  end
+
+  def results_liters_per_day
+    return 0 if technology.liters_per_day == 0 || technology_results == 0
+    technology_results * technology.liters_per_day
+  end
+
+
 end
