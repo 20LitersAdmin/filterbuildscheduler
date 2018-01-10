@@ -5,8 +5,6 @@
   - list components and parts with quantities
 5. Write tests until everyone is happy (*Ross*) because TDD is real.
 6. Is Inventory -- partial count not working?
-7.1 Event/report needs separate section for leaders
-7.2 Event/report needs button to check all checkboxes
 
 ## BUGS!! AH BUGS!!!
 1. RegistrationController::Update -- need error handling line #30 and #46
