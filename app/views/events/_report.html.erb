@@ -7,7 +7,15 @@
   <%= f.label :number_registered, label: "Total Builders and Leaders Registered: #{@event.registrations.sum(:guests_registered) + @event.registrations.count}" %>
   <%= f.input :attendance, label: "Total Attendance:" %>
   <div class="row">
-    <div class="col-xs-12">
+    <div class="col-xs-2">
+      <a href="#" class="btn blue btn-check" id="btn_check_all">
+        <%= fa_stacked_icon "check", base: "square-o" %> <span class="btn-text">all</span>
+      </a>
+      <a href="#" class="btn blue btn-check" id="btn_uncheck_all">
+        <%= fa_stacked_icon "square-o", base: "square-o" %> <span class="btn-text">all</span>
+      </a>
+    </div>
+    <div class="col-xs-10">
       <h3>Registration-based attendance: <span id="attendance_counter">0</span></h3>
     </div>
   </div>
