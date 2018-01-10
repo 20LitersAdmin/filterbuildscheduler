@@ -15,9 +15,7 @@ class User < ApplicationRecord
   belongs_to :primary_location, class_name: "Location", primary_key: "id", foreign_key: "primary_location_id", optional: true
   attr_accessor :waiver_accepted
 
-  validates :fname, presence: true
-  validates :lname, presence: true
-  validates :email, presence: true
+  validates :fname, :lname, :email, presence: true
 
   before_save :ensure_authentication_token
 
@@ -72,6 +70,7 @@ class User < ApplicationRecord
   end
 
   def custom_path
+    # this allows for a form field that handles page redirects based on values: "admin", "self"
   end
 
   private

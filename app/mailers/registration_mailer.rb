@@ -116,5 +116,23 @@ class RegistrationMailer < ApplicationMailer
     mail(to: @recipient.email, subject: '[20 Liters] NOTICE: Build Event Cancelled')
   end
 
+  def event_results(registration)
+    @registration = registration
+    @recipient = registration.user
+    @event = registration.event
+    @location = @event.location
+    @technology = @event.technology
+    
+    if @recipient.encrypted_password.blank?
+      @token = Devise.token_generator.generate(User, :reset_password_token)
+      @recipient.reset_password_token = @token[1]
+      @token = @token[0]
+      @recipient.reset_password_sent_at = Time.now.utc
+      @recipient.save
+    end
+
+    mail(to: @recipient.email, subject: "[20 Liters] Results from the filter build!")
+  end
+
 
 end

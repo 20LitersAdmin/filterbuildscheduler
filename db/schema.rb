@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171206194346) do
+ActiveRecord::Schema.define(version: 20180110022641) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -227,6 +227,9 @@ ActiveRecord::Schema.define(version: 20171206194346) do
     t.string "img_url"
     t.string "info_url"
     t.string "owner"
+    t.integer "people", default: 0, null: false
+    t.integer "lifespan_in_years", default: 0, null: false
+    t.integer "liters_per_day", default: 0
     t.index ["deleted_at"], name: "index_technologies_on_deleted_at"
   end
 

@@ -24,9 +24,15 @@ class Event < ApplicationRecord
     return end_time <= Time.now
   end
 
+  def has_begun?
+    return start_time < Time.now
+  end
+
   def dates_are_valid?
     return if start_time.nil? || end_time.nil?
-    if start_time > end_time
+    # accuracy to within a minute
+    diff = ((end_time - start_time) / 1.minute).round
+    if !diff.positive?
       errors.add(:end_time, 'must be after start time')
     end
   end
@@ -85,13 +91,29 @@ class Event < ApplicationRecord
   def total_registered(scope = "")
     if scope == "only_deleted"
       if registrations.only_deleted.exists?
-        registrations.only_deleted.map { |r| r.guests_registered }.sum + non_leaders_registered.count
+        registrations.only_deleted.map { |r| r.guests_registered }.sum + non_leaders_registered("only_deleted").count
       else
         0
       end
     else
       if registrations.exists?
         registrations.map { |r| r.guests_registered }.sum + non_leaders_registered.count
+      else
+        0
+      end
+    end
+  end
+
+  def total_registered_w_leaders(scope = "")
+    if scope == "only_deleted"
+      if registrations.only_deleted.exists?
+        registrations.only_deleted.map { |r| r.guests_registered }.sum + registrations.only_deleted.count
+      else
+        0
+      end
+    else
+      if registrations.exists?
+        registrations.map { |r| r.guests_registered }.sum + registrations.count
       else
         0
       end
@@ -159,7 +181,7 @@ class Event < ApplicationRecord
   end
 
   def complete?
-    technologies_built.present? && attendance.present?
+    (technologies_built.present? || attendance.present?) && start_time < Time.now
   end
 
   def privacy_humanize
@@ -209,4 +231,26 @@ class Event < ApplicationRecord
       end
     end
   end
+
+  def technology_results
+    return 0 if !self.complete?
+    (boxes_packed * technology.primary_component.quantity_per_box) + technologies_built
+  end
+
+  def results_people
+    return 0 if technology.people == 0 || technology_results == 0
+     technology_results * technology.people
+  end
+
+  def results_timespan
+    return 0 if technology.lifespan_in_years == 0 || technology_results == 0
+    technology.lifespan_in_years
+  end
+
+  def results_liters_per_day
+    return 0 if technology.liters_per_day == 0 || technology_results == 0
+    technology_results * technology.liters_per_day
+  end
+
+
 end
