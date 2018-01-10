@@ -1,5 +1,6 @@
 class EventsController
   class CountPopulate
+    # Based upon the tech built at the event, it adds the number of loose and boxed items to the appropriate component
     def initialize(loose, box, event, inventory, user_id)
       @loose = loose
       @box = box

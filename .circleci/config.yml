@@ -27,8 +27,7 @@ jobs:
       # Restore bundle cache
       - restore_cache:
           keys:
-            - rails-demo-bundle-v2-{{ checksum "Gemfile.lock" }}
-            - rails-demo-bundle-v2-
+            - filter-build-bundle-v2-{{ checksum "Gemfile.lock" }}
 
       - run:
           name: Bundle Install
@@ -36,25 +35,9 @@ jobs:
 
       # Store bundle cache
       - save_cache:
-          key: rails-demo-bundle-v2-{{ checksum "Gemfile.lock" }}
+          key: filter-build-bundle-v2-{{ checksum "Gemfile.lock" }}
           paths:
             - vendor/bundle
-
-      # Only necessary if app uses webpacker or yarn in some other way
-      - restore_cache:
-          keys:
-            - rails-demo-yarn-{{ checksum "yarn.lock" }}
-            - rails-demo-yarn-
-
-      - run:
-          name: Yarn Install
-          command: yarn install --cache-folder ~/.cache/yarn
-
-      # Store yarn / webpacker cache
-      - save_cache:
-          key: rails-demo-yarn-{{ checksum "yarn.lock" }}
-          paths:
-            - ~/.cache/yarn
 
       - run:
           name: Wait for DB
