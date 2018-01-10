@@ -35,6 +35,7 @@ function attendanceCounter(){
     };
     $("#btn_check_all").hide();
     $("#btn_uncheck_all").show();
+    attendanceCounter();
     event.preventDefault();
   });
   $(document).on("click", "#btn_uncheck_all", function() {
@@ -44,6 +45,7 @@ function attendanceCounter(){
     };
     $("#btn_uncheck_all").hide();
     $("#btn_check_all").show();
+    attendanceCounter();
     event.preventDefault();
   });
   $(document).on("turbolinks:load", function(){
