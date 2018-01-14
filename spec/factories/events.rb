@@ -10,4 +10,19 @@ FactoryBot.define do
     technology
     location
   end
+
+  factory :complete_event, class: Event do
+    title { Faker::TwinPeaks.quote }
+    start_time { Time.now - 2.hours }
+    end_time { start_time + 3.hours }
+    min_leaders 1
+    max_leaders 2
+    min_registrations 5
+    max_registrations 25
+    technology
+    location
+    technologies_built 30
+    boxes_packed 1
+    attendance 20
+  end
 end
