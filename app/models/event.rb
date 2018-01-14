@@ -233,7 +233,8 @@ class Event < ApplicationRecord
   end
 
   def technology_results
-    return 0 if !self.complete?
+    return 0 if incomplete?
+    return 0 if !technology.primary_component.present?
     (boxes_packed * technology.primary_component.quantity_per_box) + technologies_built
   end
 

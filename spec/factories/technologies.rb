@@ -8,5 +8,8 @@ FactoryBot.define do
     family_friendly true
     unit_rate 1
     owner "No one!"
+    people 5
+    lifespan_in_years 10
+    liters_per_day 100
   end
 end
