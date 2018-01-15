@@ -56,28 +56,37 @@ class Count < ApplicationRecord
     # field == "loose" || "box"
     prev_inv = Inventory.where("date < ?", self.inventory.date).order(date: :desc).first
 
-    case self.type
-    when "part"
-      prev = prev_inv.counts.where(part_id: self.part_id).first
-    when "material"
-      prev = prev_inv.counts.where(material_id: self.material_id).first
-    when "component"
-      prev = prev_inv.counts.where(component_id: self.component_id).first
-    end
+    if prev_inv.present?
+      case self.type
+      when "part"
+        prev = prev_inv.counts.where(part_id: self.part_id).first
+      when "material"
+        prev = prev_inv.counts.where(material_id: self.material_id).first
+      when "component"
+        prev = prev_inv.counts.where(component_id: self.component_id).first
+      end
 
-    if field == "loose"
-      val = self.loose_count - prev.loose_count
-    elsif field == "box"
-      val = self.unopened_boxes_count - prev.unopened_boxes_count
+      if field == "loose"
+        val = self.loose_count - prev.loose_count
+      elsif field == "box"
+        val = self.unopened_boxes_count - prev.unopened_boxes_count
+      else
+        val = 0
+      end
     else
-      val = 0
+      if field == "loose"
+        val = self.loose_count
+      elsif field == "box"
+        val = self.unopened_boxes_count
+      else
+        val = 0
+      end
     end
 
     return val
   end
 
   def total
-    # available + ( # per unit -- is a component? * # of completed un-boxed units)
     if self.inventory.completed_at == nil
       "Not Finalized"
     else
