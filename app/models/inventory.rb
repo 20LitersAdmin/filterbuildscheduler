@@ -57,7 +57,7 @@ class Inventory < ApplicationRecord
   end
 
   def item_count
-    counts.count - counts.where(user_id: nil).count
+    counts.where.not(user_id: nil).count
   end
 
   def count_summary
