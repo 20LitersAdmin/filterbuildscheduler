@@ -11,8 +11,4 @@ class Component < ApplicationRecord
 
 
   has_many :counts, dependent: :destroy
-
-  def id_ary
-    map { |o| o.id }
-  end
 end

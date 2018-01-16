@@ -66,9 +66,7 @@ RSpec.describe Inventory, type: :model do
       parts_wo_user_id = create_list(:count_part, 7, inventory: inventory)
       components_wo_user_id = create_list(:count_comp, 6, inventory: inventory)
       materials_wo_user_id = create_list(:count_mat, 5, inventory: inventory)
-
-      binding.pry
-
+      
       expect(inventory.item_count).to eq(9)
     end
   end
