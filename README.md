@@ -5,13 +5,12 @@
   - list components and parts with quantities
 5. Write tests until everyone is happy (*Ross*) because TDD is real.
 6. Is Inventory -- partial count not working?
+7. Event/registrations - diff table for leaders
 
 ## BUGS!! AH BUGS!!!
 1. RegistrationController::Update -- need error handling line #30 and #46
 2. accepts_nested_attributes_for seems to break event#show, at least for anon view
-3. Inventory#show -- issue with policy, Jereme can't see it.
 4. Registration#Edit always goes back to Event#Show
-5. Registration#Edit -- checking the as_leader? box leads to error. Eg: Event/3/Registration/26
 
 ## The Future
 1. Scenario: During a build event, we box technologies that we didn't build at that event. This will skew the inventory. (would need extra fields: boxes_packed_from_tech_we_made && boxes_packed_from_preexisting_tech )
