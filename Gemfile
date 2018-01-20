@@ -7,7 +7,7 @@ git_source(:github) do |repo_name|
 end
 
 gem 'rails', '~> 5.1.4'
-gem 'pg'
+gem 'pg', "~> 0.21"
 gem 'dotenv-rails'
 gem 'pundit'
 gem 'simple_form'
@@ -53,6 +53,7 @@ group :test do
   gem 'rspec'
   gem 'rspec-rails'
   gem 'rspec_junit_formatter'
+  gem 'shoulda-matchers'
 end
 
 group :development do
