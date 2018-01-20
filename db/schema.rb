@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180110022641) do
+ActiveRecord::Schema.define(version: 20180120145432) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -80,7 +80,7 @@ ActiveRecord::Schema.define(version: 20180110022641) do
     t.integer "item_goal", default: 0, null: false
     t.integer "technologies_built", default: 0, null: false
     t.datetime "deleted_at"
-    t.integer "attendance"
+    t.integer "attendance", default: 0
     t.integer "boxes_packed", default: 0, null: false
     t.string "contact_name"
     t.string "contact_email"
