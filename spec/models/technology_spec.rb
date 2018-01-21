@@ -28,7 +28,7 @@ RSpec.describe Technology, type: :model do
       user.save
       technology.save
       expect(technology.leaders).to include(leader)
-      expect(technology.leaders).to not_include(user)
+      expect(technology.leaders).not_to include(user)
     end
   end
 
