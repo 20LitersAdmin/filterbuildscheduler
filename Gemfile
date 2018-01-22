@@ -54,6 +54,7 @@ group :test do
   gem 'rspec-rails'
   gem 'rspec_junit_formatter'
   gem 'shoulda-matchers'
+  gem 'rails-controller-testing'
 end
 
 group :development do
