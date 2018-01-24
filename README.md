@@ -6,6 +6,10 @@
 5. Write tests until everyone is happy (*Ross*) because TDD is real.
 6. Is Inventory -- partial count not working?
 7. Event/registrations - diff table for leaders
+8. Event/Index - Paginate past events (limit 10) OR only show not complete events.
+9. Event/registrations - button to edit or return to event
+10. Event/edit - report: checkbox to send report out
+11. Event changed email is triggered when technology is changed, but email doesn't specify the change.
 
 ## BUGS!! AH BUGS!!!
 1. RegistrationController::Update -- need error handling line #30 and #46
