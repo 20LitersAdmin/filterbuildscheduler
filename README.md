@@ -10,6 +10,9 @@
 9. Event/registrations - button to edit or return to event
 10. Event/edit - report: checkbox to send report out
 11. Event changed email is triggered when technology is changed, but email doesn't specify the change.
+12. Monthly report: structure and auto-send
+13. Add pricing / ordering views
+14. User.email_opt_out boolean
 
 ## BUGS!! AH BUGS!!!
 1. RegistrationController::Update -- need error handling line #30 and #46
