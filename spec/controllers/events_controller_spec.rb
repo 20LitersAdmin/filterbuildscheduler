@@ -20,7 +20,7 @@ RSpec.describe EventsController, type: :controller do
     describe "when there's no current_user" do
       # don't login_admin or login_user
 
-      fit "shows only future events" do
+      it "shows only future events" do
         expect(subject.current_user).to eq nil
 
         expect(assigns(:events)).to include(future_event, registered_event)
@@ -33,7 +33,8 @@ RSpec.describe EventsController, type: :controller do
       login_admin
 
 
-      fit "show all types of events" do
+      it "show all types of events" do
+        pending("work in progress")
         future_event
         past_event
         private_event
@@ -44,7 +45,6 @@ RSpec.describe EventsController, type: :controller do
 
         expect(subject.current_user.is_admin?).to be true
 
-        binding.pry
         expect(assigns(:events)).to include(future_event, private_event, registered_event)
         expect(assigns(:past_events)).to include(past_event)
         expect(assigns(:cancelled_events).count).to eq 1
