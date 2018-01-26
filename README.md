@@ -3,6 +3,7 @@
 ## Things to do
 4. Technologies views:
   - list components and parts with quantities
+  - Add pricing / ordering views
 5. Write tests until everyone is happy (*Ross*) because TDD is real.
 6. Is Inventory -- partial count not working?
 7. Event/registrations - diff table for leaders
@@ -11,7 +12,6 @@
 10. Event/edit - report: checkbox to send report out
 11. Event changed email is triggered when technology is changed, but email doesn't specify the change.
 12. Monthly report: structure and auto-send
-13. Add pricing / ordering views
 14. User.email_opt_out boolean
 
 ## BUGS!! AH BUGS!!!
