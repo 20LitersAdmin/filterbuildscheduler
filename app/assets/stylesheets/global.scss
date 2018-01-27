@@ -28,6 +28,28 @@ html {
   width: 100%;
 }
 
+hr.bar {
+  width: 100%;
+  border-width: 2px;
+
+  &.yellow {
+    border-color: $yellow;
+  }
+
+  &.grey {
+    border-color: $grey;
+  }
+
+  &.dark-grey {
+    border-color: $dark-grey;
+  }
+}
+
+.bar-above {
+  border-top: 2px solid $yellow;
+  margin-top: 12px;
+}
+
 .twentyliters {
   text-rendering: optimizelegibility;
   -webkit-font-smoothing: antialiased;

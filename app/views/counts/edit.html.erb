@@ -2,6 +2,8 @@
   <h3><%= @count.name %></h3>
   <h4>For: <%= @count.tech_names %></h4>
   <h4><%= @context %></h4>
+  <h4>Partial_box? <%= @count.partial_box?  %></h4>
+  <h4>Partial_loose? <%= @count.partial_loose?  %></h4>
   <%= simple_form_for([@inventory, @count])  do |f| %>
     <%= f.error_notification %>
 
@@ -31,4 +33,9 @@
     <% end %>
   <% end %>
   <%= link_to "Back", edit_inventory_path(@inventory), class: "btn yellow empty fullwidth" %>
+  <hr class="bar dark-grey">
 </div>
+
+
+
+<%= render partial: 'shared/calculator'  %>
