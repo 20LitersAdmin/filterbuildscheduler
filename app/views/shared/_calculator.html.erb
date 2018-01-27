@@ -1,0 +1,78 @@
+<div id="calculator" class="col-xs-8 col-xs-offset-1 col-sm-6 col-sm-offset-3">
+  <table>
+    <tr>
+      <td colspan="4">
+        <input type="text" id="display" value="" />
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <input id="btnAns" type="button" name="operator" value="Ans" />
+      </td>
+      <td>
+        <input id="btnOParen" type="button" name="operator" value="(" onclick="set('(')" />
+      </td>
+      <td>
+        <input id="btnCParen" type="button" name="operator" value=")" onclick="set(')')" />
+      </td>
+      <td>
+        <input id="btnCE" type="button" name="operator" value="CE" onclick="ce()" />
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <input id="btn7" type="button" value="7" onclick="set('7')" />
+      </td>
+      <td>
+        <input id="btn8" type="button" value="8" onclick="set('8')" />
+      </td>
+      <td>
+        <input id="btn9" type="button" value="9" onclick="set('9')" />
+      </td>
+      <td>
+        <input id="btnDiv" type="button" name="operator" value="÷" onclick="set('/')" />
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <input id="btn4" type="button" value="4" onclick="set('4')" />
+      </td>
+      <td>
+        <input id="btn5" type="button" value="5" onclick="set('5')" />
+      </td>
+      <td>
+        <input id="btn6" type="button" value="6" onclick="set('6')" />
+      </td>
+      <td>
+        <input id="btnMul" type="button" name="operator" value="×" onclick="set('*')" />
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <input id="btn1" type="button" value="1" onclick="set('1')" />
+      </td>
+      <td>
+        <input id="btn2" type="button" value="2" onclick="set('2')" />
+      </td>
+      <td>
+        <input id="btn3" type="button" value="3" onclick="set('3')" />
+      </td>
+      <td>
+        <input id="btnSub" type="button" name="operator" value="-" onclick="set('-')" />
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <input id="btn0" type="button" value="0" onclick="set('0')" />
+      </td>
+      <td>
+        <input id="btnPeriod" type="button" value="." />
+      </td>
+      <td>
+        <input id="btnEqual" type="button" name="equal" value="=" onclick="answer()" />
+      </td>
+      <td>
+        <input id="btnAdd" type="button" name="operator" value="+" onclick="set('+')" />
+      </td>
+  </table>
+</div>
