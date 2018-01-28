@@ -16,7 +16,8 @@ class CountsController < ApplicationController
       @expected_msg = "Expected to be:"
     end
 
-    if @count.user_id.present? || @count.partial_box || @count.partial_loose # counts with user_ids have been saved at least once. counts marked as partials still need work
+    # counts with user_ids have been saved at least once. counts marked as partials still need work
+    if @count.user_id.present? || @count.partial_box || @count.partial_loose 
       if @inventory.type_for_params == "manual"
         @loose_val = @count.loose_count
         @box_val = @count.unopened_boxes_count
@@ -70,13 +71,23 @@ class CountsController < ApplicationController
     modified_params = count_params.dup
 
     # Partial counts are not complete, thus user_id should be set to nil
-    if params[:partial].present?
+    if params[:partial_box].present? # "Partial Count: Boxes" button was pushed
       modified_params.delete(:user_id)
-      
-      binding.pry
-      # Need to decide how to pick partial_box vs partial_loose
-      # Expect one param to be '' or 0
-      # If param is 0 and current val is 0
+      modified_params.delete(:loose_count)
+      @count.partial_box = true
+      @count.partial_loose = false
+    end
+
+    if params[:partial_loose].present? # "Partial Count: Loose" button was pushed
+      modified_params.delete(:user_id)
+      modified_params.delete(:unopened_boxes_count)
+      @count.partial_box = false
+      @count.partial_loose = true
+    end
+
+    if params[:commit].present? # "Submit" button was pushed
+      @count.partial_box = false
+      @count.partial_loose = false
     end
 
     # Ignore null field values, default to previous values
