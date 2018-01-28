@@ -55,8 +55,15 @@ class User < ApplicationRecord
   end
 
   def available_events
-    Event.distinct.joins('LEFT JOIN registrations ON registrations.event_id = events.id')
+    if self.is_leader?
+      # finds future events OR events the leader registered for
+      Event.distinct.joins('LEFT JOIN registrations ON registrations.event_id = events.id')
+         .where('start_time >= ? OR registrations.user_id = ?', Time.now, id)
+    else
+      # finds public events OR events the user has registered for
+      Event.distinct.joins('LEFT JOIN registrations ON registrations.event_id = events.id')
          .where('is_private = false OR registrations.user_id = ?', id)
+    end
   end
 
   def has_no_password

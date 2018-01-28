@@ -14,6 +14,9 @@ class CountsController < ApplicationController
     when "manual"
       @context = "Count inventory: Use positive numbers or 0"
       @expected_msg = "Expected to be:"
+    when "event"
+      @context = "Adjust inventory: Use positive or negative numbers"
+      @expected_msg = "Current:"
     end
 
     # counts with user_ids have been saved at least once. counts marked as partials still need work
@@ -21,10 +24,13 @@ class CountsController < ApplicationController
       if @inventory.type_for_params == "manual"
         @loose_val = @count.loose_count
         @box_val = @count.unopened_boxes_count
-      else # "shipping" || "receiving"
+      else # "shipping" || "receiving" || "event"
         @loose_val = @count.diff_from_previous("loose")
         @box_val = @count.diff_from_previous("box")
       end
+    elsif @inventory.type_for_params == "event" # if it's related to an event, show the diff since the last inventory
+      @loose_val = @count.diff_from_previous("loose")
+        @box_val = @count.diff_from_previous("box")
     else #if a count hasn't been submitted, show 0
       @loose_val = 0
       @box_val = 0
@@ -53,19 +59,34 @@ class CountsController < ApplicationController
     when "manual"
       @context = "Count inventory: Use positive numbers or 0"
       @expected_msg = "Expected to be:"
+    when "event"
+      @context = "Adjust inventory: Use positive or negative numbers"
+      @expected_msg = "Current:"
     end
 
-    if @count.user_id.present? #after a record is submitted, show the submitted value
+    # counts with user_ids have been saved at least once. counts marked as partials still need work
+    if @count.user_id.present? || @count.partial_box || @count.partial_loose 
       if @inventory.type_for_params == "manual"
         @loose_val = @count.loose_count
         @box_val = @count.unopened_boxes_count
-      else # "shipping" || "receiving"
+      else # "shipping" || "receiving" || "event"
         @loose_val = @count.diff_from_previous("loose")
         @box_val = @count.diff_from_previous("box")
       end
+    elsif @inventory.type_for_params == "event" # if it's related to an event, show the diff since the last inventory
+      @loose_val = @count.diff_from_previous("loose")
+        @box_val = @count.diff_from_previous("box")
     else #if a count hasn't been submitted, show 0
       @loose_val = 0
       @box_val = 0
+    end
+
+    if @count.partial_box
+      @loose_val = ''
+    end
+
+    if @count.partial_loose
+      @box_val = ''
     end
 
     modified_params = count_params.dup
@@ -99,8 +120,9 @@ class CountsController < ApplicationController
     end
 
     # Adjust the previous count unless it's a manual inventory
-    if @inventory.receiving || @inventory.shipping
-      if count_params[:user_id].present? # if the count has already been submitted
+    if @inventory.receiving || @inventory.shipping || @inventory.type_for_params == "event"
+      if count_params[:user_id].present? # this is being touched by a person
+        
         # If the values matches, don't re-submit the value again
         if count_params[:loose_count].to_i == @count.diff_from_previous("loose")
           modified_params.delete(:loose_count)
@@ -115,10 +137,10 @@ class CountsController < ApplicationController
           modified_params[:unopened_boxes_count] = @count.unopened_boxes_count + ( count_params[:unopened_boxes_count].to_i - @count.diff_from_previous("box") )
         end
       end # count_params[:user_id].present?
-    end # @inventory.receiving || @inventory.shipping
+    end # @inventory.receiving || @inventory.shipping || @inventory.type_for_params == "event"
 
-    if !@inventory.shipping
-      # only one type of inventory can have negative numbers.
+    if @inventory.receiving || @inventory.type_for_params == "manual"
+      # only shipping and event inventories can have negative numbers.
       if count_params[:loose_count].to_i < 0
         @count.errors.add(:loose_count, "Loose Count can't be negative for this type of inventory.")
       end

@@ -6,11 +6,14 @@
   h1 {
     text-align: center;
   }
-  .btn {
+  .btn .fullwidth {
     margin-top: 1em;
-    display: block;
-    width: 100%;
   }
+
+  .width188 {
+    width: 188px;
+  }
+
   .share-container {
     display: inline-flex;
   }
