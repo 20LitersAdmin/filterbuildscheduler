@@ -17,4 +17,6 @@ class Part < ApplicationRecord
 
   monetize :price_cents, allow_nil: true, numericality: { greater_than_or_equal_to: 0 }
   monetize :additional_cost_cents, allow_nil: true, numericality: { greater_than_or_equal_to: 0 }
+  monetize :shipping_cost_cents, allow_nil: true, numericality: { greater_than_or_equal_to: 0 }
+  monetize :wire_transfer_cost_cents, allow_nil: true, numericality: { greater_than_or_equal_to: 0 }
 end
