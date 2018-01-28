@@ -16,6 +16,5 @@
   <h5> Review the <a class="waiver_click" data-toggle="modal" data-target="#waiverModal"><%="Waiver and Release"%></a> (accepted on <%= current_user.signed_waiver_on.strftime("%-m/%-d/%Y") %>)
   </h5>
 </div>
-<%= link_to "Change/Cancel Registration", edit_event_registration_path(@event, @registration), class: 'btn red' %>
-<%= link_to('Not you? Sign Out', destroy_user_session_path, method: :delete, class: "btn yellow empty") %>
-
+<%= link_to "Change/Cancel Registration", edit_event_registration_path(@event, @registration), class: 'btn red fullwidth' %>
+<%= link_to('Not you? Sign Out', destroy_user_session_path, method: :delete, class: "btn empty fullwidth") %>

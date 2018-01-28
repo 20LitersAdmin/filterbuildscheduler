@@ -17,6 +17,8 @@ class Event < ApplicationRecord
   scope :non_private, -> { where(is_private: false) }
   scope :future, -> { where('end_time > ?', Time.now).order(start_time: :asc) }
   scope :past, -> { where('end_time <= ?', Time.now).order(start_time: :desc) }
+  scope :needs_report, -> { where('start_time <= ?', Time.now).where(attendance: 0).order(start_time: :desc) }
+  scope :closed, -> { where('start_time <= ?', Time.now).where.not(attendance: 0).order(start_time: :desc) }
 
   accepts_nested_attributes_for :registrations
 
@@ -181,7 +183,7 @@ class Event < ApplicationRecord
   end
 
   def complete?
-    (technologies_built.present? || attendance.present?) && start_time < Time.now
+    attendance.present? && start_time < Time.now
   end
 
   def privacy_humanize
@@ -252,6 +254,5 @@ class Event < ApplicationRecord
     return 0 if technology.liters_per_day == 0 || technology_results == 0
     technology_results * technology.liters_per_day
   end
-
 
 end

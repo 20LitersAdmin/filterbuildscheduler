@@ -6,10 +6,6 @@
   - list components and parts with quantities
   - Add pricing / ordering views
 5. Write tests until everyone is happy (*Ross*) because TDD is real.
-7. Event/registrations - diff table for leaders
-8. Event/Index - Paginate past events (limit 10) OR only show not complete events.
-9. Event/registrations - button to edit or return to event
-10. Event/edit - report: checkbox to send report out
 12. Monthly report: structure and auto-send
 
 ## BUGS!! AH BUGS!!!
@@ -17,6 +13,7 @@
 1. RegistrationController::Update -- need error handling line #30 and #46
 2. accepts_nested_attributes_for seems to break event#show, at least for anon view
 4. Registration#Edit always goes back to Event#Show
+12. Inventories created from events aren't subtracting parts from components (parts used to build the technologies_built or boxes_packed)
 
 ## The Future
 3. Track item inventory/count over time with a cool graph

@@ -1,20 +1,29 @@
 @import "variables";
 
-.panel-heading {
-  background-color: $yellow !important;
-}
+#info-page {
+  .panel-heading {
+    background-color: white;
+  }
+  .panel {
+    border: 2px solid $yellow;
+  }
 
-.panel-title a {
-    display: block;
-    padding: 10px 15px;
-    margin: -10px -15px;
-    &:hover {
-      text-decoration: none;
-      color: black;
-    }
-}
+  .panel-title a {
+      display: block;
+      padding: 10px 15px;
+      margin: -10px -15px;
+      &:hover {
+        text-decoration: none;
+        color: black;
+      }
+      
+      .fa-minus {
+        display: none;
+      }
+  }
+  .panel-body a {
+    color: black;
+    text-decoration: underline;
+  }
 
-.panel-body a {
-  color: black;
-  text-decoration: underline;
 }
