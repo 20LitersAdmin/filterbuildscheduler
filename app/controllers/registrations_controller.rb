@@ -4,7 +4,9 @@ class RegistrationsController < ApplicationController
 
   def index
     @event = Event.find(params[:event_id])
-    authorize @registrations = @event.registrations
+    authorize @registrations = @event.registrations.non_leader
+
+    @leaders = @event.registrations.registered_as_leader
 
     @deleted = @registrations.only_deleted
   end

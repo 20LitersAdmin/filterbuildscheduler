@@ -19,7 +19,7 @@
 
     <p style="margin-bottom: 6px">Thanks for providing <strong>life, health and prosperity</strong> to people you'll probably never meet in this lifetime.</p>
 
-    <% if @registration.guests_attended.present? %>
+    <% if @registration.guests_attended > 0 %>
       <p style="margin-bottom: 6px">You brought <%= pluralize(@registration.guests_attended, 'guest') %>. Please share these results with them.</p>
     <% end %>
 

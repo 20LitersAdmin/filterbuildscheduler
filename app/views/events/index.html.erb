@@ -1,17 +1,13 @@
 <div class="event-index">
-  <% if current_user && current_user.admin_or_leader? %>
-    <div class="action-container">
-      <% if current_user.is_admin? && @cancelled_events.exists? %>
-        <div class="col-sm-6">
-          <%= link_to "Schedue a New Build", new_event_path, class: 'btn yellow' %>
-        </div>
-        <div class="col-sm-6">
-          <%= link_to "Manage Cancelled Events", cancelled_events_path, class: 'btn blue' %>
-        </div>
-      <% else %>
-        <div class="col-sm-12">
-          <%= link_to "Schedue a New Build", new_event_path, class: 'btn yellow' %>
-        </div>
+  <% if current_user&.admin_or_leader? %>
+    <div class="col-xs-12 center admin-div">
+      <p>Available functions:</p>
+      <%= link_to "Schedue a New Build", new_event_path, class: 'btn yellow' %>
+      <% if @cancelled_events.exists? %>
+        <%= link_to "Manage Cancelled Events", cancelled_events_path, class: 'btn red' %>
+      <% end %>
+      <% if current_user.is_admin? && @closed_events.present? %>
+        <%= link_to("Manage Closed Events", closed_events_path , class: 'btn blue') %>
       <% end %>
     </div>
   <% end %>
@@ -31,7 +27,7 @@
 
     <% if @past_events.present? %>
       <div class="event-container">
-        <h2 class="heading">Past Builds</h2>
+        <h2 class="heading">Open Builds (report is missing)</h2>
         <%= render partial: 'events/event', collection: @past_events %>
       </div>
     <% else %>

@@ -2,58 +2,42 @@ class EventsController < ApplicationController
   def index
     our_events = policy_scope(Event).includes(:location, registrations: :user)
     @events = our_events.future
-    if current_user&.is_leader?
-      @past_events = our_events.past
-    end
     @user = current_user
 
+    if @user&.admin_or_leader?
+      @past_events = our_events.needs_report
+    end
+
     @cancelled_events = Event.only_deleted
+
+    @closed_events = Event.closed
   end
 
   def show
     authorize @event = Event.find(params[:id])
-    @registration = Registration.where(user: current_user, event: @event).first_or_initialize
+    @registration = @event.registrations.where(user: current_user).first_or_initialize
 
-    # decide whether or not to show the event with a stupidly complicated nested if
-    if @event.in_the_past?
-      if current_user&.is_admin || @registration.leader?
-        # past events can only be viewed by admins or those who lead the event.
-        @show_event = true
-        @show_admin_registration = true
-      else
-        @show_event = false
-      end
-    else # event is in the future
-      @show_event = true
+    if @event.technology.img_url.present?
+      @tech_img = @event.technology.img_url
+    end
+    if @event.technology.info_url.present?
+      @tech_info = @event.technology.info_url
+    end
+    if @event.location.photo_url.present?
+      @location_img = @event.location.photo_url
     end
 
-    # take action on that decision
-    if @show_event == true
-      if @event.technology.img_url.present?
-        @tech_img = @event.technology.img_url
-      end
-      if @event.technology.info_url.present?
-        @tech_info = @event.technology.info_url
-      end
-      if @event.location.photo_url.present?
-        @location_img = @event.location.photo_url
-      end
-
-      if (current_user&.is_admin || @registration&.leader?) && @event.start_time < Time.now
-        @show_report = true
-        @registrations = @event.registrations.includes(:user).order("users.is_leader").order("users.lname")
-      else
-        @show_report = false
-      end
-
-      if (current_user&.is_admin || @registration&.leader?)
-        @show_edit = true
-      else
-        @show_edit = false
-      end
+    if (current_user&.is_admin || @registration&.leader?) && @event.start_time < Time.now
+      @show_report = true
+      @registrations = @event.registrations.includes(:user).order("users.is_leader").order("users.lname")
     else
-      flash[:warning] = "That event is not available, Sorry."
-      redirect_to action: :index
+      @show_report = false
+    end
+
+    if (current_user&.is_admin || @registration&.leader?)
+      @show_edit = true
+    else
+      @show_edit = false
     end
   end
 
@@ -101,9 +85,15 @@ class EventsController < ApplicationController
 
     @event.assign_attributes(modified_params)
 
+    @inventory_created = ""
+    @admins_notified = ""
+    @users_notified = ""
+    @results_emails_sent = ""
+
     # CREATE AN INVENTORY WHEN AN EVENT REPORT IS SUBMITTED UNDER CERTAIN CONDITIONS.
     # Fields in question: technologies_built, boxes_packed
     # Conditions: They're not negative AND ( they're not both 0 OR they weren't zero but now they are. )
+    # Quit if: the event's technology doesn't have a primary_component
 
     # Condition: Neither number is negative
     @positive_numbers = false
@@ -124,7 +114,7 @@ class EventsController < ApplicationController
     end
 
     # combine conditions
-    if @positive_numbers && ( @more_than_zero > 0 || @changed_to_zero )
+    if @positive_numbers && ( @more_than_zero > 0 || @changed_to_zero ) && @event.technology.primary_component.present? # ASSUMPTION: @event.technology has a primary_component
       @inventory = Inventory.where(event_id: @event.id).first_or_initialize
       @inventory.update(date: Date.today, completed_at: Time.now)
 
@@ -153,13 +143,10 @@ class EventsController < ApplicationController
       CountPopulate.new(@loose, @box, @event, @inventory, current_user.id)
       # extrapolate out the full inventory given the new results
       InventoriesController::Extrapolate.new(@inventory)
-
-      
+      @inventory_created = "Inventory created."
     end
 
-    @admins_notified = ""
-    @users_notified = ""
-    @results_emails_sent = ""
+    
 
     if @event.start_time_was > Time.now && (@event.start_time_changed? || @event.end_time_changed? || @event.location_id_changed? || @event.technology_id_changed? || @event.is_private_changed?)
       EventMailer.delay.changed(@event, current_user)
@@ -175,13 +162,20 @@ class EventsController < ApplicationController
     end
     
     @send_results_emails = false
-    if (@event.attendance_was == nil || @event.attendance_was == 0 ) && @event.attendance > 0 && @more_than_zero > 0
+    # CONDITIONS:
+    # This is the first time the event report is being submitted (emails_sent == false)
+    # The attendance is above 0
+    # There are registrations associated with the event
+    # The event generated some loose_count or unopened_boxes_count result
+    # The "Submit Report & Email Results" button was pushed (as opposed to the "Submit Report" button)
+    if @event.emails_sent == false && @event.attendance > 0 && @event.registrations.count > 0 && @more_than_zero > 0 && params[:send_report].present?
       @send_results_emails = true
+      @event.emails_sent = true
       @results_emails_sent = "Attendees notified of results."
     end
 
     if @event.save
-      flash[:success] = "Event updated. #{@admins_notified} #{@users_notified} #{@results_emails_sent}"
+      flash[:success] = "Event updated. #{@admins_notified} #{@users_notified} #{@results_emails_sent} #{@inventory_created}"
 
       if @send_results_emails == true
         @event.registrations.where(attended: true).each do |r|
@@ -242,6 +236,11 @@ class EventsController < ApplicationController
 
   def cancelled
     authorize @cancelled_events = Event.only_deleted
+    @user = current_user
+  end
+
+  def closed
+    authorize @closed_events = Event.closed
     @user = current_user
   end
 

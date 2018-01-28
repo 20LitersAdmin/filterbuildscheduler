@@ -50,6 +50,16 @@ hr.bar {
   margin-top: 12px;
 }
 
+.admin-div {
+  padding-top: .5em;
+  padding-bottom: 1.5em;
+  margin-bottom: 2em;
+  background-color: $slightly-darker-light-grey;
+  border-radius: 2px;
+  border-bottom: 2px solid $yellow;
+  box-shadow: 0 0 5px #888;
+}
+
 .twentyliters {
   text-rendering: optimizelegibility;
   -webkit-font-smoothing: antialiased;
@@ -251,12 +261,20 @@ hr.bar {
   background-color: $slightly-darker-light-grey;
   min-height: 268px !important;
   box-shadow: 0 0 5px #888;
+  margin-left: 2%;
+  margin-right: 2%;
+
+  &.col-md-6 {
+    width: 46%;
+  }
 }
 
 .emphasis-div-narrow {
   padding: .8em 1em;
   background-color: $slightly-darker-light-grey;
   box-shadow: 0 0 5px #888;
+  margin-left: 4%;
+  margin-right: 4%;
 }
 
 .success {

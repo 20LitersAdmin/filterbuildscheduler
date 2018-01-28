@@ -4,10 +4,15 @@
     <% if @event.is_private %>
       <h4 class="center-align">Private Event</h4>
     <% end %>
-    <% if @show_admin_registration || current_user&.is_admin %>
-      <%= link_to "Manage / Register Builders", event_registrations_path(@event), class: "btn blue" %>
-    <% end %>
   </div>
+  <% if current_user&.admin_or_leader? %>
+    <div class="col-xs-12 center admin-div">
+      <p>Available functions:</p>
+      <%= link_to("Edit Event", edit_event_path(@event), class: 'btn empty width188') %>
+      <%= link_to "Print Attendance List", attendance_event_path(@event), class: 'btn yellow width188' %>
+      <%= link_to "Manage Builders", event_registrations_path(@event), class: "btn blue width188" %>
+    </div>
+  <% end %>
 
   <div class="row">
     <div class="col-md-6">
@@ -93,7 +98,7 @@
           <% end %>
 
           <% if @event.location.map_url.present? %>
-            <%= link_to "Map", @event.location.map_url, class: "btn blue", target: "_blank" %>
+            <%= link_to "Map", @event.location.map_url, class: "btn blue fullwidth", target: "_blank" %>
           <% end %>
         </div>
         <% if @location_img.present? %>
@@ -108,10 +113,6 @@
           <% if @event.description.present? %>
             <h4>Additional Event Details</h3>
             <div><%= @event.description %></div>
-          <% end %>
-          <% if current_user&.is_admin? || current_user&.is_leader %>
-            <%= link_to("Edit Event", edit_event_path(@event), class: 'btn yellow') %>
-            <%= link_to "Print Attendance List", attendance_event_path(@event), class: 'btn empty' %>
           <% end %>
         </div>
       </div>
