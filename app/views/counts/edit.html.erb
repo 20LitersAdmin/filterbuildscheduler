@@ -2,6 +2,9 @@
   <h3><%= @count.name %></h3>
   <h4>For: <%= @count.tech_names %></h4>
   <h4><%= @context %></h4>
+  <h4>Partial_box? <%= @count.partial_box?  %></h4>
+  <h4>Partial_loose? <%= @count.partial_loose?  %></h4>
+  <h4>User ID: <%= @count.user_id %></h4>
   <%= simple_form_for([@inventory, @count])  do |f| %>
     <%= f.error_notification %>
 
@@ -27,8 +30,18 @@
     <%= f.input :user_id, as: :hidden, input_html: { value: current_user.id } %>
     <%= f.submit "Submit", class: "btn yellow fullwidth" %>
     <% if @inventory.type_for_params == "manual" %>
-      <%= f.button :submit, name: "partial", value: "Partial Count", class: "btn blue fullwidth" %>
+      <div class="col-xs-12 col-sm-6">
+        <%= f.button :submit, name: "partial_loose", value: "Partial Count: Loose", class: "btn blue fullwidth" %>
+      </div>
+      <div class="col-xs-12 col-sm-6">
+        <%= f.button :submit, name: "partial_box", value: "Partial Count: Boxes", class: "btn blue fullwidth" %>
+      </div>
     <% end %>
   <% end %>
   <%= link_to "Back", edit_inventory_path(@inventory), class: "btn yellow empty fullwidth" %>
+  <hr class="bar dark-grey">
 </div>
+
+
+
+<%= render partial: 'shared/calculator'  %>

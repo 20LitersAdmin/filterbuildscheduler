@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180120145432) do
+ActiveRecord::Schema.define(version: 20180127212242) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -39,6 +39,8 @@ ActiveRecord::Schema.define(version: 20180120145432) do
     t.integer "unopened_boxes_count", default: 0, null: false
     t.datetime "deleted_at"
     t.integer "extrapolated_count", default: 0, null: false
+    t.boolean "partial_box", default: false
+    t.boolean "partial_loose", default: false
     t.index ["component_id"], name: "index_counts_on_component_id"
     t.index ["deleted_at"], name: "index_counts_on_deleted_at"
     t.index ["inventory_id"], name: "index_counts_on_inventory_id"
@@ -195,6 +197,10 @@ ActiveRecord::Schema.define(version: 20180120145432) do
     t.integer "price_cents", default: 0, null: false
     t.string "price_currency", default: "USD", null: false
     t.integer "minimum_on_hand", default: 0, null: false
+    t.integer "shipping_cost_cents", default: 0, null: false
+    t.string "shipping_cost_currency", default: "USD", null: false
+    t.integer "wire_transfer_cost_cents", default: 0, null: false
+    t.string "wire_transfer_cost_currency", default: "USD", null: false
     t.index ["deleted_at"], name: "index_parts_on_deleted_at"
   end
 
@@ -265,6 +271,7 @@ ActiveRecord::Schema.define(version: 20180120145432) do
     t.boolean "does_inventory"
     t.boolean "send_notification_emails", default: false
     t.boolean "send_inventory_emails", default: false
+    t.boolean "email_opt_out", default: false
     t.index ["authentication_token"], name: "index_users_on_authentication_token", unique: true
     t.index ["deleted_at"], name: "index_users_on_deleted_at"
     t.index ["email"], name: "index_users_on_email", unique: true
