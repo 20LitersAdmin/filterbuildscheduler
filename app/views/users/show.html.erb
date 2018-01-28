@@ -10,7 +10,7 @@
 
   <% if @user.is_leader %>
     <div class="row">
-      <div class="emphasis-div col-md-6">
+      <div class="col-md-6 emphasis-div">
         <h3>Qualifications</h3>
         <% if @user.technologies.size.zero? %>
           <p>Not currently qualified with any technologies.</p>
@@ -22,7 +22,7 @@
           </ul>
         <% end %>
       </div>
-      <div class="emphasis-div col-md-6">
+      <div class="col-md-6 emphasis-div">
         <h3>Permissions</h3>
         <ul class="list-group">
           <li class="list-group-item">
@@ -44,44 +44,107 @@
         </ul>
       </div>
     </div>
+  <% end %>
 
-    <h3>Events you're leading</h3>
-    <% if @leading_events.length.positive? %>
-      <div class="event-container">
-        <%= render partial: 'events/event', collection: @leading_events %>
+  <div class="col-xs-12">
+    <div id="accordion" class="panel-group" role="tablist" aria-multiselectable="true">
+      <% if @user.is_leader? %>
+        <div class="panel panel-default">
+          <div class="panel-heading" role="tab" id="leading">
+            <h3 class="panel-title">
+              <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseLeading" aria-expanded="true" aria-controls="collapseLeading">
+                <i class="fa fa-plus"></i>
+                <i class="fa fa-minus"></i>
+                Events you're leading
+              </a>
+            </h3>
+          </div>
+          <div id="collapseLeading" class="panel-collapse collapse" role="tabpanel" area-labelledby="leading">
+            <div class="panel-body">
+              <% if @leading_events.length.positive? %>
+                <div class="event-container">
+                  <%= render partial: 'events/event', collection: @leading_events %>
+                </div>
+              <% else %>
+                <p>No upcoming events</p>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+
+      <div class="panel panel-default">
+        <div class="panel-heading" role="tab" id="attending">
+          <h3 class="panel-title">
+            <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseAttending" aria-expanded="true" aria-controls="collapseAttending">
+              <i class="fa fa-plus"></i>
+              <i class="fa fa-minus"></i>
+              Events you're attending
+            </a>
+          </h3>
+        </div>
+        <div id="collapseAttending" class="panel-collapse collapse" role="tabpanel" area-labelledby="attending">
+          <div class="panel-body">
+            <% if @attending_events.length.positive? %>
+              <div class="event-container">
+                <%= render partial: 'events/event', collection: @attending_events %>
+              </div>
+            <% else %>
+              <p>No upcoming events</p>
+            <% end %>
+          </div>
+        </div>
       </div>
-    <% else %>
-      <p>No upcoming events</p>
-    <% end %>
-  <% end %>
 
-  <h3>Events you're attending</h3>
-  <% if @attending_events.length.positive? %>
-    <div class="event-container">
-      <%= render partial: 'events/event', collection: @attending_events %>
-    </div>
-  <% else %>
-    <p>No upcoming events</p>
-  <% end %>
+      <% if @user.is_leader? %>
+        <div class="panel panel-default">
+          <div class="panel-heading" role="tab" id="lead">
+            <h3 class="panel-title">
+              <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseLead" aria-expanded="true" aria-controls="collapseLead">
+                <i class="fa fa-plus"></i>
+                <i class="fa fa-minus"></i>
+                Events you've lead
+              </a>
+            </h3>
+          </div>
+          <div id="collapseLead" class="panel-collapse collapse" role="tabpanel" area-labelledby="lead">
+            <div class="panel-body">
+              <% if @lead_events.length.positive? %>
+                <div class="event-container">
+                  <%= render partial: 'events/event', collection: @leading_events %>
+                </div>
+              <% else %>
+                <p>No past events</p>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      <% end %>
 
-  <% if @user.is_leader %>
-    <h3>Events you've lead</h3>
-    <% if @lead_events.length.positive? %>
-      <div class="event-container">
-        <%= render partial: 'events/event', collection: @lead_events %>
+      <div class="panel panel-default">
+        <div class="panel-heading" role="tab" id="attended">
+          <h3 class="panel-title">
+            <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseAttended" aria-expanded="true" aria-controls="collapseAttended">
+              <i class="fa fa-plus"></i>
+              <i class="fa fa-minus"></i>
+              Events you've attended
+            </a>
+          </h3>
+        </div>
+        <div id="collapseAttended" class="panel-collapse collapse" role="tabpanel" area-labelledby="attended">
+          <div class="panel-body">
+            <% if @attended_events.length.positive? %>
+              <div class="event-container">
+                <%= render partial: 'events/event', collection: @attended_events %>
+              </div>
+            <% else %>
+              <p>No past events</p>
+            <% end %>
+          </div>
+        </div>
       </div>
-    <% else %>
-      <p>No past events</p>
-    <% end %>
-  <% end %>
 
-  <h3>Events you've attended</h3>
-  <% if @attended_events.length.positive? %>
-    <div class="event-container">
-      <%= render partial: 'events/event', collection: @attended_events %>
     </div>
-  <% else %>
-    <p>No past events</p>
-  <% end %>
+  </div>
 
 </div>

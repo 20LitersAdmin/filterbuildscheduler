@@ -1,4 +1,7 @@
 $(document).on("turbolinks:load", function(){
+  // User#show and Pages#info accordion symbol switching
+  $(".panel-title").children("a").addClass("accordion-link")
+
   $('.datetimepicker').each(function(){
     var theValue = Date(this.value);
     $(this).datetimepicker({
@@ -29,7 +32,6 @@ $(document).on("turbolinks:load", function(){
       "t"+
       "<'row'"+
       "<'col-xs-8'p>"+
-      "<'col-xs-12 no-overflow center' B>"+
       ">",
     buttons: [ 'copy', 'csv', 'excel', 'print' ],
     language: {
@@ -59,4 +61,9 @@ $(document).on("turbolinks:load", function(){
       "<'col-xs-12 no-overflow center'>"+
       ">"
   });
+});
+
+// User#show and Pages#info accordion symbol switching
+$(document).on("click", "a.accordion-link", function() {
+  $(this).children(".fa").toggle();
 });

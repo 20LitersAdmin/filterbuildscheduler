@@ -13,6 +13,7 @@ Rails.application.routes.draw do
   resources :events do
     collection do
       get 'cancelled'
+      get 'closed'
     end
     member do
       get 'attendance'

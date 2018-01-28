@@ -1,4 +1,11 @@
 class EventPolicy < ApplicationPolicy
+  attr_reader :user, :event
+  
+  def initialize(user, event)
+    @user = user
+    @event = event
+  end
+
   def create?
     user&.admin_or_leader?
   end
@@ -16,7 +23,22 @@ class EventPolicy < ApplicationPolicy
   end
 
   def show?
-    true
+    if event.in_the_past?
+      if user.is_admin?
+        true
+      elsif user.is_leader?
+        # only show it if the leader led the event
+        if event.registrations.where(user: user).where(leader: true).present?
+          true
+        else
+          false
+        end
+      else # anonymous users and builders can't see past events
+        false
+      end
+    else # future events can always be seen by everyone
+      true
+    end
   end
 
   def edit?
@@ -24,6 +46,10 @@ class EventPolicy < ApplicationPolicy
   end
 
   def cancelled?
+    user&.admin_or_leader?
+  end
+
+  def closed?
     user&.is_admin?
   end
 
@@ -48,7 +74,7 @@ class EventPolicy < ApplicationPolicy
     end
 
     def resolve
-      if user&.is_leader? || user&.is_admin?
+      if user&.is_admin?
         Event.all
       elsif user
         user.available_events

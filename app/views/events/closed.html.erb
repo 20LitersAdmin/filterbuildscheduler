@@ -1,0 +1,10 @@
+<div class="container">
+  <div class="event-container">
+    <h2 class="heading">Closed Builds</h2>
+    <% if @closed_events.any? %>
+      <%= render partial: 'events/event', collection: @closed_events %>
+    <% else %>
+      <h4>No closed events in the system.</h4>
+    <% end %>
+  </div>
+</div>
