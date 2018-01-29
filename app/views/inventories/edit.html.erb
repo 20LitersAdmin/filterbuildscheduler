@@ -26,6 +26,24 @@
     </div>
   </div>
 
+  <div class="col-xs-12 center admin-div">
+    <p>Filters:</p>
+    <div class="btn-group btn-group-sm">
+      <button type="button" class="btn yellow count-btn" id="clear">Show All</button>
+    </div>
+    <div class="btn-group btn-group-sm" role="group">
+      <button type="button" class="btn yellow count-btn" id="uncounted">Uncounted</button>
+      <button type="button" class="btn yellow count-btn" id="partial">Partial</button>
+      <button type="button" class="btn blue count-btn" id="counted">Counted</button>
+    </div>
+
+    <div class="btn-group btn-group-sm" role="group">
+      <% @techs.each do |t| %>
+        <button type="button" class="btn empty tech-btn" id="<%= 'tech_' + t.id.to_s %>"><%= t.name %></button>
+      <% end %>
+    </div>
+  </div>
+
   <div class="col-xs-12" id="counts_div">
     <div class="row">
       <%= render partial: "count", collection: @counts %>
