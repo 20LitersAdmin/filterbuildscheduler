@@ -16,13 +16,16 @@
     </div>
 
     <div class="form-actions">
-      <%= f.button :submit, "Update", class: 'btn yellow fullwidth' %>
-      <% if @cancel_btn_admin %>
+      
+      <% if @btn_admin %>
+        <%= f.hidden_field :form_source, value: "admin" %>
+        <%= f.button :submit, "Update", class: 'btn yellow fullwidth' %>
         <%= link_to 'Cancel Registration', event_registration_path(@registration.event, @registration, admin: true),
             data: {:confirm => 'Are you sure?'},
             :method => :delete,
             class: 'btn red fullwidth' %>
       <% else %>
+        <%= f.button :submit, "Update", class: 'btn yellow fullwidth' %>
         <%= link_to 'Cancel Registration', event_registration_path(@registration.event, @registration),
             data: {:confirm => 'Are you sure?'},
             :method => :delete,

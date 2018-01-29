@@ -57,9 +57,13 @@
         <% else %>
           <div class="col-xs-12">
         <% end %>
-          <h2>The Filter</h2>
-          <h3><%= @event.technology.name %></h3>
-          <% if @event.technology.family_friendly %>
+          <% if @event.technology %>
+            <h2>The Filter</h2>
+            <h3><%= @event.technology.name %></h3>
+          <% else %>
+            <h2>The Age Limits</h2>
+          <% end %>
+          <% if @event.technology&.family_friendly %>
             <h4>Family-friendly! Ages 4 - 104!</h4>
           <% else %>
             <h4>Grown-up build</h4>

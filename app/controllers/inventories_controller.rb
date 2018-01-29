@@ -113,7 +113,6 @@ class InventoriesController < ApplicationController
     Extrapolate.new(@inventory)
 
     if @inventory.type_for_params == "manual" || @inventory.has_items_below_minimum?
-      #InventoryMailer.notify(@inventory, current_user).deliver!
       InventoryMailer.delay.notify(@inventory, current_user)
     end
     redirect_to inventories_path

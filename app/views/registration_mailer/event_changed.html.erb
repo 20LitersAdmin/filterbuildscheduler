@@ -3,7 +3,7 @@
 
   <p>The filter build event that you registered for has changed.</p>
 
-  <% if !@registration.guests_registered.nil? && @registration.guests_registered > 0 %>
+  <% if @registration.guests_registered > 0 %>
     <p>You registered to bring <%= pluralize(@registration.guests_registered, 'guest') %>. Please share this information with them.</p>
   <% end %>
 
@@ -46,6 +46,12 @@
         </ul>
       <% end %>
     </div>
+  </div>
+
+  <div class="whole" style="position: relative; min-height: 1px; padding-left: 15px; padding-right: 15px; float: left; width: 100%;">
+    <% if @is_private %>
+      <p><strong>The event type was changed:</strong> <%= privacy_case(@is_private) %></p>
+    <% end %>
   </div>
 
   <div class="whole" style="position: relative; min-height: 16px; padding-left: 15px; padding-right: 15px; float: left; width: 100%; text-align: left;">
