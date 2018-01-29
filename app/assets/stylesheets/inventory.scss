@@ -69,6 +69,29 @@
     }
   }
 
+  .count-filters {
+    display: none;
+  }
+
+  .admin-div {
+    margin-bottom: 1em;
+    padding-bottom: 0em;
+
+    p {
+      margin: 0px;
+    }
+
+    .btn-group {
+      margin: 14px;
+    }
+
+    .tech-btn {
+      // font-size: 9px;
+      padding-left: 4px;
+      padding-right: 4px;
+    }
+  }  
+
   #finalize_form {
     display: none;
   }
