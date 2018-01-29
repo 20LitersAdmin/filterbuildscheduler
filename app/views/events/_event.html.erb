@@ -11,10 +11,14 @@
       <h3 class="time"><%= event.format_time_only %></h3>
       <h3 class="title"><%= event.title %></h3>
       <div class='family-friendly'>
-        <% if event.technology.family_friendly %>
-          <i>Family Friendly</i>
+        <% if event.technology %>
+          <% if event.technology.family_friendly %>
+            <i>Family Friendly</i>
+          <% else %>
+            <i>Ages 12+</i>
+          <% end %>
         <% else %>
-          <i>Ages 12+</i>
+          <i>Age restrictions may apply</i>
         <% end %>
       </div>
 
