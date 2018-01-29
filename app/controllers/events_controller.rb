@@ -17,10 +17,10 @@ class EventsController < ApplicationController
     authorize @event = Event.find(params[:id])
     @registration = @event.registrations.where(user: current_user).first_or_initialize
 
-    if @event.technology.img_url.present?
+    if @event.technology&.img_url.present?
       @tech_img = @event.technology.img_url
     end
-    if @event.technology.info_url.present?
+    if @event.technology&.info_url.present?
       @tech_info = @event.technology.info_url
     end
     if @event.location.photo_url.present?
@@ -93,7 +93,7 @@ class EventsController < ApplicationController
     # CREATE AN INVENTORY WHEN AN EVENT REPORT IS SUBMITTED UNDER CERTAIN CONDITIONS.
     # Fields in question: technologies_built, boxes_packed
     # Conditions: They're not negative AND ( they're not both 0 OR they weren't zero but now they are. )
-    # Quit if: the event's technology doesn't have a primary_component
+    # ESCAPE CLAUSE: the event's technology doesn't have a primary_component
 
     # Condition: Neither number is negative
     @positive_numbers = false
@@ -114,7 +114,7 @@ class EventsController < ApplicationController
     end
 
     # combine conditions
-    if @positive_numbers && ( @more_than_zero > 0 || @changed_to_zero ) && @event.technology.primary_component.present? # ASSUMPTION: @event.technology has a primary_component
+    if @positive_numbers && ( @more_than_zero > 0 || @changed_to_zero ) && @event.technology.primary_component.present? # ESCAPE CLAUSE: @event.technology has a primary_component
       @inventory = Inventory.where(event_id: @event.id).first_or_initialize
       @inventory.update(date: Date.today, completed_at: Time.now)
 
@@ -147,15 +147,14 @@ class EventsController < ApplicationController
     end
 
     
-
     if @event.start_time_was > Time.now && (@event.start_time_changed? || @event.end_time_changed? || @event.location_id_changed? || @event.technology_id_changed? || @event.is_private_changed?)
-      EventMailer.delay.changed(@event, current_user)
-      #EventMailer.changed(@event, current_user).deliver!
+      # Can't use delayed_job because ActiveModel::Dirty doesn't persist
+      EventMailer.changed(@event, current_user).deliver!
       @admins_notified = "Admins notified."
       if @event.registrations.exists? && ( @event.start_time_changed? || @event.end_time_changed? || @event.location_id_changed? || @event.technology_id_changed? )
         @event.registrations.each do |registration|
-          RegistrationMailer.delay.event_changed(registration, @event)
-          #RegistrationMailer.event_changed(registration, @event).deliver!
+          # Can't use delayed_job because ActiveModel::Dirty doesn't persist
+          RegistrationMailer.event_changed(registration, @event).deliver!
           @users_notified = "All registered builders notified."
         end
       end
@@ -179,7 +178,7 @@ class EventsController < ApplicationController
 
       if @send_results_emails == true
         @event.registrations.where(attended: true).each do |r|
-          # RegistrationMailer.delay.event_results(r)
+          #RegistrationMailer.delay.event_results(r)
           RegistrationMailer.event_results(r).deliver!
         end
       end
@@ -208,21 +207,29 @@ class EventsController < ApplicationController
   def destroy
     authorize @event = Event.find(params[:id])
 
+    @event_id = @event.id
+
     @admins_notified = ""
     @users_notified = ""
 
     # send emails to registrations and leaders before cancelling
     if @event.start_time > Time.now
-      EventMailer.delay.cancelled(@event, current_user)
-      #EventMailer.cancelled(@event, current_user).deliver!
+      # Send the Event ID instead of the record, since the recod gets pushed out of default scope on paranoid deletion.
+      EventMailer.delay.cancelled(@event_id, current_user)
+      #EventMailer.cancelled(@event_id, current_user).deliver!
       @admins_notified = "Admins notified."
+
       if @event.registrations.exists?
-        @event.registrations.each do |registration|
-          RegistrationMailer.delay.event_cancelled(registration)
-          #RegistrationMailer.event_cancelled(registration).deliver!
-          @users_notified = "All registered builders notified."
+        # Collect the registration IDs instead of the records, because the records get pushed out of default scope on paranoid deletion.
+        @registration_ids = @event.registrations.map { |r| r.id }
+
+        @registration_ids.each do |registration_id|
+          RegistrationMailer.delay.event_cancelled(registration_id)
+          #RegistrationMailer.event_cancelled(r).deliver!
         end
+        @users_notified = "All registered builders notified."
       end
+
     end
 
     if @event.destroy

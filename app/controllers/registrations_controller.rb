@@ -110,7 +110,6 @@ class RegistrationsController < ApplicationController
       @registration.save
       if @event.start_time > Time.now # don't send emails for past events.
         RegistrationMailer.delay.created @registration
-        # RegistrationMailer.created(@registration).deliver!
       end
       @user.update_attributes!(signed_waiver_on: Time.now) unless current_user.waiver_accepted
       flash[:success] = "Registration successful!"
@@ -126,7 +125,6 @@ class RegistrationsController < ApplicationController
     # if @registration.save
     #   if @event.start_time > Time.now # don't send emails for past events.
     #     RegistrationMailer.delay.created @registration
-    #     # RegistrationMailer.created(@registration).deliver!
     #   end
     #   @user.update_attributes!(signed_waiver_on: Time.now) unless current_user.waiver_accepted
     #   flash[:success] = "Registration successful!"
@@ -194,9 +192,9 @@ class RegistrationsController < ApplicationController
     @message = params[:message]
     @sender = current_user
     @event.registrations.each do |registration|
-      EventMailer.messenger(registration, @subject, @message, @sender).deliver!
+      EventMailer.delay.messenger(registration, @subject, @message, @sender)
     end
-    EventMailer.messenger_reporter(@event, @subject, @message, @sender).deliver!
+    EventMailer.delay.messenger_reporter(@event, @subject, @message, @sender)
 
     flash[:success] = "Message sent!"
     redirect_to event_registrations_path(@event)
