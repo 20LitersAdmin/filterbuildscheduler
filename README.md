@@ -6,13 +6,11 @@
   - list components and parts with quantities
   - Add pricing / ordering views
 5. Write tests until everyone is happy (*Ross*) because TDD is real.
-12. Monthly report: structure and auto-send
+12. Monthly report: structure and auto-send on first of every month
 
 ## BUGS!! AH BUGS!!!
-11. Event changed email is triggered when technology is changed, but email doesn't specify the change.
 1. RegistrationController::Update -- need error handling line #30 and #46
 2. accepts_nested_attributes_for seems to break event#show, at least for anon view
-4. Registration#Edit always goes back to Event#Show
 12. Inventories created from events aren't subtracting parts from components (parts used to build the technologies_built or boxes_packed)
 
 ## The Future

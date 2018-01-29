@@ -66,11 +66,11 @@ class RegistrationMailer < ApplicationMailer
       @recipient.save
     end
 
-    event.changes.each_pair { |k, v| instance_variable_set("@#{k}", v) }
+    @event.changes.each_pair { |k, v| instance_variable_set("@#{k}", v) }
     @location = @event.location
-    @location_was = Location.find(event.location_id_was)
-    @technology = event.technology
-    @technology_was = Technology.find(event.technology_id_was)
+    @location_was = Location.find(@event.location_id_was)
+    @technology = @event.technology
+    @technology_was = Technology.find(@event.technology_id_was)
 
     @description = render partial: 'details.text'
     @details = @description.gsub("\n","%0A").gsub(" ","%20")
@@ -107,11 +107,11 @@ class RegistrationMailer < ApplicationMailer
     mail(to: @recipient.email, subject: "[20 Liters] Reminder: Filter build on #{@event.mailer_time}")
   end
 
-  def event_cancelled(registration)
-    @registration = registration
-    @recipient = registration.user
-    @event = registration.event
-    @location = @event.location
+  def event_cancelled(registration_id)
+    @registration = Registration.with_deleted.find(registration_id)
+    @recipient = @registration.user
+    @event = Event.with_deleted.find(@registration.event_id)
+    @location = Location.with_deleted.find(@event.location_id)
 
     mail(to: @recipient.email, subject: '[20 Liters] NOTICE: Build Event Cancelled')
   end
