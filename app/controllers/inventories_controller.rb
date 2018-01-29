@@ -88,6 +88,16 @@ class InventoriesController < ApplicationController
     @counts = @inventory.counts.sort_by { |c| [c.sort_by_user, c.tech_names, - c.name] }
     @uncounted = @inventory.counts.where(user_id: nil).count
 
+    @tech_ids = []
+    @inventory.counts.each do |c|
+      @tech_ids << c.item.technologies.map { |t| t.id }
+    end
+
+    @tech_ids.flatten!
+    @tech_ids.uniq!
+
+    @techs = Technology.find(@tech_ids)
+
     if params[:unlock] == "true"
       @inventory.completed_at = nil
       @inventory.save
