@@ -9,7 +9,6 @@
 12. Monthly report: structure and auto-send
 
 ## BUGS!! AH BUGS!!!
-11. Event changed email doesn't list technology changed as option
 1. RegistrationController::Update -- need error handling line #30 and #46
 2. accepts_nested_attributes_for seems to break event#show, at least for anon view
 4. Registration#Edit always goes back to Event#Show
