@@ -1,4 +1,4 @@
-<div class="col-md-3 col-sm-4">
+<div class="col-md-3 col-sm-4 count-parent" id="<%= 'count_' + count.id.to_s %>">
   <div class="count-div">
     <p class="count-title"><%= count.name %></p>
     <p class="count-tech"><strong>For:</strong> <%= count.tech_names %></p>
@@ -10,6 +10,11 @@
       </p>
       <%= link_to "Edit", edit_inventory_count_path(@inventory, count), class: "btn blue fullwidth" %>
     <% end %>
+  </div>
+  <div class="count-filters">
+    <p class="counted" title="<%= if count.user_id != nil then 'true' else 'false' end %>"></p>
+    <p class="partial" title="<%= if count.partial_box || count.partial_loose then 'true' else 'false' end %>"></p>
+    <p class="techs" title="<%= count.item.technologies.map { |t| t.id }.to_s.gsub('[','').gsub(']','')  %>"></p>
   </div>
 </div>
 
