@@ -178,8 +178,7 @@ class EventsController < ApplicationController
 
       if @send_results_emails == true
         @event.registrations.where(attended: true).each do |r|
-          #RegistrationMailer.delay.event_results(r)
-          RegistrationMailer.event_results(r).deliver!
+          RegistrationMailer.delay.event_results(r)
         end
       end
 
@@ -216,7 +215,6 @@ class EventsController < ApplicationController
     if @event.start_time > Time.now
       # Send the Event ID instead of the record, since the recod gets pushed out of default scope on paranoid deletion.
       EventMailer.delay.cancelled(@event_id, current_user)
-      #EventMailer.cancelled(@event_id, current_user).deliver!
       @admins_notified = "Admins notified."
 
       if @event.registrations.exists?
@@ -225,7 +223,6 @@ class EventsController < ApplicationController
 
         @registration_ids.each do |registration_id|
           RegistrationMailer.delay.event_cancelled(registration_id)
-          #RegistrationMailer.event_cancelled(r).deliver!
         end
         @users_notified = "All registered builders notified."
       end

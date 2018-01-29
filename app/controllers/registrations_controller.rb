@@ -8,7 +8,7 @@ class RegistrationsController < ApplicationController
 
     @leaders = @event.registrations.registered_as_leader
 
-    @deleted = @registrations.only_deleted
+    @deleted = @event.registrations.only_deleted
   end
 
   def new
@@ -137,23 +137,28 @@ class RegistrationsController < ApplicationController
 
   def edit
     authorize @registration = Registration.find(params[:id])
-    if params[:admin] == "true"
-      @cancel_btn_admin = true
-    else
-      @cancel_btn_admin = false
-    end
-  end
 
-  def show
+    if params[:admin] == "true"
+      @btn_admin = true
+    else
+      @btn_admin = false
+    end
   end
 
   def update
     authorize @registration
     @registration.update(registration_params)
+
     if @registration.errors.any?
       flash[:danger] = @registration.errors.map { |k,v| v }.join(', ')
+      render 'edit'
+    else
+      if params[:registration][:form_source] = "admin"
+        redirect_to event_registrations_path(@registration.event)
+      else
+        redirect_to event_path(@registration.event)
+      end
     end
-    redirect_to event_path(@registration.event)
   end
 
   def destroy
