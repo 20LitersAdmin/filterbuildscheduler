@@ -8,8 +8,6 @@
   - if made_from_materials, don't include on list.
 5. Write tests until everyone is happy (*Ross*) because TDD is real.
 12. Monthly report: structure and auto-send on first of every month
-14. Help people know if they are finishing a partial count
-16. Count: show quantity per box as a reference
 
 ## BUGS!! AH BUGS!!!
 1. RegistrationController::Update -- need error handling line #30 and #46
