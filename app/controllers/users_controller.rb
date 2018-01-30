@@ -51,6 +51,23 @@ class UsersController < ApplicationController
     redirect_to users_path
   end
 
+  def communication
+    authorize @users = User.builders.order(created_at: :desc)
+  end
+
+  def comm_complete
+    @user_ids = params[:user_ids]
+    
+    if @user_ids.present? 
+      User.find(@user_ids).each do |u|
+        u.email_opt_out = true
+        u.save
+      end
+    end
+
+    redirect_to users_communication_path
+  end
+
   private
 
   def find_and_authorize_user

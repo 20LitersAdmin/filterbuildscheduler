@@ -57,6 +57,30 @@
 
   .fa-minus {
     display: none;
+    }
   }
+}
+
+.users-comm {
+  .comm-update-div {
+    // text-align: right;
+    .comm-update-btn {
+      margin-bottom: 1em;
+    }
+  }
+}
+
+
+
+@media screen and (max-width: 767px) {
+  .comm-update-div {
+    text-align: center;
+    left: 27px;
+  }
+}
+
+@media screen and (min-width: 768px) {
+  .comm-update-div {
+    text-align: right;
   }
 }

@@ -61,6 +61,18 @@ $(document).on("turbolinks:load", function(){
       "<'col-xs-12 no-overflow center'>"+
       ">"
   });
+
+  $('.datatable-search').DataTable({
+    order: [],
+    paging: false,
+    responsive: true,
+    autoWidth: false,
+    info: false,
+    dom: "ft",
+    columnDefs: [
+    { "orderable": false, "targets": -1 }
+  ]
+  });
 });
 
 // User#show and Pages#info accordion symbol switching

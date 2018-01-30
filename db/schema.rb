@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180128213407) do
+ActiveRecord::Schema.define(version: 20180130011919) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -261,15 +261,15 @@ ActiveRecord::Schema.define(version: 20180128213407) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "phone"
-    t.boolean "is_leader"
-    t.boolean "is_admin"
+    t.boolean "is_leader", default: false
+    t.boolean "is_admin", default: false
     t.date "signed_waiver_on"
     t.integer "primary_location_id"
     t.string "fname"
     t.string "lname"
     t.datetime "deleted_at"
     t.string "authentication_token", limit: 30
-    t.boolean "does_inventory"
+    t.boolean "does_inventory", default: false
     t.boolean "send_notification_emails", default: false
     t.boolean "send_inventory_emails", default: false
     t.boolean "email_opt_out", default: false

@@ -16,6 +16,10 @@ class UserPolicy < ApplicationPolicy
     user.is_admin? || user == record
   end
 
+  def communication?
+    user.is_admin?
+  end
+
   class Scope
     attr_reader :user, :scope
 

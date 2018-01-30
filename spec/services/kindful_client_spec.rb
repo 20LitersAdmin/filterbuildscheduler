@@ -12,7 +12,8 @@ RSpec.describe KindfulClient do
         fname: "Person",
         lname: "Last",
         email: "email@test.com",
-        phone: "555-555-5555"
+        phone: "555-555-5555",
+        email_opt_in: true
       }
 
       arguments = {
@@ -20,7 +21,9 @@ RSpec.describe KindfulClient do
         body: client.contact(**body_args).to_json
       }
       expect(KindfulClient).to receive(:post).with('/imports', arguments).and_return(http_spy)
-      user2 = User.new(body_args)
+      modified_args = body_args.dup
+      modified_args.delete(:email_opt_in)
+      user2 = User.new(modified_args)
       user2.save
     end
   end
