@@ -12,7 +12,8 @@ class KindfulClient
       fname: user.fname,
       lname: user.lname,
       email: user.email,
-      phone: user.phone
+      phone: user.phone,
+      email_opt_in: user.email_opt_out ? false : true
     }
     self.class.post("/imports", {headers: headers, body: contact(**body_args).to_json} )
   end
@@ -36,7 +37,7 @@ class KindfulClient
     #causevox
   end
 
-  def contact(id:, fname:, lname:, email:, phone:)
+  def contact(id:, fname:, lname:, email:, phone:, email_opt_in:)
     {
       "data_format": "contact",
       "action_type": "update",
@@ -52,6 +53,7 @@ class KindfulClient
           "first_name": fname,
           "last_name": lname,
           "email": email,
+          "email_opt_in": email_opt_in,
           "Volunteer: Filter Builders": "yes"
         }
       ]
