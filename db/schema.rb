@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180130011919) do
+ActiveRecord::Schema.define(version: 20180130204411) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -26,6 +26,7 @@ ActiveRecord::Schema.define(version: 20180130011919) do
     t.datetime "updated_at", null: false
     t.integer "quantity_per_box", default: 1
     t.float "tare_weight", default: 0.0
+    t.text "comments"
     t.index ["deleted_at"], name: "index_components_on_deleted_at"
   end
 
@@ -168,6 +169,7 @@ ActiveRecord::Schema.define(version: 20180130011919) do
     t.integer "price_cents", default: 0, null: false
     t.string "price_currency", default: "USD", null: false
     t.integer "minimum_on_hand", default: 0, null: false
+    t.text "comments"
     t.index ["deleted_at"], name: "index_materials_on_deleted_at"
   end
 
@@ -202,6 +204,7 @@ ActiveRecord::Schema.define(version: 20180130011919) do
     t.string "shipping_cost_currency", default: "USD", null: false
     t.integer "wire_transfer_cost_cents", default: 0, null: false
     t.string "wire_transfer_cost_currency", default: "USD", null: false
+    t.text "comments"
     t.index ["deleted_at"], name: "index_parts_on_deleted_at"
   end
 
@@ -237,6 +240,7 @@ ActiveRecord::Schema.define(version: 20180130011919) do
     t.integer "people", default: 0, null: false
     t.integer "lifespan_in_years", default: 0, null: false
     t.integer "liters_per_day", default: 0
+    t.text "comments"
     t.index ["deleted_at"], name: "index_technologies_on_deleted_at"
   end
 
