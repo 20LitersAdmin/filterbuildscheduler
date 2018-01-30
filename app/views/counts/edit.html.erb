@@ -15,7 +15,7 @@
       </div>
     </div>
 
-    <%= f.input :unopened_boxes_count, label: "Unopened boxes:", input_html: { value: @box_val}  %>
+    <%= f.input :unopened_boxes_count, label: "Unopened boxes: (#{@count.item.quantity_per_box } per box)", input_html: { value: @box_val}  %>
     <div class="row">
       <div class="col-xs-12 right-align expectation">
         <span id="expected_box_count_parent" class="highlight red empty right-align">
