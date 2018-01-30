@@ -8,9 +8,7 @@
   - if made_from_materials, don't include on list.
 5. Write tests until everyone is happy (*Ross*) because TDD is real.
 12. Monthly report: structure and auto-send on first of every month
-13. If count is for 2 or more techs, do the filters find it? NO
 14. Help people know if they are finishing a partial count
-15. Sort counts by name, not tech
 16. Count: show quantity per box as a reference
 
 ## BUGS!! AH BUGS!!!
