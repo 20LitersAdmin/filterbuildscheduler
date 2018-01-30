@@ -5,6 +5,7 @@
 4. Technologies views:
   - list components and parts with quantities
   - Add pricing / ordering views
+  - if made_from_materials, don't include on list.
 5. Write tests until everyone is happy (*Ross*) because TDD is real.
 12. Monthly report: structure and auto-send on first of every month
 

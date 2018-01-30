@@ -5,9 +5,10 @@ class User < ApplicationRecord
   # :confirmable, :lockable, :timeoutable and :omniauthable
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :trackable, :validatable
-  scope :leaders, -> {active.where(is_leader: true)}
-  scope :builders, -> {active}
-  scope :admin, -> {where(is_admin: true)}
+  scope :leaders, -> { where(is_leader: true)}
+  scope :admins, -> { where(is_admin: true) }
+  scope :builders, -> { where.not(is_admin: true).where.not(is_leader: true).where.not(does_inventory: true)}
+  
   has_many :registrations
   has_many :events, through: :registrations
   has_and_belongs_to_many :technologies
@@ -19,7 +20,7 @@ class User < ApplicationRecord
 
   before_save :ensure_authentication_token
 
-  after_save :update_kindful, if: Proc.new { |user| user.saved_change_to_fname? || user.saved_change_to_lname? || user.saved_change_to_email? }
+  after_save :update_kindful, if: Proc.new { |user| user.saved_change_to_fname? || user.saved_change_to_lname? || user.saved_change_to_email? || user.saved_change_to_email_opt_out? }
 
   def admin_or_leader?
     is_admin? || is_leader?

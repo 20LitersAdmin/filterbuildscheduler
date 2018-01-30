@@ -1,0 +1,5 @@
+<tr>
+  <td><%= link_to comm_tbl.name, rails_admin.edit_path(model_name: 'user', id: comm_tbl.id) %></td>
+  <td><%= comm_tbl.email %></td>
+  <td class="center"><%= check_box_tag "user_ids[]", comm_tbl.id, comm_tbl.email_opt_out %></td>
+</tr>

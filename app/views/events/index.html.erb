@@ -6,8 +6,11 @@
       <% if @cancelled_events.exists? %>
         <%= link_to "Manage Cancelled Events", cancelled_events_path, class: 'btn red' %>
       <% end %>
-      <% if current_user.is_admin? && @closed_events.present? %>
-        <%= link_to("Manage Closed Events", closed_events_path , class: 'btn blue') %>
+      <% if current_user.is_admin? %>
+        <%= link_to("Manage User Comm. Prefs",  users_communication_path, class: 'btn yellow') %>
+        <% if @closed_events.present? %>
+          <%= link_to("Manage Closed Events", closed_events_path , class: 'btn blue') %>
+        <% end %>
       <% end %>
     </div>
   <% end %>

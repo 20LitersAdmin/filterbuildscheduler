@@ -4,14 +4,12 @@ function filterView(type, button) {
   var target = "." + btnId;
   
   if (type == "count") {
-
     var goal = "true"
     var parent_id = ""
     if (btnId == "uncounted") {
       target = ".counted";
       goal = "false";
     };
-
     $(target).each(function() {
       parent_id = "#" + $(this).parents(".count-parent").attr("id");
       if ( $(this).attr("title") != goal ) {
@@ -27,7 +25,6 @@ function filterView(type, button) {
       parent_id = "#" + $(this).parents(".count-parent").attr("id");
       var techStr = $(this).attr("title");
       var techAry = techStr.split(",");
-
       if ( techAry.includes(goalStr) ) {
         $(parent_id).show();
       } else {
@@ -41,11 +38,13 @@ function filterView(type, button) {
   $(document).on("click", "#show_finalize_form", function() {
     $('#finalize_form').fadeIn();
     $('#counts_div').hide();
+    $('#admin_div').hide();
     event.preventDefault();
   });
   $(document).on("click", "#hide_finalize_form", function() {
     $('#finalize_form').hide();
     $('#counts_div').fadeIn();
+    $('#admin_div').fadeIn();
     event.preventDefault();
   });
   $(document).on("click", ".count-btn", function() {

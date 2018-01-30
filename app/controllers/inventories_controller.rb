@@ -85,7 +85,7 @@ class InventoriesController < ApplicationController
 
   def edit
     authorize @inventory = Inventory.find(params[:id])
-    @counts = @inventory.counts.sort_by { |c| [c.sort_by_user, c.tech_names, - c.name] }
+    @counts = @inventory.counts.sort_by { |c| [c.sort_by_user, - c.name] }
     @uncounted = @inventory.counts.where(user_id: nil).count
 
     @tech_ids = []
