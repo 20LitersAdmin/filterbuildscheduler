@@ -14,7 +14,7 @@
   <div class="count-filters">
     <p class="counted" title="<%= if count.user_id != nil then 'true' else 'false' end %>"></p>
     <p class="partial" title="<%= if count.partial_box || count.partial_loose then 'true' else 'false' end %>"></p>
-    <p class="techs" title="<%= count.item.technologies.map { |t| t.id }.to_s.gsub('[','').gsub(']','')  %>"></p>
+    <p class="techs" title="<%= count.item.technologies.map { |t| t.id }.to_s.gsub('[','').gsub(']','').gsub(' ','')  %>"></p>
   </div>
 </div>
 
