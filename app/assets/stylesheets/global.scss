@@ -16,12 +16,6 @@ html {
   overflow: hidden;
 }
 
-.center {
-  text-align: center;
-  margin-right: auto;
-  margin-left: auto;
-}
-
 .btn.fullwidth {
   margin-top: .5em;
   margin-bottom: .5em;
@@ -77,6 +71,12 @@ hr.bar {
 
   .center-align {
     text-align: center;
+  }
+
+  .center {
+    text-align: center;
+    margin-right: auto;
+    margin-left: auto;
   }
 
   .right-align {
