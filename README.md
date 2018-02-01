@@ -8,6 +8,18 @@
   - if made_from_materials, don't include on list.
 5. Write tests until everyone is happy (*Ross*) because TDD is real.
 12. Monthly report: structure and auto-send on first of every month
+13. Tests for new comments fields: parts, materials, components, technologies
+
+66. SUPPLIERS model with:
+  - Name
+  - URL
+  - POC (name, email, phone, address)
+  - Comments
+  - Joins: Parts (many parts, many suppliers), Materials (many materials, many suppliers)
+
+67. List of builds that still need leaders
+  - ROOT/events/lead
+  - Click link to go to event#show
 
 ## BUGS!! AH BUGS!!!
 1. RegistrationController::Update -- need error handling line #30 and #46
