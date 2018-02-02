@@ -9,6 +9,10 @@ class Material < ApplicationRecord
 
   has_many :counts, dependent: :destroy
 
+  has_many :supplier_materials, dependent: :destroy, inverse_of: :material
+  has_many :suppliers, through: :supplier_materials
+  accepts_nested_attributes_for :supplier_materials, allow_destroy: true
+
   monetize :price_cents, numericality: { greater_than_or_equal_to: 0 }
   monetize :additional_cost_cents, numericality: { greater_than_or_equal_to: 0 }
 end
