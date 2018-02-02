@@ -248,6 +248,20 @@ class EventsController < ApplicationController
     @user = current_user
   end
 
+  def lead
+    #authorize @events = Event.future.still_needs_leaders
+    
+    @user = current_user
+
+    @events = []
+
+    Event.future.each do |e|
+      if e.needs_leaders?
+        @events << e
+      end
+    end
+  end
+
   def restore
     authorize @event = Event.only_deleted.find(params[:id])
     if params[:recursive] == "false"

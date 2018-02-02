@@ -4,6 +4,8 @@ class Event < ApplicationRecord
   belongs_to :location
   belongs_to :technology
   has_many :registrations, dependent: :destroy
+  accepts_nested_attributes_for :registrations
+
   has_many :users, through: :registrations
   has_one :inventory
 
@@ -20,7 +22,9 @@ class Event < ApplicationRecord
   scope :needs_report, -> { where('start_time <= ?', Time.now).where(attendance: 0).order(start_time: :desc) }
   scope :closed, -> { where('start_time <= ?', Time.now).where.not(attendance: 0).order(start_time: :desc) }
 
-  accepts_nested_attributes_for :registrations
+  # Not working as expected
+  # scope :still_needs_leaders, -> { joins(:registrations).group("events.id").having("count(CASE WHEN registrations.leader THEN 1 END) < events.max_leaders") }
+  
 
   def in_the_past?
     return end_time <= Time.now
