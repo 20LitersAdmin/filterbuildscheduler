@@ -16,6 +16,7 @@ Rails.application.routes.draw do
     collection do
       get 'cancelled'
       get 'closed'
+      get 'lead'
     end
     member do
       get 'attendance'

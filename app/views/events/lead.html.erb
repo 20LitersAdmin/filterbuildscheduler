@@ -1,0 +1,25 @@
+<div class="container">
+  <div class="event-container">
+    <h2 class="heading">Builds that need leaders</h2>
+    <% if @events.any? %>
+      <table class="table table-striped datatable-search" id="events_leaders_table">
+        <thead>
+          <tr>
+            <th data-priority="1"></th>
+            <th data-priority="1">Event</th>
+            <th data-priority="1">Date</th>
+            <th data-priority="1">Time</th>
+            <th>Builders</th>
+            <th>Leaders</th>
+            <th>Leader slots remaining</th>
+          </tr>
+        </thead>
+        <tbody>
+          <%= render partial: 'table', collection: @events %>
+        </tbody>
+      </table>
+    <% else %>
+      <h4>All events have leaders!</h4>
+    <% end %>
+  </div>
+</div>
