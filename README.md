@@ -9,6 +9,9 @@
 5. Write tests until everyone is happy (*Ross*) because TDD is real.
 12. Monthly report: structure and auto-send on first of every month
 13. Tests for new comments fields: parts, materials, components, technologies
+14. Remove the redundent fields from Part and Material (after copying stuff over)
+15. All the monetize calls on models are redundent. See supplier_part for a good example
+16. Test for new models: supplier, supplier_part, supplier_material
 
 66. SUPPLIERS model with:
   - Name
@@ -41,3 +44,4 @@
 
 ## Remind myself:
 1. development restore-from production
+2. "Your branch is n commits behind master" - git fetch origin

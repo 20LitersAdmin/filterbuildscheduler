@@ -15,6 +15,10 @@ class Part < ApplicationRecord
 
   has_many :counts, dependent: :destroy
 
+  has_many :supplier_parts, dependent: :destroy, inverse_of: :part
+  has_many :suppliers, through: :supplier_parts
+  accepts_nested_attributes_for :supplier_parts, allow_destroy: true
+
   monetize :price_cents, allow_nil: true, numericality: { greater_than_or_equal_to: 0 }
   monetize :additional_cost_cents, allow_nil: true, numericality: { greater_than_or_equal_to: 0 }
   monetize :shipping_cost_cents, allow_nil: true, numericality: { greater_than_or_equal_to: 0 }
