@@ -127,8 +127,24 @@ RailsAdmin.config do |config|
     exclude_fields :extrapolate_technology_components, :extrapolate_component_parts, :counts
   end
 
+  config.model Supplier do
+    list do
+      scopes [nil, :only_deleted]
+      field :name
+      field :url
+      field :POC_name
+      field :POC_email
+    end
+    configure :deleted_at do
+      show
+    end
+
+    exclude_fields :supplier_parts, :supplier_materials, :parts, :materials
+  end
+
+
   config.model Material do
-    parent Technology
+    parent Supplier
     list do
       scopes [nil, :only_deleted]
       field :name
@@ -147,11 +163,11 @@ RailsAdmin.config do |config|
       show
     end
 
-    exclude_fields :extrapolate_material_parts, :counts
+    exclude_fields :extrapolate_material_parts, :counts, :suppliers
   end
 
   config.model Part do
-    parent Technology
+    parent Supplier
     list do
       scopes [nil, :only_deleted]
       field :name
@@ -169,7 +185,19 @@ RailsAdmin.config do |config|
       show
     end
 
-    exclude_fields :extrapolate_technology_parts, :extrapolate_component_parts, :extrapolate_material_parts, :counts
+    exclude_fields :extrapolate_technology_parts, :extrapolate_component_parts, :extrapolate_material_parts, :counts, :suppliers
+  end
+
+  config.model SupplierPart do
+    parent Supplier
+    label "Supplier <-> Part"
+    label_plural "Supplier <-> Parts"
+  end
+
+  config.model SupplierMaterial do
+    parent Supplier
+    label "Supplier <-> Material"
+    label_plural "Supplier <-> Materials"
   end
 
   config.model Registration do
