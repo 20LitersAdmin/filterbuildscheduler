@@ -38,3 +38,6 @@
 4. Add a Stripe Webhook / API for CauseVox to replace Zapier
   * Accepting & reading Stripe webhook is working
   * Sending to Kindful is not
+
+## Remind myself:
+1. development restore-from production
