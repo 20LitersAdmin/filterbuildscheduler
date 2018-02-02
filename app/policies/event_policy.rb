@@ -53,6 +53,10 @@ class EventPolicy < ApplicationPolicy
     user&.is_admin?
   end
 
+  def lead?
+    user&.admin_or_leader?
+  end
+
   def restore?
     user&.admin_or_leader?
   end
