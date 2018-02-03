@@ -1,0 +1,20 @@
+<tr>
+  <td data-priority="1">
+    <%= order_tbl.name %>
+  </td>
+  <td data-priority="2">
+    <%= order_tbl.tech_names %>
+  </td>
+  <td class="center-align" data-priority="1">
+    <%= #number_with_delimiter(order_tbl.item.min_order, delimiter: ',') %>
+  </td>
+  <td class="center-align" data-priority="1">
+    <%= #number_with_delimiter(order_tbl.available, delimiter: ',') %>
+  </td>
+  <td class="center-align" data-priority="2">
+    <%= #number_with_delimiter(order_tbl.item.minimum_on_hand, delimiter: ',') %>
+  </td>
+  <td class="center-align" data-priority="2">
+    <%= #number_with_delimiter(order_tbl.item.weeks_to_deliver, delimiter: ',') %>
+  </td>
+</tr>

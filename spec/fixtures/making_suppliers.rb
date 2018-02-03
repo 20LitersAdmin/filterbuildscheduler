@@ -1,8 +1,14 @@
 # creating suppliers from parts
 
-parts = Part.all.where('length(supplier) > 0')
+parts = Part.all.where('length(supplier_name) > 0')
 
 parts.each do |p|
-  s = Supplier.find_or_create_by(name: p.supplier)
-  
+  Supplier.find_or_create_by(name: p.supplier_name)
 end
+
+materials = Material.all.where('length(supplier_name) > 0')
+
+materials.each do |m|
+  Material.find_or_create_by(name: m.supplier_name)
+end
+
