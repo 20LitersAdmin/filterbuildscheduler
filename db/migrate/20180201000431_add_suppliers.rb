@@ -22,42 +22,14 @@ class AddSuppliers < ActiveRecord::Migration[5.1]
       t.index ["name"], name: "index_suppliers_on_name"
     end
 
-    create_table :supplier_parts do |t|
-      t.references :supplier, null: false
-      t.references :part, null: false
-      t.string :order_url
-      t.integer :min_order, default: 1, null: false
-      t.string :sku
-      t.float :weeks_to_deliver, default: 1, null: false
-      t.integer :minimum_on_hand, default: 1, null: false
-      t.integer :quantity_per_box, default: 1, null: false
-      t.monetize :price, amount: { null: false, default: 0 }
-      t.monetize :shipping, amount: { null: false, default: 0 }
-      t.monetize :wire_transfer, amount: { null: false, default: 0 }
-      t.monetize :additional_cost, amount: { null: false, default: 0 }
-      t.text :comments
-      t.datetime :deleted_at
-      t.index ["supplier_id", "part_id"], name: "index_supplier_parts_on_supplier_id_and_part_id"
-      t.index ["part_id", "supplier_id"], name: "index_supplier_parts_on_part_id_and_supplier_id"
+    create_join_table :suppliers, :parts, table_name: :supplier_parts do |t|
+      t.index [:supplier_id, :part_id], unique: true
+      t.index [:part_id, :supplier_id], unique: true
     end
 
-    create_table :supplier_materials do |t|
-      t.references :supplier, null: false
-      t.references :material, null: false
-      t.string :order_url
-      t.integer :min_order, default: 1, null: false
-      t.string :sku
-      t.float :weeks_to_deliver, default: 1, null: false
-      t.integer :minimum_on_hand, default: 1, null: false
-      t.integer :quantity_per_box, default: 1, null: false
-      t.monetize :price, amount: { null: false, default: 0 }
-      t.monetize :shipping, amount: { null: false, default: 0 }
-      t.monetize :wire_transfer, amount: { null: false, default: 0 }
-      t.monetize :additional_cost, amount: { null: false, default: 0 }
-      t.text :comments
-      t.datetime :deleted_at
-      t.index ["supplier_id", "material_id"], name: "index_supplier_materials_on_supplier_id_and_material_id"
-      t.index ["material_id", "supplier_id"], name: "index_supplier_materials_on_material_id_and_supplier_id"
+    create_join_table :suppliers, :materials, table_name: :supplier_materials do |t|
+      t.index [:supplier_id, :material_id], unique: true
+      t.index [:material_id, :supplier_id], unique: true
     end
 
   end

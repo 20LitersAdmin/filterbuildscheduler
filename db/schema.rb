@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180201000431) do
+ActiveRecord::Schema.define(version: 20180203161823) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -155,7 +155,7 @@ ActiveRecord::Schema.define(version: 20180201000431) do
 
   create_table "materials", force: :cascade do |t|
     t.string "name", null: false
-    t.string "supplier"
+    t.string "supplier_name"
     t.string "order_url"
     t.integer "min_order"
     t.string "order_id"
@@ -173,6 +173,13 @@ ActiveRecord::Schema.define(version: 20180201000431) do
     t.index ["deleted_at"], name: "index_materials_on_deleted_at"
   end
 
+  create_table "materials_suppliers", id: false, force: :cascade do |t|
+    t.bigint "supplier_id", null: false
+    t.bigint "material_id", null: false
+    t.index ["material_id", "supplier_id"], name: "index_materials_suppliers_on_material_id_and_supplier_id", unique: true
+    t.index ["supplier_id", "material_id"], name: "index_materials_suppliers_on_supplier_id_and_material_id", unique: true
+  end
+
   create_table "materials_technologies", id: false, force: :cascade do |t|
     t.bigint "material_id", null: false
     t.bigint "technology_id", null: false
@@ -182,7 +189,7 @@ ActiveRecord::Schema.define(version: 20180201000431) do
 
   create_table "parts", force: :cascade do |t|
     t.string "name", null: false
-    t.string "supplier"
+    t.string "supplier_name"
     t.string "order_url"
     t.integer "min_order"
     t.string "order_id"
@@ -208,6 +215,13 @@ ActiveRecord::Schema.define(version: 20180201000431) do
     t.index ["deleted_at"], name: "index_parts_on_deleted_at"
   end
 
+  create_table "parts_suppliers", id: false, force: :cascade do |t|
+    t.bigint "supplier_id", null: false
+    t.bigint "part_id", null: false
+    t.index ["part_id", "supplier_id"], name: "index_parts_suppliers_on_part_id_and_supplier_id", unique: true
+    t.index ["supplier_id", "part_id"], name: "index_parts_suppliers_on_supplier_id_and_part_id", unique: true
+  end
+
   create_table "registrations", force: :cascade do |t|
     t.integer "user_id", null: false
     t.integer "event_id", null: false
@@ -221,56 +235,6 @@ ActiveRecord::Schema.define(version: 20180201000431) do
     t.datetime "deleted_at"
     t.index ["deleted_at"], name: "index_registrations_on_deleted_at"
     t.index ["user_id", "event_id"], name: "index_registrations_on_user_id_and_event_id", unique: true
-  end
-
-  create_table "supplier_materials", force: :cascade do |t|
-    t.bigint "supplier_id", null: false
-    t.bigint "material_id", null: false
-    t.string "order_url"
-    t.integer "min_order", default: 1, null: false
-    t.string "sku"
-    t.float "weeks_to_deliver", default: 1.0, null: false
-    t.integer "minimum_on_hand", default: 1, null: false
-    t.integer "quantity_per_box", default: 1, null: false
-    t.integer "price_cents", default: 0, null: false
-    t.string "price_currency", default: "USD", null: false
-    t.integer "shipping_cents", default: 0, null: false
-    t.string "shipping_currency", default: "USD", null: false
-    t.integer "wire_transfer_cents", default: 0, null: false
-    t.string "wire_transfer_currency", default: "USD", null: false
-    t.integer "additional_cost_cents", default: 0, null: false
-    t.string "additional_cost_currency", default: "USD", null: false
-    t.text "comments"
-    t.datetime "deleted_at"
-    t.index ["material_id", "supplier_id"], name: "index_supplier_materials_on_material_id_and_supplier_id"
-    t.index ["material_id"], name: "index_supplier_materials_on_material_id"
-    t.index ["supplier_id", "material_id"], name: "index_supplier_materials_on_supplier_id_and_material_id"
-    t.index ["supplier_id"], name: "index_supplier_materials_on_supplier_id"
-  end
-
-  create_table "supplier_parts", force: :cascade do |t|
-    t.bigint "supplier_id", null: false
-    t.bigint "part_id", null: false
-    t.string "order_url"
-    t.integer "min_order", default: 1, null: false
-    t.string "sku"
-    t.float "weeks_to_deliver", default: 1.0, null: false
-    t.integer "minimum_on_hand", default: 1, null: false
-    t.integer "quantity_per_box", default: 1, null: false
-    t.integer "price_cents", default: 0, null: false
-    t.string "price_currency", default: "USD", null: false
-    t.integer "shipping_cents", default: 0, null: false
-    t.string "shipping_currency", default: "USD", null: false
-    t.integer "wire_transfer_cents", default: 0, null: false
-    t.string "wire_transfer_currency", default: "USD", null: false
-    t.integer "additional_cost_cents", default: 0, null: false
-    t.string "additional_cost_currency", default: "USD", null: false
-    t.text "comments"
-    t.datetime "deleted_at"
-    t.index ["part_id", "supplier_id"], name: "index_supplier_parts_on_part_id_and_supplier_id"
-    t.index ["part_id"], name: "index_supplier_parts_on_part_id"
-    t.index ["supplier_id", "part_id"], name: "index_supplier_parts_on_supplier_id_and_part_id"
-    t.index ["supplier_id"], name: "index_supplier_parts_on_supplier_id"
   end
 
   create_table "suppliers", force: :cascade do |t|

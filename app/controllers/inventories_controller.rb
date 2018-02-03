@@ -23,10 +23,6 @@ class InventoriesController < ApplicationController
     if @inventory.type_for_params == "event"
       @event = Event.find(@inventory.event_id)
     end
-
-    if @inventory.has_items_below_minimum?
-      @low_items = @inventory.counts.select{ |count| count.reorder? }
-    end
   end
 
   def new
@@ -126,6 +122,11 @@ class InventoriesController < ApplicationController
       InventoryMailer.delay.notify(@inventory, current_user)
     end
     redirect_to inventories_path
+  end
+
+  def order
+    authorize @inventory = Inventory.latest
+    @low_items = @inventory.counts.select{ |count| count.reorder? }
   end
 
   def destroy

@@ -32,7 +32,15 @@ Rails.application.routes.draw do
     end
   end
 
+  resources :suppliers do
+    resources :parts
+    resources :materials
+  end
+
   resources :inventories do
+    collection do
+      get 'order'
+    end
     resources :counts
   end
 
