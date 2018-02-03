@@ -5,10 +5,6 @@
 4. Inventory#show - Reorder items should have ^ these cols instead of current cols
 5. Write tests until everyone is happy (*Ross*) because TDD is real.
 12. Monthly report: structure and auto-send on first of every month
-13. Tests for new comments fields: parts, materials, components, technologies
-14. Remove the redundent fields from Part and Material (after copying stuff over)
-15. All the monetize calls on models are redundent. See supplier_part for a good example
-16. Test for new models: supplier, supplier_part, supplier_material
 
 ## BUGS!! AH BUGS!!!
 1. RegistrationController::Update -- need error handling line #30 and #46

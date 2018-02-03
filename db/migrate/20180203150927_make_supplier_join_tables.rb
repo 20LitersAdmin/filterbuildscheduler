@@ -12,6 +12,13 @@ class MakeSupplierJoinTables < ActiveRecord::Migration[5.1]
       t.index [:supplier_id, :material_id], unique: true
       t.index [:material_id, :supplier_id], unique: true
     end
-    
+
+    change_table :parts do |t|
+      t.rename :supplier, :supplier_name
+    end
+
+    change_table :materials do |t|
+      t.rename :supplier, :supplier_name
+    end
   end
 end
