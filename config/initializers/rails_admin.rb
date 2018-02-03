@@ -139,7 +139,7 @@ RailsAdmin.config do |config|
       show
     end
 
-    exclude_fields :supplier_parts, :supplier_materials, :parts, :materials
+    # exclude_fields :supplier_parts, :supplier_materials, :parts, :materials
   end
 
 
@@ -163,7 +163,7 @@ RailsAdmin.config do |config|
       show
     end
 
-    exclude_fields :extrapolate_material_parts, :counts, :suppliers
+    exclude_fields :extrapolate_material_parts, :counts
   end
 
   config.model Part do
@@ -185,19 +185,7 @@ RailsAdmin.config do |config|
       show
     end
 
-    exclude_fields :extrapolate_technology_parts, :extrapolate_component_parts, :extrapolate_material_parts, :counts, :suppliers
-  end
-
-  config.model SupplierPart do
-    parent Supplier
-    label "Supplier <-> Part"
-    label_plural "Supplier <-> Parts"
-  end
-
-  config.model SupplierMaterial do
-    parent Supplier
-    label "Supplier <-> Material"
-    label_plural "Supplier <-> Materials"
+    exclude_fields :extrapolate_technology_parts, :extrapolate_component_parts, :extrapolate_material_parts, :counts
   end
 
   config.model Registration do

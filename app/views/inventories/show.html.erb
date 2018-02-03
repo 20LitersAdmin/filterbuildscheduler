@@ -3,6 +3,10 @@
     <h2><%= @inventory.name %></h2>
   </div>
   <div class="col-xs-4 match-h2">
+    <% if @inventory.has_items_below_minimum? %>
+      <%= link_to "Order Needed!", order_inventories_path(), class: "btn red" %>
+    <% end %>
+
     <% if !@inventory.completed_at.present? %>
       <%= link_to "Edit", edit_inventory_path(@inventory), class: "btn yellow" %>
     <% else %>
@@ -10,13 +14,10 @@
         <%= link_to "Unlock", edit_inventory_path(@inventory, unlock: "true"), class: "btn yellow" %>
       <% end %>
     <% end %>
+
     <%= link_to "Back", inventories_path, class: "btn blue" %>
+    
   </div>
-  <% if @inventory.has_items_below_minimum? %>
-    <div class="col-xs-12">
-      <%= render partial: "low" %>
-    </div>
-  <% end %>
   <div class="col-xs-12 bar-above">
     <% if @inventory.type_for_params != "manual" %>
       <%= render partial: "diff" %>
