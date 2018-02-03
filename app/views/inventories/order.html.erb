@@ -1,0 +1,25 @@
+<div class="col-xs-12 col-md-8">
+  <h2>These items need to be ordered:</h2>
+</div>
+<div class="col-xs-12 col-md-4 match-h2">
+  <%= link_to "By Supplier", "#", class: "btn yellow", id: "supplier_btn" %>
+  <%= link_to "By Item", "#", class: "btn yellow", id: "item_btn" %>
+</div>
+<div class="col-xs-12">
+  <table class="table table-striped table-bordered datatable">
+    <thead>
+      <tr>
+        <th data-priority="1">Item</th>
+        <th data-priority="2">For Tech</th>
+        <th class="center-align" data-priority="1">Minimum to Order</th>
+        <th class="center-align" data-priority="1">Available Count</th>
+        <th class="center-align" data-priority="2">Minimum to keep on Hand</th>
+        <th class="center-align" data-priority="2">Weeks to Deliver</th>
+      </tr>
+    </thead>
+    <tbody>
+      <%= render partial: "order_tbl", collection: @low_items %>
+    </tbody>
+  </table>
+</div>
+

@@ -33,6 +33,9 @@ Rails.application.routes.draw do
   end
 
   resources :inventories do
+    collection do
+      get 'order'
+    end
     resources :counts
   end
 

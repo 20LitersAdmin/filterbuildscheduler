@@ -33,5 +33,9 @@ class InventoryPolicy
   def destroy?
     user&.is_admin?
   end
+
+  def order?
+    user&.does_inventory? || user&.is_admin?
+  end
 end
 
