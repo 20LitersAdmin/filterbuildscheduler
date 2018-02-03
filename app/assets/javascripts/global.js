@@ -16,6 +16,7 @@ $(document).on("turbolinks:load", function(){
       maxDate: this.value
     });
   });
+
   $('.datatable').DataTable({
     retrieve: true,
     order: [[0, "asc"]],
@@ -44,10 +45,10 @@ $(document).on("turbolinks:load", function(){
       }
     }
   });
+
   $('.datatable-paging').DataTable({
-    retrieve: true,
     order: [[0, "asc"]],
-    lengthMenu: [[25, 50, 100, -1], [25, 50, 100, "All"] ],
+    lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"] ],
     responsive: true,
     autoWidth: false,
     info: false,
@@ -71,7 +72,7 @@ $(document).on("turbolinks:load", function(){
       }
     }
   });
-  
+
   $('.datatable-slim').DataTable({
     retrieve: true,
     order: [[0, "asc"]],
