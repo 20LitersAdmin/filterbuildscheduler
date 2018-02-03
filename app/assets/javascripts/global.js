@@ -16,6 +16,7 @@ $(document).on("turbolinks:load", function(){
       maxDate: this.value
     });
   });
+
   $('.datatable').DataTable({
     order: [[0, "asc"]],
     pageLength: -1,
@@ -43,6 +44,34 @@ $(document).on("turbolinks:load", function(){
       }
     }
   });
+
+  $('.datatable-paging').DataTable({
+    order: [[0, "asc"]],
+    lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"] ],
+    responsive: true,
+    autoWidth: false,
+    info: false,
+    dom:
+      "<'row'"+
+        "<'col-xs-12 no-overflow center' B>"+
+        "<'col-xs-4 no-overflow'l>"+
+        "<'col-xs-8 no-overflow'f>"+
+      "r>"+
+      "t"+
+      "<'row'"+
+      "<'col-xs-8'p>"+
+      ">",
+    buttons: [ 'copy', 'csv', 'excel', 'print' ],
+    language: {
+      paginate: {
+        first: "&#8676",
+        previous: "&#8592",
+        next: "&#8594",
+        last: "&#8677"
+      }
+    }
+  });
+
   $('.datatable-slim').DataTable({
     order: [[0, "asc"]],
     paging: false,
