@@ -18,6 +18,7 @@ $(document).on("turbolinks:load", function(){
   });
 
   $('.datatable').DataTable({
+    retrieve: true,
     order: [[0, "asc"]],
     pageLength: -1,
     lengthMenu: [[25, 50, 100, -1], [25, 50, 100, "All"] ],
@@ -73,6 +74,7 @@ $(document).on("turbolinks:load", function(){
   });
 
   $('.datatable-slim').DataTable({
+    retrieve: true,
     order: [[0, "asc"]],
     paging: false,
     responsive: true,
@@ -92,6 +94,7 @@ $(document).on("turbolinks:load", function(){
   });
 
   $('.datatable-search').DataTable({
+    retrieve: true,
     order: [],
     paging: false,
     responsive: true,
