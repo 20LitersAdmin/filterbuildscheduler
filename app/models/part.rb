@@ -15,7 +15,7 @@ class Part < ApplicationRecord
 
   has_many :counts, dependent: :destroy
 
-  belongs_to :supplier
+  belongs_to :supplier, optional: true
 
   monetize :price_cents, :additional_cost_cents, :shipping_cost_cents, :wire_transfer_cost_cents, allow_nil: true, numericality: { greater_than_or_equal_to: 0 }
 end

@@ -1,0 +1,27 @@
+<% if !order_supplier.nil? %>
+  <div class="row">
+    <div class="col-xs-12">
+      <h2><%= order_supplier.name %></h2>
+    </div>
+    <div class="col-xs-12">
+      <table class="table table-striped table-bordered datatable" id="order_supplier_tbl_<%= order_supplier.id %>">
+      <thead>
+        <tr>
+          <th data-priority="1">Item</th>
+          <th class="center-align" data-priority="1">Available</th>
+          <th class="center-align" data-priority="2">Minimum</th>
+          <th class="center-align" data-priority="2">Weeks remaining</th>
+          <th class="center-align" data-priority="2">Weeks to deliver</th>
+          <th class="center-align" data-priority="2">Unit cost</th>
+          <th class="center-align" data-priority="1">Minimum order</th>
+          <th class="center-align" data-priority="1">Total cost</th>
+          <th class="center-align" data-priority="1">Order?</th>
+        </tr>
+      </thead>
+      <!-- <tbody>
+        <%= render partial: "order_tbl", collection: order_supplier.items_to_reorder %>
+      </tbody> -->
+    </table>
+    </div>
+  </div>    
+<% end %>  

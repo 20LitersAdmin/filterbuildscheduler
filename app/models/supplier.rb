@@ -30,4 +30,16 @@ class Supplier < ApplicationRecord
       true
     end
   end
+
+  # def items
+  #   # Create an array of parts and materials
+  #   ary = []
+  #   ary << self.parts.to_a
+  #   ary << self.materials.to_a
+  #   ary
+  # end
+
+  # def items_to_reorder
+  #   self.items.joins(:count) #hmmmm
+  # end
 end
