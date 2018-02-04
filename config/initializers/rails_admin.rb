@@ -43,7 +43,7 @@ RailsAdmin.config do |config|
 
   config.model User do
     list do
-      scopes [nil, :only_deleted]
+      scopes [:active, :leaders, :admins, :only_deleted]
       field :email
       field :fname
       field :lname
@@ -65,7 +65,7 @@ RailsAdmin.config do |config|
   config.model Event do
     object_label_method :format_time_range
     list do
-      scopes [nil, :only_deleted]
+      scopes [:active, :future, :past, :needs_report, :closed, :only_deleted]
       field :start_time
       field :end_time
       field :title
@@ -83,7 +83,7 @@ RailsAdmin.config do |config|
   config.model Location do
     parent Event
     list do
-      scopes [nil, :only_deleted]
+      scopes [:active, :only_deleted]
       field :name
       field :address1
       field :address2
@@ -96,7 +96,7 @@ RailsAdmin.config do |config|
 
   config.model Technology do
     list do
-      scopes [nil, :only_deleted]
+      scopes [:active, :only_deleted]
       field :name
       field :family_friendly
       field :unit_rate
@@ -114,7 +114,7 @@ RailsAdmin.config do |config|
   config.model Component do
     parent Technology
     list do
-      scopes [nil, :only_deleted]
+      scopes [:active, :only_deleted]
       field :name
       field :common_id
       field :technologies
@@ -129,7 +129,7 @@ RailsAdmin.config do |config|
 
   config.model Supplier do
     list do
-      scopes [nil, :only_deleted]
+      scopes [:active, :only_deleted]
       field :name
       field :url
       field :POC_name
@@ -146,7 +146,7 @@ RailsAdmin.config do |config|
   config.model Material do
     parent Supplier
     list do
-      scopes [nil, :only_deleted]
+      scopes [:active, :only_deleted]
       field :name
       field :supplier
       field :min_order
@@ -169,7 +169,7 @@ RailsAdmin.config do |config|
   config.model Part do
     parent Supplier
     list do
-      scopes [nil, :only_deleted]
+      scopes [:active, :only_deleted]
       field :name
       field :supplier
       field :min_order
@@ -191,7 +191,7 @@ RailsAdmin.config do |config|
   config.model Registration do
     parent Event
     list do
-      scopes [nil, :only_deleted]
+      scopes [:active, :only_deleted]
       field :event
       field :user
       field :attended
