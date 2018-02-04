@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180203161823) do
+ActiveRecord::Schema.define(version: 20180204000433) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -170,14 +170,9 @@ ActiveRecord::Schema.define(version: 20180203161823) do
     t.string "price_currency", default: "USD", null: false
     t.integer "minimum_on_hand", default: 0, null: false
     t.text "comments"
+    t.bigint "supplier_id"
     t.index ["deleted_at"], name: "index_materials_on_deleted_at"
-  end
-
-  create_table "materials_suppliers", id: false, force: :cascade do |t|
-    t.bigint "supplier_id", null: false
-    t.bigint "material_id", null: false
-    t.index ["material_id", "supplier_id"], name: "index_materials_suppliers_on_material_id_and_supplier_id", unique: true
-    t.index ["supplier_id", "material_id"], name: "index_materials_suppliers_on_supplier_id_and_material_id", unique: true
+    t.index ["supplier_id"], name: "index_materials_on_supplier_id"
   end
 
   create_table "materials_technologies", id: false, force: :cascade do |t|
@@ -212,14 +207,9 @@ ActiveRecord::Schema.define(version: 20180203161823) do
     t.integer "wire_transfer_cost_cents", default: 0, null: false
     t.string "wire_transfer_cost_currency", default: "USD", null: false
     t.text "comments"
+    t.bigint "supplier_id"
     t.index ["deleted_at"], name: "index_parts_on_deleted_at"
-  end
-
-  create_table "parts_suppliers", id: false, force: :cascade do |t|
-    t.bigint "supplier_id", null: false
-    t.bigint "part_id", null: false
-    t.index ["part_id", "supplier_id"], name: "index_parts_suppliers_on_part_id_and_supplier_id", unique: true
-    t.index ["supplier_id", "part_id"], name: "index_parts_suppliers_on_supplier_id_and_part_id", unique: true
+    t.index ["supplier_id"], name: "index_parts_on_supplier_id"
   end
 
   create_table "registrations", force: :cascade do |t|

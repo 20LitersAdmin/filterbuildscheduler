@@ -9,7 +9,7 @@ class Material < ApplicationRecord
 
   has_many :counts, dependent: :destroy
   
-  has_and_belongs_to_many :suppliers
+  belongs_to :supplier
 
   monetize :price_cents, :additional_cost_cents, numericality: { greater_than_or_equal_to: 0 }
 end
