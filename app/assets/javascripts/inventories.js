@@ -55,5 +55,15 @@ function filterView(type, button) {
   });
   $(document).on("click", "#clear", function() {
     $(".count-parent").show();
-  })
+  });
+  $(document).on("click", "#supplier_btn", function() {
+    $("#order_item_div").hide();
+    $("#order_supplier_div").show();
+    event.preventDefault();
+  });
+  $(document).on("click", "#item_btn", function() {
+    $("#order_supplier_div").hide();
+    $("#order_item_div").show();
+    event.preventDefault();
+  });
 }());
