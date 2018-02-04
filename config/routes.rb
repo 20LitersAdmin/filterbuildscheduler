@@ -32,11 +32,6 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :suppliers do
-    resources :parts
-    resources :materials
-  end
-
   resources :inventories do
     collection do
       get 'order'
@@ -50,6 +45,6 @@ Rails.application.routes.draw do
     mount LetterOpenerWeb::Engine, at: "/letter_opener"
   end
 
-  # catch-all for bad url
+  # catch-all for bad urls
   get "*path", to:  'pages#route_error'
 end

@@ -2,7 +2,15 @@
 
 ## Things to do
 3. Technology Reorder report to match spreadsheet cols (calculate weeks until out, cost w/ wire transfer and shipping fees, total price [adjustable with checkboxes])
-4. Inventory#show - Reorder items should have ^ these cols instead of current cols
+ - Needs: Parts table partial in _order_suppliers
+ - Needs: Two total fields, one for each div
+ - Needs: JS to distinguish between checkboxes from each div
+ - Needs: JS to toggle button, div and total field
+ - Needs: Calculate weeks until out
+ - Needs: Calculate unit cost (combo of price and other fields? Or show all fields with low priority)
+ - Needs: Calculate total cost
+ - Needs: Order quantity field, min: min_order, recalcs total cost && order total
+ 4. Inventory#show - Reorder items should have ^ these cols instead of current cols
 5. Write tests until everyone is happy (*Ross*) because TDD is real.
 12. Monthly report: structure and auto-send on first of every month
 

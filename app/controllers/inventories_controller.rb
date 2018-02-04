@@ -126,7 +126,11 @@ class InventoriesController < ApplicationController
 
   def order
     authorize @inventory = Inventory.latest
-    @low_items = @inventory.counts.select{ |count| count.reorder? }
+    @low_counts = @inventory.counts.select{ |count| count.reorder? }
+
+    @order_counts = Count.where(id: @low_counts.map { |c| c.id })
+
+    @suppliers = @order_counts.map { |c| c.supplier }.uniq
   end
 
   def destroy
