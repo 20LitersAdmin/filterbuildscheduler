@@ -22,5 +22,5 @@
   * Sending to Kindful is not
 
 ## Remind myself:
-1. development restore-from production
+1. production backup / development restore-from production
 2. "Your branch is n commits behind master" - git fetch origin
