@@ -2,8 +2,8 @@ class Supplier < ApplicationRecord
   acts_as_paranoid
   require 'uri'
 
-  has_and_belongs_to_many :parts
-  has_and_belongs_to_many :materials
+  has_many :parts
+  has_many :materials
 
   validates :name, presence: true
   validate :valid_url?
