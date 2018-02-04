@@ -40,6 +40,6 @@ class Supplier < ApplicationRecord
   # end
 
   # def items_to_reorder
-  #   self.items.joins(:count)
+  #   self.items.joins(:count) #hmmmm
   # end
 end
