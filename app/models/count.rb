@@ -44,6 +44,10 @@ class Count < ApplicationRecord
     end
   end
 
+  def supplier
+    self.item.supplier
+  end
+
   def box_count
     self.item.quantity_per_box * unopened_boxes_count
   end

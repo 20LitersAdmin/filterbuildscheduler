@@ -8,16 +8,22 @@
   <td class="center-align">
     <%= number_with_delimiter(order_tbl.item.minimum_on_hand, delimiter: ',') %>
   </td>
-  <td class="center-align">Weeks out</td>
+  <td class="center-align">
+    Weeks out
+  </td>
   <td class="center-align">
     <%= number_with_delimiter(order_tbl.item.weeks_to_deliver, delimiter: ',') %>
   </td>
-  <td class="center-align unit-cost">unit cost</td>
+  <td class="center-align unit-cost">
+    unit cost
+  </td>
   <td class="center-align">
     <%= number_with_delimiter(order_tbl.item.min_order, delimiter: ',') %>
   </td>
 
-  <td class="center-align unit-total">total</td>
+  <td class="center-align unit-total">
+    total
+  </td>
   <td class="center-align order-check">
     <%= check_box_tag "order", order_tbl.id, true %>
   </td>
