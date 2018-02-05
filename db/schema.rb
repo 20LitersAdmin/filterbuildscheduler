@@ -155,10 +155,9 @@ ActiveRecord::Schema.define(version: 20180204023606) do
 
   create_table "materials", force: :cascade do |t|
     t.string "name", null: false
-    t.string "supplier_name"
     t.string "order_url"
     t.integer "min_order"
-    t.string "order_id"
+    t.string "sku"
     t.float "weeks_to_deliver"
     t.datetime "deleted_at"
     t.datetime "created_at", null: false
@@ -171,6 +170,10 @@ ActiveRecord::Schema.define(version: 20180204023606) do
     t.integer "minimum_on_hand", default: 0, null: false
     t.text "comments"
     t.bigint "supplier_id"
+    t.integer "shipping_cost_cents", default: 0, null: false
+    t.string "shipping_cost_currency", default: "USD", null: false
+    t.integer "wire_transfer_cost_cents", default: 0, null: false
+    t.string "wire_transfer_cost_currency", default: "USD", null: false
     t.index ["deleted_at"], name: "index_materials_on_deleted_at"
     t.index ["supplier_id"], name: "index_materials_on_supplier_id"
   end
@@ -186,8 +189,7 @@ ActiveRecord::Schema.define(version: 20180204023606) do
     t.string "name", null: false
     t.string "order_url"
     t.integer "min_order"
-    t.string "order_id"
-    t.string "common_id"
+    t.string "sku"
     t.float "weeks_to_deliver"
     t.integer "sample_size"
     t.float "sample_weight"
