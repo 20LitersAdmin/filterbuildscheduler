@@ -1,6 +1,11 @@
 <tr>
   <td>
-    <%= order_tbl.name %>
+    <% if current_user.is_admin? %>
+      <%= link_to order_tbl.name, rails_admin.edit_path(model_name: order_tbl.item.model_name.name, id: order_tbl.item.id) %>
+    <% else %>
+      <%= order_tbl.name %>
+    <% end %>
+    
   </td>
   <td class="center-align">
     <%= number_with_delimiter(order_tbl.available, delimiter: ',') %>
@@ -15,14 +20,14 @@
     <%= number_with_delimiter(order_tbl.item.weeks_to_deliver, delimiter: ',') %>
   </td>
   <td class="center-align unit-cost">
-    unit cost
+    <%= order_tbl.item.price %>
   </td>
   <td>
     <%= text_field_tag 'min_order_#{order_tbl.id}', number_with_delimiter(order_tbl.item.min_order, delimiter: ','), class: "#{@field_class}" %>
   </td>
 
   <td class="center-align unit-total">
-    total
+    <%= order_tbl.item.reorder_total_cost %>
   </td>
   <td class="center-align order-check">
     <%= check_box_tag 'checkbox_' +  order_tbl.id.to_s, 1, true, class: "order_check" %>

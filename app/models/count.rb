@@ -113,12 +113,6 @@ class Count < ApplicationRecord
     end
     @answer
   end
-  
-  def unit_cost
-  end
-
-  def total_cost
-  end
 
   def weeks_to_out
   end

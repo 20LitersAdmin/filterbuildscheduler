@@ -12,4 +12,8 @@ class Material < ApplicationRecord
   belongs_to :supplier
 
   monetize :price_cents, :additional_cost_cents, numericality: { greater_than_or_equal_to: 0 }
+
+  def reorder_total_cost
+    (min_order * price ) + shipping_cost + wire_transfer_cost
+  end
 end
