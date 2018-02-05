@@ -98,12 +98,27 @@
 }
 
 #inventory_order {
-  #item_btn {
+  #item_admin {
     display: none;
   }
 
   #order_supplier_div {
     display: none;
   }
+
+  .btn-check {
+    margin-top: 30px;
+    padding-left: 1px;
+    padding-top: 0px;
+    height: 18px;
+    width: 38px;
+    border-radius: 4px;
+    font-size: 7px;
+    text-align: left;
+    .btn-text {
+      font-size: 11px;
+    }
+  }
+
 }
 
