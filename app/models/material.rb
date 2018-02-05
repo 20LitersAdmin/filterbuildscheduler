@@ -11,9 +11,18 @@ class Material < ApplicationRecord
   
   belongs_to :supplier
 
-  monetize :price_cents, :additional_cost_cents, numericality: { greater_than_or_equal_to: 0 }
+  monetize :price_cents, :additional_cost_cents, :shipping_cost_cents, :wire_transfer_cost_cents, allow_nil: true, numericality: { greater_than_or_equal_to: 0 }
 
   def reorder_total_cost
     (min_order * price ) + shipping_cost + wire_transfer_cost
+  end
+
+  def per_technology
+    if extrapolate_material_parts.first.present?
+      part = Part.find(extrapolate_material_parts.first.part_id)
+      part.per_technology
+    else
+      0
+    end
   end
 end

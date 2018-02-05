@@ -1,5 +1,12 @@
 # README
 
+## THIS NEXT PUSH
+1. Heroku db:rollback -- for dropping parts#supplier_name
+2. Uncomment the remove_supplier_name... stuff
+3. Push again
+4. Heroku db:migrate -- catch fixed remove_supplier_name... stuff and prod_rate to technology
+5. Technology.all.each do |t| set prod_rate to 1
+
 ## Things to do
 3. Technology Reorder report to match spreadsheet cols (calculate weeks until out, cost w/ wire transfer and shipping fees, total price [adjustable with checkboxes])
  - Needs: Parts table partial in _order_suppliers
