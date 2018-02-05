@@ -17,14 +17,14 @@
   <td class="center-align unit-cost">
     unit cost
   </td>
-  <td class="center-align">
-    <%= number_with_delimiter(order_tbl.item.min_order, delimiter: ',') %>
+  <td>
+    <%= text_field_tag 'min_order_#{order_tbl.id}', number_with_delimiter(order_tbl.item.min_order, delimiter: ','), class: "#{@field_class}" %>
   </td>
 
   <td class="center-align unit-total">
     total
   </td>
   <td class="center-align order-check">
-    <%= check_box_tag "order", order_tbl.id, true %>
+    <%= check_box_tag 'checkbox_' +  order_tbl.id.to_s, 1, true, class: "order_check" %>
   </td>
 </tr>

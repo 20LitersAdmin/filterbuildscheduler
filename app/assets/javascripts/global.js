@@ -26,15 +26,31 @@ $(document).on("turbolinks:load", function(){
     autoWidth: false,
     info: false,
     dom:
-      "<'row'"+
-        "<'col-xs-12 no-overflow center' B>"+
-        "<'col-xs-4 no-overflow'l>"+
-        "<'col-xs-8 no-overflow'f>"+
-      "r>"+
+      "<'col-xs-12 no-overflow center' B>"+
+      "<'col-xs-4 no-overflow'l>"+
+      "<'col-xs-8 no-overflow'f>"+
       "t"+
-      "<'row'"+
-      "<'col-xs-8'p>"+
-      ">",
+      "<'col-xs-8'p>",
+    buttons: [ 'copy', 'csv', 'excel', 'print' ],
+    language: {
+      paginate: {
+        first: "&#8676",
+        previous: "&#8592",
+        next: "&#8594",
+        last: "&#8677"
+      }
+    }
+  });
+
+  $('.datatable-export').DataTable({
+    retrieve: true,
+    order: [[0, "asc"]],
+    responsive: true,
+    autoWidth: false,
+    info: false,
+    dom:
+      "t"+
+      "<'col-xs-12 no-overflow center' B>",
     buttons: [ 'copy', 'csv', 'excel', 'print' ],
     language: {
       paginate: {
@@ -53,15 +69,11 @@ $(document).on("turbolinks:load", function(){
     autoWidth: false,
     info: false,
     dom:
-      "<'row'"+
-        "<'col-xs-12 no-overflow center' B>"+
-        "<'col-xs-4 no-overflow'l>"+
-        "<'col-xs-8 no-overflow'f>"+
-      "r>"+
+      "<'col-xs-12 no-overflow center' B>"+
+      "<'col-xs-4 no-overflow'l>"+
+      "<'col-xs-8 no-overflow'f>"+
       "t"+
-      "<'row'"+
-      "<'col-xs-8'p>"+
-      ">",
+      "<'col-xs-8'p>",
     buttons: [ 'copy', 'csv', 'excel', 'print' ],
     language: {
       paginate: {
@@ -81,16 +93,10 @@ $(document).on("turbolinks:load", function(){
     autoWidth: false,
     info: false,
     dom:
-      "<'row'"+
-        "<'col-xs-12 no-overflow center'>"+
-        "<'col-xs-4 no-overflow'l>"+
-        "<'col-xs-8 no-overflow'f>"+
-      "r>"+
+      "<'col-xs-4 no-overflow'l>"+
+      "<'col-xs-8 no-overflow'f>"+
       "t"+
-      "<'row'"+
-      "<'col-xs-8'p>"+
-      "<'col-xs-12 no-overflow center'>"+
-      ">"
+      "<'col-xs-8'p>",
   });
 
   $('.datatable-search').DataTable({

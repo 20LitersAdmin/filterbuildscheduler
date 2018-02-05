@@ -17,7 +17,9 @@
 ## BUGS!! AH BUGS!!!
 1. RegistrationController::Update -- need error handling line #30 and #46
 2. accepts_nested_attributes_for seems to break event#show, at least for anon view
+3. Supplier.valid_url? is still not ignoring null
 12. Inventories created from events aren't subtracting parts from components (parts used to build the technologies_built or boxes_packed)
+
 
 ## ROSS: These things aren't pretty:
 1. Registration.rb validations not working ( eg. :under_max_registration)
