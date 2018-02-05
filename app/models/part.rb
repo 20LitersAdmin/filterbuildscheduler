@@ -18,4 +18,12 @@ class Part < ApplicationRecord
   belongs_to :supplier, optional: true
 
   monetize :price_cents, :additional_cost_cents, :shipping_cost_cents, :wire_transfer_cost_cents, allow_nil: true, numericality: { greater_than_or_equal_to: 0 }
+
+  def reorder_total_cost
+    (min_order * price ) + shipping_cost + wire_transfer_cost
+  end
+
+  def per_technology
+    extrapolate_technology_parts.first.parts_per_technology
+  end
 end

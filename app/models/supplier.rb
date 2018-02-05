@@ -31,15 +31,13 @@ class Supplier < ApplicationRecord
     end
   end
 
-  # def items
-  #   # Create an array of parts and materials
-  #   ary = []
-  #   ary << self.parts.to_a
-  #   ary << self.materials.to_a
-  #   ary
-  # end
-
-  # def items_to_reorder
-  #   self.items.joins(:count) #hmmmm
-  # end
+  def related_items(counts)
+    ary = []
+    counts.each do |c|
+      if c.supplier == self
+        ary << c
+      end
+    end
+    ary
+  end
 end
