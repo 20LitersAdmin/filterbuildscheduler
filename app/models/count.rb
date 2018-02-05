@@ -115,6 +115,8 @@ class Count < ApplicationRecord
   end
 
   def weeks_to_out
+    # calculate the number of technologies that can be created with what remains
+    # Divide that by the monthly rate
   end
 
 end

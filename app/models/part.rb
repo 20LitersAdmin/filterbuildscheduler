@@ -22,4 +22,8 @@ class Part < ApplicationRecord
   def reorder_total_cost
     (min_order * price ) + shipping_cost + wire_transfer_cost
   end
+
+  def per_technology
+    extrapolate_technology_parts.first.parts_per_technology
+  end
 end

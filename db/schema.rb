@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180204023606) do
+ActiveRecord::Schema.define(version: 20180205030335) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -267,6 +267,7 @@ ActiveRecord::Schema.define(version: 20180204023606) do
     t.integer "lifespan_in_years", default: 0, null: false
     t.integer "liters_per_day", default: 0
     t.text "comments"
+    t.integer "monthly_production_rate", default: 1, null: false
     t.index ["deleted_at"], name: "index_technologies_on_deleted_at"
   end
 
