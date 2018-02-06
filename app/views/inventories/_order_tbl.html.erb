@@ -14,22 +14,25 @@
     <%= number_with_delimiter(order_tbl.item.minimum_on_hand, delimiter: ',') %>
   </td>
   <td class="center-align">
-    <%= badbad %>
+    <%= number_with_precision( order_tbl.weeks_to_out, precision: 1 ) %>
   </td>
   <td class="center-align">
     <%= number_with_delimiter(order_tbl.item.weeks_to_deliver, delimiter: ',') %>
   </td>
-  <td class="right-align unit-cost">
-    $<%= order_tbl.item.price %>
+  <td class="right-align item-cost">
+    $<span class="item-cost-value"><%= order_tbl.item.price %></span>
   </td>
-  <td>
-    <%= text_field_tag 'min_order_#{order_tbl.id}', number_with_delimiter(order_tbl.item.min_order, delimiter: ','), class: "#{@field_class} right-align" %>
+  <td class="min-order">
+    <%= text_field_tag 'min_order_' + order_tbl.id.to_s, number_with_delimiter(order_tbl.item.min_order, delimiter: ','), class: "min-order-field right-align", min: 0 %>
   </td>
 
-  <td class="right-align unit-total">
-    $<%= number_with_delimiter(order_tbl.item.reorder_total_cost, delimiter: ',') %>
+  <td class="right-align order-total">
+    $<span class="order-total-amt"><%= number_with_delimiter(order_tbl.item.reorder_total_cost, delimiter: ',')%></span>
+    <span class="order-associated-costs">
+      <%= order_tbl.item.reorder_associated_costs %>
+    </span>
   </td>
   <td class="center-align order-check">
-    <%= check_box_tag 'checkbox_' +  order_tbl.id.to_s, 1, true, class: "order_check" %>
+    <%= check_box_tag 'checkbox_' + @locator + "_" +  order_tbl.id.to_s, 1, true, class: "order_check" %>
   </td>
 </tr>

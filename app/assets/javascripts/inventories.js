@@ -5,37 +5,57 @@ function filterView(type, button) {
   
   if (type == "count") {
     var goal = "true"
-    var parent_id = ""
+    var parentId = ""
     if (btnId == "uncounted") {
       target = ".counted";
       goal = "false";
     };
     $(target).each(function() {
-      parent_id = "#" + $(this).parents(".count-parent").attr("id");
+      parentId = "#" + $(this).parents(".count-parent").attr("id");
       if ( $(this).attr("title") != goal ) {
-        $(parent_id).hide();
+        $(parentId).hide();
       } else {
-        $(parent_id).show();
+        $(parentId).show();
       };
     });
 
   } else { // type = "tech"
     var goalStr = target.substring(6, target.length);
     $(".techs").each(function() {
-      parent_id = "#" + $(this).parents(".count-parent").attr("id");
+      parentId = "#" + $(this).parents(".count-parent").attr("id");
       var techStr = $(this).attr("title");
       var techAry = techStr.split(",");
       if ( techAry.includes(goalStr) ) {
-        $(parent_id).show();
+        $(parentId).show();
       } else {
-        $(parent_id).hide();
+        $(parentId).hide();
       };
     });
   };
 };
 
-function orderTotal(ttl, checked) {
-  alert("total: " + ttl + "; checked: " + checked);
+function stringMaker(float, fixed) {
+  fixed = float.toFixed(fixed);
+  return fixed.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+};
+
+function orderTotal() {
+  var range = [ $("#order_item_div"), $("#order_supplier_div") ];
+
+  for( i = 0; i < range.length; i++ ) {
+    var booleans = range[i].find(".order_check").get();
+    var ttl = 0;
+    for( j = 0; j < booleans.length; j++ ) {
+      if (booleans[j].checked === true ) {
+        var amtStr = $( "#" + booleans[j].id ).parent(".order-check").siblings(".order-total").find(".order-total-amt").html();
+        var amt = parseFloat( amtStr.replace(",","") );
+        ttl += amt;
+      };
+    };
+
+    ttlStr = stringMaker(ttl, 2);
+    $("#admin_ttl").html(ttlStr);
+  };
 };
 
 function toggleCheck(action,scope) {
@@ -43,31 +63,67 @@ function toggleCheck(action,scope) {
     var booleans = $(".order_check").get();
   } else {
     // scope === id
-    var table_id = "#order_supplier_tbl_" + scope
-    var booleans = $(table_id).find("input.order_check").get();
+    var tableId = "#order_supplier_tbl_" + scope
+    var booleans = $(tableId).find("input.order_check").get();
   };
   
   if(action === "check") {
     for( i = 0; i < booleans.length; i++ ) {
         booleans[i].checked = true;
+        twinToggle(booleans[i]);
       };
   } else if(action === "uncheck") {
     for( i = 0; i < booleans.length; i++ ) {
         booleans[i].checked = false;
+        twinToggle(booleans[i]);
       };
   };
+  orderTotal();
+};
 
-  var checked_count = 0;
-  for( i = 0; i < booleans.length; i++ ) {
-    if(booleans[i].checked === true) {
-      checked_count++;
-    };
+function twinToggle(twinA) {
+  var idStr = $(twinA).attr("id");
+  var state = $(twinA).prop("checked")
+  var split = idStr.split("_");
+  // ("checkbox","item","id")
+  if(split[1] === "item") {
+    var locator = "supplier";
+  } else {
+    var locator = "item";
   };
 
-  orderTotal(booleans.length, checked_count);
-}
+  var twinB = "#checkbox_" + locator + "_" + split[2]
+  $(twinB).prop("checked", state)
+};
+
+function lineTotal(source) {
+  // quantity * itemCost + associatedCosts
+  var itemCostSpan = $(source).parent(".min-order").siblings(".item-cost").find(".item-cost-value");
+  var associatedCostsSpan = $(source).parent(".min-order").siblings(".order-total").find(".order-associated-costs");
+  var totalCostSpan = $(source).parent(".min-order").siblings(".order-total").find(".order-total-amt");
+  
+  var quantity = parseFloat( $(source).val().replace(",","") );
+  var itemCost = parseFloat( $(itemCostSpan).html().replace(",","") );
+  var associatedCosts = parseFloat( $(associatedCostsSpan).html().replace(",","") );
+  var newTotalStr = stringMaker( (quantity * itemCost) + associatedCosts, 2 );
+  $(totalCostSpan).html(newTotalStr);
+};
+
+function lineCheck(source) {
+  var checkbox = $(source).parent(".min-order").siblings(".order-check").find(".order_check");
+  if( $(checkbox).prop("checked") === false ) {
+    $(checkbox).prop("checked", true);
+  };
+};
+
+function reformat(source) {
+  var unformatted = $(source).val();
+  var formatted = unformatted.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  $(source).val(formatted);
+};
 
 (function() {
+  // Inventory#edit finalize buttons
   $(document).on("click", "#show_finalize_form", function() {
     $('#finalize_form').fadeIn();
     $('#counts_div').hide();
@@ -80,44 +136,59 @@ function toggleCheck(action,scope) {
     $('#admin_div').fadeIn();
     event.preventDefault();
   });
+  // Inventory#edit filter buttons
   $(document).on("click", ".count-btn", function() {
     filterView("count", this);
+    event.preventDefault();
   });
   $(document).on("click", ".tech-btn", function() {
     filterView("tech", this);
+    event.preventDefault();
   });
   $(document).on("click", "#clear", function() {
     $(".count-parent").show();
+    event.preventDefault();
+  });
+
+  // Inventory#order filter buttons
+  $(document).on("turbolinks:load", function(){
+    $("#item_btn").hide();
   });
   $(document).on("click", "#supplier_btn", function() {
     $("#order_item_div").hide();
-    $("#supplier_admin").hide();
+    $(this).hide();
     $("#order_supplier_div").show();
-    $("#item_admin").show();
+    $("#item_btn").show();
     event.preventDefault();
   });
   $(document).on("click", "#item_btn", function() {
     $("#order_supplier_div").hide();
-    $("#item_admin").hide();
+    $(this).hide();
     $("#order_item_div").show();
-    $("#supplier_admin").show();
+    $("#supplier_btn").show();
     event.preventDefault();
   });
 
+  // Inventory#order checkbox buttons && checkboxes
   $(document).on("click", ".btn-check", function() {
-    var id_str = $(this).attr("id");
-    var split = id_str.split("_")
+    var idStr = $(this).attr("id");
+    var split = idStr.split("_");
+    // Some combo of ["check", "all"] and ["uncheck", "id"]
     toggleCheck(split[0],split[1]);
     event.preventDefault();
   });
 
-  // $(document).on("click", "#order_check_all", function() {
-  //   toggleCheck("check","all");
-  //   event.preventDefault();
-  // });
-  // $(document).on("click", "#order_uncheck_all", function() {
-  //   toggleCheck("uncheck","all");
-  //   event.preventDefault();
-  // });
+  $(document).on("change", ".order_check", function() {
+    twinToggle(this);
+    orderTotal();
+  });
+
+  // Inventory#order form field
+  $(document).on("change", ".min-order-field", function() {
+    lineTotal(this);
+    lineCheck(this);
+    reformat(this);
+    orderTotal();
+  });
 
 }());

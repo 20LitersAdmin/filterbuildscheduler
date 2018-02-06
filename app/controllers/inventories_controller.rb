@@ -135,6 +135,11 @@ class InventoriesController < ApplicationController
     # Counts without a supplier
     @no_supplier = @order_counts.select{ |c| c.supplier == nil }
 
+    @total_cost = 0
+    @low_counts.each do |c|
+      @total_cost += c.item.reorder_total_cost
+    end
+
   end
 
   def destroy
