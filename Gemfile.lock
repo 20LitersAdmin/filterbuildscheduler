@@ -42,8 +42,6 @@ GEM
       public_suffix (>= 2.0.2, < 4.0)
     arel (8.0.0)
     ast (2.4.0)
-    autonumeric-rails (2.0.0.1)
-      jquery-rails (>= 2.0.2)
     autoprefixer-rails (7.2.5)
       execjs
     bcrypt (3.1.11)
@@ -343,7 +341,7 @@ GEM
     turbolinks (5.1.0)
       turbolinks-source (~> 5.1)
     turbolinks-source (5.1.0)
-    tzinfo (1.2.4)
+    tzinfo (1.2.5)
       thread_safe (~> 0.1)
     uglifier (4.1.5)
       execjs (>= 0.3.0, < 3)
@@ -366,7 +364,6 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  autonumeric-rails
   bootstrap-sass
   bootstrap3-datetimepicker-rails
   delayed_cron_job (~> 0.7.2)
