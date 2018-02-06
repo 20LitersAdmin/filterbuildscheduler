@@ -12,7 +12,7 @@ RSpec.describe Supplier, type: :model do
     let(:bad_url) { build :supplier, url: "http://www.creeds-blog.blogspot.net.info.biz" }
 
 
-    fit "in order to save" do
+    it "in order to save" do
       expect(supplier.save).to eq true
       expect { no_name.save!(validate: false) }.to raise_error ActiveRecord::NotNullViolation
       expect(bad_email.save).to be_falsey
