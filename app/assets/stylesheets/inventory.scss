@@ -98,16 +98,50 @@
 }
 
 #inventory_order {
-  #item_admin {
-    display: none;
+  #fixed {
+    background-color: white;
+    position: -webkit-sticky; /* Safari */
+    position: sticky;
+    top: -1px;
+    z-index: 2;
+
+    .btn-check {
+      // margin-top: 14px;
+      // margin-bottom: 14px;
+    }
+
+    .title {
+      font-size: 16px;
+    }
+
+    .match-title {
+      // margin-top: 10px;
+      &.btn {
+        font-size: 10px;
+        display: inline-block;
+      }
+    }
+
+    #order_supplier_div {
+      display: none;
+    }
   }
 
-  #order_supplier_div {
-    display: none;
+  #scrolling {
+    .btn-check {
+      margin-top: 30px;
+    }
+
+    .order-associated-costs {
+      display: none;
+    }
+
+    .min-order-field {
+      width: 74px;
+    }
   }
 
   .btn-check {
-    margin-top: 30px;
     padding-left: 1px;
     padding-top: 0px;
     height: 18px;
@@ -119,6 +153,5 @@
       font-size: 11px;
     }
   }
-
 }
 
