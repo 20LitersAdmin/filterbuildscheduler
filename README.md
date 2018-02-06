@@ -1,25 +1,17 @@
 # README
 
-## THIS NEXT PUSH
-1. Heroku db:rollback -- for dropping parts#supplier_name
-2. Uncomment the remove_supplier_name... stuff
-3. Push again
-4. Heroku db:migrate -- catch fixed remove_supplier_name... stuff and prod_rate to technology
-5. Technology.all.each do |t| set prod_rate to 1
-
 ## Things to do
-3. Technology Reorder report to match spreadsheet cols (calculate weeks until out, cost w/ wire transfer and shipping fees, total price [adjustable with checkboxes])
- - Needs: Parts table partial in _order_suppliers
- - Needs: Two total fields, one for each div
- - Needs: JS to distinguish between checkboxes from each div
- - Needs: JS to toggle button, div and total field
- - Needs: Calculate weeks until out
- - Needs: Calculate unit cost (combo of price and other fields? Or show all fields with low priority)
- - Needs: Calculate total cost
- - Needs: Order quantity field, min: min_order, recalcs total cost && order total
- 4. Inventory#show - Reorder items should have ^ these cols instead of current cols
+4. Check models for new methods needing specs (count, part, material, inventory, supplier)
 5. Write tests until everyone is happy (*Ross*) because TDD is real.
 12. Monthly report: structure and auto-send on first of every month
+  * # of Boxed technologies
+  * # of parts to order
+  * total $ of parts to order
+  * link to inventories/order
+  * link to latest inventory
+  * Email addresses attached as csv (Users.where(email_opt_out: false) created in last month)
+  * Send to send_inventory_emails
+
 
 ## BUGS!! AH BUGS!!!
 1. RegistrationController::Update -- need error handling line #30 and #46
