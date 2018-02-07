@@ -86,7 +86,6 @@
     }
 
     .tech-btn {
-      // font-size: 9px;
       padding-left: 4px;
       padding-right: 4px;
     }
@@ -98,24 +97,18 @@
 }
 
 #inventory_order {
-  #fixed {
+  #sticky {
     background-color: white;
     position: -webkit-sticky; /* Safari */
     position: sticky;
     top: -1px;
     z-index: 2;
 
-    .btn-check {
-      // margin-top: 14px;
-      // margin-bottom: 14px;
-    }
-
     .title {
       font-size: 16px;
     }
 
     .match-title {
-      // margin-top: 10px;
       &.btn {
         font-size: 10px;
         display: inline-block;
