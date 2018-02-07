@@ -150,6 +150,24 @@ function reformat(source) {
     event.preventDefault();
   });
 
+  // Inventory#edit search field
+  $(document).on("keyup", "#search", function() {
+    var term = $("#search").val().toUpperCase();
+    var collection = $(".count-parent").get();
+    var title;
+
+    if (term === "") {
+      $('.count-parent').show();
+    } else {
+      for ( i = 0; i < collection.length; i++ ) {
+      title = $(collection[i]).find(".count-title")
+      if ( $(title).html().toUpperCase().indexOf(term) === -1 ) {
+        $(collection[i]).hide();
+      };
+    };
+    }
+  });
+
   // Inventory#order filter buttons
   $(document).on("turbolinks:load", function(){
     $("#item_btn").hide();
