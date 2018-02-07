@@ -1,5 +1,5 @@
 <div id="inventory_order">  
-  <div class="row" id="fixed">
+  <div class="row" id="sticky">
     <div class="col-xs-12">
       <h2><%= @low_counts.count %> items need to be ordered:</h2>
     </div>
@@ -28,7 +28,7 @@
   <div class="row" id="scrolling">
     <div class="col-xs-12" id="order_item_div">
       <% @locator = "item" %>
-      <table class="table table-striped table-bordered datatable" id="order_item_tbl">
+      <table class="table table-striped table-bordered datatable-order-item" id="order_item_tbl">
         <thead>
           <%= render partial: "order_tbl_head" %>
         </thead>
