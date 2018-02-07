@@ -42,6 +42,10 @@
         <button type="button" class="btn empty tech-btn" id="<%= 'tech_' + t.id.to_s %>"><%= t.name %></button>
       <% end %>
     </div>
+
+    <div class="btn-group btn-group-sm">
+      <input type="text" name="search" id="search" placeholder="Search...">
+    </div>
   </div>
 
   <div class="col-xs-12" id="counts_div">
