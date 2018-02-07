@@ -153,7 +153,9 @@ function reformat(source) {
   // Inventory#order filter buttons
   $(document).on("turbolinks:load", function(){
     $("#item_btn").hide();
+    $('#order_supplier_div').hide();
   });
+
   $(document).on("click", "#supplier_btn", function() {
     $("#order_item_div").hide();
     $(this).hide();
