@@ -28,13 +28,14 @@ gem 'momentjs-rails'
 gem 'bootstrap3-datetimepicker-rails'
 gem 'font-awesome-rails'
 gem 'rest-client'
-gem 'stripe'
-gem 'stripe_event'
+# gem 'stripe'
+# gem 'stripe_event'
 gem 'pry-byebug'
 gem 'money-rails'
 gem 'icalendar'
 gem 'jquery-datatables-rails'
 gem 'httparty'
+
 
 group :production do
   gem 'puma'
@@ -48,6 +49,7 @@ group :development, :test do
   gem 'faker'
   gem 'squasher'
   gem 'foreman'
+  gem 'airborne'
 end
 
 group :test do

@@ -41,6 +41,8 @@ Rails.application.routes.draw do
 
   # mount StripeEvent::Engine, at: '/stripe-events'
 
+  post 'stripe-webhook', to: 'stripe_webhook#receive', as: 'stripe_webhook'
+
   if Rails.env.development?
     mount LetterOpenerWeb::Engine, at: "/letter_opener"
   end
