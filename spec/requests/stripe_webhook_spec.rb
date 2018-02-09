@@ -27,7 +27,7 @@ RSpec.describe "Stripe Webhook", type: :request do
 
   context "Post from anyone else" do
     before :each do
-      data = { "object": { "application": "not_causevox" } }
+      data = { "data": {"object": { "application": "not_causevox" }} }
       post stripe_webhook_path, params: data
     end
 

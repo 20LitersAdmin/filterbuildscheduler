@@ -27,33 +27,32 @@ RSpec.describe KindfulClient do
   describe "contact_with_transaction" do
     fit 'takes data and sends it to kindful' do
       http_spy = spy
-      body_args = {
-        "first_name": "FNAME",
-        "last_name": "LName",
-        "email": "foo@bar.com",
-        "addr1": "111 West Washington st",
-        "addr2": "Unit 2",
-        "city": "City",
-        "state": "State",
-        "postal": "Postal",
-        "country": "USA",
-        "amount_in_cents": "50000",
-        "currency": "usd",
-        "campaign": "CauseVox Transactions",
-        "fund": "Special Events 40400",
-        "acknowledged": "false",
-        "transaction_note": "Campaign Name from CauseVox",
-        "stripe_charge_id": "ch_1BM3X3Df2Ej1M9QFB2Qmnhwq",
-        "transaction_type": "Credit",
-        "card_type": "Mastercard",
+      opts= {
+        "id": "ch_1BM3X3Df2Ej1M9QFB2Qmnhwq",
+        "metadata": {
+          "first_name": "FNAME",
+          "last_name": "LName",
+          "email": "foo@bar.com",
+          "line1": "111 West Washington st",
+          "line2": "Unit 2",
+          "city": "City",
+          "state": "State",
+          "zipcode": "Postal",
+          "country": "USA",
+          "campaign_name": "CauseVox Transactions"
+        },
+        "amount": "50000",
+        "source": {
+          "brand": "Visa"
+        },
       }
 
       arguments = {
         headers: client.headers,
-        body: client.contact_w_transaction(body_args).to_json
+        body: client.contact_w_transaction(opts).to_json
       }
       expect(KindfulClient).to receive(:post).with('/imports', arguments).and_return(http_spy)
-      client.import_transaction(body_args)
+      client.import_transaction(opts)
     end
   end
 end
