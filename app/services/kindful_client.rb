@@ -18,7 +18,6 @@ class KindfulClient
   end
 
   def import_transaction(transaction)
-    
     self.class.post("/imports", { headers: headers, body: contact_w_transaction(transaction).to_json } )
   end
 
@@ -31,44 +30,6 @@ class KindfulClient
       "Content-Type": "application/json",
       "Authorization": "Token token=\"#{token}\""
     }
-  end
-
-  def contact_w_transaction(opts)
-    # opts[:key] is symbolized already, just make sure the names match the charge_succeded_spec keys
-
-    {
-      "data_format": "contact_with_transaction",
-      "action_type": "create",
-      "data_type": "json",
-      "match_by": {
-        "contact": "first_name_last_name_email",
-        "campaign": "name",
-        "fund": "name"
-      },
-      "data": [
-        {
-          "first_name": opts[:first_name],
-          "last_name": opts[:lname],
-          "email": opts[:email],
-          "addr1": opts[:line1],
-          "addr2": opts[:line2],
-          "city": opts[:city],
-          "state": opts[:state],
-          "postal": opts[:zipcode],
-          "country": opts[:country],
-          "amount_in_cents": opts[:amount_in_cents],
-          "currency": "usd",
-          "campaign": "CauseVox Transactions",
-          "fund": "Special Events 40400",
-          "acknowledged": "false",
-          "transaction_note": opts[:campaign_name],
-          "stripe_charge_id": opts[:charge_id],
-          "transaction_type": opts[:funding],
-          "card_type": opts[:card_brand],
-         } 
-      ]
-    }
-
   end
 
   def contact(id:, fname:, lname:, email:, email_opt_in:)
@@ -92,6 +53,44 @@ class KindfulClient
         }
       ]
     }
+  end
+
+  def contact_w_transaction(opts)
+    # opts[:key] is symbolized already, just make sure the names match the charge_succeded_spec keys
+
+    {
+      "data_format": "contact_with_transaction",
+      "action_type": "create",
+      "data_type": "json",
+      "match_by": {
+        "contact": "first_name_last_name_email",
+        "campaign": "name",
+        "fund": "name"
+      },
+      "data": [
+        {
+          "first_name": opts[:metadata][:first_name],
+          "last_name": opts[:metadata][:last_name],
+          "email": opts[:metadata][:email],
+          "addr1": opts[:metadata][:line1],
+          "addr2": opts[:metadata][:line2],
+          "city": opts[:metadata][:city],
+          "state": opts[:metadata][:state],
+          "postal": opts[:metadata][:zipcode],
+          "country": opts[:metadata][:country],
+          "amount_in_cents": opts[:amount],
+          "currency": "usd",
+          "campaign": "CauseVox Transactions",
+          "fund": "Special Events 40400",
+          "acknowledged": "false",
+          "transaction_note": opts[:metadata][:campaign_name],
+          "stripe_charge_id": opts[:id],
+          "transaction_type": "Credit",
+          "card_type": opts[:source][:brand],
+         } 
+      ]
+    }
+
   end
 
 end

@@ -18,7 +18,7 @@ RSpec.describe "Stripe Webhook", type: :request do
       #write this next
       expect( assigns(:json) ).to be  #formatted somehow
       # expect(assigns(:json)[:fname]).to be "the real thing"
-      
+
     end
 
     fit "sends the transaction and user to Kindful" do
