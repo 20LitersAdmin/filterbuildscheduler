@@ -5,7 +5,7 @@ RSpec.describe KindfulClient do
   let(:client) { KindfulClient.new }
 
   describe "import_user" do
-    fit 'takes user data and sends it to kindful' do
+    it 'takes user data and sends it to kindful' do
       http_spy = spy
       body_args = {
         id: user1.id,
@@ -25,7 +25,7 @@ RSpec.describe KindfulClient do
   end
 
   describe "contact_with_transaction" do
-    fit 'takes data and sends it to kindful' do
+    it 'takes data and sends it to kindful' do
       http_spy = spy
       opts= {
         "id": "ch_1BM3X3Df2Ej1M9QFB2Qmnhwq",

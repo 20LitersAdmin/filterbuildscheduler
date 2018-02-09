@@ -56,8 +56,6 @@ class KindfulClient
   end
 
   def contact_w_transaction(opts)
-    # opts[:key] is symbolized already, just make sure the names match the charge_succeded_spec keys
-
     {
       "data_format": "contact_with_transaction",
       "action_type": "create",
