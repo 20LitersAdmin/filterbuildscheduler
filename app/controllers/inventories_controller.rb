@@ -41,12 +41,6 @@ class InventoriesController < ApplicationController
 
   def create
     @date = inventory_params[:date]
-    # @latest = Inventory.latest
-    # if @latest.present?
-    #   @latest_id = @latest.id
-    # else
-    #   @latest_id = nil
-    # end
 
     @matching = Inventory.where(date: Date.parse(@date)).last
 
@@ -135,11 +129,8 @@ class InventoriesController < ApplicationController
     # Counts without a supplier
     @no_supplier = @order_counts.select{ |c| c.supplier == nil }
 
-    @total_cost = 0
-    @low_counts.each do |c|
-      @total_cost += c.item.reorder_total_cost
-    end
-
+    @low_counts = @inventory.counts.select{ |count| count.reorder? }
+    @total_cost = @low_counts.map { |c| c.item.reorder_total_cost }.sum
   end
 
   def destroy

@@ -1,0 +1,33 @@
+<div class="whole" style="position: relative; min-height: 1px; padding-left: 15px; padding-right: 15px; float: left; width: 100%;">
+  <h2>The monthly report is here.</h2>
+  <p>Attached is a list of new users (that didn't opt out)</p>
+</div>
+
+<div class="whole" style="position: relative; min-height: 1px; padding-left: 15px; padding-right: 15px; float: left; width: 100%;">
+  <h4>Ready to ship:</h4>
+  <ul>
+    <% @primary_component_counts.each do |c| %>
+      <li>
+        <%= c.name %>: <%= pluralize(c.unopened_boxes_count, "box") %> (<%= number_with_delimiter(c.box_count) %> ct)
+      </li>
+    <% end %>
+  </ul>
+</div>
+
+<div class="whole" style="position: relative; min-height: 1px; padding-left: 15px; padding-right: 15px; float: left; width: 100%;">
+  <h4>Item re-order:</h4>
+  <ul>
+    <li>
+      <%= pluralize(@low_counts.count, "item") %> are below their minimum
+    </li>
+    <li>
+      Full order is estimated to be $<%= number_with_delimiter(@total_cost, delimiter: ",") %> 
+    </li>
+    <li>
+      <%= link_to "See the order list", "https://make.20liters.org/inventories/order", target: "_blank" %>
+    </li>
+    <li>
+      <%= link_to "See the latest inventory", "https://make.20liters.org/inventories/" + @inventory.id.to_s, target: "_blank" %>
+    </li>
+  </ul>
+</div>
