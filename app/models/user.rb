@@ -8,6 +8,7 @@ class User < ApplicationRecord
   scope :leaders, -> { where(is_leader: true)}
   scope :admins, -> { where(is_admin: true) }
   scope :builders, -> { where.not(is_admin: true).where.not(is_leader: true).where.not(does_inventory: true)}
+  scope :for_monthly_report, -> { builders.where(email_opt_out: false).where('created_at >= ?', Date.today.beginning_of_month) }
   
   has_many :registrations
   has_many :events, through: :registrations
@@ -74,6 +75,17 @@ class User < ApplicationRecord
   def ensure_authentication_token
     if authentication_token.blank?
       self.authentication_token = generate_authentication_token
+    end
+  end
+
+  def self.to_csv
+    attributes = %w[fname lname email]
+    CSV.generate(headers: true) do |csv|
+      csv << attributes
+
+      all.each do |u|
+        csv << u.attributes.values_at(*attributes)
+      end
     end
   end
 
