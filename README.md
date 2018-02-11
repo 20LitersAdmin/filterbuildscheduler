@@ -3,15 +3,6 @@
 ## Things to do
 4. Check models for new methods needing specs (count, part, material, inventory, supplier)
 5. Write tests until everyone is happy (*Ross*) because TDD is real.
-12. Monthly report: structure and auto-send on first of every month
-  * # of Boxed technologies
-  * # of parts to order
-  * total $ of parts to order
-  * link to inventories/order
-  * link to latest inventory
-  * Email addresses attached as csv (Users.where(email_opt_out: false) created in last month)
-  * Send to send_inventory_emails
-
 
 ## BUGS!! AH BUGS!!!
 1. RegistrationController::Update -- need error handling line #30 and #46
