@@ -25,12 +25,11 @@ RSpec.describe User, type: :model do
   end
 
   describe "#update_kindful" do
+    let(:user2) { build :user }
+
     it 'takes user data and sends it to kindful_client' do
-      pending("I don't understand spy")
-      @kindful_spy = spy
-      expect(KindfulClient).to receive(:new).and_return(@kindful_spy)
-      user1
-      expect(@kindful_spy).to have_received(:update_kindful)
+      expect_any_instance_of( KindfulClient ).to receive(:import_user).with(user2)
+      user2.save
     end
   end
 

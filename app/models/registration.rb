@@ -6,8 +6,7 @@ class Registration < ApplicationRecord
   scope :registered_as_leader, -> {where(leader: true)}
   scope :non_leader, -> {where(leader: false)}
   scope :ordered_by_user_lname, -> { includes(:user).order('users.lname')}
-  # delegate :signed_waiver_on, to: :user, prefix: :false, allow_nil: false
-  # attr_accessor :waiver_accepted?
+  attr_accessor :accept_waiver
 
   validates :guests_registered, numericality: { only_integer: true, greater_than_or_equal_to: 0 }, presence: true
   validate :under_max_registrations?
