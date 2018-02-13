@@ -120,7 +120,7 @@ class Count < ApplicationRecord
     else
       # calculate the number of technologies that can be created with what remains
       # Divide that by the monthly rate
-      ( available.to_f / item.per_technology ) / ( item.technologies.first.monthly_production_rate / 4 )
+      ( available.to_f / item.per_technology ) / ( item.technologies.first.monthly_production_rate / 4.0 )
     end
   end
 
