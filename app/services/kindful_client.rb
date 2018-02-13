@@ -1,9 +1,14 @@
 class KindfulClient
   include HTTParty
+
   if Rails.env.production?
     base_uri "https://app.kindful.com/api/v1"
   else
     base_uri "https://app-sandbox.kindful.com/api/v1"
+  end
+
+  def self.post(url, opts)
+    super(url, opts) unless Rails.env.test?
   end
 
   def import_user(user)

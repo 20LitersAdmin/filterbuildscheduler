@@ -15,7 +15,6 @@ class User < ApplicationRecord
   has_and_belongs_to_many :technologies
   has_many :counts
   belongs_to :primary_location, class_name: "Location", primary_key: "id", foreign_key: "primary_location_id", optional: true
-  attr_accessor :waiver_accepted
 
   validates :fname, :lname, :email, presence: true
 
@@ -33,10 +32,6 @@ class User < ApplicationRecord
 
   def name
     "#{fname} #{lname}"
-  end
-
-  def waiver_accepted
-    !signed_waiver_on.nil?
   end
 
   def password_required?
