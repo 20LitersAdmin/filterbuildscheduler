@@ -78,13 +78,12 @@ class EventPolicy < ApplicationPolicy
     end
 
     def resolve
-      if user&.is_admin?
-        Event.all
-      elsif user
+      if user
         user.available_events
       else
         Event.non_private
       end
     end
+    
   end
 end

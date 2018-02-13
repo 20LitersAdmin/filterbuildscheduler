@@ -52,7 +52,9 @@ class User < ApplicationRecord
   end
 
   def available_events
-    if self.is_leader?
+    if self.is_admin?
+      Event.all
+    elsif self.is_leader?
       # finds future events OR events the leader registered for
       Event.distinct.joins('LEFT JOIN registrations ON registrations.event_id = events.id')
          .where('start_time >= ? OR registrations.user_id = ?', Time.now, id)
