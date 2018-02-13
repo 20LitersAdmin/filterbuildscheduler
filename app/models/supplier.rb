@@ -23,6 +23,7 @@ class Supplier < ApplicationRecord
       false
     when parsed_url.host.length - parsed_url.host.gsub('.','').length > 3
       errors.add(:url, "Bad URL")
+      false
     when parsed_url.scheme != "http" && parsed_url.scheme != "https"
       errors.add(:url, "Must include http:// or https://")
       false

@@ -13,6 +13,12 @@ RSpec.describe Count, type: :model do
   let(:count_part2) { create :count_part, part: part, inventory: inventory }
   let(:part2) { create :part, quantity_per_box: 10 }
 
+  let(:part_w_min) { create :part, minimum_on_hand: 300 }
+  let(:tech_part_w_min) { create :tech_part, technology: technology, part: part_w_min }
+  let(:count_part_low) { create :count_part, loose_count: 150, unopened_boxes_count: 1, part: part_w_min }
+  let(:count_part_high) { create :count_part, loose_count: 550, unopened_boxes_count: 12, part: part_w_min }
+  
+
   describe "must be valid" do
     let(:no_inv) { build :count_part, inventory_id: nil }
     let(:no_loose) { build :count_part, loose_count: nil, inventory: inventory }
@@ -121,8 +127,6 @@ RSpec.describe Count, type: :model do
   end
 
   describe "#reorder?" do
-    let(:part_w_min) { create :part, minimum_on_hand: 300 }
-    let(:count_part_low) { create :count_part, loose_count: 150, unopened_boxes_count: 0, part: part_w_min }
     
     it "returns false if the item is a component" do
       expect(count_comp.reorder?).to be_falsey
@@ -130,6 +134,20 @@ RSpec.describe Count, type: :model do
 
     it "returns true if the part needs to be reordered" do
       expect(count_part_low.reorder?).to eq true
+    end
+  end
+
+  describe "#weeks_to_out" do
+    let(:count_part_out) { create :count_part, loose_count: 0, unopened_boxes_count: 0 }
+
+    it "returns 0 if loose_count and box_count are 0" do
+      expect(count_part_out.weeks_to_out).to eq 0
+    end
+
+    it "returns a float that represents the weeks until the product runs out" do
+      part_w_min.save
+      tech_part_w_min.save
+      expect(count_part_high.weeks_to_out).to eq 2248.0
     end
   end
 end

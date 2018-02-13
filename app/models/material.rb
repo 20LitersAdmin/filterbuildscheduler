@@ -28,9 +28,10 @@ class Material < ApplicationRecord
       ppc = part.extrapolate_component_parts.first.parts_per_component
       component = part.extrapolate_component_parts.first.component
       cpt = component.extrapolate_technology_components.first.components_per_technology
-      per_tech = 1 / ( ( ppm / ppc ) * cpt )
+      # per_tech = 1.0 / ( ( ppm / ppc ) * cpt )
+      per_tech = (cpt * ppc.to_f ) / ppm
     else
-      per_tech = 0
+      per_tech = 0.0
     end
 
     per_tech
