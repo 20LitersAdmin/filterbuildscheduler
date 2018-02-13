@@ -29,12 +29,14 @@ class Part < ApplicationRecord
 
   def per_technology
     if extrapolate_technology_parts.first.present?
-      per_tech = extrapolate_technology_parts.first.parts_per_technology
+      per_tech = extrapolate_technology_parts.first.parts_per_technology.to_f
     elsif extrapolate_component_parts.first.present?
       ppc = extrapolate_component_parts.first.parts_per_component
       component = extrapolate_component_parts.first.component
       cpt = component.extrapolate_technology_components.first.components_per_technology
-      per_tech = ppc * cpt
+      per_tech = ppc.to_f * cpt
+    else
+      per_tech = 0.0
     end
 
     per_tech
