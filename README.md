@@ -1,13 +1,14 @@
 # README
 
 ## Things to do
-4. Check models for new methods needing specs (count, part, material, inventory, supplier)
 5. Write tests until everyone is happy (*Ross*) because TDD is real.
+  * Learn to write system tests
+  - https://chriskottom.com/blog/2017/04/full-stack-testing-with-rails-system-tests/
+  - https://medium.com/table-xi/a-quick-guide-to-rails-system-tests-in-rspec-b6e9e8a8b5f6
 
 ## BUGS!! AH BUGS!!!
 1. RegistrationController::Update -- need error handling line #30 and #46
 2. accepts_nested_attributes_for seems to break event#show, at least for anon view
-3. Supplier.valid_url? is still not ignoring null
 12. Inventories created from events aren't subtracting parts from components (parts used to build the technologies_built or boxes_packed)
 
 
