@@ -111,7 +111,7 @@ class RegistrationsController < ApplicationController
       if @event.start_time > Time.now # don't send emails for past events.
         RegistrationMailer.delay.created @registration
       end
-      @user.update_attributes!(signed_waiver_on: Time.now) unless current_user.waiver_accepted
+      @user.update_attributes!(signed_waiver_on: Time.now) unless current_user.waiver_accepted?
       flash[:success] = "Registration successful!"
 
       if params[:registration][:form_source] == "admin"
@@ -126,7 +126,7 @@ class RegistrationsController < ApplicationController
     #   if @event.start_time > Time.now # don't send emails for past events.
     #     RegistrationMailer.delay.created @registration
     #   end
-    #   @user.update_attributes!(signed_waiver_on: Time.now) unless current_user.waiver_accepted
+    #   @user.update_attributes!(signed_waiver_on: Time.now) unless current_user.waiver_accepted?
     #   flash[:success] = "Registration successful!"
     # else
     #   render 'new'

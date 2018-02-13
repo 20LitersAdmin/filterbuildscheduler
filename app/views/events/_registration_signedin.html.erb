@@ -15,7 +15,7 @@
     <%= f.input :accommodations, label: 'Notes', as: :text %>
   </div>
 
-  <% if !current_user.waiver_accepted %>
+  <% if !current_user.waiver_accepted? %>
     <div>
       <h4>
         <%= f.hidden_field :waiver_accepted, value: '0' %>

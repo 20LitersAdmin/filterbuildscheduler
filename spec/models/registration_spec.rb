@@ -19,9 +19,14 @@ RSpec.describe Registration, type: :model do
     end
   end
 
-  it "should delegate waiver_accepted to User" do
-    pending("I don't understand delegate")
-    should delegate_method(:waiver_accepted).to(:user)
+  it "should delegate waiver_accepted to User" do 
+    user.signed_waiver_on = nil
+
+    expect(registration.waiver_accepted?).to be false
+
+    user.signed_waiver_on = Time.now
+
+    expect(registration.waiver_accepted?).to be true
   end
 
   describe "#under_max_registrations?" do
