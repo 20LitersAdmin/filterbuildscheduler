@@ -31,24 +31,20 @@
       <p><strong>
         Event <%= pluralize_without_count(@event.registrations.registered_as_leader.count, 'leader') %>: <%= @event.registrations.registered_as_leader.map { |r| r.user.fname }.join(', ') %>
       </strong></p>
-      <hr>
+      <hr />
+      <% if @event.registrations_filled? %>
+        <%= render partial: 'events/registration_full' %>
+      <% else %>
         <% if current_user %>
           <% if current_user.registered?(@event) %>
             <%= render partial: 'events/registration_registered' %>
           <% else %>
-            <% if @event.registrations_filled? %>
-              <%= render partial: 'events/registration_full' %>
-            <% else %>
-              <%= render partial: 'events/registration_signedin' %>
-            <% end %>
+            <%= render partial: 'events/registration_signedin' %>
           <% end %>
         <% else # current_user == nil %>
-          <% if @event.registrations_filled? %>
-            <%= render partial: 'events/registration_full' %>
-          <% else %>
-            <%= render partial: 'events/registration_anonymous' %>
-          <% end %>
+          <%= render partial: 'events/registration_anonymous' %>
         <% end %>
+      <% end %>
     </div>
     <div class="col-md-6">
       <div class="row">

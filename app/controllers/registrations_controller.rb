@@ -58,7 +58,7 @@ class RegistrationsController < ApplicationController
       @registration.errors.add(:guests_registered, "You can only bring up to #{@event.registrations_remaining - 1} guests at this event.")
     end
 
-    if @user.save && @registration.save
+    if @registration.errors.blank? && @user.save && @registration.save
       
       sign_in(@user) unless current_user
 
@@ -74,48 +74,14 @@ class RegistrationsController < ApplicationController
         redirect_to event_path @event
       end
     else
-      # binding.pry
       flash[:danger] = @registration.errors.messages.map { |k,v| v }.join(', ')
-      flash[:danger] += @user.errors.messages.map { |k,v| v }.join(', ')
+      flash[:danger] += @user.errors.messages.map { |k,v| "#{k} #{v.join(', ')}" }.join(' | ')
       if params[:registration][:form_source] == "admin"
         render 'new'
       else
         render 'events/show'
       end
     end
-
-    # if @registration.errors.any? || @user.errors.any?
-    #   flash[:danger] = @registration.errors.messages.map { |k,v| v }.join(', ')
-    #   if params[:registration][:form_source] == "admin"
-    #     render 'new'
-    #   else
-    #     render 'events/show'
-    #   end
-    # else
-    #   @registration.save
-    #   if @event.start_time > Time.now # don't send emails for past events.
-    #     RegistrationMailer.delay.created @registration
-    #   end
-    #   @user.update_attributes!(signed_waiver_on: Time.now) unless waiver_accepted?
-    #   flash[:success] = "Registration successful!"
-
-    #   if params[:registration][:form_source] == "admin"
-    #     redirect_to event_registrations_path @event
-    #   else
-    #     redirect_to event_path @event
-    #   end
-    # end
-
-    # This is what's needed to use f.error_notification, but how within nested model && with user_params??
-    # if @registration.save
-    #   if @event.start_time > Time.now # don't send emails for past events.
-    #     RegistrationMailer.delay.created @registration
-    #   end
-    #   @user.update_attributes!(signed_waiver_on: Time.now) unless current_user.waiver_accepted?
-    #   flash[:success] = "Registration successful!"
-    # else
-    #   render 'new'
-    # end
   end
 
 
