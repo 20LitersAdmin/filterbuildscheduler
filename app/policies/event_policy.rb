@@ -24,9 +24,9 @@ class EventPolicy < ApplicationPolicy
 
   def show?
     if event.in_the_past?
-      if user.is_admin?
+      if user&.is_admin?
         true
-      elsif user.is_leader?
+      elsif user&.is_leader?
         # only show it if the leader led the event
         if event.registrations.where(user: user).where(leader: true).present?
           true
