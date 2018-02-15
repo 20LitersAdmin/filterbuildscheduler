@@ -174,6 +174,19 @@ $(document).on("turbolinks:load", function(){
 });
 
 // User#show and Pages#info accordion symbol switching
+function collapsedFAs(clicked) {
+  var collapsed = $('div[aria-expanded="false"]').get();
+  var id = "";
+
+  for( i = 0; i < collapsed.length; i++) {
+    id = "#" + $(collapsed[i]).attr("aria-labelledby");
+    $(id).find(".fa-minus").hide();
+    $(id).find(".fa-plus").show();
+  }
+}
+
 $(document).on("click", "a.accordion-link", function() {
   $(this).children(".fa").toggle();
+
+  collapsedFAs(this);
 });
