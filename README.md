@@ -2,15 +2,16 @@
 
 ## Things to do
 5. Write tests until everyone is happy (*Ross*) because TDD is real.
-6. JQuery registration form validations
+6. JQuery registration form validations (use global .has-errors css, see user#edit for good example)
 7. Available functions div as partial on more screens (e.g. event/closed, users/communication, events/lead, events/cancelled )
 
 ## System tests:
 1. DONE: Visit the homepage
 2. DONE: Visit the info page
-3. Visit my account page
-9. Edit my profile
-9. Set my password when I don't have one (have to register for an event, then visit user#show)
+3. DONE: Visit my account page
+9. DONE: Edit my profile / set a password
+9. DONE: Sign in / Sign out / Sign up
+9. Reset my password
 4. View an event (private vs. public, past vs. present, registered vs. not, admin, leader, builder, anon)
 5. Register for an event
 6. Cancel an event registration

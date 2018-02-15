@@ -16,6 +16,11 @@ html {
   overflow: hidden;
 }
 
+form .has-error {
+  color: $red !important;
+  border-color: $red !important;
+}
+
 .btn.fullwidth {
   margin-top: .5em;
   margin-bottom: .5em;
