@@ -50,4 +50,25 @@ RSpec.describe "Account page", type: :system do
 
   end
 
+  context "based on the presence of a password" do
+    let(:user) { create :user }
+    let(:user_w_password) { create :user_w_password }
+
+    it "when not present, encourages them to set one" do
+      sign_in user
+      visit show_user_path user
+
+      expect(page).to have_content "You haven't set your password yet, please do so now."
+      expect(page).to have_link("Set your password!")
+    end
+
+    it "when present, doesn't need to encourage" do
+      sign_in user_w_password
+      visit show_user_path user_w_password
+
+      expect(page).not_to have_content "You haven't set your password yet, please do so now."
+      expect(page).to have_link("Edit Your Information")
+    end
+  end
+
 end
