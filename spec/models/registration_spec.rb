@@ -28,48 +28,5 @@ RSpec.describe Registration, type: :model do
 
     expect(registration.waiver_accepted?).to be true
   end
-
-  describe "#under_max_registrations?" do
-    let(:big_reg) { build :registration, guests_registered: 29, event: event, user: user }
-
-    it "doesn't add an error if the registration is for a leader" do
-      registration_leader.under_max_registrations?
-      expect(registration_leader.errors.messages.count).to eq 0
-    end
-
-    it "doesn't add an error if the registration doesn't exceed the max" do
-      registration.under_max_registrations?
-      expect(registration.errors.messages.count).to eq 0
-    end
-
-    it "adds an error to User#email if the registration will exceed the max" do
-      user
-      event
-      big_reg.under_max_registrations?
-      expect(big_reg.errors.messages[:guests_registered][0]).to eq "maximum registrations exceeded by 5 for event"
-    end
-  end
-
-  describe "#under_max_leaders?" do
-    let(:registration_leader2) { create :registration_leader, event: event }
-    let(:registration_leader3) { build :registration_leader, event: event }
-
-    it "returns nil if the registration is not a leader" do
-      registration_leader.under_max_leaders?
-      expect(registration_leader.errors.messages.count).to eq 0
-    end
-
-    it "returns nil if the registration doesn't exceed the leader max" do
-      registration_leader.under_max_leaders?
-      expect(registration_leader.errors.messages.count).to eq 0
-    end
-
-    it "adds an error to Registration#leader if the registration will exceed the max" do
-      event
-      registration_leader
-      registration_leader2
-      registration_leader3.under_max_leaders?
-      expect(registration_leader3.errors.messages[:leader][0]).to eq "maximum leaders exceeded for event"
-    end
-  end
+  
 end
