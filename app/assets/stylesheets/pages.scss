@@ -20,10 +20,21 @@
       .fa-minus {
         display: none;
       }
+
+      
   }
   .panel-body a {
     color: black;
     text-decoration: underline;
   }
 
+  a[title="what"] {
+    .fa-plus {
+      display: none;
+    }
+
+    .fa-minus {
+      display: inline-block;
+    }
+  }
 }

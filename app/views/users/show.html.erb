@@ -8,7 +8,7 @@
     <% end %>
   </div>
 
-  <% if @user.is_leader %>
+  <% if @user.is_leader || @user.is_admin %>
     <div class="row">
       <div class="col-md-6 emphasis-div">
         <h3>Qualifications</h3>
