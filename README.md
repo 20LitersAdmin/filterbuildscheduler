@@ -6,6 +6,7 @@
 7. Available functions div as partial on more screens (e.g. event/closed, users/communication, events/lead, events/cancelled )
 
 ## System tests:
+Reference: https://gist.github.com/them0nk/2166525
 1. DONE: Visit the homepage
 2. DONE: Visit the info page
 3. DONE: Visit my account page
