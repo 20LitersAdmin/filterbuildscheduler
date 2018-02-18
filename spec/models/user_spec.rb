@@ -76,7 +76,7 @@ RSpec.describe User, type: :model do
       event2
       private_event
 
-      expect(user1.available_events).to eq([event1, event2])
+      expect(user1.available_events.count).to eq(2)
     end
 
     it 'shows all events I have registered for' do
