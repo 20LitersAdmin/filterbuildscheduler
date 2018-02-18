@@ -48,9 +48,18 @@ RSpec.describe "Password Reset", type: :system do
     expect(@email.body.parts.first.body.raw_source).to have_content "Someone has requested a link to change your password"
   end
 
-  fit "honors the reset_password_token" do
-    # maybe craft the url with the token?
-    # http://localhost:3000/users/password/edit?reset_password_token=sLZNNpmiYa7gD_vykGtN
+  it "honors the reset_password_token" do
+
+    fill_in "user_email", with: @user.email
+    click_button "Send me reset password instructions"
+
+    @user.reload
+
+    visit edit_user_password_path(reset_password_token: @user.reset_password_token)
+
+    expect(page).to have_content "Set your password"
+    expect(page).to have_field "user_password"
+    
   end
 
 end

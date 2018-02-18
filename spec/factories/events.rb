@@ -1,7 +1,19 @@
 FactoryBot.define do
   factory :event do
     title { Faker::TwinPeaks.quote }
-    start_time { Faker::Time.backward(30) }
+    start_time { Faker::Time.forward(90) }
+    end_time { start_time + 3.hours }
+    min_leaders 1
+    max_leaders 2
+    min_registrations 5
+    max_registrations 25
+    technology
+    location
+  end
+
+  factory :past_event, class: Event do
+    title { Faker::TwinPeaks.quote }
+    start_time { Faker::Time.backward(90) }
     end_time { start_time + 3.hours }
     min_leaders 1
     max_leaders 2
@@ -13,7 +25,7 @@ FactoryBot.define do
 
   factory :complete_event, class: Event do
     title { Faker::TwinPeaks.quote }
-    start_time { Time.now - 2.hours }
+    start_time { Time.now - 4.hours }
     end_time { start_time + 3.hours }
     min_leaders 1
     max_leaders 2

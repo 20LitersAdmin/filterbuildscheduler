@@ -23,7 +23,7 @@ class Count < ApplicationRecord
   end
 
   def name
-    self.item.name
+    item.name
   end
 
   def type
@@ -37,19 +37,19 @@ class Count < ApplicationRecord
   end
 
   def tech_names
-    if self.item.technologies.map { |t| t.name }.empty?
+    if item.technologies.map { |t| t.name }.empty?
       "not associated"
     else
-      self.item.technologies.map { |t| t.name }.join(", ")
+      item.technologies.map { |t| t.name }.join(", ")
     end
   end
 
   def supplier
-    self.item.supplier
+    item.supplier
   end
 
   def box_count
-    self.item.quantity_per_box * unopened_boxes_count
+    item.quantity_per_box * unopened_boxes_count
   end
 
   def available
@@ -58,30 +58,30 @@ class Count < ApplicationRecord
 
   def diff_from_previous(field)
     # field == "loose" || "box"
-    prev_inv = Inventory.where("date < ?", self.inventory.date).order(date: :desc).first
+    prev_inv = Inventory.where("date < ?", inventory.date).order(date: :desc).first
 
     if prev_inv.present?
-      case self.type
+      case type
       when "part"
-        prev = prev_inv.counts.where(part_id: self.part_id).first
+        prev = prev_inv.counts.where(part_id: part_id).first
       when "material"
-        prev = prev_inv.counts.where(material_id: self.material_id).first
+        prev = prev_inv.counts.where(material_id: material_id).first
       when "component"
-        prev = prev_inv.counts.where(component_id: self.component_id).first
+        prev = prev_inv.counts.where(component_id: component_id).first
       end
 
       if field == "loose"
-        val = self.loose_count - prev.loose_count
+        val = loose_count - prev.loose_count
       elsif field == "box"
-        val = self.unopened_boxes_count - prev.unopened_boxes_count
+        val = unopened_boxes_count - prev.unopened_boxes_count
       else
         val = 0
       end
     else
       if field == "loose"
-        val = self.loose_count
+        val = loose_count
       elsif field == "box"
-        val = self.unopened_boxes_count
+        val = unopened_boxes_count
       else
         val = 0
       end
@@ -91,7 +91,7 @@ class Count < ApplicationRecord
   end
 
   def total
-    if self.inventory.completed_at == nil
+    if inventory.completed_at == nil
       "Not Finalized"
     else
       available + extrapolated_count
@@ -108,7 +108,7 @@ class Count < ApplicationRecord
 
   def reorder?
     @answer = false
-    if self.type != "component" && self.available < self.item.minimum_on_hand
+    if type != "component" && available < item.minimum_on_hand
       @answer = true
     end
     @answer
