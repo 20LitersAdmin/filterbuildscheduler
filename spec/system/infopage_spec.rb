@@ -13,7 +13,7 @@ RSpec.describe "Info page", type: :system, js: true do
   context "accordion div" do
     it "can be clicked" do
       click_link("how")
-
+      
       expect(page).to have_css("div#collapseHow.in")
       expect(page).not_to have_css("div#collapseWhat.in") 
     end

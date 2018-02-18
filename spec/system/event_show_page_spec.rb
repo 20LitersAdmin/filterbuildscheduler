@@ -18,6 +18,17 @@ RSpec.describe "Visiting Events", type: :system do
 
       expect(page).to have_content event.full_title
     end
+
+    it "full can be visited but without a form" do
+      event = FactoryBot.create(:event, min_registrations: 1, max_registrations: 2)
+      registration = FactoryBot.create(:registration, guests_registered: 1, event: event)
+
+      visit event_path event
+
+      expect(page).to have_content event.full_title
+      expect(page).to have_content "Registration Full."
+      expect(page).not_to have_button "Register"
+    end
   end
 
   context "past tense, anon user" do
