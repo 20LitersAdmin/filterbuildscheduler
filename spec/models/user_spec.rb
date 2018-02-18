@@ -3,6 +3,11 @@ require 'rails_helper'
 RSpec.describe User, type: :model do
   let(:user1) { create :user }
 
+  before(:each) do
+    # describe 'available_events' is having memory leak issues (like 30 events created and persisting in the test db every time)
+    Event.destroy_all
+  end
+
   describe "must be valid" do
     let(:good_user) {build :user }
     let(:blank_password) { build :user, password: ""}
@@ -62,20 +67,11 @@ RSpec.describe User, type: :model do
   end
 
   describe 'available_events' do
-    let(:event1) { create :event }
-    let(:event2) { create :event }
+    let(:event1) { create :event, start_time: Time.now - 30.minutes }
+    let(:event2) { create :event, start_time: Time.now }
     let(:private_event) { create :event, is_private: true }
 
-    fit 'shows all public events' do
-      event_ids = Event.all.map { |e| e.id }
-      event_ids.delete(event1.id)
-      event_ids.delete(event2.id)
-      Event.find(event_ids).each do |e|
-        e.really_destroy!
-      end
-
-      binding.pry
-
+    it 'shows all public events' do
       event1
       event2
       private_event
@@ -84,12 +80,6 @@ RSpec.describe User, type: :model do
     end
 
     it 'shows all events I have registered for' do
-      event_ids = Event.all.map { |e| e.id }
-      event_ids.delete(private_event.id)
-      Event.find(event_ids).each do |e|
-        e.really_destroy!
-      end
-
       Registration.create user: user1, event: private_event
 
       expect(user1.available_events).to eq([private_event])
