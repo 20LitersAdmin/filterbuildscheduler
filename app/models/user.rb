@@ -39,7 +39,7 @@ class User < ApplicationRecord
   end
 
   def can_lead_event?(event)
-    return false unless is_leader
+    return false unless admin_or_leader?
     return event.technology.nil? || technologies.exists?(event.technology.id)
   end
 

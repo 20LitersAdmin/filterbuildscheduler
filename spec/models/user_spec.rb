@@ -65,16 +65,31 @@ RSpec.describe User, type: :model do
     let(:event1) { create :event }
     let(:event2) { create :event }
     let(:private_event) { create :event, is_private: true }
-    let(:user2) { create :user }
 
-    it 'shows all public events' do
+    fit 'shows all public events' do
+      event_ids = Event.all.map { |e| e.id }
+      event_ids.delete(event1.id)
+      event_ids.delete(event2.id)
+      Event.find(event_ids).each do |e|
+        e.really_destroy!
+      end
+
+      binding.pry
+
       event1
       event2
-      create :event, is_private: true
+      private_event
+
       expect(user1.available_events).to eq([event1, event2])
     end
 
     it 'shows all events I have registered for' do
+      event_ids = Event.all.map { |e| e.id }
+      event_ids.delete(private_event.id)
+      Event.find(event_ids).each do |e|
+        e.really_destroy!
+      end
+
       Registration.create user: user1, event: private_event
 
       expect(user1.available_events).to eq([private_event])

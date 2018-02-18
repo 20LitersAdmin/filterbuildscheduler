@@ -12,8 +12,8 @@ Reference: https://gist.github.com/them0nk/2166525
 3. DONE: Visit my account page
 9. DONE: Edit my profile / set a password
 9. DONE: Sign in / Sign out / Sign up
-9. Reset my password
-4. View an event (private vs. public, past vs. present, registered vs. not, admin, leader, builder, anon)
+9. DONE: Reset my password
+4. DONE: View an event (private vs. public, past vs. present, registered vs. not, admin, leader, builder, anon)
 5. Register for an event
 6. Cancel an event registration
 7. Register to lead an event
