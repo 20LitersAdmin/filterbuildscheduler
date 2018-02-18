@@ -14,17 +14,12 @@ Reference: https://gist.github.com/them0nk/2166525
 9. DONE: Sign in / Sign out / Sign up
 9. DONE: Reset my password
 4. DONE: View an event (private vs. public, past vs. present, registered vs. not, admin, leader, builder, anon)
-5. Register for an event
-6. Cancel an event registration
-7. Register to lead an event
+5. DONE: Register for an event
+6. Cancel an event registration && Cancel someone else's registration
 9. See a list of registrations for an event
-8. Register someone else for an event
-9. Edit someone else's registration
-9. Cancel someone else's registration
+9. Edit a registration && Edit someone else's registration
 9. Send a message to all registered users
 9. Share the event (fb, twitter, poster)
-9. See a map of a location
-9. See a photo of a location
 9. Print an attendance list
 9. Restore a deleted event && associated registration
 9. See a list of events that need leaders
@@ -39,9 +34,6 @@ Reference: https://gist.github.com/them0nk/2166525
 9. Edit a count (blanks are ignored)
 9. Submit a partial count (box / loose)
 9. See the count#edit calculator
-9. Be redirected to the homepage
-9. Be redirected to the sign_in page
-
 
 ## BUGS!! AH BUGS!!!
 12. Inventories created from events aren't subtracting parts from components (parts used to build the technologies_built or boxes_packed)
