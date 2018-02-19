@@ -15,9 +15,8 @@ Reference: https://gist.github.com/them0nk/2166525
 9. DONE: Reset my password
 4. DONE: View an event (private vs. public, past vs. present, registered vs. not, admin, leader, builder, anon)
 5. DONE: Register for an event
-6. Edit / Cancel an event registration && Edit / Cancel someone else's registration
-9. See a list of registrations for an event
-9. Create an event (admin, leader, not builder, not past event, not closed event)
+6. DONE: Edit / Cancel an event registration && Edit / Cancel someone else's registration
+9. DONE: Create an event (admin, leader, not builder)
 9. Edit an event (admin, leader, not builder, not past event, not closed event)
 9. Send a message to all registered users
 9. Share the event (fb, twitter, poster)
