@@ -97,14 +97,14 @@ class RegistrationsController < ApplicationController
   end
 
   def update
-    authorize @registration
-    @registration.update(registration_params)
-
+    authorize @registration = Registration.find(params[:id])
+    
     if @registration.errors.any?
       flash[:danger] = @registration.errors.map { |k,v| v }.join(', ')
       render 'edit'
     else
-      if params[:registration][:form_source] = "admin"
+      @registration.update(registration_params)
+      if params[:registration][:form_source] == "admin"
         redirect_to event_registrations_path(@registration.event)
       else
         redirect_to event_path(@registration.event)
