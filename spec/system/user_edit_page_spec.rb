@@ -25,9 +25,9 @@ RSpec.describe "User#edit", type: :system do
       click_button "Update"
 
       expect(page).to have_content "Info updated!"
-      expect(page).to have_content "Upcoming Builds"
 
       @user.reload
+      expect(page).to have_content @user.name
       expect(@user.name).to eq "Ross Hunter"
     end
 
@@ -54,23 +54,15 @@ RSpec.describe "User#edit", type: :system do
       visit edit_user_path @user
     end
 
-    fit "changes the password, sends an email, and logs out the user" do
-
+    it "changes the password, sends an email, and logs out the user" do
       fill_in "user_password", with: "mybirthday"
       fill_in "user_password_confirmation", with: "mybirthday"
-
-      save_and_open_page
 
       first_count = ActionMailer::Base.deliveries.count
 
       click_button "Update"
 
-      expect(page).to have_content "Info updated!"
-      expect(page).to have_content "Upcoming Builds"
-      expect(page).to have_content "Sign Out"
-
-      @user.reload
-      expect(@user.password).to eq "mybirthday"
+      expect(page).to have_content "You need to sign in first"
 
       second_count = ActionMailer::Base.deliveries.count
       expect(second_count).to eq first_count + 1
@@ -80,6 +72,9 @@ RSpec.describe "User#edit", type: :system do
       expect(email.subject).to eq "[20 Liters] Your password was changed"
       expect(email.to[0]).to eq @user.email
       expect(email.body.parts.first.body.raw_source).to have_content "Your password has just been changed in the Filter Build system."
+      
+      @user.reload
+      expect(@user.valid_password?("mybirthday")).to be true
     end
   end
 end
