@@ -63,6 +63,12 @@
   }
 }
 
+#user_edit_form {
+  #password_change_notice {
+    display: none;
+  }
+}
+
 
 
 @media screen and (max-width: 767px) {

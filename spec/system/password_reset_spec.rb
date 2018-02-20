@@ -1,6 +1,9 @@
 require 'rails_helper'
 
 RSpec.describe "Password Reset", type: :system do
+  after :all do
+    clean_up!
+  end
 
   before :each do
     @user = FactoryBot.create(:user)
@@ -33,19 +36,19 @@ RSpec.describe "Password Reset", type: :system do
 
   it "sends an email" do
 
-    @first_count = ActionMailer::Base.deliveries.count
+    first_count = ActionMailer::Base.deliveries.count
 
     fill_in "user_email", with: @user.email
     click_button "Send me reset password instructions"
     
-    @second_count = ActionMailer::Base.deliveries.count
-    @email = ActionMailer::Base.deliveries.last
+    second_count = ActionMailer::Base.deliveries.count
+    email = ActionMailer::Base.deliveries.last
 
-    expect(@second_count).to eq @first_count + 1
+    expect(second_count).to eq first_count + 1
 
-    expect(@email.subject).to eq "[20 Liters] Reset your password"
-    expect(@email.to[0]).to eq @user.email
-    expect(@email.body.parts.first.body.raw_source).to have_content "Someone has requested a link to change your password"
+    expect(email.subject).to eq "[20 Liters] Reset your password"
+    expect(email.to[0]).to eq @user.email
+    expect(email.body.parts.first.body.raw_source).to have_content "Someone has requested a link to change your password"
   end
 
   it "honors the reset_password_token" do

@@ -1,6 +1,9 @@
 require 'rails_helper'
 
 RSpec.describe "Create events:", type: :system do
+  after :all do
+    clean_up!
+  end
 
   context "anon user" do
     it "can't visit the new event page" do
@@ -24,7 +27,7 @@ RSpec.describe "Create events:", type: :system do
 
   context "leader" do
     before :each do
-      @user = FactoryBot.create(:leader)
+      @user = FactoryBot.create(:leader, send_notification_emails: true)
       @location = FactoryBot.create(:location)
       @technology = FactoryBot.create(:technology)
       sign_in @user
@@ -39,7 +42,7 @@ RSpec.describe "Create events:", type: :system do
       expect(page).to have_link "Back"
     end
 
-    it "can fill in the event page" do
+    it "can fill in and submit the event from, which triggers an email" do
       event = FactoryBot.build(:event, location: @location, technology: @technology)
 
       fill_in "event_title", with: event.title
@@ -53,6 +56,8 @@ RSpec.describe "Create events:", type: :system do
       fill_in "event_min_registrations", with: event.min_registrations
       fill_in "event_max_registrations", with: event.max_registrations
 
+      first_count = Delayed::Job.count
+
       click_button "Create Event"
 
       expect(page).to have_content "Upcoming Builds"
@@ -60,12 +65,15 @@ RSpec.describe "Create events:", type: :system do
       expect(saved_event.title).to eq event.title
       expect(saved_event.location).to eq event.location
       expect(saved_event.technology).to eq event.technology
+
+      second_count = Delayed::Job.count
+      expect(second_count).to eq first_count + 1
     end
   end
 
   context "Admin" do
     before :each do
-      @user = FactoryBot.create(:admin)
+      @user = FactoryBot.create(:admin, send_notification_emails: true)
       @location = FactoryBot.create(:location)
       @technology = FactoryBot.create(:technology)
       sign_in @user
@@ -80,7 +88,7 @@ RSpec.describe "Create events:", type: :system do
       expect(page).to have_link "Back"
     end
 
-    it "can fill in the event page" do
+    it "can fill in and submit the event from, which triggers an email" do
       event = FactoryBot.build(:event, location: @location, technology: @technology)
 
       fill_in "event_title", with: event.title
@@ -94,6 +102,8 @@ RSpec.describe "Create events:", type: :system do
       fill_in "event_min_registrations", with: event.min_registrations
       fill_in "event_max_registrations", with: event.max_registrations
 
+      first_count = Delayed::Job.count
+
       click_button "Create Event"
 
       expect(page).to have_content "Upcoming Builds"
@@ -102,6 +112,8 @@ RSpec.describe "Create events:", type: :system do
       expect(saved_event.location).to eq event.location
       expect(saved_event.technology).to eq event.technology
 
+      second_count = Delayed::Job.count
+      expect(second_count).to eq first_count + 1
     end
   end
 end

@@ -1,6 +1,9 @@
 require 'rails_helper'
 
 RSpec.describe "User Session", type: :system do
+  after :all do
+    clean_up!
+  end
 
   context "signing in" do
     before :each do

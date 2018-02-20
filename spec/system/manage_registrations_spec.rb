@@ -1,6 +1,9 @@
 require 'rails_helper'
 
 RSpec.describe "Manage registrations:", type: :system, js: true do
+  after :all do
+    clean_up!
+  end
 
   context "anon user" do
     before :each do

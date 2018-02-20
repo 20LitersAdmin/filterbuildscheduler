@@ -45,7 +45,6 @@ group :development, :test do
   gem 'timecop'
   gem 'factory_bot_rails'
   gem 'faker'
-  gem 'squasher'
   gem 'foreman'
   gem 'airborne'
 end
@@ -55,7 +54,7 @@ group :test do
   gem 'rspec-rails', '~> 3.7.2'
   gem 'rspec_junit_formatter'
   gem 'shoulda-matchers'
-  gem 'rails-controller-testing'
+  # gem 'rails-controller-testing'
   gem 'capybara'
   gem 'selenium-webdriver'
   gem 'database_cleaner'

@@ -1,6 +1,9 @@
 require 'rails_helper'
 
 RSpec.describe "Account page", type: :system do
+  after :all do
+    clean_up!
+  end
 
   context "as a builder" do
     let(:user) { create :user }

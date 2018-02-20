@@ -1,6 +1,9 @@
 require 'rails_helper'
 
 RSpec.describe "Info page", type: :system, js: true do
+  after :all do
+    clean_up!
+  end
 
   before :each do
     visit info_path

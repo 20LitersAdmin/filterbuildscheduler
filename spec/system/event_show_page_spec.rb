@@ -1,6 +1,9 @@
 require 'rails_helper'
 
 RSpec.describe "Visiting Events", type: :system do
+  after :all do
+    clean_up!
+  end
 
   context "in the future that are" do
     it "public can be visited" do
@@ -32,7 +35,7 @@ RSpec.describe "Visiting Events", type: :system do
   end
 
   context "past tense, anon user" do
-    event = FactoryBot.create(:past_event)
+    let(:event) { create :past_event }
 
     it "can't be visited" do
       visit event_path event
@@ -43,8 +46,8 @@ RSpec.describe "Visiting Events", type: :system do
   end
 
   context "past tense, builder, regardless of registered" do
-    event = FactoryBot.create(:past_event)
-    builder = FactoryBot.create(:user)
+    let(:event) { create :past_event }
+    let(:builder) { create :user }
 
     it "can't be visited" do
       sign_in builder
@@ -57,8 +60,8 @@ RSpec.describe "Visiting Events", type: :system do
   end
 
   context "past tense, leader, not registered" do
-    event = FactoryBot.create(:past_event)
-    leader = FactoryBot.create(:leader)
+    let(:event) { create :past_event }
+    let(:leader) { create :leader }
 
     it "can't be visited" do
       sign_in leader
@@ -71,16 +74,15 @@ RSpec.describe "Visiting Events", type: :system do
   end
 
   context "past tense, leader, registered" do
-    event = FactoryBot.create(:past_event)
-    leader = FactoryBot.create(:leader, signed_waiver_on: Faker::Time.backward(90) )
-    registration = FactoryBot.create(:registration_leader, event: event, user: leader)
+    let(:event) { create :past_event }
+    let(:leader) { create :leader, signed_waiver_on: Faker::Time.backward(90)  }
+    let(:registration) {create :registration_leader, event: event, user: leader }
 
     it "can be visited" do
       leader.technologies << event.technology
       leader.save
-
-      sign_in leader
       registration.save
+      sign_in leader
       visit event_path event
 
       expect(page).to have_content event.full_title
@@ -91,9 +93,9 @@ RSpec.describe "Visiting Events", type: :system do
   end
 
   context "past tense, admin, regardless of registration" do
-    event = FactoryBot.create(:past_event)
-    admin = FactoryBot.create(:admin, signed_waiver_on: Faker::Time.backward(90) )
-    registration = FactoryBot.build(:registration_leader, event: event, user: admin)
+    let(:event) { create :past_event }
+    let(:admin) { create :admin, signed_waiver_on: Faker::Time.backward(90)  }
+    let(:registration) {build :registration_leader, event: event, user: admin }
 
     it "can be visited" do
       sign_in admin
@@ -117,7 +119,7 @@ RSpec.describe "Visiting Events", type: :system do
   end
 
   context "future tense, anon user" do
-    event = FactoryBot.create(:event)
+    let(:event) { create :event }
 
     it "can be visited" do
       visit event_path event
@@ -132,8 +134,8 @@ RSpec.describe "Visiting Events", type: :system do
   # next 2 shouldn't have register as leader checkbox
 
   context "future tense, builder, not registered" do
-    event = FactoryBot.create(:event)
-    builder = FactoryBot.create(:user)
+    let(:event) { create :event }
+    let(:builder) { create :user }
 
     it "can be visited" do
       sign_in builder
@@ -149,9 +151,9 @@ RSpec.describe "Visiting Events", type: :system do
   end
 
   context "future tense, builder, registered" do
-    event = FactoryBot.create(:event)
-    builder = FactoryBot.create(:user, signed_waiver_on: Faker::Time.backward(90) )
-    registration = FactoryBot.create(:registration_leader, event: event, user: builder)
+    let(:event) { create :event }
+    let(:builder) { create :user, signed_waiver_on: Faker::Time.backward(90) }
+    let(:registration) { create :registration_leader, event: event, user: builder }
 
     it "can be visited" do
       registration.save
@@ -168,8 +170,8 @@ RSpec.describe "Visiting Events", type: :system do
   end
 
   context "future tense, leader, not registered" do
-    event = FactoryBot.create(:event)
-    leader = FactoryBot.create(:leader)
+    let(:event) { create :event }
+    let(:leader) { create :leader }
 
     it "can be visited" do
       leader.technologies << event.technology
@@ -186,11 +188,14 @@ RSpec.describe "Visiting Events", type: :system do
   end
 
   context "future tense, leader, registered" do
-    event = FactoryBot.create(:event)
-    leader = FactoryBot.create(:leader, signed_waiver_on: Faker::Time.backward(90) )
-    registration = FactoryBot.create(:registration_leader, event: event, user: leader)
+    let(:event) { create :event }
+    let(:leader) { create :leader, signed_waiver_on: Faker::Time.backward(90) }
+    let(:registration) { create :registration_leader, event: event, user: leader }
 
     it "can be visited" do
+      leader.technologies << event.technology
+      leader.save
+      registration.save
       sign_in leader
       registration.save
       visit event_path event
@@ -205,8 +210,8 @@ RSpec.describe "Visiting Events", type: :system do
   end
 
   context "future tense, admin, not registered" do
-    event = FactoryBot.create(:event)
-    admin = FactoryBot.create(:admin )
+    let(:event) { create :event }
+    let(:admin) { create :admin }
 
     it "can be visited" do
       admin.technologies << event.technology
@@ -225,13 +230,14 @@ RSpec.describe "Visiting Events", type: :system do
   end
 
   context "future tense, admin, registered" do
-    event = FactoryBot.create(:event)
-    admin = FactoryBot.create(:admin, signed_waiver_on: Faker::Time.backward(90) )
-    registration = FactoryBot.build(:registration_leader, event: event, user: admin)
+    let(:event) { create :event }
+    let(:admin) { create :admin, signed_waiver_on: Faker::Time.backward(90) }
+    let(:registration) { build :registration_leader, event: event, user: admin }
 
     it "can be visited" do
       admin.technologies << event.technology
       admin.save
+      registration.save
       sign_in admin
       registration.save
       visit event_path event

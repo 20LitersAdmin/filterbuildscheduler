@@ -37,9 +37,11 @@ class UsersController < ApplicationController
   end
 
   def update
+    @the_current_user = current_user
+
     if @user.update(user_params)
       flash[:success] = "Info updated!"
-      redirect_to events_path
+      redirect_to show_user_path @user
     else
       render 'edit'
     end
@@ -79,6 +81,7 @@ class UsersController < ApplicationController
     params.require(:user).permit :fname,
                                   :lname,
                                   :email,
+                                  :phone,
                                   :password,
                                   :password_confirmation
   end
