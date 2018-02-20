@@ -1,6 +1,9 @@
 require 'rails_helper'
 
 RSpec.describe "Homepage", type: :system do
+  after :all do
+    clean_up!
+  end
 
   context "an Admin user" do
     it "goes to the homepage" do

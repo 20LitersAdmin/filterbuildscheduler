@@ -1,13 +1,16 @@
 require 'rails_helper'
 
 RSpec.describe "User#edit", type: :system do
+  after :all do
+    clean_up!
+  end
 
   context "when a user has a password" do
 
     before :each do
-      @user_w_password = FactoryBot.create(:user_w_password)
-      sign_in @user_w_password
-      visit edit_user_path @user_w_password
+      @user = FactoryBot.create(:user_w_password)
+      sign_in @user
+      visit edit_user_path @user
     end
 
     it "displays a form" do
@@ -21,8 +24,11 @@ RSpec.describe "User#edit", type: :system do
 
       click_button "Update"
 
-      @user_w_password.reload
-      expect(@user_w_password.name).to eq "Ross Hunter"
+      expect(page).to have_content "Info updated!"
+      expect(page).to have_content "Upcoming Builds"
+
+      @user.reload
+      expect(@user.name).to eq "Ross Hunter"
     end
 
   end
@@ -39,5 +45,41 @@ RSpec.describe "User#edit", type: :system do
       expect(page).to have_css("input#user_password.has-error")
     end
 
+  end
+
+  context "when changing the password" do
+    before :each do
+      @user = FactoryBot.create(:user_w_password)
+      sign_in @user
+      visit edit_user_path @user
+    end
+
+    fit "changes the password, sends an email, and logs out the user" do
+
+      fill_in "user_password", with: "mybirthday"
+      fill_in "user_password_confirmation", with: "mybirthday"
+
+      save_and_open_page
+
+      first_count = ActionMailer::Base.deliveries.count
+
+      click_button "Update"
+
+      expect(page).to have_content "Info updated!"
+      expect(page).to have_content "Upcoming Builds"
+      expect(page).to have_content "Sign Out"
+
+      @user.reload
+      expect(@user.password).to eq "mybirthday"
+
+      second_count = ActionMailer::Base.deliveries.count
+      expect(second_count).to eq first_count + 1
+
+      email = ActionMailer::Base.deliveries.last
+
+      expect(email.subject).to eq "[20 Liters] Your password was changed"
+      expect(email.to[0]).to eq @user.email
+      expect(email.body.parts.first.body.raw_source).to have_content "Your password has just been changed in the Filter Build system."
+    end
   end
 end

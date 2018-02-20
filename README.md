@@ -16,9 +16,9 @@ Reference: https://gist.github.com/them0nk/2166525
 4. DONE: View an event (private vs. public, past vs. present, registered vs. not, admin, leader, builder, anon)
 5. DONE: Register for an event
 6. DONE: Edit / Cancel an event registration && Edit / Cancel someone else's registration
-9. DONE: Create an event (admin, leader, not builder)
-9. Edit an event (admin, leader, not builder, not past event, not closed event)
-9. Send a message to all registered users
+9. DONE: Create an event (admin, leader, not builder, not admin)
+9. DONE: Managage an event (admin, leader, not builder, not admin)
+9. DONE: Send a message to all registered users
 9. Share the event (fb, twitter, poster)
 9. Print an attendance list
 9. Create an event report (close the event, and create related inventory)
@@ -37,6 +37,7 @@ Reference: https://gist.github.com/them0nk/2166525
 9. See the count#edit calculator
 
 ## BUGS!! AH BUGS!!!
+1. rails_helper: system tests (using driven_by :rack_test) seems to not clear fixtures? -- https://stackoverflow.com/questions/46936457/rails-5-1-system-test-fixtures-and-database-cleanup
 12. Inventories created from events aren't subtracting parts from components (parts used to build the technologies_built or boxes_packed)
 
 ## Remind myself:

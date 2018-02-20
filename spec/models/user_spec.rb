@@ -3,13 +3,6 @@ require 'rails_helper'
 RSpec.describe User, type: :model do
   let(:user1) { create :user }
 
-  before(:each) do
-    # describe 'available_events' is having memory leak issues (like 30 events created and persisting in the test db every time)
-    Event.destroy_all
-    Location.destroy_all
-    Technology.destroy_all
-  end
-
   describe "must be valid" do
     let(:good_user) {build :user }
     let(:blank_password) { build :user, password: ""}
