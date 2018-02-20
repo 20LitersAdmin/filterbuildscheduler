@@ -58,6 +58,7 @@ group :test do
   gem 'capybara'
   gem 'selenium-webdriver'
   gem 'database_cleaner'
+  gem 'rspec-retry'
 end
 
 group :development do

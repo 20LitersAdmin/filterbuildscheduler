@@ -14,6 +14,7 @@ require 'devise'
 require 'capybara/rspec'
 require 'selenium-webdriver'
 require 'support/cleanup_crew'
+require 'rspec/retry'
 
 # Requires supporting ruby files with custom matchers and macros, etc, in
 # spec/support/ and its subdirectories. Files matching `spec/**/*_spec.rb` are
@@ -42,7 +43,14 @@ RSpec.configure do |config|
   config.use_transactional_fixtures = true
   config.infer_spec_type_from_file_location!
   config.filter_rails_from_backtrace!
-  
+
+  # Rspec/retry settings
+  # show retry status in spec process
+  config.verbose_retry = true
+  # Try twice (retry once)
+  config.default_retry_count = 2
+  # Only retry when Selenium raises Net::ReadTimeout
+  config.exceptions_to_retry = [Net::ReadTimeout]
 
   config.expect_with :rspec do |expectations|
     expectations.syntax = [:should, :expect]
