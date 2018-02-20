@@ -37,10 +37,17 @@ class UsersController < ApplicationController
   end
 
   def update
-    @the_current_user = current_user
+    if @user.valid_password?(params[:user][:password])
+      modified_params = user_params_no_pws
+    else
+      modified_params = user_params
+    end
 
-    if @user.update(user_params)
+    if @user.update(modified_params)
       flash[:success] = "Info updated!"
+      if modified_params[:password].present?
+        DeviseMailer.password_change(@user).deliver!
+      end
       redirect_to show_user_path @user
     else
       render 'edit'
@@ -84,6 +91,13 @@ class UsersController < ApplicationController
                                   :phone,
                                   :password,
                                   :password_confirmation
+  end
+
+  def user_params_no_pws
+    params.require(:user).permit :fname,
+                                  :lname,
+                                  :email,
+                                  :phone
   end
 
 end

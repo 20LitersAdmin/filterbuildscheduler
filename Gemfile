@@ -54,7 +54,7 @@ group :test do
   gem 'rspec-rails', '~> 3.7.2'
   gem 'rspec_junit_formatter'
   gem 'shoulda-matchers'
-  # gem 'rails-controller-testing'
+  gem 'rails-controller-testing'
   gem 'capybara'
   gem 'selenium-webdriver'
   gem 'database_cleaner'
