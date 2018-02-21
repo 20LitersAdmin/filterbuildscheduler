@@ -19,8 +19,8 @@ Reference: https://gist.github.com/them0nk/2166525
 9. DONE: Create an event (admin, leader, not builder, not admin)
 9. DONE: Managage an event (admin, leader, not builder, not admin)
 9. DONE: Send a message to all registered users
-9. Share the event (fb, twitter, poster)
-9. Print an attendance list
+9. DONE: Share the event (fb, twitter, poster)
+9. DONE: Print an attendance list
 9. Create an event report (close the event, and create related inventory)
 9. Restore a deleted event && associated registration
 9. See a list of events that need leaders

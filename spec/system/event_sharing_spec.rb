@@ -47,7 +47,7 @@ RSpec.describe "An event can be shared", type: :system, js: true do
 
     click_link "poster_link"
 
-    within_window(page.driver.browser.window_handles.last) do
+    within_window(windows.last) do
       expect(page).to have_content "Roll up your sleeves to solve the global water crisis"
       expect(page).to have_link "print_btn"
     end
