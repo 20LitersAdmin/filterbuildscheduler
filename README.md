@@ -38,6 +38,7 @@ Reference: https://gist.github.com/them0nk/2166525
 
 ## BUGS!! AH BUGS!!!
 1. rails_helper: system tests (using driven_by :rack_test) seems to not clear fixtures? -- https://stackoverflow.com/questions/46936457/rails-5-1-system-test-fixtures-and-database-cleanup
+2. Devise is signing out the current_user when updating a user's password (outside of Rails Admin) and all the SO and Devise guidance is failing me.
 12. Inventories created from events aren't subtracting parts from components (parts used to build the technologies_built or boxes_packed)
 
 ## Remind myself:
