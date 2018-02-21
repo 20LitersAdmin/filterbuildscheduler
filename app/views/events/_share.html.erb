@@ -9,7 +9,7 @@
     <a href="https://twitter.com/share?ref_src=twsrc%5Etfw" class="twitter-share-button" data-text="<%= current_user && current_user.registered?(@event) ? 'Join me in building water filters with 20 Liters!' : 'Help build water filters with 20 Liters!' %>" data-show-count="false">Tweet</a><script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
   </div>
   <div class="poster-div">
-    <%= link_to "<i class='fa fa-print'></i>".html_safe + " Poster", poster_event_path(@event), class: "btn-poster" , target: "_blank" %>
+    <%= link_to "<i class='fa fa-print'></i>".html_safe + " Poster", poster_event_path(@event), class: "btn-poster", id: "poster_link" , target: "_blank" %>
   </div>
 </div>
 
