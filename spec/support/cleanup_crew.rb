@@ -22,5 +22,24 @@ module CleanupCrew
       t.really_destroy!
     end
 
+    Count.with_deleted.each do |c|
+      c.really_destroy!
+    end
+
+    Inventory.with_deleted.each do |i|
+      i.really_destroy!
+    end
+
+    Component.with_deleted.each do |c|
+      c.really_destroy!
+    end
+
+    Part.with_deleted.each do |part|
+      part.really_destroy!
+    end
+
+    Material.with_deleted.each do |m|
+      m.really_destroy!
+    end
   end
 end

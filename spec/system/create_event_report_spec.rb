@@ -53,7 +53,7 @@ RSpec.describe "To create an event report", type: :system, js: true do
   context "fill out the form" do
     before :each do
       @event = FactoryBot.create(:past_event)
-      5.times { FactoryBot.create(:registration, event: @event) }
+      5.times { FactoryBot.create(:registration, event: @event, guests_registered: Random.rand(0..2)) }
       visit event_path @event
     end
 
@@ -151,6 +151,23 @@ RSpec.describe "To create an event report", type: :system, js: true do
       expect(@event.boxes_packed).to eq 3
       expect(@event.emails_sent).to eq true
       expect(second_count).to eq first_count + 5
+    end
+
+    it "and submit it to create an inventory" do
+      @event.technology.components << FactoryBot.create(:component_ct)
+      @event.technology.save
+
+      fill_in "event_technologies_built", with: 350
+      fill_in "event_boxes_packed", with: 3
+
+      click_button "Submit Report"
+
+      expect(page).to have_content "Event updated."
+      expect(page).to have_content "Inventory created."
+      expect(Inventory.last.event).to eq @event
+      count_in_question = Count.where(component: @event.technology.primary_component).last
+      expect(count_in_question.loose_count).to eq 350
+      expect(count_in_question.unopened_boxes_count).to eq 3
     end
   end
 end
