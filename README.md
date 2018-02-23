@@ -21,8 +21,8 @@ Reference: https://gist.github.com/them0nk/2166525
 9. DONE: Send a message to all registered users
 9. DONE: Share the event (fb, twitter, poster)
 9. DONE: Print an attendance list
-9. Create an event report (close the event, and create related inventory)
-9. Restore a deleted event && associated registration
+9. DONE: Create an event report (close the event, and create related inventory)
+9. Restore a deleted event && || associated registration
 9. See a list of events that need leaders
 9. Manage communication preferences
 9. Manage closed events
