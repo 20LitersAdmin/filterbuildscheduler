@@ -249,8 +249,6 @@ class EventsController < ApplicationController
   end
 
   def lead
-    #authorize @events = Event.future.still_needs_leaders
-    
     @user = current_user
 
     @events = []
@@ -260,6 +258,8 @@ class EventsController < ApplicationController
         @events << e
       end
     end
+
+    authorize @events.first
   end
 
   def restore
