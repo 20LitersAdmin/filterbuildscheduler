@@ -15,7 +15,7 @@ RSpec.describe "Restoring a cancelled event", type: :system do
     clean_up!
   end
 
-  fit "requires an event to be deleted first" do
+  it "requires an event to be deleted first" do
     visit "/"
     expect(page).to have_link "Manage Cancelled Events"
 
@@ -33,7 +33,7 @@ RSpec.describe "Restoring a cancelled event", type: :system do
     expect(page).to have_link "Restore Event Only"
   end
 
-  fit "without restoring the associated registrations" do
+  it "without restoring the associated registrations" do
     click_link "Restore Event Only"
 
     expect(page).to have_content "Event restored but not registrations."
@@ -46,7 +46,7 @@ RSpec.describe "Restoring a cancelled event", type: :system do
     end
   end
 
-  fit "while restoring the associated registrations" do
+  it "while restoring the associated registrations" do
     click_link "Restore Event & Registrations"
 
     expect(page).to have_content "Event and associated registrations restored."
@@ -59,7 +59,7 @@ RSpec.describe "Restoring a cancelled event", type: :system do
     end    
   end
 
-  fit "stays on the cancelled events page if there are more cancelled events" do
+  it "stays on the cancelled events page if there are more cancelled events" do
     @event2 = FactoryBot.create(:event)
     2.times { FactoryBot.create(:registration, event: @event2, guests_registered: Random.rand(0..2)) }
     @event2.destroy
