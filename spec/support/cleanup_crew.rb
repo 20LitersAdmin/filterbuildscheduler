@@ -41,5 +41,13 @@ module CleanupCrew
     Material.with_deleted.each do |m|
       m.really_destroy!
     end
+
+    Supplier.with_deleted.each do |s|
+      s.really_destroy!
+    end
+
+    ActiveRecord::Base.connection.tables.each do |t|
+      ActiveRecord::Base.connection.reset_pk_sequence!(t)
+    end
   end
 end

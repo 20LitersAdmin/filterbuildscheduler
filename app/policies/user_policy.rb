@@ -1,23 +1,19 @@
 class UserPolicy < ApplicationPolicy
 
   def delete?
-    user.is_admin?
+    user&.is_admin?
   end
 
   def show?
-    if user.present?
-      user.is_admin? || user == record
-    else
-      false
-    end
+    user&.is_admin? || user == record
   end
 
   def update?
-    user.is_admin? || user == record
+    user&.is_admin? || user == record
   end
 
   def communication?
-    user.is_admin?
+    user&.is_admin?
   end
 
   class Scope
@@ -29,7 +25,7 @@ class UserPolicy < ApplicationPolicy
     end
 
     def resolve
-      if user&.is_leader? || user&.is_admin?
+      if user&.admin_or_leader?
         User.all
       elsif user
         user
