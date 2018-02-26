@@ -7,6 +7,7 @@
 
 ## System tests:
 Reference: https://gist.github.com/them0nk/2166525
+I made a generator: rails g spec SpecName SpecType
 1. DONE: Visit the homepage
 2. DONE: Visit the info page
 3. DONE: Visit my account page
@@ -25,10 +26,10 @@ Reference: https://gist.github.com/them0nk/2166525
 9. DONE: Restore a deleted event && || associated registration
 9. DONE: See a list of events that need leaders
 9. DONE: Manage closed events
-9. See inventories index
-9. Manage communication preferences
-9. View an existing inventory
-9. Edit an existing inventory (test filtering with js: true)
+9. DONE: See inventories index
+9. DONE: Manage communication preferences
+9. DONE: View an existing inventory
+9. DONE: Edit an existing inventory (test filtering with js: true)
 9. Finalize an existing inventory
 9. Make a new inventory (manual, shipping, receiving, event)
 9. See orders needed
