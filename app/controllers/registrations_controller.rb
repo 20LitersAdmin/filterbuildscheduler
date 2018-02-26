@@ -87,7 +87,7 @@ class RegistrationsController < ApplicationController
 
 
   def edit
-    authorize @registration = Registration.find(params[:id])
+    authorize @registration
 
     if params[:admin] == "true"
       @btn_admin = true
@@ -97,7 +97,7 @@ class RegistrationsController < ApplicationController
   end
 
   def update
-    authorize @registration = Registration.find(params[:id])
+    authorize @registration
     
     if @registration.errors.any?
       flash[:danger] = @registration.errors.map { |k,v| v }.join(', ')
