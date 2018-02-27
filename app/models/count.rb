@@ -14,11 +14,11 @@ class Count < ApplicationRecord
 
   def item
     if part_id.present?
-      part
+      Part.with_deleted.find(part_id)
     elsif material_id.present?
-      material
+      Material.with_deleted.find(material_id)
     else
-      component
+      Component.with_deleted.find(component_id)
     end
   end
 
