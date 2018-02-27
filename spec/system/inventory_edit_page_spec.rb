@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe "Inventory edit page", type: :system, js: true do
-  before :all do
+  before :each do
     @inventory = FactoryBot.create(:inventory)
     supplier = FactoryBot.create(:supplier)
 
@@ -30,7 +30,7 @@ RSpec.describe "Inventory edit page", type: :system, js: true do
     InventoriesController::CountCreate.new(@inventory)
   end
 
-  after :all do
+  after :each do
     clean_up!
   end
 
@@ -126,24 +126,24 @@ RSpec.describe "Inventory edit page", type: :system, js: true do
 
       expect(page).to have_content Count.second.name
       expect(page).to have_content Count.third.name
-      expect(page).to have_css("div#count_#{Count.first.item.id.to_s}", visible: false)
-      expect(page).to have_css("div#count_#{Count.last.item.id.to_s}", visible: false)
+      expect(page).to have_css("div#count_" + Count.first.item.id.to_s, visible: false)
+      expect(page).to have_css("div#count_" + Count.last.item.id.to_s, visible: false)
 
       click_button "Show All"
       click_button "Counted"
 
       expect(page).to have_content Count.first.name
       expect(page).to have_content Count.last.name
-      expect(page).to have_css("div#count_#{Count.second.item.id.to_s}", visible: false)
-      expect(page).to have_css("div#count_#{Count.third.item.id.to_s}", visible: false)
+      expect(page).to have_css("div#count_" + Count.second.item.id.to_s, visible: false)
+      expect(page).to have_css("div#count_" + Count.third.item.id.to_s, visible: false)
 
       click_button "Show All"
       click_button "Partial"
 
       expect(page).to have_content Count.second.name
       expect(page).to have_content Count.third.name
-      expect(page).to have_css("div#count_#{Count.first.item.id.to_s}", visible: false)
-      expect(page).to have_css("div#count_#{Count.last.item.id.to_s}", visible: false)
+      expect(page).to have_css("div#count_" + Count.first.item.id.to_s, visible: false)
+      expect(page).to have_css("div#count_" + Count.last.item.id.to_s, visible: false)
     end
 
     it "allows for filtering by technology" do
@@ -154,10 +154,10 @@ RSpec.describe "Inventory edit page", type: :system, js: true do
       expect(page).to have_content Part.third.name
       expect(page).to have_content Component.first.name
       expect(page).to have_content Component.third.name
-      expect(page).to have_css("div#count_#{Part.second.id.to_s}", visible: false)
-      expect(page).to have_css("div#count_#{Part.fourth.id.to_s}", visible: false)
-      expect(page).to have_css("div#count_#{Component.second.id.to_s}", visible: false)
-      expect(page).to have_css("div#count_#{Component.fourth.id.to_s}", visible: false)
+      expect(page).to have_css("div#count_" + Part.second.id.to_s, visible: false)
+      expect(page).to have_css("div#count_" + Part.fourth.id.to_s, visible: false)
+      expect(page).to have_css("div#count_" + Component.second.id.to_s, visible: false)
+      expect(page).to have_css("div#count_" + Component.fourth.id.to_s, visible: false)
 
       click_button "Show All"
       click_button @tech1.name
@@ -166,10 +166,10 @@ RSpec.describe "Inventory edit page", type: :system, js: true do
       expect(page).to have_content Part.fourth.name
       expect(page).to have_content Component.second.name
       expect(page).to have_content Component.fourth.name
-      expect(page).to have_css("div#count_#{Part.first.id.to_s}", visible: false)
-      expect(page).to have_css("div#count_#{Part.third.id.to_s}", visible: false)
-      expect(page).to have_css("div#count_#{Component.first.id.to_s}", visible: false)
-      expect(page).to have_css("div#count_#{Component.third.id.to_s}", visible: false)
+      expect(page).to have_css("div#count_" + Part.first.id.to_s, visible: false)
+      expect(page).to have_css("div#count_" + Part.third.id.to_s, visible: false)
+      expect(page).to have_css("div#count_" + Component.first.id.to_s, visible: false)
+      expect(page).to have_css("div#count_" + Component.third.id.to_s, visible: false)
     end
 
     it "can be finalized" do

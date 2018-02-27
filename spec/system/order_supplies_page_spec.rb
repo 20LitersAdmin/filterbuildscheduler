@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe "Order supplies page", type: :system, js: true do
-  before :all do
+  before :each do
     @inventory = FactoryBot.create(:inventory)
     @supplier1 = FactoryBot.create(:supplier)
     @supplier2 = FactoryBot.create(:supplier)
@@ -38,7 +38,7 @@ RSpec.describe "Order supplies page", type: :system, js: true do
     end
   end
 
-  after :all do
+  after :each do
     clean_up!
   end
 
