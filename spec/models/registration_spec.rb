@@ -28,5 +28,4 @@ RSpec.describe Registration, type: :model do
 
     expect(registration.waiver_accepted?).to be true
   end
-  
 end
