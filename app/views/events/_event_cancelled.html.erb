@@ -14,8 +14,8 @@
       <% end %>
     </div>
 
-    <%= link_to "Restore Event & Registrations", restore_event_path(event_cancelled, recursive: "true"), class: "btn btn-primary empty restore" %>
-    <%= link_to "Restore Event Only", restore_event_path(event_cancelled, recursive: "false"), class: "btn btn-primary empty restore" %>
+    <%= link_to "Restore Event & Registrations", restore_event_path(event_cancelled, recursive: "true"), class: "btn btn-primary empty restore", id: "event_and_registrations_" + event_cancelled.id.to_s %>
+    <%= link_to "Restore Event Only", restore_event_path(event_cancelled, recursive: "false"), class: "btn btn-primary empty restore", id: "event_only_" + event_cancelled.id.to_s %>
   </div>
 
   <div class="bar-outer-wrapper <%= 'is_leader' if current_user&.is_leader %>">

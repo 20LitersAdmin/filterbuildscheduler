@@ -101,7 +101,6 @@ class EventMailer < ApplicationMailer
     @subject = '[20 Liters] ' + subject
     @message = message
     @sender = sender
-
     mail(to: @registration.user.email, subject: @subject)
   end
 

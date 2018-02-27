@@ -34,3 +34,5 @@ app/.DS_Store
 app/controllers/.DS_Store
 
 bin
+
+public/capybara.html

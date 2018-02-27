@@ -23,7 +23,7 @@
     $<span class="item-cost-value"><%= order_tbl.item.price %></span>
   </td>
   <td class="min-order">
-    <%= text_field_tag 'min_order_' + order_tbl.id.to_s, number_with_delimiter(order_tbl.item.min_order, delimiter: ','), class: "min-order-field right-align", min: 0 %>
+    <%= text_field_tag @locator + '_min_order_' + order_tbl.id.to_s, number_with_delimiter(order_tbl.item.min_order, delimiter: ','), class: "min-order-field right-align", min: 0 %>
   </td>
 
   <td class="right-align order-total">

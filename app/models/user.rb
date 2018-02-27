@@ -15,7 +15,6 @@ class User < ApplicationRecord
   has_and_belongs_to_many :technologies
   has_many :counts
   belongs_to :primary_location, class_name: "Location", primary_key: "id", foreign_key: "primary_location_id", optional: true
-  attr_accessor :waiver_accepted
 
   validates :fname, :lname, :email, presence: true
 
@@ -35,16 +34,12 @@ class User < ApplicationRecord
     "#{fname} #{lname}"
   end
 
-  def waiver_accepted
-    !signed_waiver_on.nil?
-  end
-
   def password_required?
     false
   end
 
   def can_lead_event?(event)
-    return false unless is_leader
+    return false unless admin_or_leader?
     return event.technology.nil? || technologies.exists?(event.technology.id)
   end
 
@@ -57,7 +52,9 @@ class User < ApplicationRecord
   end
 
   def available_events
-    if self.is_leader?
+    if is_admin?
+      Event.all
+    elsif is_leader?
       # finds future events OR events the leader registered for
       Event.distinct.joins('LEFT JOIN registrations ON registrations.event_id = events.id')
          .where('start_time >= ? OR registrations.user_id = ?', Time.now, id)

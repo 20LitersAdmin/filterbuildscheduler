@@ -91,6 +91,8 @@ RSpec.describe Count, type: :model do
     end
 
     it "returns the current count if there is no previous inventory" do
+      count_part2
+
       expect(count_part2.diff_from_previous("loose")).to eq(count_part2.loose_count)
       expect(count_part2.diff_from_previous("box")).to eq(count_part2.unopened_boxes_count)
     end
@@ -98,6 +100,8 @@ RSpec.describe Count, type: :model do
     it "returns the diff from the previous count" do
       inventory_prev.save
       count_part_prev.save
+      count_part2
+
       expect(count_part2.diff_from_previous("loose")).to eq(5)
       expect(count_part2.diff_from_previous("box")).to eq(4)
     end

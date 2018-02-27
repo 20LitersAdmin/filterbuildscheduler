@@ -11,4 +11,8 @@ class Component < ApplicationRecord
 
 
   has_many :counts, dependent: :destroy
+
+  def tech_monthly_production_rate
+    technologies.first.monthly_production_rate
+  end
 end

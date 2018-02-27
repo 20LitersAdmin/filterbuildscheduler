@@ -1,0 +1,8 @@
+description: 
+  This generator creates a spec file customized for this app
+
+Example:
+  rails g spec user_edit system
+
+  this will create:
+    spec/system/user_edit_spec.rb

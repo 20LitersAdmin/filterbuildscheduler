@@ -35,7 +35,7 @@ class InventoryPolicy
   end
 
   def order?
-    user&.does_inventory? || user&.is_admin?
+    user&.does_inventory?
   end
 end
 

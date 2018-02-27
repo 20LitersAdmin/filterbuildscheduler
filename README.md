@@ -2,25 +2,43 @@
 
 ## Things to do
 5. Write tests until everyone is happy (*Ross*) because TDD is real.
-  * Learn to write system tests
-  - https://chriskottom.com/blog/2017/04/full-stack-testing-with-rails-system-tests/
-  - https://medium.com/table-xi/a-quick-guide-to-rails-system-tests-in-rspec-b6e9e8a8b5f6
+6. JQuery registration form validations (use global .has-errors css, see user#edit for good example)
+7. Available functions div as partial on more screens (e.g. event/closed, users/communication, events/lead, events/cancelled )
+8. View for technology assembly (which items [comps and parts] and #s on hand) -- shows what is needed and how many tech can be built with what's on hand
+9. Count.item.has_no_box? to hide box count field on Count#edit
 
-## BUGS!! AH BUGS!!!
-1. RegistrationController::Update -- need error handling line #30 and #46
-2. accepts_nested_attributes_for seems to break event#show, at least for anon view
-12. Inventories created from events aren't subtracting parts from components (parts used to build the technologies_built or boxes_packed)
+## System tests:
+Reference: https://gist.github.com/them0nk/2166525
+I made a generator: rails g spec SpecName SpecType
+1. DONE: Visit the homepage
+2. DONE: Visit the info page
+3. DONE: Visit my account page
+9. DONE: Edit my profile / set a password
+9. DONE: Sign in / Sign out / Sign up
+9. DONE: Reset my password
+4. DONE: View an event (private vs. public, past vs. present, registered vs. not, admin, leader, builder, anon)
+5. DONE: Register for an event
+6. DONE: Edit / Cancel an event registration && Edit / Cancel someone else's registration
+9. DONE: Create an event (admin, leader, not builder, not admin)
+9. DONE: Managage an event (admin, leader, not builder, not admin)
+9. DONE: Send a message to all registered users
+9. DONE: Share the event (fb, twitter, poster)
+9. DONE: Print an attendance list
+9. DONE: Create an event report (close the event, and create related inventory)
+9. DONE: Restore a deleted event && || associated registration
+9. DONE: See a list of events that need leaders
+9. DONE: Manage closed events
+9. DONE: See inventories index
+9. DONE: Manage communication preferences
+9. DONE: View an existing inventory
+9. DONE: Edit an existing inventory (test filtering with js: true) && Finalize
+9. DONE: Make a new inventory (manual, shipping, receiving, event)
+9. DONE: See orders needed
+9. DONE: Edit a count (blanks are ignored) && Submit a partial count (box / loose) && See/use the count#edit calculator
 
-
-## ROSS: These things aren't pretty:
-1. Registration.rb validations not working ( eg. :under_max_registration)
-  * Patched my own solution into RegistrationController
-3. Registration#create (via Event#show): registration_anonymous partial: How to handle form errors with f.error_notifiction and o.error_notification?
-
-## ROSS: What would this cost?
-4. Add a Stripe Webhook / API for CauseVox to replace Zapier
-  * Accepting & reading Stripe webhook is working
-  * Sending to Kindful is not
+## HMMM
+1. Inventories created from events aren't subtracting parts from components (parts used to build the technologies_built or boxes_packed)
+2. `weeks_to_out` and `per_technology` rely on lots of `.first`s which is an issue for items that `have_many` technologies
 
 ## Remind myself:
 1. production backup / development restore-from production

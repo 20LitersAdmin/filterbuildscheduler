@@ -11,8 +11,10 @@ require 'rspec/rails'
 # Add additional requires below this line. Rails is not loaded until this point!
 # note: require 'devise' after require 'rspec/rails'
 require 'devise'
-require_relative 'support/controller_macros'
 require 'capybara/rspec'
+require 'selenium-webdriver'
+require 'support/cleanup_crew'
+require 'rspec/retry'
 
 # Requires supporting ruby files with custom matchers and macros, etc, in
 # spec/support/ and its subdirectories. Files matching `spec/**/*_spec.rb` are
@@ -26,77 +28,42 @@ require 'capybara/rspec'
 # of increasing the boot-up time by auto-requiring all files in the support
 # directory. Alternatively, in the individual `*_spec.rb` files, manually
 # require only the support files necessary.
-#
-# Dir[Rails.root.join('spec/support/**/*.rb')].each { |f| require f }
 
 # Checks for pending migrations and applies them before tests are run.
 # If you are not using ActiveRecord, you can remove this line.
+
 ActiveRecord::Migration.maintain_test_schema!
-
-Capybara.register_driver :selenium_chrome do |app|
-  Capybara::Selenium::Driver.new(app, browser: :chrome)
-end
-
-Capybara.javascript_driver = :selenium_chrome
 
 RSpec.configure do |config|
   config.include FactoryBot::Syntax::Methods
-  # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
+  config.include Devise::Test::IntegrationHelpers, type: :system
+  config.include CleanupCrew, type: :system
+
   config.fixture_path = "#{::Rails.root}/spec/fixtures"
-
-  # If you're not using ActiveRecord, or you'd prefer not to run each of your
-  # examples within a transaction, remove the following line or assign false
-  # instead of true.
   config.use_transactional_fixtures = true
-
-  # RSpec Rails can automatically mix in different behaviours to your tests
-  # based on their file location, for example enabling you to call `get` and
-  # `post` in specs under `spec/controllers`.
-  #
-  # You can disable this behaviour by removing the line below, and instead
-  # explicitly tag your specs with their type, e.g.:
-  #
-  #     RSpec.describe UsersController, :type => :controller do
-  #       # ...
-  #     end
-  #
-  # The different available types are documented in the features, such as in
-  # https://relishapp.com/rspec/rspec-rails/docs
   config.infer_spec_type_from_file_location!
-
-  # Filter lines from Rails gems in backtraces.
   config.filter_rails_from_backtrace!
-  # arbitrary gems may also be filtered via:
-  # config.filter_gems_from_backtrace("gem name")
-  config.include Devise::Test::ControllerHelpers, type: :controller
-  config.extend ControllerMacros, type: :controller
+
+  # Rspec/retry settings
+  # show retry status in spec process
+  config.verbose_retry = true
+  # Try twice (retry once)
+  config.default_retry_count = 2
+  # Only retry when Selenium raises Net::ReadTimeout
+  config.exceptions_to_retry = [Net::ReadTimeout]
 
   config.expect_with :rspec do |expectations|
     expectations.syntax = [:should, :expect]
   end
 
-  config.before(:suite) do
-    DatabaseCleaner.clean_with(:truncation)
+  config.before(:each, type: :system) do
+    driven_by :rack_test
   end
 
-  config.before(:each) do
-    DatabaseCleaner.strategy = :transaction
+  config.before(:each, type: :system, js: true) do
+    driven_by :selenium_chrome_headless
+    Capybara.page.driver.browser.manage.window.resize_to(1920,2024)
   end
-
-  config.before(:each, js: true) do
-    DatabaseCleaner.strategy = :truncation
-  end
-
-  # This block must be here, do not combine with the other `before(:each)` block.
-  # This makes it so Capybara can see the database.
-  config.before(:each) do
-    DatabaseCleaner.start
-  end
-
-  config.after(:each) do
-    DatabaseCleaner.clean
-  end
-
 end
 
 Shoulda::Matchers.configure do |config|
