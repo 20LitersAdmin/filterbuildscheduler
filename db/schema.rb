@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180205030335) do
+ActiveRecord::Schema.define(version: 20180226175223) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -156,9 +156,9 @@ ActiveRecord::Schema.define(version: 20180205030335) do
   create_table "materials", force: :cascade do |t|
     t.string "name", null: false
     t.string "order_url"
-    t.integer "min_order"
+    t.integer "min_order", default: 1
     t.string "sku"
-    t.float "weeks_to_deliver"
+    t.float "weeks_to_deliver", default: 1.0
     t.datetime "deleted_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -188,9 +188,9 @@ ActiveRecord::Schema.define(version: 20180205030335) do
   create_table "parts", force: :cascade do |t|
     t.string "name", null: false
     t.string "order_url"
-    t.integer "min_order"
+    t.integer "min_order", default: 1
     t.string "sku"
-    t.float "weeks_to_deliver"
+    t.float "weeks_to_deliver", default: 1.0
     t.integer "sample_size"
     t.float "sample_weight"
     t.boolean "made_from_materials", default: false

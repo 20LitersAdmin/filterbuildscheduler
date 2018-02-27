@@ -5,9 +5,7 @@ class RegistrationsController < ApplicationController
   def index
     @event = Event.find(params[:event_id])
     authorize @registrations = @event.registrations.non_leader
-
     @leaders = @event.registrations.registered_as_leader
-
     @deleted = @event.registrations.only_deleted
   end
 
@@ -17,67 +15,28 @@ class RegistrationsController < ApplicationController
   end
 
   def create
-    waiver_accepted = params[:registration].delete(:waiver_accepted)
+    waiver_accepted = params[:registration].delete(:accept_waiver)
     @event = Event.find(params[:event_id])
 
     case params[:registration][:form_source]
-      # Admin registering for user      <- find_or_initialize user && save
-      # Anon user registering for self  <-- find_or_initialize user && save && signin
-      # Current_user self-registering   <-- current_user
     when "admin"
-      @user = User.find_or_initialize_by(email: user_params[:email])
-      @user.fname ||= user_params[:fname]
-      @user.lname ||= user_params[:lname]
+      @user = find_or_initialize_user(user_params)
       @user.signed_waiver_on ||= Time.now
-      @user.save!
-      # if !@user.save
-      #   render 'edit' and return
-      # end
-      if @user.can_lead_event?(@event)
-        @leader = true
-      else
-        @leader = false
-      end
+
+      @leader = @user.can_lead_event?(@event)
       @duplicate_registration_risk = false
     when "self"
       @user = current_user
       @leader = params[:registration][:leader] || false
       @duplicate_registration_risk = false
-    else # == "anon" or anything else
-      @user = User.find_or_initialize_by(email: user_params[:email])
-      @user.fname = user_params[:fname]
-      @user.lname = user_params[:lname]
-      #@user.signed_waiver_on ||= Time.now
-      @user.save!
-      # if !@user.save
-      #   @registration = Registration.new(event: @event)
-      #   render 'events/show' and return
-      # end
-      if !current_user
-        sign_in(:user, @user)
-      end
-      @leader = false
-
-      @duplicate_registration_risk = true
-    end # case params[:registration][:form_source]
-
-    # check for a deleted record before creating a new one.
-    if Registration.with_deleted.where(user_id: @user.id, event_id: @event.id).exists?
-      @registration = Registration.with_deleted.where(user_id: @user.id, event_id: @event.id).first
-      @registration.restore
-      @registration.guests_registered = registration_params[:guests_registered]
-      @registration.accommodations = registration_params[:accommodations]
-      @registration.leader = registration_params[:leader] || false
-      @registration.save
     else
-      @registration = Registration.new(event: @event,
-                              user: @user,
-                            leader: @leader,
-                 guests_registered: params[:registration][:guests_registered],
-                    accommodations: params[:registration][:accommodations])
+      @user = find_or_initialize_user(user_params)
+      @leader = false
+      @duplicate_registration_risk = true
     end
 
-    authorize @registration
+    @registration = find_or_initialize_registration(@user, @event)
+    @registration.assign_attributes(registration_params)
 
     # A user who exists but isn't signed in shouldn't be able to register for an event more than once.
     if @duplicate_registration_risk
@@ -92,26 +51,21 @@ class RegistrationsController < ApplicationController
     end
 
     if waiver_accepted == '0'
-      @registration.errors.add(:waiver_accepted, "You must review and sign the Liability Waiver first")
+      @registration.errors.add(:accept_waiver, "You must review and sign the Liability Waiver first")
     end
 
     if @event.max_registrations < (@event.total_registered + params[:registration][:guests_registered].to_i + 1) #count up the totals and validate
       @registration.errors.add(:guests_registered, "You can only bring up to #{@event.registrations_remaining - 1} guests at this event.")
     end
 
-    if @registration.errors.any?
-      flash[:danger] = @registration.errors.messages.map { |k,v| v }.join(', ')
-      if params[:registration][:form_source] == "admin"
-        render 'new'
-      else
-        render 'events/show'
-      end
-    else
-      @registration.save
+    if @registration.errors.blank? && @user.save && @registration.save
+      
+      sign_in(@user) unless current_user
+
       if @event.start_time > Time.now # don't send emails for past events.
         RegistrationMailer.delay.created @registration
       end
-      @user.update_attributes!(signed_waiver_on: Time.now) unless current_user.waiver_accepted
+      @user.update_attributes!(signed_waiver_on: Time.now) unless @registration.waiver_accepted?
       flash[:success] = "Registration successful!"
 
       if params[:registration][:form_source] == "admin"
@@ -119,24 +73,21 @@ class RegistrationsController < ApplicationController
       else
         redirect_to event_path @event
       end
+    else
+      flash[:danger] = @registration.errors.messages.map { |k,v| v }.join(', ')
+      flash[:danger] += @user.errors.messages.map { |k,v| "#{k} #{v.join(', ')}" }.join(' | ')
+      if params[:registration][:form_source] == "admin"
+        render 'new'
+      else
+        render 'events/show'
+      end
     end
-
-    # This is what's needed to use f.error_notification, but how within nested model && with user_params??
-    # if @registration.save
-    #   if @event.start_time > Time.now # don't send emails for past events.
-    #     RegistrationMailer.delay.created @registration
-    #   end
-    #   @user.update_attributes!(signed_waiver_on: Time.now) unless current_user.waiver_accepted
-    #   flash[:success] = "Registration successful!"
-    # else
-    #   render 'new'
-    # end
   end
 
 
 
   def edit
-    authorize @registration = Registration.find(params[:id])
+    authorize @registration
 
     if params[:admin] == "true"
       @btn_admin = true
@@ -148,7 +99,6 @@ class RegistrationsController < ApplicationController
   def update
     authorize @registration
     
-
     if @registration.errors.any?
       flash[:danger] = @registration.errors.map { |k,v| v }.join(', ')
       render 'edit'
@@ -229,8 +179,6 @@ class RegistrationsController < ApplicationController
     @registration = Registration.find(params[:id])
   end
 
-  private
-
   def authenticate_user_from_token!
     user_token = params[:user_token].presence
     user_email = params[:user_email].presence
@@ -239,5 +187,27 @@ class RegistrationsController < ApplicationController
     if user && Devise.secure_compare(user.authentication_token, params[:user_token])
       sign_in user
     end
+  end
+
+  def find_or_initialize_user(data)
+    user = User.find_or_initialize_by(email: data[:email])
+    user.fname ||= data[:fname]
+    user.lname ||= data[:lname]
+
+    user
+  end
+
+  def find_or_initialize_registration(user, event)
+        # check for a deleted record before creating a new one.
+    if Registration.with_deleted.where(user: user, event: event).exists?
+      registration = Registration.with_deleted.where(user: user, event: event).first
+      registration.restore
+    else
+      registration = Registration.new(event: event, user: user)
+    end
+
+    authorize registration
+
+    registration
   end
 end

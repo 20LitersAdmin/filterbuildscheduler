@@ -25,12 +25,11 @@ RSpec.describe User, type: :model do
   end
 
   describe "#update_kindful" do
+    let(:user2) { build :user }
+
     it 'takes user data and sends it to kindful_client' do
-      pending("I don't understand spy")
-      @kindful_spy = spy
-      expect(KindfulClient).to receive(:new).and_return(@kindful_spy)
-      user1
-      expect(@kindful_spy).to have_received(:update_kindful)
+      expect_any_instance_of( KindfulClient ).to receive(:import_user).with(user2)
+      user2.save
     end
   end
 
@@ -63,16 +62,16 @@ RSpec.describe User, type: :model do
   end
 
   describe 'available_events' do
-    let(:event1) { create :event }
-    let(:event2) { create :event }
+    let(:event1) { create :event, start_time: Time.now - 30.minutes }
+    let(:event2) { create :event, start_time: Time.now }
     let(:private_event) { create :event, is_private: true }
-    let(:user2) { create :user }
 
     it 'shows all public events' do
       event1
       event2
-      create :event, is_private: true
-      expect(user1.available_events).to eq([event1, event2])
+      private_event
+
+      expect(user1.available_events.count).to eq(2)
     end
 
     it 'shows all events I have registered for' do

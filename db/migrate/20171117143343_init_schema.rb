@@ -144,9 +144,9 @@ class InitSchema < ActiveRecord::Migration[5.1]
     create_table "materials", force: :cascade do |t|
       t.string "name", null: false
       t.string "order_url"
-      t.integer "min_order"
+      t.integer "min_order", default: 1
       t.string "sku"
-      t.float "weeks_to_deliver"
+      t.float "weeks_to_deliver", default: 1.0
       t.datetime "deleted_at"
       t.datetime "created_at", null: false
       t.datetime "updated_at", null: false
@@ -176,9 +176,9 @@ class InitSchema < ActiveRecord::Migration[5.1]
     create_table "parts", force: :cascade do |t|
       t.string "name", null: false
       t.string "order_url"
-      t.integer "min_order"
+      t.integer "min_order", default: 1
       t.string "sku"
-      t.float "weeks_to_deliver"
+      t.float "weeks_to_deliver", default: 1.0
       t.integer "sample_size"
       t.float "sample_weight"
       t.boolean "made_from_materials", default: false
@@ -255,6 +255,7 @@ class InitSchema < ActiveRecord::Migration[5.1]
       t.integer "lifespan_in_years", default: 0, null: false
       t.integer "liters_per_day", default: 0
       t.text "comments"
+      t.integer "monthly_production_rate", default: 1, null: false
       t.index ["deleted_at"], name: "index_technologies_on_deleted_at"
     end
 
