@@ -62,6 +62,7 @@ RSpec.configure do |config|
 
   config.before(:each, type: :system, js: true) do
     driven_by :selenium_chrome_headless
+    Capybara.page.driver.browser.manage.window.resize_to(1920,2024)
   end
 end
 

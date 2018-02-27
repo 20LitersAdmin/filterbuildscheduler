@@ -9,7 +9,7 @@ RSpec.describe "Inventory edit page", type: :system, js: true do
     @tech2 = FactoryBot.create(:technology, name: "Tech #2")
 
     2.times { FactoryBot.create(:component_ct) }
-    5.times { FactoryBot.create(:component) }
+    3.times { FactoryBot.create(:component) }
     Component.where("id % 2 = ?", "0").each do |c|
       FactoryBot.create(:tech_comp, component: c, technology: @tech1)
     end
@@ -18,7 +18,7 @@ RSpec.describe "Inventory edit page", type: :system, js: true do
       FactoryBot.create(:tech_comp, component: c, technology: @tech2)
     end
 
-    10.times { FactoryBot.create(:part, supplier: supplier) }
+    4.times { FactoryBot.create(:part, supplier: supplier) }
     Part.where("id % 2 = ?", "0").each do |part|
       FactoryBot.create(:tech_part, part: part, technology: @tech1)
     end
@@ -170,6 +170,15 @@ RSpec.describe "Inventory edit page", type: :system, js: true do
       expect(page).to have_css("div#count_#{Part.third.id.to_s}", visible: false)
       expect(page).to have_css("div#count_#{Component.first.id.to_s}", visible: false)
       expect(page).to have_css("div#count_#{Component.third.id.to_s}", visible: false)
+    end
+
+    it "can be finalized" do
+      click_link "Finalize"
+
+      expect_any_instance_of(InventoriesController::Extrapolate).to receive(:initialize).with(@inventory)
+      click_button "Finalize Inventory"
+
+      expect(page).to have_content "Current Inventory:"
     end
   end
 

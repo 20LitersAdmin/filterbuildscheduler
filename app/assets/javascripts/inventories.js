@@ -41,20 +41,25 @@ function stringMaker(float, fixed) {
 
 function orderTotal() {
   var range = [ $("#order_item_div"), $("#order_supplier_div") ];
+  var target = [ $("#item_ttl"), $("#supplier_ttl") ];
+  var ttl = [];
+  var ttlStr = [];
+  var amtStr, amt;
 
   for( i = 0; i < range.length; i++ ) {
     var booleans = range[i].find(".order_check").get();
-    var ttl = 0;
+    ttl[i] = 0;
+
     for( j = 0; j < booleans.length; j++ ) {
       if (booleans[j].checked === true ) {
-        var amtStr = $( "#" + booleans[j].id ).parent(".order-check").siblings(".order-total").find(".order-total-amt").html();
-        var amt = parseFloat( amtStr.replace(",","") );
-        ttl += amt;
+        amtStr = $( "#" + booleans[j].id ).parent(".order-check").siblings(".order-total").find(".order-total-amt").html();
+        amt = parseFloat( amtStr.replace(",","") );
+        ttl[i] += amt;
       };
     };
 
-    ttlStr = stringMaker(ttl, 2);
-    $("#admin_ttl").html(ttlStr);
+    ttlStr[i] = stringMaker(ttl[i], 2);
+    target[i].html(ttlStr[i]);
   };
 };
 
@@ -85,7 +90,7 @@ function twinToggle(twinA) {
   var idStr = $(twinA).attr("id");
   var state = $(twinA).prop("checked")
   var split = idStr.split("_");
-  // ("checkbox","item","id")
+  // split: ("checkbox",["item", "supplier"],"id")
   if(split[1] === "item") {
     var locator = "supplier";
   } else {
@@ -176,15 +181,19 @@ function reformat(source) {
 
   $(document).on("click", "#supplier_btn", function() {
     $("#order_item_div").hide();
+    $("#item_ttl").hide();
     $(this).hide();
     $("#order_supplier_div").show();
+    $("#supplier_ttl").show();
     $("#item_btn").show();
     event.preventDefault();
   });
   $(document).on("click", "#item_btn", function() {
     $("#order_supplier_div").hide();
+    $("#supplier_ttl").hide();
     $(this).hide();
     $("#order_item_div").show();
+    $("#item_ttl").show();
     $("#supplier_btn").show();
     event.preventDefault();
   });
