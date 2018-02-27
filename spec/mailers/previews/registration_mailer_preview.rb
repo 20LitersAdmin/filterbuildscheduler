@@ -20,7 +20,7 @@ class RegistrationMailerPreview < ActionMailer::Preview
   end
 
   def event_cancelled
-    RegistrationMailer.event_cancelled(Registration.first)
+    RegistrationMailer.event_cancelled(Registration.first.id)
   end
 
   def event_results
