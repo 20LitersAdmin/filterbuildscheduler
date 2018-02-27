@@ -4,6 +4,8 @@
 5. Write tests until everyone is happy (*Ross*) because TDD is real.
 6. JQuery registration form validations (use global .has-errors css, see user#edit for good example)
 7. Available functions div as partial on more screens (e.g. event/closed, users/communication, events/lead, events/cancelled )
+8. View for technology assembly (which items [comps and parts] and #s on hand) -- shows what is needed and how many tech can be built with what's on hand
+9. Count.item.has_no_box? to hide box count field on Count#edit
 
 ## System tests:
 Reference: https://gist.github.com/them0nk/2166525
@@ -29,18 +31,15 @@ I made a generator: rails g spec SpecName SpecType
 9. DONE: See inventories index
 9. DONE: Manage communication preferences
 9. DONE: View an existing inventory
-9. DONE: Edit an existing inventory (test filtering with js: true)
-9. Finalize an existing inventory
-9. Make a new inventory (manual, shipping, receiving, event)
-9. See orders needed
-9. Edit a count (blanks are ignored)
+9. DONE: Edit an existing inventory (test filtering with js: true) && Finalize
+9. DONE: Make a new inventory (manual, shipping, receiving, event)
+9. DONE: See orders needed
+9. Edit a count (blanks are ignored) && See/use the count#edit calculator
 9. Submit a partial count (box / loose)
-9. See the count#edit calculator
 
-## BUGS!! AH BUGS!!!
-1. rails_helper: system tests (using driven_by :rack_test) seems to not clear fixtures? -- https://stackoverflow.com/questions/46936457/rails-5-1-system-test-fixtures-and-database-cleanup
-2. Devise is signing out the current_user when updating a user's password (outside of Rails Admin) and all the SO and Devise guidance is failing me.
-12. Inventories created from events aren't subtracting parts from components (parts used to build the technologies_built or boxes_packed)
+## HMMM
+1. Inventories created from events aren't subtracting parts from components (parts used to build the technologies_built or boxes_packed)
+2. `weeks_to_out` and `per_technology` rely on lots of `.first`s which is an issue for items that `have_many` technologies
 
 ## Remind myself:
 1. production backup / development restore-from production

@@ -9,6 +9,8 @@
     <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <% if params[:controller] == 'inventories' && (params[:action] == 'show' || params[:action] == 'edit') %>
       <title>20 Liters <%= @inventory.name_title %></title>
+    <% elsif params[:controller] == 'events' && (params[:action] == 'poster') %>
+      <title>20 Liters Event Poster</title>
     <% else %>
       <title>20 Liters</title>
     <% end %>
