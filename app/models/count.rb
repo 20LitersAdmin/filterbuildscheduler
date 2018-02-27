@@ -60,31 +60,24 @@ class Count < ApplicationRecord
     # field == "loose" || "box"
     prev_inv = Inventory.where("date < ?", inventory.date).order(date: :desc).first
 
-    if prev_inv.present?
-      case type
-      when "part"
-        prev = prev_inv.counts.where(part_id: part_id).first
-      when "material"
-        prev = prev_inv.counts.where(material_id: material_id).first
-      when "component"
-        prev = prev_inv.counts.where(component_id: component_id).first
-      end
+    case type
+    when "part"
+      prev_item = prev_inv.counts.where(part: part.id).first
+    when "material"
+      prev_item = prev_inv.counts.where(material: material.id).first
+    when "component"
+      prev_item = prev_inv.counts.where(component: component.id).first
+    end
 
-      if field == "loose"
-        val = loose_count - prev.loose_count
-      elsif field == "box"
-        val = unopened_boxes_count - prev.unopened_boxes_count
-      else
-        val = 0
-      end
+    old_loose = prev_item.present? ? prev_item.loose_count : 0
+    old_box   = prev_item.present? ? prev_item.unopened_boxes_count : 0
+
+    if field == "loose"
+      val = loose_count - old_loose
+    elsif field == "box"
+      val = unopened_boxes_count - old_box
     else
-      if field == "loose"
-        val = loose_count
-      elsif field == "box"
-        val = unopened_boxes_count
-      else
-        val = 0
-      end
+      val = 0
     end
 
     return val
