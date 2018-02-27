@@ -34,8 +34,7 @@ I made a generator: rails g spec SpecName SpecType
 9. DONE: Edit an existing inventory (test filtering with js: true) && Finalize
 9. DONE: Make a new inventory (manual, shipping, receiving, event)
 9. DONE: See orders needed
-9. Edit a count (blanks are ignored) && See/use the count#edit calculator
-9. Submit a partial count (box / loose)
+9. DONE: Edit a count (blanks are ignored) && Submit a partial count (box / loose) && See/use the count#edit calculator
 
 ## HMMM
 1. Inventories created from events aren't subtracting parts from components (parts used to build the technologies_built or boxes_packed)
