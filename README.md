@@ -1,11 +1,28 @@
 # README
 
 ## Things to do
+4. after event report submitted - push contact_w_note to Kindful -- adding a note for each attendee saying "#user attended #event on #date"
 5. Write tests until everyone is happy (*Ross*) because TDD is real.
 6. JQuery registration form validations (use global .has-errors css, see user#edit for good example)
 7. Available functions div as partial on more screens (e.g. event/closed, users/communication, events/lead, events/cancelled )
 8. View for technology assembly (which items [comps and parts] and #s on hand) -- shows what is needed and how many tech can be built with what's on hand
 9. Count.item.has_no_box? to hide box count field on Count#edit
+10. Registrations#new 
+  - include email_opt_out field if event is in the past
+  - Save and New button
+11. Stats framework (for time period) (visible to Admin)
+  - # of technologies by type
+  - # of vol hours (event length * attendance )
+  - # of volunteers engaged (could be duplicated)
+  - # of events held
+  - List of high-participating builders (3+ builds, not leader)
+  - List of leaders && participating
+12. Resurrect phone
+  - User profile
+  - Registration form ( && on event#show)
+  - Send to Kindful
+13. Event#edit should also have report div (not just Edit#show)
+14. Soft-deleting a part / component / material -- how do counts and inventories respond?
 
 ## System tests:
 Reference: https://gist.github.com/them0nk/2166525
