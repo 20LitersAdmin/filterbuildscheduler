@@ -1,4 +1,4 @@
-<div class="event">
+<div class="event" id="event_<%= event.id %>">
   <% if event.you_are_attendee(@user).present? || event.you_are_leader(@user).present? %>
     <%= image_tag "registered_badge.png", size: "80x80", class: "registered-badge" %>
   <% end %>
