@@ -3,19 +3,12 @@
 
     <p>Thanks for coming to the filter build on <%= @event.format_date_only %>!</p>
 
-    <p style="margin-bottom: 6px"><strong>We built <%= pluralize(@event.technology_results, @technology.name) %>!</strong></p>
-    <ul style="margin-top: 0px">
-      <li>Your work will impact <%= pluralize(number_with_delimiter(@event.results_people, delimiter: ','), 'people') %></li>
-      <li>These filters will produce <%= pluralize(number_with_delimiter(@event.results_liters_per_day, delimiter: ','), 'liter') %> of clean water every day</li>
-      <li>These results will last <%= pluralize(number_with_delimiter(@event.results_timespan, delimiter: ','), 'year') %> or more</li>
-    </ul>
+    <p style="margin-bottom: 6px"><strong>We built <%= pluralize(@event.technology_results, @technology.name) %>!</strong> These filters will make dirty water clean for <%= pluralize(number_with_delimiter(@event.results_people, delimiter: ','), 'people') %> and produce <%= pluralize(number_with_delimiter(@event.results_liters_per_day, delimiter: ','), 'liter') %> of clean water every day for at least <%= pluralize(number_with_delimiter(@event.results_timespan, delimiter: ','), 'year') %>.
+    </p>
 
-    <p style="margin-bottom: 6px">Not only did you make these filters more affordable by volunteering your time, these filters will have a real impact. Less waterborne diseases means:</p>
-    <ul style="margin-top: 0px">
-      <li>Less money spent at health clinics and hospitals</li>
-      <li>Less days sick and more days at work and school</li>
-      <li>Overall health, nutrition, and immune system improvements</li>
-    </ul>
+    <p style="margin-bottom: 6px">
+      By volunteering your time to build these filters, you helped make them <strong>more affordable</strong> to people who need access to clean water. And access to clean water has the power to change everything for vulnerable families. Starting with <strong>improved health</strong>, clean water opens doors for <strong>saving and earning more money</strong> and keeps kids healthy enough to <strong>attend school more often</strong>. Access to clean water is a critical leap out of generational poverty for vulnerable families in the developing world.
+    </p>
 
     <p style="margin-bottom: 6px">Thanks for providing <strong>life, health and prosperity</strong> to people you'll probably never meet in this lifetime.</p>
 
@@ -41,8 +34,9 @@
         <strong>One more thing!</strong>
       </p>
       <p>You've already shown a desire to make dirty water clean. We share your passion.</p>
-      <p><strong>$20 is all it takes</strong> to provide a person with access to a filter for the next decade.</p>
-      <p>Can you help get our filters to the people who need them?</p>
+      <p><strong>With just $100, 20 Liters can make dirty water clean for a family for the next decade.</strong></p>
+      <p><em>That's just $10 per year.</em></p>
+      <p>Can you take the next step to put a filter to use - making <strong>clean water a reality</strong> for someone who needs it? </p>
       <%= link_to "Donate Now", "https://20liters.org/get-involved/#organize", class: "btn yellow", target: "_blank", style: "display: inline-block; margin-bottom: 0; font-weight: bold; text-align: center; vertical-align: middle; border: 1px solid transparent; white-space: nowrap; padding: 8px 16px; font-size: 14px; text-decoration: none; color: #4a4a4a; background-color: #fce000; border-color: ##fcc900;" %>
     </div>
   </div>
