@@ -48,24 +48,6 @@
     margin-top: 5px;
   }
 
-  .thin hr {
-    margin: -6px 0px 0px 0px;
-  }
-
-  .btn-check {
-    margin-top: 30px;
-    padding-left: 1px;
-    padding-top: 0px;
-    height: 18px;
-    width: 38px;
-    border-radius: 4px;
-    font-size: 7px;
-    text-align: left;
-    .btn-text {
-      font-size: 11px;
-    }
-  }
-
   @media (min-width: 768px) {
     .right-align-md {
       text-align: right;
@@ -259,7 +241,7 @@
   }
 
   .family-friendly{
-  	margin-top:.2rem;
+    margin-top:.2rem;
   }
 }
 

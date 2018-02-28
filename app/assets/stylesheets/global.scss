@@ -100,8 +100,7 @@ hr.bar {
     border: 1px solid $light-blue;
   }
 
-
-   textarea {
+  textarea {
     width: 100%;
     border: 1px solid #ccc;
   }
@@ -115,6 +114,7 @@ hr.bar {
       color: lighten($grey, 10%);
     }
   }
+
   .btn.yellow {
     color: $grey;
     background-color: $yellow;
@@ -246,6 +246,24 @@ hr.bar {
     &.collapse {
       margin-top: 1em;
     }
+  }
+
+  .btn-check {
+    margin-top: 30px;
+    padding-left: 1px;
+    padding-top: 0px;
+    height: 18px;
+    width: 38px;
+    border-radius: 4px;
+    font-size: 7px;
+    text-align: left;
+    .btn-text {
+      font-size: 11px;
+    }
+  }
+  
+  .thin hr {
+    margin: -6px 0px 0px 0px;
   }
 }
 
