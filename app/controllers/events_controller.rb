@@ -27,13 +27,6 @@ class EventsController < ApplicationController
       @location_img = @event.location.photo_url
     end
 
-    if (current_user&.is_admin || @registration&.leader?) && @event.start_time < Time.now
-      @show_report = true
-      @registrations = @event.registrations.includes(:user).order("users.is_leader").order("users.lname")
-    else
-      @show_report = false
-    end
-
     if (current_user&.is_admin || @registration&.leader?)
       @show_edit = true
     else
@@ -61,11 +54,9 @@ class EventsController < ApplicationController
   def edit
     authorize @event = Event.find(params[:id])
 
-    if (current_user&.is_admin || @registration&.leader?) && @event.start_time < Time.now
-      @show_advanced = true
-    else
-      @show_advanced = false
-    end
+    @show_report = current_user&.admin_or_leader? && @event.start_time < Time.now ? true : false
+
+    @too_old = (Date.today - @event.end_time.to_date).round > 14 ? true : false
   end
 
   def update

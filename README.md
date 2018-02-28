@@ -22,7 +22,7 @@
   - Registration form ( && on event#show)
   - Send to Kindful
 13. Event#edit should also have report div (not just Edit#show)
-14. Soft-deleting a part / component / material -- how do counts and inventories respond?
+ - Also add "copy link to clipboard" button in sharing section
 
 ## System tests:
 Reference: https://gist.github.com/them0nk/2166525
