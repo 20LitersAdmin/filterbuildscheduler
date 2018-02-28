@@ -2,12 +2,10 @@ require 'rails_helper'
 
 RSpec.describe "Events#Lead", type: :system do
   before :each do
-    3.times do
-      FactoryBot.create(:event)
-    end
+    3.times { FactoryBot.create(:event) }
   end
 
-  after :all do
+  after :each do
     clean_up!
   end
 

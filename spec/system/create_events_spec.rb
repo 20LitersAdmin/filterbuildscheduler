@@ -38,7 +38,7 @@ RSpec.describe "Create events:", type: :system do
       expect(page).to have_field "event_title"
       expect(page).to have_field "event_location_id"
       expect(page).to have_field "event_is_private"
-      expect(page).to have_button "Create Event"
+      expect(page).to have_button "Submit"
       expect(page).to have_link "Back"
     end
 
@@ -58,7 +58,7 @@ RSpec.describe "Create events:", type: :system do
 
       first_count = Delayed::Job.count
 
-      click_button "Create Event"
+      click_button "Submit"
 
       expect(page).to have_content "Upcoming Builds"
       saved_event = Event.last
@@ -84,7 +84,7 @@ RSpec.describe "Create events:", type: :system do
       expect(page).to have_field "event_title"
       expect(page).to have_field "event_location_id"
       expect(page).to have_field "event_is_private"
-      expect(page).to have_button "Create Event"
+      expect(page).to have_button "Submit"
       expect(page).to have_link "Back"
     end
 
@@ -104,7 +104,7 @@ RSpec.describe "Create events:", type: :system do
 
       first_count = Delayed::Job.count
 
-      click_button "Create Event"
+      click_button "Submit"
 
       expect(page).to have_content "Upcoming Builds"
       saved_event = Event.last

@@ -43,7 +43,7 @@ RSpec.describe Count, type: :model do
 
   describe "#name" do
     it "returns the associated model's name value" do
-      expect(count_part2.name).to equal(part.name)
+      expect(count_part2.name).to eq(part.name)
     end
   end
 

@@ -60,13 +60,15 @@ class Count < ApplicationRecord
     # field == "loose" || "box"
     prev_inv = Inventory.where("date < ?", inventory.date).order(date: :desc).first
 
-    case type
-    when "part"
-      prev_item = prev_inv.counts.where(part: part.id).first
-    when "material"
-      prev_item = prev_inv.counts.where(material: material.id).first
-    when "component"
-      prev_item = prev_inv.counts.where(component: component.id).first
+    if prev_inv.present?
+      case type
+      when "part"
+        prev_item = prev_inv.counts.where(part: part.id).first
+      when "material"
+        prev_item = prev_inv.counts.where(material: material.id).first
+      when "component"
+        prev_item = prev_inv.counts.where(component: component.id).first
+      end
     end
 
     old_loose = prev_item.present? ? prev_item.loose_count : 0
