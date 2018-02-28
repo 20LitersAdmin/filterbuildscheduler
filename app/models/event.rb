@@ -259,4 +259,8 @@ class Event < ApplicationRecord
     technology_results * technology.liters_per_day
   end
 
+  def number_registered
+    # this allows for a form field
+  end
+
 end

@@ -44,7 +44,7 @@ RSpec.describe "Managing events:", type: :system, js: true do
       expect(page).to have_field "event_title"
       expect(page).to have_field "event_location_id"
       expect(page).to have_field "event_is_private"
-      expect(page).to have_button "Update Event"
+      expect(page).to have_button "Submit"
       expect(page).to have_link "Back"
 
     end
@@ -60,7 +60,7 @@ RSpec.describe "Managing events:", type: :system, js: true do
 
       first_count = ActionMailer::Base.deliveries.count
 
-      click_button "Update Event"
+      click_button "Submit"
 
       expect(page).to have_content "Event updated."
       @event.reload
@@ -101,7 +101,7 @@ RSpec.describe "Managing events:", type: :system, js: true do
       expect(page).to have_field "event_title"
       expect(page).to have_field "event_location_id"
       expect(page).to have_field "event_is_private"
-      expect(page).to have_button "Update Event"
+      expect(page).to have_button "Submit"
       expect(page).to have_link "Back"
     end
 
@@ -116,7 +116,7 @@ RSpec.describe "Managing events:", type: :system, js: true do
 
       first_count = ActionMailer::Base.deliveries.count
 
-      click_button "Update Event"
+      click_button "Submit"
 
       expect(page).to have_content "Event updated."
       @event.reload

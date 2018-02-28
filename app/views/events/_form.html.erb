@@ -51,35 +51,32 @@
       </div>
     </div>
 
-    <div class='row'>
-      <% if @show_advanced %>
-        <div class="col-xs-12">
-          <hr>
-        </div>
-        <div class='col-sm-6'>
-          <%= f.input :technologies_built, label: "Filters built (but not boxed): " %>
-        </div>
-        <div class='col-sm-6'>
-          <%= f.input :boxes_packed, label: "Boxes packed (ready to ship): " %>
-        </div>
-      </div> <!-- class="row" -->
-      <div class='row'>
-        <div class='col-sm-6'>
-          <%= f.label "Total Registered:" %><br/>
-          <%= f.label "#{@event.total_registered}" %>
-        </div>
-        <div class='col-sm-6'>
-          <%= f.input :attendance  %>
-        </div>
+    <% if @show_report %>
+      <div class="row">
+        <hr />
       </div>
-    <% else %>
-      </div>
+      <h2>Report</h2>
+      <%= render partial: 'events/report_fields', locals: { f: f } %>
     <% end %>
 
-    <%= f.button :submit, class: 'btn yellow fullwidth' %>
+    <%= f.submit "Submit", class: 'btn yellow fullwidth' %>
+
+    <% if @show_report && !@too_old %>
+
+      <% if @event.registrations.count > 0 && @event.emails_sent == false %>
+        <%= f.button :submit, name: "send_report", value: "Submit & Email Results", class: "btn blue fullwidth" %>
+      <% end %>
+
+      <% if @event.emails_sent == true %>
+        <p class="btn blue fullwidth">(results already emailed)</p>
+      <% end %>
+
+    <% end %>
+
     <% if !@event.new_record? %>
       <%= link_to "Cancel Event", event_path(@event), method: :delete, class: 'btn red fullwidth', data: { confirm: "Are you sure you want to cancel the event? This has consequences."} %>
     <% end %>
-  <% end %>
+
+   <% end %> <!-- simple form -->
   <%= link_to "Back", events_path(), class: 'btn blue fullwidth' %>
 </div>
