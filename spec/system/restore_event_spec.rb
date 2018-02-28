@@ -11,7 +11,7 @@ RSpec.describe "Restoring a cancelled event", type: :system do
     visit cancelled_events_path
   end
 
-  after :each do
+  after :all do
     clean_up!
   end
 
