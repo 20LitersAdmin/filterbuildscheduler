@@ -13,55 +13,53 @@ RSpec.describe "To create an event report", type: :system, js: true do
     
     it "future events dont include an event report section" do
       event = FactoryBot.create(:event)
-      visit event_path event
+      visit edit_event_path event
 
       expect(page).to have_content event.title
-      expect(page).to have_content "Register"
+      expect(page).to have_button "Submit"
 
       expect(page).not_to have_content "Report"
       expect(page).not_to have_field "event_technologies_built"
       expect(page).not_to have_field "event_boxes_packed"
       expect(page).not_to have_field "event_attendance"
       expect(page).not_to have_content "Registration-based attendance:"
-      expect(page).not_to have_button "Submit Report"
-      expect(page).not_to have_button "Submit Report & Email Results"
+      expect(page).not_to have_button "Submit & Email Results"
     end
 
     it "past events have an event report section" do
-      event = FactoryBot.create(:past_event)
-      visit event_path event
+      event = FactoryBot.create(:recent_event)
+      visit edit_event_path event
 
       expect(page).to have_content event.title
-      expect(page).to have_content "Register"
       expect(page).to have_content "Report"
       expect(page).to have_field "event_technologies_built"
       expect(page).to have_field "event_boxes_packed"
       expect(page).to have_field "event_attendance"
       expect(page).to have_content "Registration-based attendance:"
-      expect(page).to have_button "Submit Report"
+      expect(page).to have_button "Submit"
 
       # no registrations means no option to email results
-      expect(page).not_to have_button "Submit Report & Email Results"
+      expect(page).not_to have_button "Submit & Email Results"
 
       2.times { FactoryBot.create(:registration, event: event) }
-      visit event_path event
+      visit edit_event_path event
 
-      expect(page).to have_button "Submit Report & Email Results"
+      expect(page).to have_button "Submit & Email Results"
     end
   end
 
   context "fill out the form" do
     before :each do
-      @event = FactoryBot.create(:past_event)
+      @event = FactoryBot.create(:recent_event)
       5.times { FactoryBot.create(:registration, event: @event, guests_registered: Random.rand(0..2)) }
-      visit event_path @event
+      visit edit_event_path @event
     end
 
     it "with some technology stats" do
       fill_in "event_technologies_built", with: 450
       fill_in "event_boxes_packed", with: 4
 
-      click_button "Submit Report"
+      click_button "Submit"
 
       expect(page).to have_content "Event updated."
       @event.reload
@@ -72,7 +70,6 @@ RSpec.describe "To create an event report", type: :system, js: true do
     end
 
     context "with attendee information" do
-
       it "which auto-counts the total attendance" do
         expect(page).to have_css("div.event_registrations_attended", count: 5)
         expect(page).to have_field("event_attendance", with: "0")
@@ -114,7 +111,7 @@ RSpec.describe "To create an event report", type: :system, js: true do
 
       first_count = ActionMailer::Base.deliveries.count
 
-      click_button "Submit Report"
+      click_button "Submit"
 
       second_count = ActionMailer::Base.deliveries.count
 
@@ -136,7 +133,7 @@ RSpec.describe "To create an event report", type: :system, js: true do
 
       first_count = Delayed::Job.count
 
-      click_button "Submit Report & Email Results"
+      click_button "Submit & Email Results"
 
       second_count = Delayed::Job.count
 
@@ -154,13 +151,17 @@ RSpec.describe "To create an event report", type: :system, js: true do
     end
 
     it "and submit it to create an inventory" do
-      @event.technology.components << FactoryBot.create(:component_ct)
+      prev_inv = FactoryBot.create(:inventory, date: Date.today - 2.days)
+      component_ct = FactoryBot.create(:component_ct)
+      FactoryBot.create(:count_comp, inventory: prev_inv, component: component_ct, loose_count: 0, unopened_boxes_count: 0)
+
+      @event.technology.components << component_ct
       @event.technology.save
 
       fill_in "event_technologies_built", with: 350
       fill_in "event_boxes_packed", with: 3
 
-      click_button "Submit Report"
+      click_button "Submit"
 
       expect(page).to have_content "Event updated."
       expect(page).to have_content "Inventory created."
