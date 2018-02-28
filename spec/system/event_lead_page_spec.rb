@@ -5,7 +5,7 @@ RSpec.describe "Events#Lead", type: :system do
     3.times { FactoryBot.create(:event) }
   end
 
-  after :each do
+  after :all do
     clean_up!
   end
 

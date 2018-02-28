@@ -69,7 +69,8 @@ RSpec.describe "Restoring a cancelled event", type: :system do
 
     expect(page).to have_content "Event restored but not registrations."
     expect(page).to have_content "Cancelled Builds"
-    expect(page).not_to have_content @event.title
+    expect(page).to have_css("div#event_cancelled_" + @event2.id.to_s)
+    expect(page).not_to have_css("div#event_cancelled_" + @event.id.to_s)
   end
 
 end
