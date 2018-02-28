@@ -11,6 +11,18 @@ FactoryBot.define do
     location
   end
 
+  factory :recent_event, class: Event do
+    title { Faker::Zelda.game}
+    start_time { Faker::Time.backward(5) }
+    end_time { start_time + 3.hours }
+    min_leaders 1
+    max_leaders 2
+    min_registrations 5
+    max_registrations 25
+    technology
+    location
+  end
+
   factory :past_event, class: Event do
     title { Faker::Zelda.game}
     start_time { Faker::Time.backward(90) }

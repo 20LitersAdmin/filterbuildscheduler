@@ -50,7 +50,7 @@ RSpec.describe "Events#Closed", type: :system do
     event2 = Event.second
     event3 = Event.third
 
-    event4 = FactoryBot.create(:event)
+    event4 = FactoryBot.create(:event, start_time: Time.now + 15.days)
 
     sign_in FactoryBot.create(:admin)
 
@@ -61,6 +61,6 @@ RSpec.describe "Events#Closed", type: :system do
     expect(page).to have_content event1.title
     expect(page).to have_content event2.title
     expect(page).to have_content event3.title
-    expect(page).not_to have_content event4.title
+    expect(page).not_to have_css( "div#event_" + event4.id.to_s )
   end
 end
