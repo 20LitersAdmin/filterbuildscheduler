@@ -46,7 +46,7 @@ RSpec.describe "Events#Lead", type: :system do
     event2 = Event.second
     event3 = Event.third
 
-    event4 = FactoryBot.create(:event, min_leaders: 1, max_leaders: 1)
+    event4 = FactoryBot.create(:event, min_leaders: 1, max_leaders: 1, title: "NOT FAKER")
     FactoryBot.create(:registration_leader, event: event4)
 
     sign_in FactoryBot.create(:leader)
