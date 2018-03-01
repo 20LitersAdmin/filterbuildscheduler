@@ -32,6 +32,8 @@ class EventsController < ApplicationController
     else
       @show_edit = false
     end
+
+    @leaders = @event.registrations.registered_as_leader
   end
 
   def new

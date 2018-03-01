@@ -34,7 +34,9 @@
         <% end %>
       </p>
       <p><strong>
-        Event <%= pluralize_without_count(@event.registrations.registered_as_leader.count, 'leader') %>: <%= @event.registrations.registered_as_leader.map { |r| r.user.fname }.join(', ') %>
+        <% if @leaders.count.positive? %>
+          Event <%= pluralize_without_count(@leaderscount, 'leader') %>: <%= @leaders.map { |r| r.user.fname }.join(', ') %>
+        <% end %>
       </strong></p>
       <hr />
       <% if @event.registrations_filled? %>
