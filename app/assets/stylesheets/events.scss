@@ -48,17 +48,24 @@
     margin-top: 5px;
   }
 
+  .tech-img {
+    height: auto;
+    width: auto;
+    max-height: 120px;
+    max-width: 100%;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .location-img, .waiver_click {
+    cursor: pointer;
+  }
+
   @media (min-width: 768px) {
     .right-align-md {
       text-align: right;
     }
-  }
-  img {
-    width: 100%;
-    height: auto;
-  }
-  .location-img, .waiver_click {
-    cursor: pointer;
   }
 }
 
