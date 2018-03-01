@@ -11,10 +11,10 @@
   - include email_opt_out field if event is in the past
   - Save and New button
 8. Stats framework (for time period) (visible to Admin)
-  - # of technologies by type
-  - # of vol hours (event length * attendance )
-  - # of volunteers engaged (could be duplicated)
-  - # of events held
+  - Number of technologies by type
+  - Number of vol hours (event length * attendance )
+  - Number of volunteers engaged (could be duplicated)
+  - Number of events held
   - List of high-participating builders (3+ builds, not leader)
   - List of leaders && participating
 9. Resurrect phone
@@ -22,6 +22,7 @@
   - Registration form ( && on event#show)
   - Send to Kindful
 10. Event#show: add "copy link to clipboard" button in sharing section
+11. Link to add location on Event#new
 
 ## HMMM
 1. Inventories created from events aren't subtracting parts from components (parts used to build the technologies_built or boxes_packed)
