@@ -12,6 +12,7 @@ RSpec.describe KindfulClient do
         fname: user1.fname,
         lname: user1.lname,
         email: user1.email,
+        phone: user1.phone,
         email_opt_in: true
       }
 
