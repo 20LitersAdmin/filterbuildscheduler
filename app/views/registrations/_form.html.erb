@@ -6,6 +6,7 @@
     <%= o.input :fname, label: 'First Name' %>
     <%= o.input :lname, label: 'Last Name' %>
     <%= o.input :email, label: 'Email' %>
+    <%= o.input :phone, label: 'Phone', required: false %>
     <%= f.label :leader, 'Register as Leader?' %>
     <%= f.check_box :leader %>
     <p>Room for <%= pluralize(@event.registrations_remaining - 1, 'more guest') %></p>
