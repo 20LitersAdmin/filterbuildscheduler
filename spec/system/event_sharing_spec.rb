@@ -43,7 +43,7 @@ RSpec.describe "An event can be shared", type: :system, js: true do
   end
 
   it "by printing a poster" do
-    expect(page).to have_css("a.btn-poster")
+    expect(page).to have_css("a#poster_link")
 
     # Intermittent Failures
     # click_link "poster_link"
@@ -52,6 +52,10 @@ RSpec.describe "An event can be shared", type: :system, js: true do
     #   expect(page).to have_content "Roll up your sleeves to solve the global water crisis"
     #   expect(page).to have_link "print_btn"
     # end
+  end
+
+  it "by copying the URL" do
+    expect(page).to have_css("a#btn_copy")
   end
 
 end
