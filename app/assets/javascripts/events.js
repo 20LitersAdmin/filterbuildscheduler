@@ -52,4 +52,14 @@ function attendanceCounter(){
     attendanceCounter();
     $("#btn_uncheck_all").hide();
   })
+  $(document).on("click", "#btn_copy", function(){
+    var url = $("#copy_url")
+    url.select();
+    document.execCommand("Copy");
+    url.blur();
+    $("#copy_confirm").fadeIn('normal', function() {
+      $(this).delay(3000).fadeOut();
+    });
+    event.preventDefault();
+  });
 }());

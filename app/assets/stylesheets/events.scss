@@ -26,7 +26,7 @@
   .poster-div {
     margin-top: -1px;
   }
-  .btn-poster {
+  .btn-sharing {
     background-color: $yellow;
     border: 1px solid $yellow;
     color: $grey;
@@ -40,6 +40,28 @@
       color: white;
     }
   }
+
+  .copy-div {
+    text-align: left;
+    overflow: visible;
+    p {
+      display: none;
+      position: absolute;
+    }
+  }
+
+  #copy_url {
+    width: 8px;
+    height: 8px;
+    font-size: 2px;
+    border: none;
+    color: white;
+    :focus {
+      border: none;
+      color: white;
+    }
+  }
+
   .mt-10 {
     margin-top: 10px;
   }
