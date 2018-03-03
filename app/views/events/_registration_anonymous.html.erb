@@ -7,6 +7,7 @@
     <%= o.input :fname, label: 'First Name' %>
     <%= o.input :lname, label: 'Last Name' %>
     <%= o.input :email, label: 'Email' %>
+    <%= o.input :phone, label: 'Phone (optional)', required: false %>
     <p>Room for <%= pluralize(@event.registrations_remaining - 1, 'more guest') %></p>
     <%= f.input :guests_registered, label: 'Additional Guests (excluding you)', input_html: { min: 0, max: @event.registrations_remaining - 1 } %>
     <%= f.input :accommodations, label: 'Notes', as: :text %>

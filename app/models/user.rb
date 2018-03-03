@@ -18,7 +18,7 @@ class User < ApplicationRecord
 
   validates :fname, :lname, :email, presence: true
 
-  before_save :ensure_authentication_token
+  before_save :ensure_authentication_token, :check_phone_format
 
   after_save :update_kindful, if: Proc.new { |user| user.saved_change_to_fname? || user.saved_change_to_lname? || user.saved_change_to_email? || user.saved_change_to_email_opt_out? }
 
@@ -72,6 +72,13 @@ class User < ApplicationRecord
   def ensure_authentication_token
     if authentication_token.blank?
       self.authentication_token = generate_authentication_token
+    end
+  end
+
+  def check_phone_format
+    if phone.present? && phone.match('^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$').nil?
+      # Remove any non-numbers, and any symbols that aren't part of [(,),-,.,+]
+      phone.gsub!(/[^\d,(,),+,\s,.,-]/,'')
     end
   end
 
