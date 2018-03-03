@@ -61,6 +61,26 @@ RSpec.describe User, type: :model do
     end
   end
 
+  describe 'check_phone_format' do
+    let(:good_phone) { build :user, phone: "(616) 555-1212"}
+    let(:bad_phone) { build :user, phone: "(616;) 555=1212&$$$" }
+    let(:text_phone) { build :user, phone: "DELETE BobbyTables!"}
+
+    it 'accepts properly formatted phone #s' do
+      good_phone.save
+
+      expect(good_phone.phone).to eq '(616) 555-1212'
+    end
+
+    it 'strips bad characters from bad phone #s' do
+      bad_phone.save
+      text_phone.save
+
+      expect(bad_phone.phone).to eq '(616) 5551212'
+      expect(text_phone.phone).to eq ' '
+    end
+  end
+
   describe 'available_events' do
     let(:event1) { create :event, start_time: Time.now - 30.minutes }
     let(:event2) { create :event, start_time: Time.now }
