@@ -17,10 +17,6 @@
   - Number of events held
   - List of high-participating builders (3+ builds, not leader)
   - List of leaders && participating
-9. Resurrect phone
-  - User profile
-  - Registration form ( && on event#show)
-  - Send to Kindful
 10. Event#show: add "copy link to clipboard" button in sharing section
 11. Link to add location on Event#new
 
