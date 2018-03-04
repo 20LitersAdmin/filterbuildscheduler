@@ -161,9 +161,9 @@ class RegistrationsController < ApplicationController
   def user_params
     # If the form comes from Event#show, the user is nested in the params.
     if params[:registration][:form_source] == "admin"
-      params.require(:user).permit(:fname, :lname, :email)
+      params.require(:user).permit(:fname, :lname, :email, :phone)
     else
-      params[:registration].require(:user).permit(:fname, :lname, :email)
+      params[:registration].require(:user).permit(:fname, :lname, :email, :phone)
     end
   end
 
