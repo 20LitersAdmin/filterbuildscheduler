@@ -56,11 +56,7 @@ class KindfulClient
   end
 
   def token
-    if Rails.env.test?
-      "thisisnotarealtokenbutitdoesntmattertothetestsuite"
-    else
-      ENV.fetch("KF_FILTERBUILD_TOKEN")
-    end
+    ENV.fetch("KF_FILTERBUILD_TOKEN")
   end
 
   def headers
