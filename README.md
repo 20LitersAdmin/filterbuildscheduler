@@ -3,8 +3,6 @@
 ## Things to do
 1. after event report submitted - push contact_w_note to Kindful -- adding a note for each attendee saying "#user attended #event on #date"
 
-2. Write tests until everyone is happy (*Ross*) because TDD is real.
-
 3. JQuery registration form validations (use global .has-errors css, see user#edit for good example)
 
 4. Available functions div as partial on more screens (e.g. event/closed, users/communication, events/lead, events/cancelled )

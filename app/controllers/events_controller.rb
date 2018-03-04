@@ -169,12 +169,12 @@ class EventsController < ApplicationController
     if @event.save
       flash[:success] = "Event updated. #{@admins_notified} #{@users_notified} #{@results_emails_sent} #{@inventory_created}"
 
-      if @send_results_emails == true
-        @event.registrations.where(attended: true).each do |r|
+      @event.registrations.where(attended: true).each do |r|
+        if @send_results_emails == true
           RegistrationMailer.delay.event_results(r)
         end
+        KindfulClient.new.import_user_w_note(r)
       end
-
 
       redirect_to event_path(@event)
     else

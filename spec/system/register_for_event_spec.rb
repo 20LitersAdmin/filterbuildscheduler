@@ -104,13 +104,16 @@ RSpec.describe "Register for Event", type: :system, js: true do
       expect(page).to_not have_field "registration_leader"
     end
 
-    it "can be filled out and submitted" do
-      user = FactoryBot.build(:user_w_password)
+    fit "can be filled out and submitted, which sends the user's info to Kindful" do
+      user = FactoryBot.build(:user)
 
       fill_in "registration_user_fname", with: user.fname
       fill_in "registration_user_lname", with: user.lname
       fill_in "registration_user_email", with: user.email
       check "registration_accept_waiver"
+
+      # expect_any_instance_of( KindfulClient ).to receive(:import_user).with(user)
+
       click_button "Register"
 
       expect(User.last.fname).to eq user.fname
@@ -118,6 +121,8 @@ RSpec.describe "Register for Event", type: :system, js: true do
       expect(page).to have_content "Registration successful!"
       expect(page).to have_content user.name
       expect(page).to have_link "Change/Cancel Registration"
+
+
     end
   end
 
@@ -169,12 +174,14 @@ RSpec.describe "Register for Event", type: :system, js: true do
           expect(page).to have_button "Register"
         end 
 
-        it "with all fields is successful" do
+        fit "with all fields is successful, which sends the user's info to Kindful" do
           fill_in "user_email", with: user.email
           fill_in "user_fname", with: user.fname
           fill_in "user_lname", with: user.lname
 
           first_count = Delayed::Job.count
+
+          # expect_any_instance_of( KindfulClient ).to receive(:import_user).with(user)
 
           click_button "Register"
 
