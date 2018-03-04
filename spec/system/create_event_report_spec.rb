@@ -170,5 +170,19 @@ RSpec.describe "To create an event report", type: :system, js: true do
       expect(count_in_question.loose_count).to eq 350
       expect(count_in_question.unopened_boxes_count).to eq 3
     end
+
+    fit "and submit it to send registration information to Kindful" do
+      registration = Registration.first
+
+      click_link "btn_check_all"
+
+      expect(page).to have_field("event_attendance", with: "5")
+
+      expect_any_instance_of( KindfulClient ).to receive(:import_user_w_note).with(registration)
+
+      click_button "Submit"
+
+      expect(page).to have_content "Event updated."
+    end
   end
 end
