@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe "Register for Event", type: :system, js: true do
+RSpec.describe "Register for Event", type: :system do
   let(:event) { create :event}
 
   after :all do
@@ -104,13 +104,16 @@ RSpec.describe "Register for Event", type: :system, js: true do
       expect(page).to_not have_field "registration_leader"
     end
 
-    it "can be filled out and submitted" do
-      user = FactoryBot.build(:user_w_password)
+    it "can be filled out and submitted, which sends the user's info to Kindful" do
+      user = FactoryBot.build(:user)
 
       fill_in "registration_user_fname", with: user.fname
       fill_in "registration_user_lname", with: user.lname
       fill_in "registration_user_email", with: user.email
       check "registration_accept_waiver"
+
+      expect_any_instance_of( KindfulClient ).to receive(:import_user)
+
       click_button "Register"
 
       expect(User.last.fname).to eq user.fname
@@ -118,6 +121,8 @@ RSpec.describe "Register for Event", type: :system, js: true do
       expect(page).to have_content "Registration successful!"
       expect(page).to have_content user.name
       expect(page).to have_link "Change/Cancel Registration"
+
+
     end
   end
 
@@ -137,7 +142,7 @@ RSpec.describe "Register for Event", type: :system, js: true do
 
     context "can be filled out and submitted" do
 
-      it "by email only for a user that exists" do
+      it "by email only for a user that exists", js: true do
         user = FactoryBot.create(:user)
 
         fill_in "user_email", with: user.email
@@ -169,12 +174,14 @@ RSpec.describe "Register for Event", type: :system, js: true do
           expect(page).to have_button "Register"
         end 
 
-        it "with all fields is successful" do
+        it "with all fields is successful, which sends the user's info to Kindful" do
           fill_in "user_email", with: user.email
           fill_in "user_fname", with: user.fname
           fill_in "user_lname", with: user.lname
 
           first_count = Delayed::Job.count
+
+          expect_any_instance_of( KindfulClient ).to receive(:import_user)
 
           click_button "Register"
 
@@ -182,7 +189,6 @@ RSpec.describe "Register for Event", type: :system, js: true do
           builder_tbl_text = page.all('table#builders_tbl td').map(&:text)
 
           expect(page).to have_content "Registrations for " + event.full_title
-          expect(leader_tbl_text).to eq ["No data available in table"]
           expect(builder_tbl_text).to have_content user.name
 
           expect(User.last.email).to eq user.email
@@ -192,7 +198,7 @@ RSpec.describe "Register for Event", type: :system, js: true do
         end
       end
 
-      it "to assign leaders if the user is a leader" do
+      it "to assign leaders if the user is a leader", js: true do
         user = FactoryBot.create(:leader)
         user.technologies << event.technology
         user.save
