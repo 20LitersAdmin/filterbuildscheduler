@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe "To create an event report", type: :system, js: true do
+RSpec.describe "To create an event report", type: :system do
   before :each do
     sign_in FactoryBot.create(:admin)
   end
@@ -69,7 +69,7 @@ RSpec.describe "To create an event report", type: :system, js: true do
       expect(@event.emails_sent).to be_falsey
     end
 
-    context "with attendee information" do
+    context "with attendee information", js: true do
       it "which auto-counts the total attendance" do
         expect(page).to have_css("div.event_registrations_attended", count: 5)
         expect(page).to have_field("event_attendance", with: "0")
@@ -102,7 +102,7 @@ RSpec.describe "To create an event report", type: :system, js: true do
       end
     end
 
-    it "and submit it without sending an email" do
+    it "and submit it without sending an email", js: true do
       fill_in "event_technologies_built", with: 250
       fill_in "event_boxes_packed", with: 2
       click_link "btn_check_all"
@@ -124,7 +124,7 @@ RSpec.describe "To create an event report", type: :system, js: true do
       expect(second_count).to eq first_count
     end
 
-    it "and submit it while sending an email" do
+    it "and submit it while sending an email", js: true do
       fill_in "event_technologies_built", with: 350
       fill_in "event_boxes_packed", with: 3
       click_link "btn_check_all"
@@ -171,14 +171,10 @@ RSpec.describe "To create an event report", type: :system, js: true do
       expect(count_in_question.unopened_boxes_count).to eq 3
     end
 
-    fit "and submit it to send registration information to Kindful" do
-      registration = Registration.first
+    it "and submit it to send registration information to Kindful" do
+      find(:css, "#event_registrations_attributes_0_attended").set(true)
 
-      click_link "btn_check_all"
-
-      expect(page).to have_field("event_attendance", with: "5")
-
-      expect_any_instance_of( KindfulClient ).to receive(:import_user_w_note).with(registration)
+      expect_any_instance_of( KindfulClient ).to receive(:import_user_w_note)
 
       click_button "Submit"
 
