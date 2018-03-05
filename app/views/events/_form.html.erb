@@ -2,7 +2,18 @@
   <%= simple_form_for @event do |f| %>
     <%= f.error_notification %>
     <%= f.input :title %>
-    <%= f.association :location %>
+    <% if current_user.is_admin? %>
+      <div class="row">
+        <div class="col-sm-9">
+          <%= f.association :location %>
+        </div>
+        <div class="col-sm-3">
+          <%= link_to "Add location", rails_admin.new_path(model_name: "location"), class: "btn yellow form-matcher float-right" %>
+        </div>
+      </div>
+    <% else %>
+      <%= f.association :location %>
+    <% end %>  
     <div class='row'>
       <div class='col-sm-6'>
         <%= f.input :start_time, as: :string, input_html: {class: 'datetimepicker', :value => time_for_form(f.object.start_time) } %>
