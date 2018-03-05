@@ -9,7 +9,6 @@ RSpec.describe "Register for Event", type: :system do
 
   context "logged in user" do
     
-
     context "shows the registration_signedin partial" do
 
       it "without leader checkbox for a builder" do
@@ -20,7 +19,7 @@ RSpec.describe "Register for Event", type: :system do
         expect(page).to have_content event.full_title
         expect(page).to have_content user.name
         expect(page).to have_field "registration_accept_waiver"
-        expect(page).to have_button "Register"
+        expect(page).to have_css("input[name='commit']")
 
         expect(page).to_not have_field "registration_user_fname"
         expect(page).to_not have_field "registration_leader" 
@@ -37,7 +36,7 @@ RSpec.describe "Register for Event", type: :system do
         expect(page).to have_content user.name
         expect(page).to have_field "registration_accept_waiver"
         expect(page).to have_field "registration_leader"
-        expect(page).to have_button "Register"
+        expect(page).to have_css("input[name='commit']")
       end
       
     end
@@ -53,7 +52,7 @@ RSpec.describe "Register for Event", type: :system do
 
         first_count = Delayed::Job.count
 
-        click_button "Register"
+        click_submit
 
         expect(page).to have_content "Registration successful!"
         expect(page).to have_content user.name
@@ -75,7 +74,7 @@ RSpec.describe "Register for Event", type: :system do
         
         first_count = Delayed::Job.count
         
-        click_button "Register"
+        click_submit
 
         expect(page).to have_content "Registration successful!"
         expect(page).to have_content user.name
@@ -100,7 +99,7 @@ RSpec.describe "Register for Event", type: :system do
 
       expect(page).to have_field "registration_user_fname"
       expect(page).to have_field "registration_accept_waiver"
-      expect(page).to have_button "Register"
+      expect(page).to have_css("input[name='commit']")
       expect(page).to_not have_field "registration_leader"
     end
 
@@ -114,7 +113,7 @@ RSpec.describe "Register for Event", type: :system do
 
       expect_any_instance_of( KindfulClient ).to receive(:import_user)
 
-      click_button "Register"
+      click_submit
 
       expect(User.last.fname).to eq user.fname
 
@@ -137,10 +136,29 @@ RSpec.describe "Register for Event", type: :system do
       expect(page).to have_content "Register someone for " + event.full_title
       expect(page).to have_field "user_fname"
       expect(page).to have_field "registration_leader"
-      expect(page).to have_button "Register"
+      expect(page).to have_css("input[name='commit']")
     end
 
     context "can be filled out and submitted" do
+
+      fit "using the Create & New button" do
+        user = FactoryBot.build(:user)
+
+        fill_in "user_email", with: user.email
+        fill_in "user_fname", with: user.fname
+        fill_in "user_lname", with: user.lname
+        check "user_email_opt_out"
+
+        click_button "Create & New"
+
+        expect(page).to have_content "Registration successful!"
+        expect(page).to have_content "Register someone for " + event.full_title
+        expect(page).to have_field "user_fname"
+
+        saved_user = User.find_by(email: user.email)
+        
+        expect(saved_user.email_opt_out).to eq true
+      end
 
       it "by email only for a user that exists", js: true do
         user = FactoryBot.create(:user)
@@ -149,7 +167,7 @@ RSpec.describe "Register for Event", type: :system do
 
         first_count = Delayed::Job.count
         
-        click_button "Register"
+        click_submit
 
         leader_tbl_text = page.all('table#leaders_tbl td').map(&:text)
         builder_tbl_text = page.all('table#builders_tbl td').map(&:text)
@@ -167,11 +185,11 @@ RSpec.describe "Register for Event", type: :system do
 
         it "with email only isn't successful" do
           fill_in "user_email", with: user.email
-          click_button "Register"
+          click_submit
 
           expect(page).to have_content "fname can't be blank | lname can't be blank"
           expect(page).to have_content "Register someone for " + event.full_title
-          expect(page).to have_button "Register"
+          expect(page).to have_css("input[name='commit']")
         end 
 
         it "with all fields is successful, which sends the user's info to Kindful" do
@@ -183,7 +201,7 @@ RSpec.describe "Register for Event", type: :system do
 
           expect_any_instance_of( KindfulClient ).to receive(:import_user)
 
-          click_button "Register"
+          click_submit
 
           leader_tbl_text = page.all('table#leaders_tbl td').map(&:text)
           builder_tbl_text = page.all('table#builders_tbl td').map(&:text)
@@ -208,7 +226,7 @@ RSpec.describe "Register for Event", type: :system do
 
         first_count = Delayed::Job.count
         
-        click_button "Register"
+        click_submit
 
         leader_tbl_text = page.all('table#leaders_tbl td').map(&:text)
         builder_tbl_text = page.all('table#builders_tbl td').map(&:text)

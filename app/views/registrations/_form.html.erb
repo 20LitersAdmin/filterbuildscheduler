@@ -7,16 +7,21 @@
     <%= o.input :lname, label: 'Last Name' %>
     <%= o.input :email, label: 'Email' %>
     <%= o.input :phone, label: 'Phone', required: false %>
-    <%= f.label :leader, 'Register as Leader?' %>
-    <%= f.check_box :leader %>
+    <div class="row">
+      <div class="col-xs-6">
+        <%= f.check_box :leader %>
+        <%= f.label :leader, 'Register as Leader?' %>
+      </div>
+      <div class="col-xs-6">
+        <%= o.check_box :email_opt_out %>
+        <%= o.label :email_opt_out, "Opt out of emails?" %>
+      </div>
+    </div>
     <p>Room for <%= pluralize(@event.registrations_remaining - 1, 'more guest') %></p>
     <%= f.input :guests_registered, label: 'Guests', input_html: { min: 0, max: @event.registrations_remaining - 1 } %>
     <%= f.input :accommodations, label: 'Notes', as: :text %>
-    <div>
-      <h4>
-        <%= f.hidden_field :waiver_accepted, value: '1' %>
-      </h4>
-    </div>
+    <%= f.hidden_field :waiver_accepted, value: '1' %>
   <% end %>
-  <%= f.submit 'Register', class: 'btn yellow' %>
+  <%= f.button :submit, class: 'btn yellow fullwidth' %>
+  <%= f.button :submit, name: "commit_and_new", value: "Create & New", class: 'btn yellow fullwidth' %>
 <% end %>

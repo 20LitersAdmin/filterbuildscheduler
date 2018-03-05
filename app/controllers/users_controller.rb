@@ -89,6 +89,7 @@ class UsersController < ApplicationController
                                   :lname,
                                   :email,
                                   :phone,
+                                  :email_opt_out,
                                   :password,
                                   :password_confirmation
   end
@@ -97,7 +98,8 @@ class UsersController < ApplicationController
     params.require(:user).permit :fname,
                                   :lname,
                                   :email,
-                                  :phone
+                                  :phone,
+                                  :email_opt_out
   end
 
 end

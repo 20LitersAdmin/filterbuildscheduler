@@ -14,6 +14,7 @@ require 'devise'
 require 'capybara/rspec'
 require 'selenium-webdriver'
 require 'support/cleanup_crew'
+require 'support/form_helper'
 require 'rspec/retry'
 
 # Requires supporting ruby files with custom matchers and macros, etc, in
@@ -38,6 +39,7 @@ RSpec.configure do |config|
   config.include FactoryBot::Syntax::Methods
   config.include Devise::Test::IntegrationHelpers, type: :system
   config.include CleanupCrew, type: :system
+  config.include FormHelper, type: :system
 
   config.fixture_path = "#{::Rails.root}/spec/fixtures"
   config.use_transactional_fixtures = true

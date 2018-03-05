@@ -1,6 +1,6 @@
 class RegistrationsController < ApplicationController
   before_action :find_registration, only: [:edit, :update, :destroy]
-  before_action :authenticate_user_from_token!, only: [:edit, :update, :destroy]
+  # before_action :authenticate_user_from_token!, only: [:edit, :update, :destroy]
 
   def index
     @event = Event.find(params[:event_id])
@@ -69,7 +69,11 @@ class RegistrationsController < ApplicationController
       flash[:success] = "Registration successful!"
 
       if params[:registration][:form_source] == "admin"
-        redirect_to event_registrations_path @event
+        if params[:commit_and_new].present?
+          redirect_to new_event_registration_path @event
+        else
+          redirect_to event_registrations_path @event
+        end
       else
         redirect_to event_path @event
       end
@@ -161,9 +165,17 @@ class RegistrationsController < ApplicationController
   def user_params
     # If the form comes from Event#show, the user is nested in the params.
     if params[:registration][:form_source] == "admin"
-      params.require(:user).permit(:fname, :lname, :email, :phone)
+      params.require(:user).permit(:fname,
+                                    :lname,
+                                    :email,
+                                    :phone,
+                                    :email_opt_out)
     else
-      params[:registration].require(:user).permit(:fname, :lname, :email, :phone)
+      params[:registration].require(:user).permit(:fname,
+                                                  :lname,
+                                                  :email,
+                                                  :phone,
+                                                  :email_opt_out)
     end
   end
 
@@ -193,6 +205,12 @@ class RegistrationsController < ApplicationController
     user = User.find_or_initialize_by(email: data[:email])
     user.fname ||= data[:fname]
     user.lname ||= data[:lname]
+    user.phone ||= data[:phone]
+    # If the user hasn't been opted out, allow the form to opt them out
+    # But, if the user has been opted out, don't allow the form to opt them back in
+    if user.email_opt_out == false && data[:email_opt_out] == "1"
+      user.email_opt_out = true
+    end
 
     user
   end
