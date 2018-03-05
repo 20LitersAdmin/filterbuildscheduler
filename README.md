@@ -1,8 +1,8 @@
 # README
 
 ## Things to do
-6. Count.item.has_no_box? to hide box count field on Count#edit
-  - Part, Material, Component: need :has_no_box, :boolean, default: false
+6. Count.item.only_loose? to hide box count field on Count#edit
+  - Part, Material, Component: need :only_loose, :boolean, default: false
   - EG: 8' Wood, 10' PVC, un- and welded cartridges, instructions, 2" tubes, bags w/ instructions, all.where(quantity_per_box: 1)
 
 3. JQuery registration form validations (use global .has-errors css, see user#edit for good example)

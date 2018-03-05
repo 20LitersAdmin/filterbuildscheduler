@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180226175223) do
+ActiveRecord::Schema.define(version: 20180305222615) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -27,6 +27,7 @@ ActiveRecord::Schema.define(version: 20180226175223) do
     t.integer "quantity_per_box", default: 1
     t.float "tare_weight", default: 0.0
     t.text "comments"
+    t.boolean "only_loose", default: false
     t.index ["deleted_at"], name: "index_components_on_deleted_at"
   end
 
@@ -174,6 +175,7 @@ ActiveRecord::Schema.define(version: 20180226175223) do
     t.string "shipping_cost_currency", default: "USD", null: false
     t.integer "wire_transfer_cost_cents", default: 0, null: false
     t.string "wire_transfer_cost_currency", default: "USD", null: false
+    t.boolean "only_loose", default: false
     t.index ["deleted_at"], name: "index_materials_on_deleted_at"
     t.index ["supplier_id"], name: "index_materials_on_supplier_id"
   end
@@ -209,6 +211,7 @@ ActiveRecord::Schema.define(version: 20180226175223) do
     t.string "wire_transfer_cost_currency", default: "USD", null: false
     t.text "comments"
     t.bigint "supplier_id"
+    t.boolean "only_loose", default: false
     t.index ["deleted_at"], name: "index_parts_on_deleted_at"
     t.index ["supplier_id"], name: "index_parts_on_supplier_id"
   end
