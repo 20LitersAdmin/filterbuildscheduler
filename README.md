@@ -6,11 +6,8 @@
 4. Available functions div as partial on more screens (e.g. event/closed, users/communication, events/lead, events/cancelled )
 
 5. View for technology assembly (which items [comps and parts] and #s on hand) -- shows what is needed and how many tech can be built with what's on hand
-6. Count.item.has_no_box? to hide box count field on Count#edit
 
-7. Registrations#new 
-  - include email_opt_out field if event is in the past
-  - Save and New button
+6. Count.item.has_no_box? to hide box count field on Count#edit
 
 8. Stats framework (for time period) (visible to Admin)
   - Number of technologies by type
@@ -19,8 +16,6 @@
   - Number of events held
   - List of high-participating builders (3+ builds, not leader)
   - List of leaders && participating
-  
-11. Link to add location on Event#new
 
 ## HMMM
 1. Inventories created from events aren't subtracting parts from components (parts used to build the technologies_built or boxes_packed)

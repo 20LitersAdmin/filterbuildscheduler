@@ -8,7 +8,7 @@ class Registration < ApplicationRecord
   scope :ordered_by_user_lname, -> { includes(:user).order('users.lname')}
   attr_accessor :accept_waiver
 
-  validates :guests_registered, numericality: { only_integer: true, greater_than_or_equal_to: 0 }, presence: true
+  validates :guests_registered, :guests_attended, numericality: { only_integer: true, greater_than_or_equal_to: 0 }, presence: true
 
   def form_source
     # this allows for a form field that handles page redirects based on values: "admin", "self", "anon"
