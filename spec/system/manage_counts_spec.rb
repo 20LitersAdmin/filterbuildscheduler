@@ -3,9 +3,9 @@ require 'rails_helper'
 RSpec.describe "Managing counts:", type: :system, js: true do
   before :each do
     @inventory = FactoryBot.create(:inventory)
-    tech = FactoryBot.create(:technology)
+    @tech = FactoryBot.create(:technology)
     part = FactoryBot.create(:part)
-    FactoryBot.create(:tech_part, part: part, technology: tech)
+    FactoryBot.create(:tech_part, part: part, technology: @tech)
     @count = FactoryBot.create(:count_part, part: part, inventory: @inventory, loose_count: 18, unopened_boxes_count: 3 )
   end
 
@@ -60,6 +60,29 @@ RSpec.describe "Managing counts:", type: :system, js: true do
       expect(page).to have_content @count.name
       expect(page).to have_content "Count inventory: Use positive numbers or 0"
     end
+  end
+
+  context "the form" do
+    before :each do
+      sign_in FactoryBot.create(:admin)
+      @part2 = FactoryBot.create(:part, only_loose: true)
+      FactoryBot.create(:tech_part, part: @part2, technology: @tech)
+    end
+
+    it "only shows the loose field when the item is marked only_loose" do
+      @count2 = FactoryBot.create(:count_part, part: @part2, inventory: @inventory )
+      visit edit_inventory_count_path @inventory, @count2
+
+      expect(page).to have_css("#count_loose_count")
+      expect(page).not_to have_css("#count_unopened_boxes_count")
+    end
+
+    it "show loose and box field when the item isn't marked only loose" do
+      visit edit_inventory_count_path @inventory, @count
+
+      expect(page).to have_css("#count_loose_count")
+      expect(page).to have_css("#count_unopened_boxes_count")
+    end   
   end
 
   context "the form can be" do
