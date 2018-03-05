@@ -1,19 +1,14 @@
 # README
 
 ## Things to do
-<<<<<<< Updated upstream
-=======
 6. Count.item.only_loose? to hide box count field on Count#edit
   - EG: 8' Wood, 10' PVC, un- and welded cartridges, instructions, 2" tubes, bags w/ instructions, all.where(quantity_per_box: 1)
 
->>>>>>> Stashed changes
 3. JQuery registration form validations (use global .has-errors css, see user#edit for good example)
 
 4. Available functions div as partial on more screens (e.g. event/closed, users/communication, events/lead, events/cancelled )
 
 5. View for technology assembly (which items [comps and parts] and #s on hand) -- shows what is needed and how many tech can be built with what's on hand
-
-6. Count.item.has_no_box? to hide box count field on Count#edit
 
 8. Stats framework (for time period) (visible to Admin)
   - Number of technologies by type

@@ -15,18 +15,22 @@
       </div>
     </div>
 
-    <%= f.input :unopened_boxes_count, label: "Unopened boxes: (#{@count.item.quantity_per_box } per box)", input_html: { value: @box_val}  %>
-    <div class="row">
-      <div class="col-xs-12 right-align expectation">
-        <span id="expected_box_count_parent" class="highlight red empty right-align">
-          <%= @expected_msg %>
-          <span id="expected_box_count"><%= @count.unopened_boxes_count %></span>
-        </span>
-      </div>
-    </div>
+    <% if !@count.item.only_loose? %>
+      <%= f.input :unopened_boxes_count, label: "Unopened boxes: (#{@count.item.quantity_per_box } per box)", input_html: { value: @box_val}  %>
+      <div class="row">
+        <div class="col-xs-12 right-align expectation">
+          <span id="expected_box_count_parent" class="highlight red empty right-align">
+            <%= @expected_msg %>
+            <span id="expected_box_count"><%= @count.unopened_boxes_count %></span>
+          </span>
+        </div>
+      </div>    
+    <% end %>
+
     <%= f.input :user_id, as: :hidden, input_html: { value: current_user.id } %>
     <%= f.submit "Submit", class: "btn yellow fullwidth" %>
-    <% if @inventory.type_for_params == "manual" || @inventory.type_for_params == "event"  %>
+    
+    <% if (@inventory.type_for_params == "manual" || @inventory.type_for_params == "event") && !@count.item.only_loose?  %>
       <div class="col-xs-12 col-sm-6">
         <% if !@count.partial_box %>
           <%= f.button :submit, name: "partial_loose", value: "Partial Count: Loose", class: "btn blue fullwidth" %>  
@@ -41,9 +45,9 @@
           <h4 class="center">Ready to Submit</h4>
         <% end %>
       </div>
-
     <% end %>
   <% end %>
+
   <%= link_to "Back", edit_inventory_path(@inventory), class: "btn yellow empty fullwidth" %>
   <hr class="bar dark-grey">
 </div>
