@@ -141,7 +141,7 @@ RSpec.describe "Register for Event", type: :system do
 
     context "can be filled out and submitted" do
 
-      fit "using the Create & New button" do
+      it "using the Create & New button" do
         user = FactoryBot.build(:user)
 
         fill_in "user_email", with: user.email
