@@ -20,7 +20,7 @@ class User < ApplicationRecord
 
   before_save :ensure_authentication_token, :check_phone_format
 
-  after_save :update_kindful, if: Proc.new { |user| user.saved_change_to_fname? || user.saved_change_to_lname? || user.saved_change_to_email? || user.saved_change_to_email_opt_out? }
+  after_save :update_kindful, if: Proc.new { |user| user.saved_change_to_fname? || user.saved_change_to_lname? || user.saved_change_to_email? || user.saved_change_to_email_opt_out? || user.saved_change_to_phone? }
 
   def admin_or_leader?
     is_admin? || is_leader?
