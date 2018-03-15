@@ -7,7 +7,7 @@ class Supplier < ApplicationRecord
 
   validates :name, presence: true
   validate :valid_url?
-  validates :email, :POC_email, format: { with: /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\z/i }, allow_blank: true
+  validates :email, :poc_email, format: { with: /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\z/i }, allow_blank: true
 
   def valid_url?
     # Allow nil
