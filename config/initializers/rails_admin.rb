@@ -132,8 +132,8 @@ RailsAdmin.config do |config|
       scopes [:active, :only_deleted]
       field :name
       field :url
-      field :POC_name
-      field :POC_email
+      field :poc_name
+      field :poc_email
     end
     configure :deleted_at do
       show
