@@ -3,11 +3,13 @@
 
     <p>Thanks for coming to the filter build on <%= @event.format_date_only %>!</p>
 
-    <p style="margin-bottom: 6px"><strong>We built <%= pluralize(@event.technology_results, @technology.name) %>!</strong> These filters will make dirty water clean for <%= pluralize(number_with_delimiter(@event.results_people, delimiter: ','), 'people') %> and produce <%= pluralize(number_with_delimiter(@event.results_liters_per_day, delimiter: ','), 'liter') %> of clean water every day for at least <%= pluralize(number_with_delimiter(@event.results_timespan, delimiter: ','), 'year') %>.
-    </p>
+    <% if @event.technology_results > 0 %>
+      <p style="margin-bottom: 6px"><strong>We built <%= pluralize(@event.technology_results, @technology.name) %>!</strong> These filters will make dirty water clean for <%= pluralize(number_with_delimiter(@event.results_people, delimiter: ','), 'people') %> and produce <%= pluralize(number_with_delimiter(@event.results_liters_per_day, delimiter: ','), 'liter') %> of clean water every day for at least <%= pluralize(number_with_delimiter(@event.results_timespan, delimiter: ','), 'year') %>.
+      </p>
+    <% end %>
 
     <p style="margin-bottom: 6px">
-      By volunteering your time to build these filters, you helped make them <strong>more affordable</strong> to people who need access to clean water. And access to clean water has the power to change everything for vulnerable families. Starting with <strong>improved health</strong>, clean water opens doors for <strong>saving and earning more money</strong> and keeps kids healthy enough to <strong>attend school more often</strong>. Access to clean water is a critical leap out of generational poverty for vulnerable families in the developing world.
+      By volunteering your time to build filters, you helped make them <strong>more affordable</strong> to people who need access to clean water. And access to clean water has the power to change everything for vulnerable families. Starting with <strong>improved health</strong>, clean water opens doors for <strong>saving and earning more money</strong> and keeps kids healthy enough to <strong>attend school more often</strong>. Access to clean water is a critical leap out of generational poverty for vulnerable families in the developing world.
     </p>
 
     <p style="margin-bottom: 6px">Thanks for providing <strong>life, health and prosperity</strong> to people you'll probably never meet in this lifetime.</p>
