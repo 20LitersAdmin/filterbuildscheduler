@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180305222615) do
+ActiveRecord::Schema.define(version: 20180315152132) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -243,10 +243,10 @@ ActiveRecord::Schema.define(version: 20180305222615) do
     t.string "province"
     t.string "country"
     t.string "phone"
-    t.string "POC_name"
-    t.string "POC_email"
-    t.string "POC_phone"
-    t.string "POC_address"
+    t.string "poc_name"
+    t.string "poc_email"
+    t.string "poc_phone"
+    t.string "poc_address"
     t.text "comments"
     t.datetime "deleted_at"
     t.index ["name"], name: "index_suppliers_on_name"
