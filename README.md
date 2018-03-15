@@ -1,8 +1,9 @@
 # README
 
 ## Things to do
-1.  Monthly report didn't send??
-2. Inventories/order Weeks Remaining seems off?
+1. Monthly email isn't sending?
+
+2. Inventory/order weeks to out is bad math
 
 6. Count.item.only_loose? to hide box count field on Count#edit
   - EG: 8' Wood, 10' PVC, un- and welded cartridges, instructions, 2" tubes, bags w/ instructions, all.where(quantity_per_box: 1)
