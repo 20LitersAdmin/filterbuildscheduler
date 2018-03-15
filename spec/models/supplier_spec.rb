@@ -9,14 +9,14 @@ RSpec.describe Supplier, type: :model do
   describe "must be valid" do
     let(:no_name) { build :supplier, name: nil }
     let(:bad_email) { build :supplier, email: "not an email AT gmail DOT com" }
-    let(:bad_POC_email) { build :supplier, POC_email: "heythere.gmail.com" }
+    let(:bad_poc_email) { build :supplier, poc_email: "heythere.gmail.com" }
 
 
     it "in order to save" do
       expect(supplier.save).to eq true
       expect { no_name.save!(validate: false) }.to raise_error ActiveRecord::NotNullViolation
       expect(bad_email.save).to be_falsey
-      expect(bad_POC_email.save).to be_falsey
+      expect(bad_poc_email.save).to be_falsey
       expect(no_url_scheme.save).to be_falsey
       expect(no_url_host.save).to be_falsey
       expect(bad_url.save).to be_falsey
