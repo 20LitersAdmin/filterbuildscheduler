@@ -136,6 +136,11 @@ class EventsController < ApplicationController
       CountPopulate.new(@loose, @box, @event, @inventory, current_user.id)
       # extrapolate out the full inventory given the new results
       InventoriesController::Extrapolate.new(@inventory)
+
+      # FUTURE FEATURE
+      # Inventories created from events should subtract parts from components (the parts used to build the technologies_built or boxes_packed)
+      # Subtract.new(@inventory, @loose, @box)
+
       @inventory_created = "Inventory created."
     end
 
