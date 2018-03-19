@@ -61,7 +61,8 @@ class UsersController < ApplicationController
   end
 
   def communication
-    authorize @users = User.builders.order(created_at: :desc)
+    # filter out users with no registrations by joining
+    authorize @users = User.builders.joins(:registrations).group('users.id').order('users.created_at DESC')
   end
 
   def comm_complete
