@@ -176,7 +176,7 @@ RSpec.describe "Inventory edit page", type: :system, js: true do
     it "can be finalized" do
       click_link "Finalize"
 
-      expect_any_instance_of(InventoriesController::Extrapolate).to receive(:initialize).with(@inventory)
+      expect(InventoriesController::Extrapolate).to receive(:new).with(@inventory).and_call_original
       click_button "Finalize Inventory"
 
       expect(page).to have_content "Current Inventory:"
