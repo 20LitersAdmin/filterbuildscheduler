@@ -2,7 +2,12 @@ require 'rails_helper'
 
 RSpec.describe "Users#communication page", type: :system, js: true do
   before :each do
+    event = FactoryBot.create(:event)
     5.times { FactoryBot.create(:user) }
+
+    User.all.each do |u|
+      FactoryBot.create(:registration, user: u, event: event)
+    end
   end
 
   after :all do
