@@ -82,6 +82,14 @@ class User < ApplicationRecord
     end
   end
 
+  def latest_event
+    if registrations.count > 0
+      registrations.includes(:event).order('events.start_time DESC').first.event.full_title
+    else
+      "No Event"
+    end
+  end
+
   def self.to_csv
     attributes = %w[fname lname email]
     CSV.generate(headers: true) do |csv|
