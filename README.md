@@ -3,11 +3,6 @@
 ## Things to do
 1. Monthly email isn't sending?
 
-2. Inventory/order weeks to out is bad math
-
-6. Count.item.only_loose? to hide box count field on Count#edit
-  - EG: 8' Wood, 10' PVC, un- and welded cartridges, instructions, 2" tubes, bags w/ instructions, all.where(quantity_per_box: 1)
-
 3. JQuery registration form validations (use global .has-errors css, see user#edit for good example)
 
 4. Available functions div as partial on more screens (e.g. event/closed, users/communication, events/lead, events/cancelled )
@@ -24,7 +19,9 @@
 
 ## HMMM
 1. Inventories created from events aren't subtracting parts from components (parts used to build the technologies_built or boxes_packed)
-2. `weeks_to_out` and `per_technology` rely on lots of `.first`s which is an issue for items that `have_many` technologies
+  - Create a file similar to extrapolate.rb to handle this
+2. In the same vain: parts.where(made_from_materials: true) is increased from previous, related materials should decrease fractionally
+3. `weeks_to_out` and `per_technology` rely on lots of `.first`s which is an issue for items that `have_many` technologies
 
 ## Remind myself:
 1. production backup / development restore-from production

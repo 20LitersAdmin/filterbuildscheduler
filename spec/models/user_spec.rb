@@ -110,4 +110,18 @@ RSpec.describe User, type: :model do
       expect(user1.available_events).to include(private_event)
     end
   end
+
+  describe 'latest_event' do
+    let(:event) { create :event }
+    let(:registration) { create :registration, event: event, user: user1 }
+    let(:user3) { create :user }
+    
+    it 'returns the latest event the user registered for' do
+      event
+      registration
+
+      expect(user1.latest_event).to eq event.full_title
+      expect(user3.latest_event).to eq "No Event"
+    end
+  end
 end
