@@ -1,4 +1,7 @@
-<div class="container">
+<div class="container event-closed">
+  <% if current_user&.admin_or_leader? %>
+    <%= render partial: 'shared/event_functions' %>
+  <% end %>
   <div class="event-container">
     <h2 class="heading">Closed Builds</h2>
     <% if @closed_events.any? %>

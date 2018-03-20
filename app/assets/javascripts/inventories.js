@@ -132,13 +132,13 @@ function reformat(source) {
   $(document).on("click", "#show_finalize_form", function() {
     $('#finalize_form').fadeIn();
     $('#counts_div').hide();
-    $('#admin_div').hide();
+    $('#filter_div').hide();
     event.preventDefault();
   });
   $(document).on("click", "#hide_finalize_form", function() {
     $('#finalize_form').hide();
     $('#counts_div').fadeIn();
-    $('#admin_div').fadeIn();
+    $('#filter_div').fadeIn();
     event.preventDefault();
   });
   // Inventory#edit filter buttons

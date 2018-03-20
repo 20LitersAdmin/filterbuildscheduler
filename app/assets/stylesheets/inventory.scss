@@ -40,6 +40,29 @@
 }
 
 #inventory_edit {
+  #filter_div {
+    padding: .5em 4px;
+    margin-bottom: 2em;
+    background-color: white;
+    border-radius: 2px;
+    border-bottom: 2px solid $yellow;
+    box-shadow: 0 0 5px #888;
+    .btn-group {
+      margin: 4px;
+    }
+    button {
+      font-size: 10px;
+      padding: 4px 8px;
+    }
+    p {
+      margin: 0px;
+    }
+    position: -webkit-sticky; /* Safari */
+    position: sticky;
+    top: -1px;
+    z-index: 2;
+  }
+
   .count-div {
     background-color: $slightly-darker-light-grey;
     height: 156px;

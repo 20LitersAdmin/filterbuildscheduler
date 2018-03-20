@@ -1,19 +1,6 @@
 <div class="event-index">
   <% if current_user&.admin_or_leader? %>
-    <div class="col-xs-12 center admin-div">
-      <p>Available functions:</p>
-      <%= link_to "Schedue a New Build", new_event_path, class: 'btn yellow' %>
-      <%= link_to "Lead a Build", lead_events_path, class: 'btn yellow' %>
-      <% if current_user.is_admin? %>
-        <%= link_to("Manage User Comm. Prefs",  users_communication_path, class: 'btn yellow') %>
-        <% if @closed_events.present? %>
-          <%= link_to("Manage Closed Events", closed_events_path , class: 'btn blue') %>
-        <% end %>
-      <% end %>
-      <% if @cancelled_events.exists? %>
-        <%= link_to "Manage Cancelled Events", cancelled_events_path, class: 'btn red' %>
-      <% end %>
-    </div>
+    <%= render partial: 'shared/event_functions' %>
   <% end %>
   <div class='container'>
     <div class="event-container">
