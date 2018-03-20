@@ -1,4 +1,5 @@
-<div class="container">
+<div class="container event-cancelled">
+  <%= render partial: 'shared/event_functions' %>
   <div class="event-container">
     <h2 class="heading">Cancelled Builds</h2>
     <% if @cancelled_events.any? %>
