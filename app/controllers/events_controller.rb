@@ -1,4 +1,6 @@
 class EventsController < ApplicationController
+  before_action :find_stale, only: [:index, :show, :new, :edit, :lead, :cancelled, :closed]
+
   def index
     our_events = policy_scope(Event).includes(:location, registrations: :user)
     @events = our_events.future
@@ -7,10 +9,6 @@ class EventsController < ApplicationController
     if @user&.admin_or_leader?
       @past_events = our_events.needs_report
     end
-
-    @cancelled_events = Event.only_deleted
-
-    @closed_events = Event.closed
   end
 
   def show
@@ -34,10 +32,14 @@ class EventsController < ApplicationController
     end
 
     @leaders = @event.registrations.registered_as_leader
+
+    @finder = "edit"
   end
 
   def new
     authorize @event = Event.new
+
+    @finder = "new"
   end
 
   def create
@@ -59,6 +61,8 @@ class EventsController < ApplicationController
     @show_report = current_user&.admin_or_leader? && @event.start_time < Time.now ? true : false
 
     @too_old = (Date.today - @event.end_time.to_date).round > 14 ? true : false
+
+    @finder = "edit"
   end
 
   def update
@@ -237,13 +241,17 @@ class EventsController < ApplicationController
   end
 
   def cancelled
-    authorize @cancelled_events = Event.only_deleted
+    authorize @cancelled_events
     @user = current_user
+
+    @finder = "cancelled"
   end
 
   def closed
-    authorize @closed_events = Event.closed
+    authorize @closed_events
     @user = current_user
+
+    @finder = "closed"
   end
 
   def lead
@@ -258,6 +266,8 @@ class EventsController < ApplicationController
     end
 
     authorize @events.first
+
+    @finder = "lead"
   end
 
   def restore
@@ -332,5 +342,10 @@ class EventsController < ApplicationController
                                   :contact_name,
                                   :contact_email,
                                   registrations_attributes: [ :id, :user_id, :event_id, :attended, :leader, :guests_registered, :guests_attended ]
+  end
+
+  def find_stale
+    @cancelled_events = Event.only_deleted
+    @closed_events = Event.closed
   end
 end

@@ -1,4 +1,4 @@
-<div id="inventory_edit">
+<div class="container" id="inventory_edit">
   <div class="col-xs-8">
     <h2>Edit <%= @inventory.name %></h2>
   </div>
@@ -26,7 +26,7 @@
     </div>
   </div>
 
-  <div id="admin_div" class="col-xs-12 center admin-div">
+  <div id="filter_div" class="col-xs-12 center">
     <p>Filters:</p>
     <div class="btn-group btn-group-sm">
       <button type="button" class="btn yellow count-btn" id="clear">Show All</button>
@@ -39,7 +39,7 @@
 
     <div class="btn-group btn-group-sm" role="group">
       <% @techs.each do |t| %>
-        <button type="button" class="btn empty tech-btn" id="<%= 'tech_' + t.id.to_s %>"><%= t.name %></button>
+        <button type="button" class="btn empty tech-btn" id="<%= 'tech_' + t.id.to_s %>"><%= t.short_name %></button>
       <% end %>
     </div>
 

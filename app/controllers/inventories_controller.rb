@@ -23,6 +23,8 @@ class InventoriesController < ApplicationController
     if @inventory.type_for_params == "event"
       @event = Event.find(@inventory.event_id)
     end
+
+    @latest = Inventory.latest
   end
 
   def new
@@ -136,6 +138,8 @@ class InventoriesController < ApplicationController
 
     @low_counts = @inventory.counts.select{ |count| count.reorder? }
     @total_cost = @low_counts.map { |c| c.item.reorder_total_cost }.sum
+
+    @latest = Inventory.latest
   end
 
   def destroy

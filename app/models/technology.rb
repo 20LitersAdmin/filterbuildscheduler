@@ -20,4 +20,8 @@ class Technology < ApplicationRecord
     # find the component related to this technology that represents the completed tech
     self.components.where(completed_tech: true).first
   end
+
+  def short_name
+    name.partition(" ").first
+  end
 end

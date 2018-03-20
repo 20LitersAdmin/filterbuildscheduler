@@ -1,13 +1,12 @@
 class UsersController < ApplicationController
 
-  before_action only: [:show, :edit, :update, :delete] do
-    find_and_authorize_user
-  end
+  before_action :find_and_authorize_user, only: [:show, :edit, :update, :delete]
 
   def show
     if @user.has_no_password
       flash[:warning] = "You haven't set your password yet, please do so now."
     end
+
     @leading_events = @user.registrations
                            .where(leader: true)
                            .joins(:event)
@@ -63,6 +62,11 @@ class UsersController < ApplicationController
   def communication
     # filter out users with no registrations by joining
     authorize @users = User.builders.joins(:registrations).group('users.id').order('users.created_at DESC')
+
+    @cancelled_events = Event.only_deleted
+    @closed_events = Event.closed
+
+    @finder = "communication"
   end
 
   def comm_complete

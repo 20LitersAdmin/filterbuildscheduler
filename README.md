@@ -5,8 +5,6 @@
 
 3. JQuery registration form validations (use global .has-errors css, see user#edit for good example)
 
-4. Available functions div as partial on more screens (e.g. event/closed, users/communication, events/lead, events/cancelled )
-
 5. View for technology assembly (which items [comps and parts] and #s on hand) -- shows what is needed and how many tech can be built with what's on hand
 
 8. Stats framework (for time period) (visible to Admin)
