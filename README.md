@@ -1,8 +1,6 @@
 # README
 
 ## Things to do
-4. Available functions div as partial on more screens (e.g. event/closed, users/communication, events/lead, events/cancelled )
-
 1. Monthly email isn't sending?
 
 3. JQuery registration form validations (use global .has-errors css, see user#edit for good example)

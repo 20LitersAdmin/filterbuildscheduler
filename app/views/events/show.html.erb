@@ -1,13 +1,8 @@
-<% if current_user&.admin_or_leader? %>
-  <div class="col-xs-12 center admin-div">
-    <p>Available functions:</p>
-    <%= link_to("Edit Event", edit_event_path(@event), class: 'btn empty width188') %>
-    <%= link_to "Print Attendance List", attendance_event_path(@event), class: 'btn yellow width188' %>
-    <%= link_to "Manage Builders", event_registrations_path(@event), class: "btn blue width188" %>
-  </div>
-<% end %>
-
 <div class="container event-show">
+  <% if current_user&.admin_or_leader? %>
+    <%= render partial: 'shared/event_functions' %>
+  <% end %>
+  
   <div class="page-header row">
     <h1><%= @event.full_title %></h1>
     <% if @event.is_private %>
