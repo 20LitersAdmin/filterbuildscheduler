@@ -37,5 +37,9 @@ class InventoryPolicy
   def order?
     user&.does_inventory?
   end
+
+  def status?
+    user&.admin_or_leader?
+  end
 end
 
