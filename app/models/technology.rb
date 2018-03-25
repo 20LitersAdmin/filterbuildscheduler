@@ -12,6 +12,8 @@ class Technology < ApplicationRecord
   has_many :parts, through: :extrapolate_technology_parts
   accepts_nested_attributes_for :extrapolate_technology_parts, allow_destroy: true
 
+  scope :status_worthy, -> { where("monthly_production_rate > ?", 0).order(monthly_production_rate: "desc") }
+
   def leaders
     users.where(is_leader: true)
   end

@@ -142,6 +142,12 @@ class InventoriesController < ApplicationController
     @latest = Inventory.latest
   end
 
+  def status
+    authorize @inventory = Inventory.latest
+
+    @techs = Technology.status_worthy
+  end
+
   def destroy
     authorize @inventory = Inventory.find(params[:id])
   end
