@@ -3,6 +3,8 @@ class ReportJob < ApplicationJob
 
   def perform(*args)
     inventory = Inventory.latest
-    ReportMailer.monthly(inventory).deliver_later
+    puts "-+ Sending monthly report"
+    ReportMailer.monthly(inventory).deliver!
+    puts "-+ Done sending"
   end
 end

@@ -18,5 +18,7 @@ class ReportMailer < ApplicationMailer
 
     mail.attachments[@users_file_name] = { mime_type: 'text/csv', content: @users_csv }
     mail( to: @recipients, subject: '[20 Liters] Monthly Report' )
+    
+    puts "-+-+ Monthly report sent to " + @recipients.map{ |r| r.name }.to_s
   end
 end
