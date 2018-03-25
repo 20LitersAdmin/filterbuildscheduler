@@ -15,4 +15,14 @@ class Component < ApplicationRecord
   def tech_monthly_production_rate
     technologies.first.monthly_production_rate
   end
+
+  def total
+    count = Count.where(inventory: Inventory.latest, component: self).first
+
+    if count
+      count.total
+    else
+      0
+    end
+  end
 end

@@ -49,7 +49,7 @@ RSpec.describe "Inventory status page", type: :system do
         FactoryBot.create(:technology)
       end
 
-      unworthy = Technology.first
+      unworthy = Technology.last
       unworthy.update(monthly_production_rate: 0)
 
       visit status_inventories_path
@@ -57,16 +57,17 @@ RSpec.describe "Inventory status page", type: :system do
 
     it "shows the page" do
       expect(page).to have_content "Status"
+      expect(page).to have_content "CSV"
     end
 
     it "shows a list of technologies with a monthly_production_rate > 0" do
-      expect(page).to have_css("div.tech-status", count: 4)
-      expect(page).to have_content(Technology.last.name)
-      expect(page).to have_css("p#tech_#{Technology.second.id.to_s}")
-      expect(page).to_not have_css("#tech_#{Technology.first.id.to_s}")
+      expect(page).to have_css("div.tech-title", count: 4)
+      expect(page).to have_content(Technology.first.name)
+      expect(page).to have_css("#tech_#{Technology.second.id.to_s}")
+      expect(page).to_not have_css("#tech_#{Technology.last.id.to_s}")
     end
 
-    it "shows how many technologies are produced"
+    it "shows how many technologies are currently available"
 
     it "shows how many technologies can be produced"
 
