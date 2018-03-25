@@ -61,12 +61,12 @@ class Inventory < ApplicationRecord
   end
 
   def count_summary
-    if self.receiving
-      self.item_count.to_s + " of " + self.counts.count.to_s + " items received."
-    elsif self.shipping
-      self.item_count.to_s + " of " + self.counts.count.to_s + " items shipped."
+    if receiving
+      item_count.to_s + " of " + counts.count.to_s + " items received."
+    elsif shipping
+      item_count.to_s + " of " + counts.count.to_s + " items shipped."
     else
-      self.item_count.to_s + " of " + self.counts.count.to_s + " items counted."
+      item_count.to_s + " of " + counts.count.to_s + " items counted."
     end
   end
 
@@ -74,6 +74,6 @@ class Inventory < ApplicationRecord
     # find the components that represent completed technologies
     @primary_comp_ids = Component.where(completed_tech: true).map { |c| c.id }
     # get the count records of these components
-    self.counts.where(component_id: @primary_comp_ids)
+    counts.where(component_id: @primary_comp_ids)
   end
 end

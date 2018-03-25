@@ -20,10 +20,16 @@ class Technology < ApplicationRecord
 
   def primary_component
     # find the component related to this technology that represents the completed tech
-    self.components.where(completed_tech: true).first
+    components.where(completed_tech: true).first
   end
 
   def short_name
     name.partition(" ").first
+  end
+
+  def event_tech_goals_within(num = 0)
+    events = Event.future.within_days(num).where(technology: self)
+
+    events.map { |e| e.item_goal }.sum
   end
 end

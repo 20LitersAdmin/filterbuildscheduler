@@ -18,9 +18,11 @@ class Event < ApplicationRecord
 
   scope :non_private, -> { where(is_private: false) }
   scope :future, -> { where('end_time > ?', Time.now).order(start_time: :asc) }
+  scope :within_days, -> (num) { where('start_time <= ?', Time.now + num.days) }
   scope :past, -> { where('end_time <= ?', Time.now).order(start_time: :desc) }
   scope :needs_report, -> { where('start_time <= ?', Time.now).where(attendance: 0).order(start_time: :desc) }
   scope :closed, -> { where('start_time <= ?', Time.now).where.not(attendance: 0).order(start_time: :desc) }
+
 
   # Not working as expected
   # scope :still_needs_leaders, -> { joins(:registrations).group("events.id").having("count(CASE WHEN registrations.leader THEN 1 END) < events.max_leaders") }
