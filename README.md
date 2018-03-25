@@ -3,6 +3,8 @@
 ## Things to do
 1. Monthly email isn't sending?
 
+2. Event#show should list private event contact info
+
 3. JQuery registration form validations (use global .has-errors css, see user#edit for good example)
 
 4. Available functions div as partial on more screens (e.g. event/closed, users/communication, events/lead, events/cancelled )
