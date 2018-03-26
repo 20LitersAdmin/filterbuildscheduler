@@ -4,7 +4,9 @@
       <%= tech_tbl.name %>
     </h4>
   </td>
-  <td class="center">Produceable</td>
+  <td class="center">
+    <%= tech_tbl.produceable %>
+  </td>
   <td class="center">
     <%= number_with_delimiter( tech_tbl.primary_component.total, delimiter: "," ) %>
   </td>

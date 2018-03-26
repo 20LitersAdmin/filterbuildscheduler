@@ -42,21 +42,15 @@ class Part < ApplicationRecord
     per_tech
   end
 
-  def tech_monthly_production_rate
+  def technology
     # The path from parts to technologies can vary:
     # Part ->(extrap_technology_parts)-> Technology
     # Part ->(extrap_component_parts)-> Component ->(extrap_component_parts)-> Technology
 
     if technologies.first.present?
-      mpr = technologies.first.monthly_production_rate
+      technologies.first
     elsif extrapolate_component_parts.first.present?
-      component = extrapolate_component_parts.first.component
-      mpr = components.first.technologies.first.monthly_production_rate
-    else
-      mpr = 0
-    end 
-    
-    mpr
+      components.first.technologies.first
+    end
   end
-
 end
