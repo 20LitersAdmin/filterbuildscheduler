@@ -102,19 +102,24 @@ class Count < ApplicationRecord
   end
 
   def reorder?
-    @answer = false
+    answer = false
     if type != "component" && available < item.minimum_on_hand
-      @answer = true
+      answer = true
     end
-    @answer
+    answer
   end
 
-  def weeks_to_out
+  def can_produce
     if available == 0
       0
     else
-      ( available.to_f / item.per_technology ) / ( item.tech_monthly_production_rate / 4.0 )
+      available / item.per_technology
     end
+  end
+
+  def weeks_to_out
+    mpr = item.technology.monthly_production_rate || 0
+    can_produce / ( mpr / 4.0 )
   end
 
 end

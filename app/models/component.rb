@@ -12,8 +12,12 @@ class Component < ApplicationRecord
 
   has_many :counts, dependent: :destroy
 
-  def tech_monthly_production_rate
-    technologies.first.monthly_production_rate
+  def technology
+    technologies.first
+  end
+
+  def per_technology
+    extrapolate_technology_components.first.components_per_technology
   end
 
   def total

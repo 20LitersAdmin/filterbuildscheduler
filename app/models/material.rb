@@ -37,25 +37,23 @@ class Material < ApplicationRecord
     per_tech
   end
 
-  def tech_monthly_production_rate
+  def technology
     # The path from materials to technologies can vary:
     # Material ->(materials_technologies)-> Technology
     # Material ->(extrap_material_parts)-> Part ->(extrap_technology_parts)-> Technology
     # Material ->(extrap_material_parts)-> Part ->(extrap_component_parts)-> Component ->(extrap_component_parts)-> Technology
 
     if technologies.first.present?
-      mpr = technologies.first.monthly_production_rate
-    else # extrapolate_material_parts.first.present?
+      technologies.first
+    elsif extrapolate_material_parts.first.present?
       part = parts.first
       if part.technologies.first.present?
-        mpr = part.technologies.first.monthly_production_rate
+        part.technologies.first
       elsif part.components.first.present?
         component = part.components.first
-        mpr = component.technologies.first.monthly_production_rate
-      else
-        mpr = 0
+        component.technologies.first
       end
     end
-
   end
+  
 end

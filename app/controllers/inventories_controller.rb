@@ -146,6 +146,8 @@ class InventoriesController < ApplicationController
     authorize @inventory = Inventory.latest
 
     @techs = Technology.status_worthy
+
+    @finder = "status"
   end
 
   def destroy
