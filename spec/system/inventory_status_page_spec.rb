@@ -52,6 +52,8 @@ RSpec.describe "Inventory status page", type: :system do
       unworthy = Technology.last
       unworthy.update(monthly_production_rate: 0)
 
+      # I need to build out a full inventory with primary_component, parts, components, materials, and counts
+
       visit status_inventories_path
     end
 

@@ -118,8 +118,12 @@ class Count < ApplicationRecord
   end
 
   def weeks_to_out
-    mpr = item.technology.monthly_production_rate || 0
-    can_produce / ( mpr / 4.0 )
+    if available == 0
+      0
+    else
+      mpr = item.technology.present? ? item.technology.monthly_production_rate : 0
+      can_produce / ( mpr / 4.0 )
+    end
   end
 
 end
