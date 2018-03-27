@@ -20,6 +20,10 @@ class Component < ApplicationRecord
     extrapolate_technology_components.first.components_per_technology
   end
 
+  def required?
+    extrapolate_technology_component.first.required?
+  end
+
   def total
     count = Count.where(inventory: Inventory.latest, component: self).first
 

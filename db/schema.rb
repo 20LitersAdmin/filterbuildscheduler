@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180315152132) do
+ActiveRecord::Schema.define(version: 20180326204504) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -112,14 +112,27 @@ ActiveRecord::Schema.define(version: 20180315152132) do
     t.bigint "component_id", null: false
     t.bigint "technology_id", null: false
     t.integer "components_per_technology", default: 1, null: false
+    t.boolean "required", default: false
     t.index ["component_id", "technology_id"], name: "by_component_and_technology", unique: true
     t.index ["technology_id", "component_id"], name: "by_technology_and_component", unique: true
+  end
+
+  create_table "extrapolate_technology_materials", force: :cascade do |t|
+    t.bigint "technology_id"
+    t.bigint "material_id"
+    t.float "materials_per_technology", default: 1.0, null: false
+    t.boolean "required", default: false, null: false
+    t.index ["material_id", "technology_id"], name: "index_materials_technologies_on_material"
+    t.index ["material_id"], name: "index_extrapolate_technology_materials_on_material_id"
+    t.index ["technology_id", "material_id"], name: "index_materials_technologies_on_technology"
+    t.index ["technology_id"], name: "index_extrapolate_technology_materials_on_technology_id"
   end
 
   create_table "extrapolate_technology_parts", force: :cascade do |t|
     t.bigint "part_id", null: false
     t.bigint "technology_id", null: false
     t.integer "parts_per_technology", default: 1, null: false
+    t.boolean "required", default: false
     t.index ["part_id", "technology_id"], name: "by_part_and_technology", unique: true
     t.index ["technology_id", "part_id"], name: "by_technology_and_part", unique: true
   end
@@ -178,13 +191,6 @@ ActiveRecord::Schema.define(version: 20180315152132) do
     t.boolean "only_loose", default: false
     t.index ["deleted_at"], name: "index_materials_on_deleted_at"
     t.index ["supplier_id"], name: "index_materials_on_supplier_id"
-  end
-
-  create_table "materials_technologies", id: false, force: :cascade do |t|
-    t.bigint "material_id", null: false
-    t.bigint "technology_id", null: false
-    t.index ["material_id"], name: "index_materials_technologies_on_material_id"
-    t.index ["technology_id"], name: "index_materials_technologies_on_technology_id"
   end
 
   create_table "parts", force: :cascade do |t|

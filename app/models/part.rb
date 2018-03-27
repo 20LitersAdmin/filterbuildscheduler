@@ -27,6 +27,10 @@ class Part < ApplicationRecord
     shipping_cost + wire_transfer_cost + additional_cost
   end
 
+  def required?
+    extrapolate_technology_parts.first.required?
+  end
+
   def per_technology
     if extrapolate_technology_parts.first.present?
       per_tech = extrapolate_technology_parts.first.parts_per_technology.to_f
