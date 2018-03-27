@@ -1,6 +1,8 @@
 # README
 
 ## Things to do
+1. Partial counts are showing the previous sister count (counts controller ln 24)
+
 3. JQuery registration form validations (use global .has-errors css, see user#edit for good example)
 
 5. View for technology assembly (which items [comps and parts] and #s on hand) -- shows what is needed and how many tech can be built with what's on hand

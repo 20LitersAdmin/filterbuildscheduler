@@ -116,7 +116,6 @@ RailsAdmin.config do |config|
     list do
       scopes [:active, :only_deleted]
       field :name
-      field :common_id
       field :technologies
       field :completed_tech
     end
@@ -234,6 +233,12 @@ RailsAdmin.config do |config|
     parent Technology
     label "Technology <-> Part"
     label_plural "Technologies <-> Parts"
+  end
+
+  config.model ExtrapolateTechnologyMaterial do
+    parent Technology
+    label "Technology <-> Material"
+    label_plural "Technologies <-> Materials"
   end
 
   config.actions do

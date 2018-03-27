@@ -1,11 +1,13 @@
 class Material < ApplicationRecord
   acts_as_paranoid
 
-  has_and_belongs_to_many :technologies
-
   has_many :extrapolate_material_parts, dependent: :destroy, inverse_of: :material
   has_many :parts, through: :extrapolate_material_parts
   accepts_nested_attributes_for :extrapolate_material_parts, allow_destroy: true
+
+  has_many :extrapolate_technology_materials, dependent: :destroy, inverse_of: :material
+  has_many :technologies, through: :extrapolate_technology_materials
+  accepts_nested_attributes_for :extrapolate_technology_materials, allow_destroy: true
 
   has_many :counts, dependent: :destroy
   
@@ -21,10 +23,15 @@ class Material < ApplicationRecord
     shipping_cost + wire_transfer_cost + additional_cost
   end
 
+  def required?
+    extrapolate_technology_materials.first.required?
+  end
+
   def per_technology
     if extrapolate_material_parts.first.present?
-      part = extrapolate_material_parts.first.part
       ppm = extrapolate_material_parts.first.parts_per_material
+
+      part = extrapolate_material_parts.first.part
       ppc = part.extrapolate_component_parts.first.parts_per_component
       component = part.extrapolate_component_parts.first.component
       cpt = component.extrapolate_technology_components.first.components_per_technology
