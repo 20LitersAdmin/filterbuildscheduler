@@ -39,84 +39,79 @@ class Technology < ApplicationRecord
   def produceable
     inventory = Inventory.latest
 
-    tech_count_ids = []
-
+    # narrow the inventory counts down to just related to this technology
+    counts_aoh = []
     inventory.counts.each do |c|
-      if c.item.technology == Technology.first && c.item.required?
-        tech_count_ids << c.id
+      if c.item.technology == self
+        counts_aoh << { type: c.type, id: c.item.id, name: c.name, produce_tech: c.can_produce_x_tech, required: c.item.required?, available: c.available, makeable: 0, produceable: 0 }
       end
     end
 
-    mat_counts = inventory.counts.where(id: tech_count_ids).joins(:material)
-    parts_can_be_built = []
-    mat_counts.each do |c|
-      parts_can_be_built << { part_id: c.material.parts.first.id, mat_produce: c.can_produce }
+    mats_aoh = []
+    parts_aoh = []
+    comps_aoh = []
+    counts_aoh.each do |hsh|
+      case hsh[:type]
+      when "material"
+        mats_aoh << { id: hsh[:id], available: hsh[:available], makeable: 0, produceable: 0 }
+      when "part"
+        parts_aoh << { id: hsh[:id], available: hsh[:available], makeable: 0, produceable: 0 }
+      when "component"
+        comps_aoh << { id: hsh[:id], available: hsh[:available], makeable: 0, produceable: 0 }
+      end
     end
 
-    part_counts = inventory.counts.where(id: tech_count_ids).joins(:part)
-    comps_can_be_built = []
-    part_counts.each do |c|
-      comps_can_be_built << { comp_id: c.part.components.first.id, part_id: c.part.id, part_produce: c.can_produce }
+    # how many parts can be made from available materials?
+    mats_aoh.each do |mat|
+      parts_aoh.each do |part|
+        emp = ExtrapolateMaterialPart.where(material_id: mat[:id]).where(part_id: part[:id]).first
+        if !emp.nil?
+          part[:makeable] = mat[:available] *  emp.parts_per_material
+        end
+        part[:produceable] = part[:available] + part[:makeable]
+      end
     end
 
-    comp_counts = inventory.counts.where(id: tech_count_ids).joins(:component).where('components.completed_tech = ?', false)
-    prime_can_be_built = []
-    comp_counts.each do |c|
-      prime_can_be_built << { prime_id: Technology.first.primary_component.id, comp_id: c.component.id, comp_produce: c.can_produce }
+    # how many components can be made from available && makeable parts?
+    parts_aoh.each do |part|
+      comps_aoh.each do |comp|
+        ecp = ExtrapolateComponentPart.where(part_id: part[:id]).where(component_id: comp[:id]).first
+        if !ecp.nil?
+          comp[:makeable] = part[:produceable] / ecp.parts_per_component
+        end
+        comp[:produceable] = comp[:available] + comp[:makeable]
+      end
     end
 
-    parts_can_be_built
-    comps_can_be_built
-    prime_can_be_built
+    # rebuild the counts_aoh with the new information && disregard the not required ones
+    tech_items_aoh = []
 
-    comps_can_be_built.each do |comps|
-      parts_can_be_built.each do |parts|
-        if parts[:part_id] == comps[:part_id]
-        comps[:part_produce] += parts[:mat_produce]
+    counts_aoh.each do |count|
+      case count[:type]
+      when "material"
+        count[:produceable] = count[:available]
+      when "part"
+        parts_aoh.each do |part|
+          if count[:id] == part[:id]
+            count[:makeable] = part[:makeable]
+            count[:produceable] = part[:produceable]
+          end
+        end
+      when "component"
+        comps_aoh.each do |comp|
+          if count[:id] == comp[:id]
+            count[:makeable] = comp[:makeable]
+            count[:produceable] = comp[:produceable]
+          end
         end
       end
+      if count[:required]
+        tech_items_aoh << count
+      end
     end
 
-
-    # New strategy: traverse down and collect results
-    # Primary_component > components > parts > materials
-    # Primary_component > parts > materials
-    # comp_count_ary << { id: c.id, produceable: c.can_produce }
-
-    # Still need to:
-    # Use the primary_component instead of the technology (c.item.technology is the problem, should be based on relation to primary_component)
-    # Sub-loop over components.available == 0 and do the same: components.parts.each do |p| p.counts.latest.available / p.per_technology end
-    # Ignore parts.available == 0 if parent component is not 0
-
-    # PROBLEM: binding.pry
-    # > count_ids = count_ary.map { |a| a[:id] }
-    # > Count.find(count_ids).map { |c| [c.item.name, c.available] }
-    # [["Tubing 12-inch", 8008],
-    #  ["3-inch assembled cartridges welded", 1875],
-    #  ["3-inch assembled cartridges unwelded", 2150],
-    #  ["Bags w/ Instructions VF100", 0],               ******************* Have bags, have instructions, so... can_produce needs to exist on components && parts.made_from_materials
-    #  ["3-inch core with O-rings", 5144],
-    #  ["Bucket Filter - VF100", 6706],
-    #  ["Tubing - 2-inch", 2680],
-    #  ["Shipping Box 20x20x20", 25],                   ******************* Not required to make the primary_component
-    #  ["Rubber Washer large hole", 3669],
-    #  ["Filter Housing Long (blue)", 19],
-    #  ["Thin O-ring", 337],
-    #  ["Syringes", 5389],
-    #  ["Saddle - plastic (blue)", 4288],
-    #  ["Bucket Filter Instructions", 64],
-    #  ["Nut - plastic (blue)", 3600],
-    #  ["Thick O-ring", 405],
-    #  ["Hook - plastic (blue)", 5220],
-    #  ["3-inch core", 240],
-    #  ["Adaptor FGHT to 1/4-inch barbed", 21931],
-    #  ["Rubber Washer beveled", 5578],
-    #  ["Filter Housing Short (blue)", 0],          ******************* Yes, part is gone, but parent component is present
-    #  ["Cartridge O-ring 40-mm ID", 0],            ******************* Yes, part is gone, but parent component is present
-    #  ["Hose Clamp", 6329],
-    #  ["1/2-inch O-ring (thick)", 12423],
-    #  ["Plastic Bag 8x10", 1101],
-    #  ["Rubber Washer small hole", 16602]]
+    tech_items_aoh.sort_by! { |hsh| hsh[:produceable] }
+    # and voila, the fucking thing is ready.
 
   end
 

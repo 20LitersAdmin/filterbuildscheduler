@@ -17,11 +17,19 @@ class Component < ApplicationRecord
   end
 
   def per_technology
-    extrapolate_technology_components.first.components_per_technology
+    if extrapolate_technology_components.any?
+      extrapolate_technology_components.first.components_per_technology
+    else
+      1
+    end
   end
 
   def required?
-    extrapolate_technology_component.first.required?
+    if extrapolate_technology_components.any?
+      extrapolate_technology_components.first.required?
+    else
+      false
+    end
   end
 
   def total

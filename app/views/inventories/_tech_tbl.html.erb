@@ -5,7 +5,10 @@
     </h4>
   </td>
   <td class="center">
-    <%= tech_tbl.produceable %>
+    <%= tech_tbl.produceable.any? ? tech_tbl.produceable.first[:produceable] : "unknown" %>
+  </td>
+  <td>
+    <a href="#" class="btn blue btn-xs">Why?</a>
   </td>
   <td class="center">
     <%= number_with_delimiter( tech_tbl.primary_component.total, delimiter: "," ) %>

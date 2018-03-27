@@ -24,7 +24,11 @@ class Material < ApplicationRecord
   end
 
   def required?
-    extrapolate_technology_materials.first.required?
+    if extrapolate_technology_materials.any?
+      extrapolate_technology_materials.first.required?
+    else
+      false
+    end
   end
 
   def per_technology
