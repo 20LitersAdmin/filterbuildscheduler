@@ -1,5 +1,7 @@
 class CreateExtrapTechMat < ActiveRecord::Migration[5.1]
   def change
+    # drop_table :extrapolate_technology_materials
+
     create_table :extrapolate_technology_materials do |t|
       t.references :technology
       t.references :material

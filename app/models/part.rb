@@ -28,7 +28,11 @@ class Part < ApplicationRecord
   end
 
   def required?
-    extrapolate_technology_parts.first.required?
+    if extrapolate_technology_parts.any?
+      extrapolate_technology_parts.first.required?
+    else
+      false
+    end
   end
 
   def per_technology
@@ -50,6 +54,8 @@ class Part < ApplicationRecord
     # The path from parts to technologies can vary:
     # Part ->(extrap_technology_parts)-> Technology
     # Part ->(extrap_component_parts)-> Component ->(extrap_component_parts)-> Technology
+
+    # FLAWED: e.g. 3" core has 2 technologies
 
     if technologies.first.present?
       technologies.first

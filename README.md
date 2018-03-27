@@ -23,5 +23,6 @@
 
 ## Remind myself:
 1. production backup / development restore-from production
+  - User.all.each do |u| u.update(password: "password", password_confirmation: "password") end
 2. "Your branch is n commits behind master" - git fetch origin
 3. git remote prune origin --dry-run
