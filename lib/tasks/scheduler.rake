@@ -13,7 +13,7 @@ end
 
 task send_report: :environment do
   puts "Scheduling monthly report"
-  #ReportJob.set(cron: '30 7 1 * *').perform_later
-  ReportJob.perform_now
+  ReportJob.set(cron: '30 7 1 * *').perform_later
+  # ReportJob.perform_now
   puts "Done"
 end
