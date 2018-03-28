@@ -17,7 +17,7 @@ class ReportMailer < ApplicationMailer
     @recipients = User.all.where(send_inventory_emails: true)
 
     mail.attachments[@users_file_name] = { mime_type: 'text/csv', content: @users_csv }
-    mail( to: @recipients, subject: '[20 Liters] Monthly Report' )
+    mail( to: @recipients.map{ |u| u.email }, subject: '[20 Liters] Monthly Report' )
     
     puts "-+-+ Monthly report sent to " + @recipients.map{ |r| r.name }.to_s
   end
