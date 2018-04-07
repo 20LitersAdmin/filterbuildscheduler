@@ -20,8 +20,7 @@ class CountsController < ApplicationController
     end
 
     # counts with user_ids have been saved at least once. counts marked as partials still need work
-    if @count.user_id.present? || @count.partial_box || @count.partial_loose 
-      # Partial counts shouldn't display the sister count
+    if @count.user_id.present? || @count.partial_box || @count.partial_loose
       if @inventory.type_for_params == "manual"
         @loose_val = @count.loose_count
         @box_val = @count.unopened_boxes_count
@@ -37,6 +36,7 @@ class CountsController < ApplicationController
       @box_val = 0
     end
 
+    # Partial counts shouldn't display the sister count
     if @count.partial_box
       @loose_val = ''
     end
