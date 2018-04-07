@@ -1,8 +1,6 @@
 # README
 
 ## Things to do
-1. Partial counts are showing the previous sister count (counts controller ln 24)
-
 2. Event#show should list private event contact info
 
 3. JQuery registration form validations (use global .has-errors css, see user#edit for good example)
