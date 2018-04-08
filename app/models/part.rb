@@ -27,6 +27,14 @@ class Part < ApplicationRecord
     shipping_cost + wire_transfer_cost + additional_cost
   end
 
+  def required?
+    if extrapolate_technology_parts.any?
+      extrapolate_technology_parts.first.required?
+    else
+      false
+    end
+  end
+
   def per_technology
     if extrapolate_technology_parts.first.present?
       per_tech = extrapolate_technology_parts.first.parts_per_technology.to_f
@@ -42,21 +50,17 @@ class Part < ApplicationRecord
     per_tech
   end
 
-  def tech_monthly_production_rate
+  def technology
     # The path from parts to technologies can vary:
     # Part ->(extrap_technology_parts)-> Technology
     # Part ->(extrap_component_parts)-> Component ->(extrap_component_parts)-> Technology
 
-    if technologies.first.present?
-      mpr = technologies.first.monthly_production_rate
-    elsif extrapolate_component_parts.first.present?
-      component = extrapolate_component_parts.first.component
-      mpr = components.first.technologies.first.monthly_production_rate
-    else
-      mpr = 0
-    end 
-    
-    mpr
-  end
+    # FLAWED: e.g. 3" core has 2 technologies
 
+    if technologies.first.present?
+      technologies.first
+    elsif extrapolate_component_parts.first.present?
+      components.first.technologies.first
+    end
+  end
 end

@@ -35,6 +35,7 @@ Rails.application.routes.draw do
   resources :inventories do
     collection do
       get 'order'
+      get 'status'
     end
     resources :counts
   end
