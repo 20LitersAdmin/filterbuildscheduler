@@ -102,18 +102,51 @@ class Count < ApplicationRecord
   end
 
   def reorder?
-    @answer = false
+    answer = false
     if type != "component" && available < item.minimum_on_hand
-      @answer = true
+      answer = true
     end
-    @answer
+    answer
+  end
+
+  def can_produce_x_tech
+    if available == 0
+      0
+    else
+      available / item.per_technology
+    end
+  end
+
+  def can_produce_x_parent
+    if available == 0
+      0
+    else
+      case type
+      when "material"
+        if material.extrapolate_material_parts.any?
+          # Materials are larger than parts (1 material makes many parts)
+          available * material.extrapolate_material_parts.first.parts_per_material
+        else
+          available
+        end
+      when "part"
+        if part.extrapolate_component_parts.any?
+          available / part.extrapolate_component_parts.first.parts_per_component
+        else
+          available
+        end
+      when "component"
+        available / item.per_technology
+      end 
+    end
   end
 
   def weeks_to_out
     if available == 0
       0
     else
-      ( available.to_f / item.per_technology ) / ( item.tech_monthly_production_rate / 4.0 )
+      mpr = item.technology.present? ? item.technology.monthly_production_rate : 0
+      can_produce_x_tech / ( mpr / 4.0 )
     end
   end
 

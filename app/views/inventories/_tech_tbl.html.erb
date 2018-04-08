@@ -1,0 +1,27 @@
+<% @produceable = tech_tbl.produceable %>
+<% @produceable_list = @produceable.map { |i| i[:name] + ": " + i[:produceable].to_s + "<br />" }.to_s.gsub("[","").gsub("]","").gsub(",","").gsub('"','') %>
+<tr>
+  <td>
+    <h4 id="<%= "tech_" + tech_tbl.id.to_s %>" class="tech-title">
+      <%= tech_tbl.name %>
+    </h4>
+  </td>
+  <td class="center tech-produceable">
+    <%= @produceable.any? ? @produceable.first[:produceable] : "unknown" %>
+  </td>
+  <td class="popover-td">
+    <button type="button" class="btn blue btn-xs inv-status-pop" data-toggle="popover" data-html="true" title="<%= tech_tbl.name %> items" data-content="<%= @produceable_list.html_safe %>">Why?</a>
+  </td>
+  <td class="center tech-available">
+    <%= number_with_delimiter( tech_tbl.primary_component.total, delimiter: "," ) %>
+  </td>
+  <td class="center">
+    <%= number_with_delimiter( tech_tbl.monthly_production_rate, delimiter: "," ) %>
+  </td>
+  <td class="center">
+    <%= number_with_precision( tech_tbl.primary_component.total / (tech_tbl.monthly_production_rate / 4.0), delimiter: ",", precision: 2 ) %>
+  </td>
+  <td class="center tech-event-goals">
+    <%= tech_tbl.event_tech_goals_within(30) %>
+  </td>
+</tr>

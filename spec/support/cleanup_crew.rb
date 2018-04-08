@@ -1,7 +1,6 @@
 module CleanupCrew
 
   def clean_up!
-
     Registration.with_deleted.each do |r|
       r.really_destroy!
     end

@@ -177,6 +177,7 @@ function reformat(source) {
   $(document).on("turbolinks:load", function(){
     $("#item_btn").hide();
     $('#order_supplier_div').hide();
+    $('[data-toggle="popover"]').popover();
   });
 
   $(document).on("click", "#supplier_btn", function() {

@@ -12,7 +12,33 @@ class Component < ApplicationRecord
 
   has_many :counts, dependent: :destroy
 
-  def tech_monthly_production_rate
-    technologies.first.monthly_production_rate
+  def technology
+    technologies.first
+  end
+
+  def per_technology
+    if extrapolate_technology_components.any?
+      extrapolate_technology_components.first.components_per_technology
+    else
+      1
+    end
+  end
+
+  def required?
+    if extrapolate_technology_components.any?
+      extrapolate_technology_components.first.required?
+    else
+      false
+    end
+  end
+
+  def total
+    count = Count.where(inventory: Inventory.latest, component: self).first
+
+    if count
+      count.total
+    else
+      0
+    end
   end
 end
