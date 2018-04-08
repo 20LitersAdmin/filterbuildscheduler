@@ -18,6 +18,6 @@ FactoryBot.define do
     user
     event
     leader true
-    guests_registered R{ Random.rand(0..3) }
+    guests_registered { Random.rand(0..3) }
   end
 end

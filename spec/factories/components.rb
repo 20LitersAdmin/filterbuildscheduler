@@ -7,6 +7,6 @@ FactoryBot.define do
   factory :component_ct, class: Component do
     name { Faker::Beer.name }
     completed_tech true
-    quantity_per_box { Random.rand(1..5) }
+    quantity_per_box 125
   end
 end

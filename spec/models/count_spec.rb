@@ -14,7 +14,7 @@ RSpec.describe Count, type: :model do
   let(:part2) { create :part, quantity_per_box: 10 }
 
   let(:part_w_min) { create :part, minimum_on_hand: 300 }
-  let(:tech_part_w_min) { create :tech_part, technology: technology, part: part_w_min }
+  let(:tech_part_w_min) { create :tech_part, technology: technology, part: part_w_min, parts_per_technology: 1 }
   let(:count_part_low) { create :count_part, loose_count: 150, unopened_boxes_count: 1, part: part_w_min }
   let(:count_part_high) { create :count_part, loose_count: 550, unopened_boxes_count: 12, part: part_w_min }
   

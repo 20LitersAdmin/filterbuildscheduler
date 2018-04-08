@@ -12,7 +12,7 @@
   <td class="popover-td">
     <button type="button" class="btn blue btn-xs inv-status-pop" data-toggle="popover" data-html="true" title="<%= tech_tbl.name %> items" data-content="<%= @produceable_list.html_safe %>">Why?</a>
   </td>
-  <td class="center">
+  <td class="center tech-available">
     <%= number_with_delimiter( tech_tbl.primary_component.total, delimiter: "," ) %>
   </td>
   <td class="center">

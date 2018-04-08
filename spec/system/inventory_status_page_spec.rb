@@ -113,13 +113,26 @@ RSpec.describe "Inventory status page", type: :system, js: true do
       expect(page).to_not have_css("#tech_#{Technology.last.id.to_s}")
     end
 
-    fit "shows how many technologies are currently available" do
-      expect(page).to have_css("td.tech-produceable", count: 5)
-      # save_and_open_page
-      # binding.pry
+    it "shows how many technologies can be produced" do
+      expect(page).to have_css("td.tech-produceable", count: 4)
+      expect(page).not_to have_css("td.tech-produceable", text: "unknown")
     end
 
-    it "shows how many technologies can be produced"
+    it "has 'why?' buttons that can be clicked" do
+      expect(page).to have_css("button.inv-status-pop", count: 4)
+
+      expect(page).not_to have_css("div.popover")
+
+      title = "button[data-original-title='#{Technology.first.name} items']"
+
+      find(title).click
+
+      expect(page).to have_css("div.popover")
+    end
+
+    it "shows how many technologies are currently available" do
+      expect(page).to have_css("td.tech-available", count: 4)
+    end
 
     it "takes upcoming events into account" do
       expect(page).to have_css("td.tech-event-goals", text: "0", count: 3)
