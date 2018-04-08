@@ -42,6 +42,7 @@ RailsAdmin.config do |config|
   end
 
   config.model User do
+    weight 0
     list do
       scopes [:active, :leaders, :admins, :only_deleted]
       field :email
@@ -63,6 +64,7 @@ RailsAdmin.config do |config|
   end
 
   config.model Event do
+    weight 1
     object_label_method :format_time_range
     list do
       scopes [:active, :future, :past, :needs_report, :closed, :only_deleted]
@@ -80,7 +82,25 @@ RailsAdmin.config do |config|
     exclude_fields :registrations, :users, :inventory
   end
 
+  config.model Registration do
+    weight 0
+    parent Event
+    list do
+      scopes [:active, :only_deleted]
+      field :event
+      field :user
+      field :attended
+      field :leader
+      field :guests_registered
+      field :guests_attended
+    end
+    configure :deleted_at do
+      show
+    end
+  end
+
   config.model Location do
+    weight 1
     parent Event
     list do
       scopes [:active, :only_deleted]
@@ -95,6 +115,7 @@ RailsAdmin.config do |config|
   end
 
   config.model Technology do
+    weight 2
     list do
       scopes [:active, :only_deleted]
       field :name
@@ -111,8 +132,22 @@ RailsAdmin.config do |config|
     exclude_fields :extrapolate_technology_parts, :extrapolate_technology_components
   end
 
+  config.model Supplier do
+    weight 3
+    list do
+      scopes [:active, :only_deleted]
+      field :name
+      field :url
+      field :poc_name
+      field :poc_email
+    end
+    configure :deleted_at do
+      show
+    end
+  end
+
   config.model Component do
-    parent Technology
+    weight 4
     list do
       scopes [:active, :only_deleted]
       field :name
@@ -126,47 +161,8 @@ RailsAdmin.config do |config|
     exclude_fields :extrapolate_technology_components, :extrapolate_component_parts, :counts
   end
 
-  config.model Supplier do
-    list do
-      scopes [:active, :only_deleted]
-      field :name
-      field :url
-      field :poc_name
-      field :poc_email
-    end
-    configure :deleted_at do
-      show
-    end
-
-    # exclude_fields :supplier_parts, :supplier_materials, :parts, :materials
-  end
-
-
-  config.model Material do
-    parent Supplier
-    list do
-      scopes [:active, :only_deleted]
-      field :name
-      field :supplier
-      field :min_order
-      field :weeks_to_deliver
-      field :price_cents do
-        label "Price"
-        formatted_value do
-          "$" + (value.to_f / 100).to_s
-        end
-      end
-      field :min_order
-    end
-    configure :deleted_at do
-      show
-    end
-
-    exclude_fields :extrapolate_material_parts, :counts
-  end
-
   config.model Part do
-    parent Supplier
+    weight 5
     list do
       scopes [:active, :only_deleted]
       field :name
@@ -187,20 +183,27 @@ RailsAdmin.config do |config|
     exclude_fields :extrapolate_technology_parts, :extrapolate_component_parts, :extrapolate_material_parts, :counts
   end
 
-  config.model Registration do
-    parent Event
+  config.model Material do
+    weight 6
     list do
       scopes [:active, :only_deleted]
-      field :event
-      field :user
-      field :attended
-      field :leader
-      field :guests_registered
-      field :guests_attended
+      field :name
+      field :supplier
+      field :min_order
+      field :weeks_to_deliver
+      field :price_cents do
+        label "Price"
+        formatted_value do
+          "$" + (value.to_f / 100).to_s
+        end
+      end
+      field :min_order
     end
     configure :deleted_at do
       show
     end
+
+    exclude_fields :extrapolate_material_parts, :counts
   end
 
   config.model Count do
@@ -224,21 +227,42 @@ RailsAdmin.config do |config|
   end
 
   config.model ExtrapolateTechnologyComponent do
-    parent Technology
+    parent Component
     label "Technology <-> Component"
     label_plural "Technologies <-> Components"
+
+    list do
+      field :component
+      field :technology
+      field :components_per_technology
+      field :required
+    end
   end
 
   config.model ExtrapolateTechnologyPart do
-    parent Technology
+    parent Part
     label "Technology <-> Part"
     label_plural "Technologies <-> Parts"
+
+    list do
+      field :part
+      field :technology
+      field :parts_per_technology
+      field :required
+    end
   end
 
   config.model ExtrapolateTechnologyMaterial do
-    parent Technology
+    parent Material
     label "Technology <-> Material"
     label_plural "Technologies <-> Materials"
+
+    list do
+      field :material
+      field :technology
+      field :materials_per_technology
+      field :required
+    end
   end
 
   config.actions do
