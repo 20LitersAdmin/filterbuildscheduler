@@ -41,18 +41,31 @@ RSpec.describe "Inventory status page", type: :system, js: true do
       unworthy = Technology.last
       unworthy.update(monthly_production_rate: 0)
 
-      Technology.all.each do |tech|  
+      Technology.all.each do |tech|
+        parts = []
+        comps = []
+        mats = []
+
         3.times do
-          @parts = FactoryBot.create(:part)
-          @components = FactoryBot.create(:component)
-          @materials = FactoryBot.create(:material)
+          parts << FactoryBot.create(:part)
+          comps << FactoryBot.create(:component)
+          mats << FactoryBot.create(:material)
         end
 
-        tech.components << FactoryBot.create(:component_ct)
+        parts.each do |part|
+          FactoryBot.create(:tech_part, part: part, technology: tech)
+        end
 
-        tech.parts << @parts
-        tech.components << @components
-        tech.materials << @materials
+        comp_ct = FactoryBot.create(:component_ct)
+        FactoryBot.create(:tech_comp, component: comp_ct, technology: tech)
+
+        comps.each do |comp|
+          FactoryBot.create(:tech_comp, component: comp, technology: tech)
+        end
+
+        mats.each do |mat|
+          FactoryBot.create(:tech_mat, material: mat, technology: tech)
+        end
       end
 
       inventory = FactoryBot.create(:inventory, completed_at: Time.now)
@@ -70,6 +83,8 @@ RSpec.describe "Inventory status page", type: :system, js: true do
         FactoryBot.create(:count_mat, material: mat, inventory: inventory)
       end
 
+      FactoryBot.create(:event, start_time: Time.now + 15.days, end_time: Time.now + 15.days + 3.hours, item_goal: 143, technology: Technology.first )
+      FactoryBot.create(:event, start_time: Time.now + 45.days, end_time: Time.now + 45.days + 3.hours, item_goal: 59, technology: Technology.second )
     end
 
     before :each do
@@ -98,11 +113,19 @@ RSpec.describe "Inventory status page", type: :system, js: true do
       expect(page).to_not have_css("#tech_#{Technology.last.id.to_s}")
     end
 
-    it "shows how many technologies are currently available"
+    fit "shows how many technologies are currently available" do
+      expect(page).to have_css("td.tech-produceable", count: 5)
+      # save_and_open_page
+      # binding.pry
+    end
 
     it "shows how many technologies can be produced"
 
-    it "takes upcoming events into account"
+    it "takes upcoming events into account" do
+      expect(page).to have_css("td.tech-event-goals", text: "0", count: 3)
+      expect(page).to have_css("td.tech-event-goals", text: "143", count: 1)
+      expect(page).not_to have_css("td.tech-event-goals", text: "59")
+    end
   end
 
 end

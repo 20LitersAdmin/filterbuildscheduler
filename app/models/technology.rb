@@ -110,9 +110,9 @@ class Technology < ApplicationRecord
       end
     end
 
-    tech_items_aoh.sort_by! { |hsh| hsh[:produceable] }
-    # and voila, the fucking thing is ready.
+    # binding.pry
 
+    tech_items_aoh.sort_by! { |hsh| hsh[:produceable] }
   end
 
 end
