@@ -2,7 +2,7 @@
   <% if event.you_are_attendee(@user).present? || event.you_are_leader(@user).present? %>
     <%= image_tag "registered_badge.png", size: "80x80", class: "registered-badge" %>
   <% end %>
-  <%= link_to event_path(event) do %>
+  <%= link_to event_path(event), class: "use-load-screen" do %>
     <div class="top-part-wrapper">
       <div>
         <span class="location">Hosted by <%= event.location.name %></span>

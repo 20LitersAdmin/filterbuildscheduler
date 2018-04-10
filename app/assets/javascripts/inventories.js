@@ -220,5 +220,4 @@ function reformat(source) {
     reformat(this);
     orderTotal();
   });
-
 }());
