@@ -64,6 +64,26 @@ hr.bar {
     }
   }
 
+  #load_screen {
+    background-color: rgba(255,255,255,0.8);
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 200%;
+    height: 200%;
+    z-index: 99;
+    display: none;
+  }
+
+  #load_image {
+    color: $yellow;
+    position: fixed;
+    top: 50%;
+    margin-top: -50px;
+    left: 50%;
+    margin-left: -50px;
+  }
+
   .admin-div {
     padding-top: .5em;
     padding-bottom: .75em;

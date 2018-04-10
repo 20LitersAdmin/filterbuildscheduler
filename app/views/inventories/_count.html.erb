@@ -5,17 +5,17 @@
 
     <% if count.user_id == nil %>
       <% if count.partial_box %>
-        <%= link_to "Loose Count", edit_inventory_count_path(@inventory, count), class: "btn empty fullwidth" %>
+        <%= link_to "Loose Count", edit_inventory_count_path(@inventory, count), class: "btn empty fullwidth use-load-screen" %>
       <% elsif count.partial_loose %>
-        <%= link_to "Box Count", edit_inventory_count_path(@inventory, count), class: "btn empty fullwidth" %>
+        <%= link_to "Box Count", edit_inventory_count_path(@inventory, count), class: "btn empty fullwidth use-load-screen" %>
       <% else %>
-        <%= link_to @btn_text, edit_inventory_count_path(@inventory, count), class: "btn yellow fullwidth" %>
+        <%= link_to @btn_text, edit_inventory_count_path(@inventory, count), class: "btn yellow fullwidth use-load-screen" %>
       <% end %>
     <% else %>
       <p class="current-count">
         <strong>Avail:</strong> <%= count.available %>
       </p>
-      <%= link_to "Edit", edit_inventory_count_path(@inventory, count), class: "btn blue fullwidth" %>
+      <%= link_to "Edit", edit_inventory_count_path(@inventory, count), class: "btn blue fullwidth use-load-screen" %>
     <% end %>
   </div>
   <div class="count-filters">

@@ -30,6 +30,10 @@
 
   <body class="twentyliters">
     <%= render partial: 'layouts/navbar' %>
+    <div id="load_screen" class="container fa-5x">
+      <i class="fa fa-spinner fa-pulse" id="load_image"></i>
+    </div>
+
     <% if current_page?('/events') || current_page?(root_url) %>
       <% if current_user.nil? || !current_user.admin_or_leader? %>
         <div class="hero-img collapse in" id="collapseHero">

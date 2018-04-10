@@ -17,7 +17,7 @@ RSpec.describe "Restoring a cancelled event", type: :system do
 
   it "requires an event to be deleted first" do
     visit "/"
-    expect(page).to have_link "Manage Cancelled Events"
+    expect(page).to have_link "Cancelled Events"
 
     expect(@event.deleted_at).to_not be nil
 

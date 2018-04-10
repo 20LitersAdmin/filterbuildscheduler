@@ -12,11 +12,11 @@
             <p>
               <strong><%= if @latest.completed_at.present? then "FINALIZED" end %></strong> &nbsp;
             </p>
-            <%= link_to "View", inventory_path(@latest), class: "btn yellow" %>
+            <%= link_to "View", inventory_path(@latest), class: "btn yellow use-load-screen" %>
             <% if !@latest.completed_at.present? %>
-              <%= link_to "Edit", edit_inventory_path(@latest), class: "btn blue" %>
+              <%= link_to "Edit", edit_inventory_path(@latest), class: "btn blue use-load-screen" %>
             <% elsif current_user.is_admin? %>
-              <%= link_to "Unlock", edit_inventory_path(@latest, unlock: "true"), class: "btn blue" %>
+              <%= link_to "Unlock", edit_inventory_path(@latest, unlock: "true"), class: "btn blue use-load-screen" %>
             <% end %>
           </div>
         </div>
