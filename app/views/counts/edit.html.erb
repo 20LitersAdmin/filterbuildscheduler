@@ -28,19 +28,19 @@
     <% end %>
 
     <%= f.input :user_id, as: :hidden, input_html: { value: current_user.id } %>
-    <%= f.submit "Submit", class: "btn yellow fullwidth" %>
+    <%= f.submit "Submit", class: "btn yellow fullwidth use-load-screen" %>
     
     <% if (@inventory.type_for_params == "manual" || @inventory.type_for_params == "event") && !@count.item.only_loose?  %>
       <div class="col-xs-12 col-sm-6">
         <% if !@count.partial_box %>
-          <%= f.button :submit, name: "partial_loose", value: "Partial Count: Loose", class: "btn blue fullwidth" %>  
+          <%= f.button :submit, name: "partial_loose", value: "Partial Count: Loose", class: "btn blue fullwidth use-load-screen" %>  
         <% else %>
           <h4 class="center">Ready to Submit</h4>
         <% end %>
       </div>
       <div class="col-xs-12 col-sm-6">
         <% if !@count.partial_loose %>
-          <%= f.button :submit, name: "partial_box", value: "Partial Count: Boxes", class: "btn blue fullwidth" %>
+          <%= f.button :submit, name: "partial_box", value: "Partial Count: Boxes", class: "btn blue fullwidth use-load-screen" %>
         <% else %>
           <h4 class="center">Ready to Submit</h4>
         <% end %>
@@ -48,7 +48,7 @@
     <% end %>
   <% end %>
 
-  <%= link_to "Back", edit_inventory_path(@inventory), class: "btn yellow empty fullwidth" %>
+  <%= link_to "Back", edit_inventory_path(@inventory), class: "btn yellow empty fullwidth use-load-screen" %>
   <hr class="bar dark-grey">
 </div>
 

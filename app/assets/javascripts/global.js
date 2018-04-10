@@ -190,3 +190,13 @@ $(document).on("click", "a.accordion-link", function() {
 
   collapsedFAs(this);
 });
+
+$(document).on("click", ".use-load-screen", function() {
+  $("#load_screen").show();
+});
+
+$(document).on("turbolinks:load", function() {
+  $("#load_screen").hide();
+});
+
+

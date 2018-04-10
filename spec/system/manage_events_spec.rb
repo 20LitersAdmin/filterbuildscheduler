@@ -81,7 +81,7 @@ RSpec.describe "Managing events:", type: :system, js: true do
       page.accept_confirm { click_link "Cancel Event" }
 
       expect(page).to have_content "Event cancelled."
-      expect(page).to have_link "Manage Cancelled Events"
+      expect(page).to have_link "Cancelled Events"
       @event.reload
       expect(@event.deleted_at).to_not be_nil
 
@@ -137,7 +137,7 @@ RSpec.describe "Managing events:", type: :system, js: true do
       page.accept_confirm { click_link "Cancel Event" }
 
       expect(page).to have_content "Event cancelled."
-      expect(page).to have_link "Manage Cancelled Events"
+      expect(page).to have_link "Cancelled Events"
       @event.reload
       expect(@event.deleted_at).to_not be_nil
 

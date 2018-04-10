@@ -111,6 +111,14 @@
             <a class="btn blue fullwidth" data-toggle="modal" data-target="#photoModal">Larger Image</a>
           </div>
         <% end %>
+        <% if @event.is_private && @event.contact_email.present? %>
+          <div class="col-xs-12">
+            <h2>Event contact:</h2>
+            <h4>
+              <%= @event.contact_name %>: <%= mail_to @event.contact_email %>
+            </h4>
+          </div>
+        <% end %>
       </div>
     </div>
 

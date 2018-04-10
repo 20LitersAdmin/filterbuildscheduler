@@ -1,6 +1,6 @@
 <tr>
   <td><%= comm_tbl.fname %></td>
-  <td><%= link_to comm_tbl.lname, rails_admin.edit_path(model_name: 'user', id: comm_tbl.id) %></td>
+  <td><%= link_to comm_tbl.lname, rails_admin.edit_path(model_name: 'user', id: comm_tbl.id), class: "use-load-screen" %></td>
   <td><%= comm_tbl.email %></td>
   <td>
     <%= comm_tbl.latest_event %>

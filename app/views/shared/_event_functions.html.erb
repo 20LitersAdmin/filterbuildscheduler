@@ -1,32 +1,32 @@
 <div class="admin-div col-xs-12 center">
   <p>Available functions:</p>
   <% if @finder == "edit" %>
-    <%= link_to("Edit Event", edit_event_path(@event), class: 'btn empty width188') %>
-    <%= link_to "Print Attendance List", attendance_event_path(@event), class: 'btn yellow' %>
-    <%= link_to "Manage Builders", event_registrations_path(@event), class: "btn blue" %>
+    <%= link_to "Edit Event", edit_event_path(@event), class: 'btn empty width188 use-load-screen' %>
+    <%= link_to "Print Attendance List", attendance_event_path(@event), class: 'btn yellow use-load-screen' %>
+    <%= link_to "Manage Builders", event_registrations_path(@event), class: "btn blue use-load-screen" %>
   <% end %>
 
   <% if @finder != "new" %>
-    <%= link_to "Schedue a New Build", new_event_path, class: 'btn yellow' %>
+    <%= link_to "New Build", new_event_path, class: 'btn yellow use-load-screen' %>
   <% end %>
 
   <% if @finder != "lead" %>
-    <%= link_to "Lead a Build", lead_events_path, class: 'btn yellow' %>
+    <%= link_to "Lead a Build", lead_events_path, class: 'btn yellow use-load-screen' %>
   <% end %>
 
   <% if @finder != "status" %>
-    <%= link_to "Tech Status", status_inventories_path, class: "btn yellow"  %>
+    <%= link_to "Tech Status", status_inventories_path, class: "btn yellow use-load-screen"  %>
   <% end %>
 
   <% if current_user.is_admin? && @finder != "communication" %>
-    <%= link_to("Manage User Comm. Prefs",  users_communication_path, class: 'btn yellow') %>
+    <%= link_to "User Comm. Prefs",  users_communication_path, class: 'btn yellow use-load-screen' %>
   <% end %>
 
   <% if current_user.is_admin? && @closed_events.present? && @finder != "closed" %>
-    <%= link_to("Manage Closed Events", closed_events_path , class: 'btn blue') %>
+    <%= link_to "Closed Events", closed_events_path , class: 'btn blue use-load-screen' %>
   <% end %>
 
   <% if @cancelled_events.exists? && @finder != "cancelled" %>
-    <%= link_to "Manage Cancelled Events", cancelled_events_path, class: 'btn red' %>
+    <%= link_to "Cancelled Events", cancelled_events_path, class: 'btn red use-load-screen' %>
   <% end %>
 </div>

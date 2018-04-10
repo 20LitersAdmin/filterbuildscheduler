@@ -4,12 +4,12 @@
   <p>
     <strong><%= if inventory.completed_at.present? then "FINALIZED" end %></strong> &nbsp;
   </p>
-  <%= link_to "View", inventory_path(inventory), class: "btn yellow" %>
+  <%= link_to "View", inventory_path(inventory), class: "btn yellow use-load-screen" %>
   <% if current_user&.is_admin? %>
     <% if !inventory.completed_at.present? %>
-      <%= link_to "Edit", edit_inventory_path(inventory), class: "btn blue" %>
+      <%= link_to "Edit", edit_inventory_path(inventory), class: "btn blue use-load-screen" %>
     <% else %>
-      <%= link_to "Unlock", edit_inventory_path(inventory, unlock: "true"), class: "btn blue" %>
+      <%= link_to "Unlock", edit_inventory_path(inventory, unlock: "true"), class: "btn blue use-load-screen" %>
     <% end %>
   <% end %>
 </div>
