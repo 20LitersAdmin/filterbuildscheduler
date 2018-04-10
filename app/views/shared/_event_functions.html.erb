@@ -7,7 +7,7 @@
   <% end %>
 
   <% if @finder != "new" %>
-    <%= link_to "Schedue a New Build", new_event_path, class: 'btn yellow' %>
+    <%= link_to "New Build", new_event_path, class: 'btn yellow' %>
   <% end %>
 
   <% if @finder != "lead" %>
@@ -15,18 +15,18 @@
   <% end %>
 
   <% if @finder != "status" %>
-    <%= link_to "Tech Status", status_inventories_path, class: "btn yellow"  %>
+    <%= link_to "Tech Status", status_inventories_path, class: "btn yellow", id: "tech_btn"  %>
   <% end %>
 
   <% if current_user.is_admin? && @finder != "communication" %>
-    <%= link_to("Manage User Comm. Prefs",  users_communication_path, class: 'btn yellow') %>
+    <%= link_to("User Comm. Prefs",  users_communication_path, class: 'btn yellow') %>
   <% end %>
 
   <% if current_user.is_admin? && @closed_events.present? && @finder != "closed" %>
-    <%= link_to("Manage Closed Events", closed_events_path , class: 'btn blue') %>
+    <%= link_to("Closed Events", closed_events_path , class: 'btn blue') %>
   <% end %>
 
   <% if @cancelled_events.exists? && @finder != "cancelled" %>
-    <%= link_to "Manage Cancelled Events", cancelled_events_path, class: 'btn red' %>
+    <%= link_to "Cancelled Events", cancelled_events_path, class: 'btn red' %>
   <% end %>
 </div>
