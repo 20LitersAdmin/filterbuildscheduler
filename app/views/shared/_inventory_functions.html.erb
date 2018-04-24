@@ -2,7 +2,7 @@
   <p>Available functions:</p>
   <%= link_to "New Inventory", new_inventory_path(type: "manual"), class: "btn yellow use-load-screen"  %>
   <%= link_to "Receive Supplies", new_inventory_path(type: "receiving"), class: "btn blue use-load-screen" %>
-  <%= link_to "Ship Supplies use-load-screen", new_inventory_path(type: "shipping"), class: "btn blue" %>
+  <%= link_to "Ship Supplies", new_inventory_path(type: "shipping"), class: "btn blue use-load-screen" %>
   <% if @latest.has_items_below_minimum? %>
     <%= link_to "Supplies Needed!", order_inventories_path(), class: "btn red use-load-screen" %>
   <% end %>
