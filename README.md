@@ -3,6 +3,8 @@
 ## Things to do
 3. JQuery registration form validations (use global .has-errors css, see user#edit for good example)
 
+4. Part / Material / Component history view, Tech name links to this from Tech Status page.
+
 8. Stats framework (for time period) (visible to Admin)
   - Number of technologies by type
   - Number of vol hours (event length * attendance )
