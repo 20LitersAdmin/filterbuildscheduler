@@ -1,11 +1,21 @@
 # README
 
 ## Things to do
+1. inv/status - not calculating based on parts_per_technology or 
+
 3. JQuery registration form validations (use global .has-errors css, see user#edit for good example)
 
 4. Part / Material / Component history view, Tech name links to this from Tech Status page.
 
-8. Stats framework (for time period) (visible to Admin)
+5. inv/status - relies on finalized inventory.
+
+6. inv/order - filter by technology / at least show technology
+
+7. Integrate partial buttons into navbar as sub-items (inv and builds) - make navbar sticky?
+
+8. SAM3 min orders 
+
+9. Stats framework (for time period) (visible to Admin)
   - Number of technologies by type
   - Number of vol hours (event length * attendance )
   - Number of volunteers engaged (could be duplicated)

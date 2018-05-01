@@ -75,7 +75,7 @@ class KindfulClient
         "contact": "first_name_last_name_email",
         "group": "name"
       },
-      "groups": ["Volunteer: Filter Builders"],
+      "groups": ["Vol: Filter Builder"],
       "data": [
         {
           "id": id.to_s,
