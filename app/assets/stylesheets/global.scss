@@ -357,6 +357,9 @@ hr.bar {
 
 @media (max-width: 768px) {
   .admin-div {
-    display: none;
+    // display: none;
+    a {
+      margin: 6px;
+    }
   }
 }

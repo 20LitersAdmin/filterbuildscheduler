@@ -1,4 +1,7 @@
 <div class="col-xs-12 center admin-div">
+  <button type="button" class="close" id="hide_admin">
+    <span aria-hidden="true">&times;</span>
+  </button>
   <p>Available functions:</p>
   <%= link_to "New Inventory", new_inventory_path(type: "manual"), class: "btn yellow use-load-screen"  %>
   <%= link_to "Receive Supplies", new_inventory_path(type: "receiving"), class: "btn blue use-load-screen" %>
