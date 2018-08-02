@@ -5,7 +5,9 @@
     <% else %>
       <%= order_tbl.name %>
     <% end %>
-    
+  </td>
+  <td>
+    <%= order_tbl.tech_names %>
   </td>
   <td class="center-align">
     <%= number_with_delimiter(order_tbl.available, delimiter: ',') %>
