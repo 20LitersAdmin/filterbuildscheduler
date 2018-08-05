@@ -1,5 +1,5 @@
 class EventsController < ApplicationController
-  before_action :find_stale, only: [:index, :show, :new, :edit, :lead, :cancelled, :closed]
+  before_action :find_stale
 
   def index
     our_events = policy_scope(Event).includes(:location, registrations: :user)
@@ -46,6 +46,7 @@ class EventsController < ApplicationController
     authorize @event = Event.new(event_params)
     authorize @event
 
+    @finder = "new"
     if @event.save
       flash[:success] = "The event has been created."
       EventMailer.delay.created(@event, current_user)
@@ -86,7 +87,6 @@ class EventsController < ApplicationController
     @admins_notified = ""
     @users_notified = ""
     @results_emails_sent = ""
-
     # CREATE AN INVENTORY WHEN AN EVENT REPORT IS SUBMITTED UNDER CERTAIN CONDITIONS.
     # Fields in question: technologies_built, boxes_packed
     # Conditions: They're not negative AND ( they're not both 0 OR they weren't zero but now they are. )
@@ -187,21 +187,9 @@ class EventsController < ApplicationController
 
       redirect_to event_path(@event)
     else
-      if event_params[:technologies_built].present?
-        flash[:danger] = "There was a problem saving this event report."
-        @registration = Registration.where(user: current_user, event: @event).first_or_initialize
-        @location = @event.location
-        @technology = @event.technology
-        @tech_img = @technology.img_url
-        @tech_info = @technology.info_url
-        @location_img = @location.photo_url
-        @show_event = true
-        @show_report = true
-        render 'show'
-      else
-        @show_advanced = true
-        render 'edit'
-      end
+      flash[:danger] = "There was a problem saving this event report."
+      @show_advanced = true
+      render 'edit'
     end
   end
 

@@ -17,7 +17,11 @@
         <%= o.label :email_opt_out, "Opt out of emails?" %>
       </div>
     </div>
-    <p>Room for <%= pluralize(@event.registrations_remaining - 1, 'more guest') %></p>
+    <% if @event.registrations_filled? %>
+      <p>This registration will automatically increase the event's max attendance</p>
+    <% else %>
+      <p>Room for <%= pluralize(@event.registrations_remaining - 1, 'more guest') %> without increasing max attendance.<br>Max attendance will be updated automatically if necessary.</p>
+    <% end %>
     <%= f.input :guests_registered, label: 'Guests', input_html: { min: 0, max: @event.registrations_remaining - 1 } %>
     <%= f.input :accommodations, label: 'Notes', as: :text %>
     <%= f.hidden_field :waiver_accepted, value: '1' %>
