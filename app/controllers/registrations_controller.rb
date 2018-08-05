@@ -1,6 +1,5 @@
 class RegistrationsController < ApplicationController
   before_action :find_registration, only: [:edit, :update, :destroy]
-  # before_action :authenticate_user_from_token!, only: [:edit, :update, :destroy]
 
   def index
     @event = Event.find(params[:event_id])
@@ -25,6 +24,12 @@ class RegistrationsController < ApplicationController
 
       @leader = @user.can_lead_event?(@event)
       @duplicate_registration_risk = false
+
+      if @event.registrations_filled?
+        guests = registration_params[:guests_registered].present? ? registration_params[:guests_registered].to_i : 0
+        new_max = @event.total_registered + guests + 1
+        @event.update(max_registrations: new_max)
+      end
     when "self"
       @user = current_user
       @leader = params[:registration][:leader] || false
@@ -88,8 +93,6 @@ class RegistrationsController < ApplicationController
     end
   end
 
-
-
   def edit
     authorize @registration
 
@@ -102,6 +105,12 @@ class RegistrationsController < ApplicationController
 
   def update
     authorize @registration
+
+    if @event.registrations_filled?
+      guests = registration_params[:guests_registered].present? ? registration_params[:guests_registered].to_i : 0
+      new_max = @event.total_registered + guests + 1
+      @event.update(max_registrations: new_max)
+    end
     
     if @registration.errors.any?
       flash[:danger] = @registration.errors.map { |k,v| v }.join(', ')
@@ -223,8 +232,6 @@ class RegistrationsController < ApplicationController
     else
       registration = Registration.new(event: event, user: user)
     end
-
-    authorize registration
 
     registration
   end
