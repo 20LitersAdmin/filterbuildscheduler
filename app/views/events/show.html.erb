@@ -30,7 +30,7 @@
       </p>
       <p><strong>
         <% if @leaders.count.positive? %>
-          Event <%= pluralize_without_count(@leaderscount, 'leader') %>: <%= @leaders.map { |r| r.user.fname }.join(', ') %>
+          Event <%= pluralize_without_count(@leaders.count, 'leader') %>: <%= @leaders.map { |r| r.user.fname }.join(', ') %>
         <% end %>
       </strong></p>
       <hr />
