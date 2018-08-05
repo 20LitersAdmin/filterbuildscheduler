@@ -9,8 +9,6 @@
 
 5. inv/status - relies on finalized inventory.
 
-6. inv/order - filter by technology / at least show technology
-
 7. Integrate partial buttons into navbar as sub-items (inv and builds) - make navbar sticky?
 
 8. SAM3 min orders 
