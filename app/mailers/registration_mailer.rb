@@ -126,7 +126,7 @@ class RegistrationMailer < ApplicationMailer
     if @recipient.encrypted_password.blank?
       @token = Devise.token_generator.generate(User, :reset_password_token)
       @recipient.reset_password_token = @token[1]
-      @token = @token[0]
+      @token_send = @token[0]
       @recipient.reset_password_sent_at = Time.now.utc
       @recipient.save
     end
