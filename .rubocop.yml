@@ -1,0 +1,30 @@
+Metrics/LineLength:
+  Enabled: false
+Metrics/MethodLength:
+  Enabled: false
+Metrics/BlockLength:
+  Enabled: false
+Metrics/AbcSize:
+  Enabled: false
+Metrics/ClassLength:
+  Enabled: false
+Style/Documentation:
+  Enabled: false
+Style/SymbolArray:
+  Enabled: true
+  Exclude:
+    - db/migrate/*
+Style/BracesAroundHashParameters:
+  Enabled: false
+Style/DoubleNegation:
+  Enabled: false
+Style/MixinUsage:
+  Exclude:
+    - spec/*
+Layout/IndentHash:
+  Enabled: false
+Lint/AmbiguousBlockAssociation:
+  Enabled: false
+AllCops:
+  Exclude:
+    - db/schema.rb
