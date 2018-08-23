@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class InventoryPolicy
   attr_reader :user, :inventory
 
