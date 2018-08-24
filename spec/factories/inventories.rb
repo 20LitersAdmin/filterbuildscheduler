@@ -1,26 +1,28 @@
+# frozen_string_literal: true
+
 FactoryBot.define do
   factory :inventory do
-    manual true
-    date Date.today
+    manual { true }
+    date { Date.today }
   end
 
   factory :inventory_man, class: Inventory do
-    manual true
-    date Date.today
+    manual { true }
+    date { Date.today }
   end
 
   factory :inventory_ship, class: Inventory do
-    shipping true
-    date Date.today
+    shipping { true }
+    date { Date.today }
   end
 
   factory :inventory_rec, class: Inventory do
-    receiving true
-    date Date.today
+    receiving { true }
+    date { Date.today }
   end
 
   factory :inventory_event, class: Inventory do
     event
-    date Date.today
+    date { Date.today }
   end
 end

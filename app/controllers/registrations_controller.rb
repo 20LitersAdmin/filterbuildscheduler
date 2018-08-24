@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class RegistrationsController < ApplicationController
   before_action :find_registration, only: [:edit, :update, :destroy]
 
@@ -64,7 +66,7 @@ class RegistrationsController < ApplicationController
     end
 
     if @registration.errors.blank? && @user.save && @registration.save
-      
+
       sign_in(@user) unless current_user
 
       if @event.start_time > Time.now # don't send emails for past events.
@@ -106,12 +108,12 @@ class RegistrationsController < ApplicationController
   def update
     authorize @registration
 
-    if @event.registrations_filled?
+    if @registration.event.registrations_filled?
       guests = registration_params[:guests_registered].present? ? registration_params[:guests_registered].to_i : 0
       new_max = @event.total_registered + guests + 1
       @event.update(max_registrations: new_max)
     end
-    
+
     if @registration.errors.any?
       flash[:danger] = @registration.errors.map { |k,v| v }.join(', ')
       render 'edit'

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module MailerHelper
 
   def datetime_for_gcal

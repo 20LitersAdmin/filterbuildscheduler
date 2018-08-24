@@ -1,15 +1,17 @@
+# frozen_string_literal: true
+
 FactoryBot.define do
   factory :registration do
     user
     event
-    attended false
+    attended { false }
     guests_registered { Random.rand(0..5) }
   end
 
   factory :registration_attended, class: Registration do
     user
     event
-    attended true
+    attended { true }
     guests_registered { Random.rand(0..5) }
     guests_attended { Random.rand(0..5) }
   end
@@ -17,7 +19,7 @@ FactoryBot.define do
   factory :registration_leader, class: Registration do
     user
     event
-    leader true
+    leader { true }
     guests_registered { Random.rand(0..3) }
   end
 end

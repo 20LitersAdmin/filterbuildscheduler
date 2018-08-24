@@ -14,7 +14,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.dev
-    command: bin/start_docker 
+    command: bin/start_docker
     volumes:
       - .:/app
     depends_on:
