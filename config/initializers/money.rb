@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # encoding : utf-8
 
 MoneyRails.configure do |config|
@@ -77,11 +79,13 @@ MoneyRails.configure do |config|
   # Default value is nil meaning "ignore this option".
   # Example:
   #
-  # config.default_format = {
-  #   :no_cents_if_whole => nil,
-  #   :symbol => nil,
-  #   :sign_before_symbol => nil
-  # }
+  config.no_cents_if_whole = false
+
+  config.default_format = {
+    :no_cents_if_whole => false,
+    :symbol => "$",
+    :sign_before_symbol => nil
+  }
 
   # Set default raise_error_on_money_parsing option
   # It will be raise error if assigned different currency

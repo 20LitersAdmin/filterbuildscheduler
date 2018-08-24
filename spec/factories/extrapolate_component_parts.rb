@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 FactoryBot.define do
   factory :comp_part, class: ExtrapolateComponentPart do
     component

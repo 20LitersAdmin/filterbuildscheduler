@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Supplier < ApplicationRecord
   acts_as_paranoid
   require 'uri'

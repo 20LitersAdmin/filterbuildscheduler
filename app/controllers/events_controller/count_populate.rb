@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class EventsController
   class CountPopulate
     # Based upon the tech built at the event, it adds the number of loose and boxed items to the appropriate component

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module EventsHelper
   def time_for_form(event_time)
     if event_time.present?

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class InventoriesController
   class CountCreate
     def initialize(inventory)

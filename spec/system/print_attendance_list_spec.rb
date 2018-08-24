@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
 RSpec.describe "Printing an attendance list", type: :system do
@@ -47,7 +49,7 @@ RSpec.describe "Printing an attendance list", type: :system do
     expect(page).to have_content "Filter Build Attendance on " + @event.format_time_range
     expect(page).to have_link "print_btn"
 
-    expect(page).to have_css("table.attendance-list tbody tr", count: 10)    
+    expect(page).to have_css("table.attendance-list tbody tr", count: 10)
   end
 
 end

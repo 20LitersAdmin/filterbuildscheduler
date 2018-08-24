@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ExtrapolateMaterialPart < ApplicationRecord
   belongs_to :material, inverse_of: :extrapolate_material_parts
   belongs_to :part, inverse_of: :extrapolate_material_parts

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Count < ApplicationRecord
   acts_as_paranoid
 
