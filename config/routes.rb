@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 Rails.application.routes.draw do
   root to: 'events#index'
   mount RailsAdmin::Engine => '/admin', as: 'rails_admin'

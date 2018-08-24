@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class RegistrationPolicy < ApplicationPolicy
   attr_reader :user, :registration
 

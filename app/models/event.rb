@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Event < ApplicationRecord
   acts_as_paranoid
 
@@ -26,7 +28,7 @@ class Event < ApplicationRecord
 
   # Not working as expected
   # scope :still_needs_leaders, -> { joins(:registrations).group("events.id").having("count(CASE WHEN registrations.leader THEN 1 END) < events.max_leaders") }
-  
+
 
   def in_the_past?
     return end_time <= Time.now
@@ -69,9 +71,9 @@ class Event < ApplicationRecord
 
   def format_time_range
     if start_time.beginning_of_day == end_time.beginning_of_day
-      start_time.strftime("%a, %-m/%-d %l:%M%P") + end_time.strftime(" - %l:%M%P")
+      start_time.strftime('%a, %-m/%-d %-l:%M%P') + ' - ' + end_time.strftime('%-l:%M%P')
     else
-      start_time.strftime("%a, %-m/%-d %l:%M%P") + end_time.strftime(" to %a, %-m/%-d at %l:%M%P")
+      start_time.strftime('%a, %-m/%-d %-l:%M%P') + ' to ' + end_time.strftime('%a, %-m/%-d at %-l:%M%P')
     end
   end
 

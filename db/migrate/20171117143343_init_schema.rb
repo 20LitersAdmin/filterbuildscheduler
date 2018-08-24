@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class InitSchema < ActiveRecord::Migration[5.1]
   def up
     # These are extensions that must be enabled in order to support this database
@@ -15,6 +17,7 @@ class InitSchema < ActiveRecord::Migration[5.1]
       t.integer "quantity_per_box", default: 1
       t.float "tare_weight", default: 0.0
       t.text "comments"
+      t.boolean "only_loose", default: false
       t.index ["deleted_at"], name: "index_components_on_deleted_at"
     end
 
@@ -99,14 +102,27 @@ class InitSchema < ActiveRecord::Migration[5.1]
       t.bigint "component_id", null: false
       t.bigint "technology_id", null: false
       t.integer "components_per_technology", default: 1, null: false
+      t.boolean "required", default: false
       t.index ["component_id", "technology_id"], name: "by_component_and_technology", unique: true
       t.index ["technology_id", "component_id"], name: "by_technology_and_component", unique: true
+    end
+
+    create_table "extrapolate_technology_materials", force: :cascade do |t|
+      t.bigint "technology_id"
+      t.bigint "material_id"
+      t.float "materials_per_technology", default: 1.0, null: false
+      t.boolean "required", default: false, null: false
+      t.index ["material_id", "technology_id"], name: "index_materials_technologies_on_material"
+      t.index ["material_id"], name: "index_extrapolate_technology_materials_on_material_id"
+      t.index ["technology_id", "material_id"], name: "index_materials_technologies_on_technology"
+      t.index ["technology_id"], name: "index_extrapolate_technology_materials_on_technology_id"
     end
 
     create_table "extrapolate_technology_parts", force: :cascade do |t|
       t.bigint "part_id", null: false
       t.bigint "technology_id", null: false
       t.integer "parts_per_technology", default: 1, null: false
+      t.boolean "required", default: false
       t.index ["part_id", "technology_id"], name: "by_part_and_technology", unique: true
       t.index ["technology_id", "part_id"], name: "by_technology_and_part", unique: true
     end
@@ -162,15 +178,9 @@ class InitSchema < ActiveRecord::Migration[5.1]
       t.string "shipping_cost_currency", default: "USD", null: false
       t.integer "wire_transfer_cost_cents", default: 0, null: false
       t.string "wire_transfer_cost_currency", default: "USD", null: false
+      t.boolean "only_loose", default: false
       t.index ["deleted_at"], name: "index_materials_on_deleted_at"
       t.index ["supplier_id"], name: "index_materials_on_supplier_id"
-    end
-
-    create_table "materials_technologies", id: false, force: :cascade do |t|
-      t.bigint "material_id", null: false
-      t.bigint "technology_id", null: false
-      t.index ["material_id"], name: "index_materials_technologies_on_material_id"
-      t.index ["technology_id"], name: "index_materials_technologies_on_technology_id"
     end
 
     create_table "parts", force: :cascade do |t|
@@ -197,6 +207,7 @@ class InitSchema < ActiveRecord::Migration[5.1]
       t.string "wire_transfer_cost_currency", default: "USD", null: false
       t.text "comments"
       t.bigint "supplier_id"
+      t.boolean "only_loose", default: false
       t.index ["deleted_at"], name: "index_parts_on_deleted_at"
       t.index ["supplier_id"], name: "index_parts_on_supplier_id"
     end
@@ -228,10 +239,10 @@ class InitSchema < ActiveRecord::Migration[5.1]
       t.string "province"
       t.string "country"
       t.string "phone"
-      t.string "POC_name"
-      t.string "POC_email"
-      t.string "POC_phone"
-      t.string "POC_address"
+      t.string "poc_name"
+      t.string "poc_email"
+      t.string "poc_phone"
+      t.string "poc_address"
       t.text "comments"
       t.datetime "deleted_at"
       t.index ["name"], name: "index_suppliers_on_name"

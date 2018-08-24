@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class InventoryMailerPreview < ActionMailer::Preview
 
   def notify

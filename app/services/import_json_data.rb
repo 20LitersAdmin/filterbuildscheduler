@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 [{ fname: 'Darcie', lname: 'Way', email: 'dmway1201@gmail.com' },
  { fname: 'Karen', lname: 'Opatik', email: 'karenopatik@gmail.com' },
  { fname: 'Ron', lname: 'Kooinenga', email: 'kooiengaron@gmail.com' },

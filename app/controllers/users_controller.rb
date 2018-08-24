@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class UsersController < ApplicationController
 
   before_action :find_and_authorize_user, only: [:show, :edit, :update, :delete]

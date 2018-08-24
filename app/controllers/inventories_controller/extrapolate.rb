@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class InventoriesController
   class Extrapolate
     def initialize(inventory)

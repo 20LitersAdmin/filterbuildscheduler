@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 desc "Email Scheduling Daemon"
 task send_reminders: :environment do
   puts "Cleaning up the job list"

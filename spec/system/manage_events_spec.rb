@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
 RSpec.describe "Managing events:", type: :system, js: true do
@@ -67,7 +69,7 @@ RSpec.describe "Managing events:", type: :system, js: true do
       expect(page).to have_content @event.full_title
       expect(@event.title).to eq "Leader can name the event"
       expect(@event.description).to eq "Leader can provide a description"
-      expect(@event.format_time_range).to eq "Sat, 9/11  6:30pm -  9:00pm"
+      expect(@event.format_time_range).to eq "Sat, 9/11 6:30pm - 9:00pm"
 
       second_count = ActionMailer::Base.deliveries.count
       expect(second_count).to eq first_count + 3 # 2 registrants and the leader
@@ -123,7 +125,7 @@ RSpec.describe "Managing events:", type: :system, js: true do
       expect(page).to have_content @event.full_title
       expect(@event.title).to eq "Admin can name the event"
       expect(@event.description).to eq "Admin can provide a description"
-      expect(@event.format_time_range).to eq "Sat, 9/11  6:30pm -  9:00pm"
+      expect(@event.format_time_range).to eq "Sat, 9/11 6:30pm - 9:00pm"
 
       second_count = ActionMailer::Base.deliveries.count
       expect(second_count).to eq first_count + 3 # 2 registrants and the admin
