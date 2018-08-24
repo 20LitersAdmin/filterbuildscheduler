@@ -8,12 +8,16 @@ class ImportClient
 
   ###### How to manually batch enter people into Kindful using this app:
   # Create a json file with fname, lname, email
+  # Adjust the fields in this file (then save file before loading IRB):
+  # - note_subject
+  # - groups
+  # - Lines 70 && 98
   # in IRB console:
   # require "import_client"
   # set users = #Array
-  # users.each do |user|
-  #   ImportClient.new.import_user_w_note(user[:fname], user[:lname], user[:email])
-  # end
+users.each do |user|
+  ImportClient.new.import_user_w_note(user[:fname], user[:lname], user[:email])
+end
 
   def import_user(fname, lname, email)
     body_args = {
@@ -21,7 +25,7 @@ class ImportClient
       lname: lname,
       email: email
     }
-    self.class.post("/imports", {headers: headers, body: contact(**body_args).to_json} )
+    self.class.post('/imports', { headers: headers, body: contact(**body_args).to_json })
     puts "processed for #{fname} #{lname}: #{response}"
   end
 
@@ -31,7 +35,7 @@ class ImportClient
       lname: lname,
       email: email,
       note_time: Time.new(2018, 7, 14, 9).iso8601,
-      note_subject: 'Attended Macatawa Water Festival'
+      note_subject: 'Attended Mars Hill Celebration 2018'
     }
     response = self.class.post('/imports', { headers: headers, body: contact_w_note(**body_args).to_json })
     puts "processed for #{fname} #{lname}: #{response}"
@@ -57,13 +61,13 @@ class ImportClient
         "contact": 'first_name_last_name_email',
         "group": 'name'
       },
-      "groups": ['Macatawa Water Festival'],
+      "groups": ['Mars Hill Celebration 2018'],
       "data": [
         {
           "first_name": fname,
           "last_name": lname,
           "email": email,
-          "Macatawa Water Festival": 'yes'
+          "Mars Hill Celebration 2018": 'yes'
         }
       ]
     }
@@ -80,7 +84,7 @@ class ImportClient
         "fund": 'name',
         "group": 'name'
       },
-      "groups": ['Macatawa Water Festival'],
+      "groups": ['Mars Hill Celebration 2018'],
       "data": [
         {
           "first_name": fname,
@@ -91,7 +95,7 @@ class ImportClient
           "note_type": 'Event',
           "campaign": 'Social Fundraisers',
           "fund": 'Special Events 40400',
-          "Macatawa Water Festival": 'yes'
+          "Mars Hill Celebration 2018": 'yes'
         }
       ]
     }
