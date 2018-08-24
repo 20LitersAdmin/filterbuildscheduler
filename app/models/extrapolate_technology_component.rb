@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ExtrapolateTechnologyComponent < ApplicationRecord
   belongs_to :component, inverse_of: :extrapolate_technology_components
   belongs_to :technology, inverse_of: :extrapolate_technology_components

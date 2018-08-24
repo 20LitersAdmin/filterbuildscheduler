@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class InventoryMailer < ApplicationMailer
   helper MailerHelper
   default from: "filterbuilds@20liters.org"
