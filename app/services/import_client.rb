@@ -15,9 +15,9 @@ class ImportClient
   # in IRB console:
   # require "import_client"
   # set users = #Array
-users.each do |user|
-  ImportClient.new.import_user_w_note(user[:fname], user[:lname], user[:email])
-end
+# users.each do |user|
+#   ImportClient.new.import_user_w_note(user[:fname], user[:lname], user[:email])
+# end
 
   def import_user(fname, lname, email)
     body_args = {
