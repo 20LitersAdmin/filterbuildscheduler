@@ -6,6 +6,43 @@
   <p>Finalized by: <%= @user.name %></p>
 </div>
 <div class="whole" style="position: relative; min-height: 1px; padding-left: 15px; padding-right: 15px; float: left; width: 100%;">
+  <p><strong>Completed Technologies:</strong></p>
+  <table style="border: 1px solid #4a4a4a; border-collapse: collapse;">
+    <thead>
+      <tr style="border: 1px solid #4a4a4a; border-collapse: collapse;">
+        <th style="text-align: left; border: 1px solid #4a4a4a; border-collapse: collapse; padding: 6px;">
+          Technology
+        </th>
+        <th style="text-align: center; border: 1px solid #4a4a4a; border-collapse: collapse; padding: 6px;">
+          Loose Count
+        </th>
+        <th style="text-align: center; border: 1px solid #4a4a4a; border-collapse: collapse; padding: 6px;">
+          Packed Boxes
+        </th>
+        <th>Total Available</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @inventory.primary_counts.each do |c| %>
+        <tr style="border: 1px solid #4a4a4a; border-collapse: collapse; padding: 6px;">
+          <td style="border: 1px solid #4a4a4a; border-collapse: collapse; padding: 6px;">
+            <%= c.component.name %>
+          </td>
+          <td style="text-align: center; border: 1px solid #4a4a4a; border-collapse: collapse; padding: 6px;">
+            <%= number_with_delimiter(c.loose_count, delimiter: ',') %>
+          </td>
+          <td style="text-align: center; border: 1px solid #4a4a4a; border-collapse: collapse; padding: 6px;">
+            <%= number_with_delimiter(c.unopened_boxes_count, delimiter: ',') %>
+          </td>
+          <td style="text-align: center; border: 1px solid #4a4a4a; border-collapse: collapse; padding: 6px;">
+            <%= number_with_delimiter(c.available, delimiter: ',') %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
+<div class="whole" style="position: relative; min-height: 1px; padding-left: 15px; padding-right: 15px; float: left; width: 100%;">
   <p><strong>Reorder Items:</strong></p>
   <table style="border: 1px solid #4a4a4a; border-collapse: collapse;">
     <thead>
@@ -44,39 +81,6 @@
           </td>
           <td style="border: 1px solid #4a4a4a; border-collapse: collapse; padding: 6px;">
             <%= number_with_delimiter(i.item.weeks_to_deliver, delimiter: ',') %>
-          </td>
-        </tr>
-      <% end %>
-    </tbody>
-  </table>
-</div>
-<div class="whole" style="position: relative; min-height: 1px; padding-left: 15px; padding-right: 15px; float: left; width: 100%;">
-  <p><strong>Completed Technologies:</strong></p>
-  <table style="border: 1px solid #4a4a4a; border-collapse: collapse;">
-    <thead>
-      <tr style="border: 1px solid #4a4a4a; border-collapse: collapse;">
-        <th style="text-align: left; border: 1px solid #4a4a4a; border-collapse: collapse; padding: 6px;">
-          Technology
-        </th>
-        <th style="text-align: center; border: 1px solid #4a4a4a; border-collapse: collapse; padding: 6px;">
-          Loose Count
-        </th>
-        <th style="text-align: center; border: 1px solid #4a4a4a; border-collapse: collapse; padding: 6px;">
-          Packed Boxes
-        </th>
-      </tr>
-    </thead>
-    <tbody>
-      <% @inventory.primary_counts.each do |c| %>
-        <tr style="border: 1px solid #4a4a4a; border-collapse: collapse; padding: 6px;">
-          <td style="border: 1px solid #4a4a4a; border-collapse: collapse; padding: 6px;">
-            <%= c.component.name %>
-          </td>
-          <td style="text-align: center; border: 1px solid #4a4a4a; border-collapse: collapse; padding: 6px;">
-            <%= number_with_delimiter(c.loose_count, delimiter: ',') %>
-          </td>
-          <td style="text-align: center; border: 1px solid #4a4a4a; border-collapse: collapse; padding: 6px;">
-            <%= number_with_delimiter(c.unopened_boxes_count, delimiter: ',') %>
           </td>
         </tr>
       <% end %>
