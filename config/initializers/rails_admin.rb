@@ -2,6 +2,7 @@
 
 RailsAdmin.config do |config|
   config.main_app_name = ["20 Liters", "Admin"]
+  config.excluded_models = ['ActiveStorage::Blob', 'ActiveStorage::Attachment']
 
   ### Popular gems integration
 
