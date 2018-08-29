@@ -28,6 +28,10 @@ class Count < ApplicationRecord
     item.name
   end
 
+  def owner
+    item.technology.owner
+  end
+
   def type
     if part_id.present?
       "part"

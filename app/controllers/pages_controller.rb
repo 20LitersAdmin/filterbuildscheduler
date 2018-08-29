@@ -9,4 +9,7 @@ class PagesController < ApplicationController
     flash[:danger] = "That's not a real place."
     redirect_to root_path
   end
+
+  def report
+  end
 end

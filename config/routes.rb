@@ -13,6 +13,7 @@ Rails.application.routes.draw do
   get :waiver, controller: :application
 
   get 'info', to: 'pages#info', as: 'info'
+  get 'report', to: 'pages#report', as: 'report'
 
   resources :events do
     collection do
