@@ -20,7 +20,6 @@ RSpec.describe "To create an event report", type: :system do
       expect(page).to have_content event.title
       expect(page).to have_button "Submit"
 
-      expect(page).not_to have_content "Report"
       expect(page).not_to have_field "event_technologies_built"
       expect(page).not_to have_field "event_boxes_packed"
       expect(page).not_to have_field "event_attendance"
