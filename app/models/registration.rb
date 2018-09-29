@@ -24,4 +24,12 @@ class Registration < ApplicationRecord
     user.signed_waiver_on?
   end
 
+  def total_registered
+    guests_registered + 1
+  end
+
+  def total_attended
+    return 0 unless attended?
+    guests_attended + 1
+  end
 end
