@@ -267,4 +267,11 @@ class Event < ApplicationRecord
     # this allows for a form field
   end
 
+  def length
+    (end_time - start_time) / 1.hour
+  end
+
+  def volunteer_hours
+    length * attendance
+  end
 end
