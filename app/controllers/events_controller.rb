@@ -171,7 +171,7 @@ class EventsController < ApplicationController
     # There are registrations associated with the event
     # The event generated some loose_count or unopened_boxes_count result
     # The "Submit Report & Email Results" button was pushed (as opposed to the "Submit Report" button)
-    if @event.emails_sent == false && @event.attendance > 0 && @event.registrations.count > 0 && @more_than_zero > 0 && params[:send_report].present?
+    if @event.emails_sent == false && @event.attendance.positive? && @event.registrations.count.positive? && @more_than_zero.positive? && params[:send_report].present?
       @send_results_emails = true
       @event.emails_sent = true
       @results_emails_sent = "Attendees notified of results."
