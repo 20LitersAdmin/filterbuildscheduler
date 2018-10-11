@@ -21,6 +21,10 @@
   - List of high-participating builders (3+ builds, not leader)
   - List of leaders && participating
 
+10. /events/lead -- SHOW TECHNOLOGY
+
+11. [20 Liters] Upcoming Filter Build Reminder - fires SOO many times. Need event.reminder_sent boolean
+
 ## HMMM
 1. Inventories created from events aren't subtracting parts from components (parts used to build the technologies_built or boxes_packed)
   - Create a file similar to extrapolate.rb to handle this

@@ -1,6 +1,7 @@
 <tr>
   <td><%= link_to "Lead", event_path(table), class: "btn yellow" %></td>
   <td><%= table.title %></td>
+  <td><%= table.technology.name %></td>
   <td><%= table.format_date_only %></td>
   <td><%= table.format_time_only %></td>
   <td><%= table.total_registered %></td>
