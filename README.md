@@ -1,6 +1,8 @@
 # README
 
 ## Things to do
+11. [20 Liters] Upcoming Filter Build Reminder - fires SOO many times. Need event.reminder_sent boolean
+
 1. inv/status - not calculating based on parts_per_technology or 
 
 3. JQuery registration form validations (use global .has-errors css, see user#edit for good example)
@@ -22,8 +24,6 @@
   - List of leaders && participating
 
 10. /events/lead -- SHOW TECHNOLOGY
-
-11. [20 Liters] Upcoming Filter Build Reminder - fires SOO many times. Need event.reminder_sent boolean
 
 ## HMMM
 1. Inventories created from events aren't subtracting parts from components (parts used to build the technologies_built or boxes_packed)
