@@ -1,8 +1,6 @@
 # README
 
 ## Things to do
-11. [20 Liters] Upcoming Filter Build Reminder - fires SOO many times. Need event.reminder_sent boolean
-
 1. inv/status - not calculating based on parts_per_technology or 
 
 3. JQuery registration form validations (use global .has-errors css, see user#edit for good example)

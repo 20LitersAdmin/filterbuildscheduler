@@ -5,8 +5,7 @@ class RegistrationReminderJob < ApplicationJob
 
   def perform(*args)
     puts "-+ Creating registration reminders"
-    # events = Event.where(reminder_sent_at: nil).where('start_time > ? and start_time < ?', Time.zone.now + 1.days, Time.zone.now + 2.days)
-    events = Event.where(id: [49,50]).where(reminder_sent_at: nil)
+    events = Event.where(reminder_sent_at: nil).where('start_time > ? and start_time < ?', Time.zone.now + 1.days, Time.zone.now + 2.days)
     
     events.each do |e|
       EventMailer.remind_admins(e).deliver_later
