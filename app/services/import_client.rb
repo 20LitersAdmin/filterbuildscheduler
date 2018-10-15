@@ -12,8 +12,10 @@ class ImportClient
   # in Rails Console (be sure file is saved and pristine before loading):
   # require "import_client"
   # users = eval(File.read(Rails.root.to_s + '/app/services/import_data.txt'))
+  # ic = ImportClient.new
+  # ic.dummy # checks env && base_uri
   # users.each do |user|
-  #   ImportClient.new.import_user_w_note(user[:fname], user[:lname], user[:email])
+  #   ic.import_user_w_note(user[:fname], user[:lname], user[:email], user[:subject], user[:msg])
   # end
 
   DUMMY = 'test' # change this to 'live' when ready.
@@ -36,17 +38,26 @@ class ImportClient
   end
 
   # https://developer.kindful.com/reference#contact_with_note
-  def import_user_w_note(fname, lname, email)
+  def import_user_w_note(fname, lname, email, subject, msg)
+    case msg
+    when 1
+      message = MSG1
+    when 2
+      message = MSG2
+    when 3
+      message = MSG3
+    end
+
     body_args = {
       fname: fname,
       lname: lname,
       email: email,
-      note_time: Time.new(2018, 9, 28, 13, 30, 00).utc,
-      note_subject: 'MOU Preview',
+      note_time: Time.new(2018, 10, 04, 9, 30, 00).utc,
+      note_subject: subject,
       note_type: 'Received Email',
-      message_body: 'Every three years, we prepare a plan for the Water Project in Rwanda alongside our implementing partner, World Relief. We just finalized a new plan to guide our work through September 2021 – including expansion into a new sector! As one of our most consistent supporters, we wanted to share the details of this next three-year plan with you first. Please take a minute to check out our one-page summary. Thanks for making this work possible!',
-      note_sender_name: 'Chip',
-      note_sender_email: 'chip@20liters.org',
+      message_body: message,
+      note_sender_name: 'Amanda',
+      note_sender_email: 'amanda@20liters.org',
       campaign: 'Contributions',
       fund: 'Contributions 40100'
     }
@@ -66,8 +77,8 @@ class ImportClient
       note_body: '',
       note_sender_name: '',
       note_sender_email: '',
-      campaign: 'Social Fundraisers',
-      fund: 'Special Events 40400',
+      campaign: 'Contributions',
+      fund: 'Contributions 40100',
       groups: ['Group name', 'Another group']
     }
     response = self.class.post('/imports', { headers: headers, body: contact_w_note_and_groups(**body_args).to_json })
@@ -166,5 +177,9 @@ class ImportClient
       "Content-Type": 'application/json',
       "Authorization": "Token token=\"#{token}\""
     }
+  end
+
+  def dummy
+    puts DUMMY + "; base_uri: " + self.class.base_uri
   end
 end
