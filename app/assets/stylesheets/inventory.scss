@@ -177,3 +177,13 @@
   }
 }
 
+#inventory_paper {
+  @media print {
+    thead { display: table-header-group; }
+  }
+
+  th.small {
+    font-size: .75em;
+  }
+}
+
