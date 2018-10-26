@@ -41,7 +41,11 @@ class InventoryPolicy
   end
 
   def status?
-    user&.admin_or_leader?
+    user&.admin_or_leader? || user&.does_inventory?
+  end
+
+  def paper?
+    user&.admin_or_leader? || user&.does_inventory?
   end
 end
 
