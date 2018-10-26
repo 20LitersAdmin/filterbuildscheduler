@@ -40,6 +40,7 @@ Rails.application.routes.draw do
       get 'order'
       get 'status'
     end
+    get 'paper', on: :member
     resources :counts
   end
 

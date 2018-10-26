@@ -1,0 +1,22 @@
+<div class="container" id="inventory_paper">
+  <div class="col-xs-12">
+    <table class="table table-condensed">
+      <thead>
+        <tr>
+          <th colspan='6' style='text-align: center;'><%= @inventory.name %></th>
+        </tr>
+        <tr>
+          <th>Item</th>
+          <th>Tech</th>
+          <th>Loose Count</th>
+          <th class='small'>Old Loose</th>
+          <th>Box Count</th>
+          <th class='small'>Old Box</th>
+        </tr>
+      </thead>
+      <tbody>
+        <%= render partial: 'print_tbl', collection: @counts %>
+      </tbody>
+    </table>
+  </div>
+</div>
