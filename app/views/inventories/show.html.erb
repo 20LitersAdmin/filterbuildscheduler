@@ -1,9 +1,10 @@
 <div class="container" id="inventory_show">
   <%= render partial: 'shared/inventory_functions' %>
-  <div class="col-xs-8">
+  <div class="col-xs-6">
     <h2><%= @inventory.name %></h2>
   </div>
-  <div class="col-xs-4 match-h2">
+  <div class="col-xs-6 match-h2">
+    <%= link_to 'Paper Version', paper_inventory_path(@inventory), class: 'btn blue', target: '_blank'  %>
     <% if @inventory.has_items_below_minimum? %>
       <%= link_to "Order Needed!", order_inventories_path(), class: "btn red" %>
     <% end %>

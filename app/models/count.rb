@@ -50,6 +50,14 @@ class Count < ApplicationRecord
     end
   end
 
+  def tech_names_short
+    if item.technologies.map { |t| t.name }.empty?
+      "n/a"
+    else
+      item.technologies.map { |t| t.name.gsub(' Filter', '').gsub(' for Bucket', '') }.join(", ")
+    end
+  end
+
   def supplier
     item.supplier
   end
@@ -105,6 +113,10 @@ class Count < ApplicationRecord
     else
       0
     end
+  end
+
+  def group_by_tech
+     item.technologies.map(&:id).sort.first || 999
   end
 
   def reorder?
