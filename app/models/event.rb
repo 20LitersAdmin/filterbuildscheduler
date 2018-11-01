@@ -23,7 +23,7 @@ class Event < ApplicationRecord
   scope :within_days, -> (num) { where('start_time <= ?', Time.now + num.days) }
   scope :past, -> { where('end_time <= ?', Time.now).order(start_time: :desc) }
   scope :needs_report, -> { where('start_time <= ?', Time.now).where(attendance: 0).order(start_time: :desc) }
-  scope :closed, -> { where('start_time <= ?', Time.now).where.not(attendance: 0).order(start_time: :desc) }
+  scope :closed, -> { where('start_time <= ?', Time.now).order(start_time: :desc) }
 
 
   # Not working as expected
