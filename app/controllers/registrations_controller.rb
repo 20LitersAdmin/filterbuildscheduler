@@ -110,8 +110,8 @@ class RegistrationsController < ApplicationController
 
     if @registration.event.registrations_filled?
       guests = registration_params[:guests_registered].present? ? registration_params[:guests_registered].to_i : 0
-      new_max = @event.total_registered + guests + 1
-      @event.update(max_registrations: new_max)
+      new_max = @registration.event.total_registered + guests + 1
+      @registration.event.update(max_registrations: new_max)
     end
 
     if @registration.errors.any?
