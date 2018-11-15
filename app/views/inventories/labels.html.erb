@@ -1,0 +1,39 @@
+<div id="inventory_labels">
+  <table id="avery8163">
+    <thead>
+      <tr>
+        <td style='width: .155in;'></td>
+        <td style='width: 4in;'></td>
+        <td style='width: .19in;'></td>
+        <td style='width: 4in;'></td>
+        <td style='width: .155in;'></td>
+      </tr>
+    </thead>
+    <tfoot>
+      <tr>
+        <td colspan="5"></td>
+      </tr>
+    </tfoot>
+    <tbody>
+      <% n = 0 %>
+      <% @loop.times do %>
+        <tr>
+          <td></td>
+          <td>
+            <%= render partial: 'label', locals: { count: @counts[n] } %>
+            <% n += 1 %>
+          </td>
+          <td></td>
+          <td>
+            <% if @counts[n].present? %>
+              <%= render partial: 'label', locals: { count: @counts[n] } %>
+            <% end %>
+            <% n += 1 %>
+          </td>
+          <td></td>
+        </tr>
+        
+      <% end %>
+    </tbody>
+  </table>
+</div>

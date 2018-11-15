@@ -47,5 +47,9 @@ class InventoryPolicy
   def paper?
     user&.admin_or_leader? || user&.does_inventory?
   end
+
+  def labels?
+    user&.admin_or_leader? || user&.does_inventory?
+  end
 end
 
