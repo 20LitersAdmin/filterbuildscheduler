@@ -1,0 +1,47 @@
+@import 'variables';
+
+#inventory_labels {
+  width: 8.5in;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+table#avery8163 {
+  table-layout: fixed;
+  width: 8.5in;
+
+  thead, tfoot {
+    td {
+      height: .5in;
+    }
+  }
+}
+
+#avery8163 > tbody > tr > td {
+  height: 2in;
+}
+
+.item-table {
+  text-align: center;
+
+  .img, p {
+    padding: 6px;
+    overflow: hidden;
+  }
+
+  .uid {
+    width: 84px;
+  }
+}
+
+@media print {
+  table#avery8163 {
+    thead { 
+      display: table-header-group;
+    }
+
+    tfoot { 
+      display: table-footer-group;
+    }
+  }
+}
