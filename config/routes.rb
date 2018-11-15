@@ -39,12 +39,13 @@ Rails.application.routes.draw do
     collection do
       get 'order'
       get 'status'
+      get 'labels'
     end
     get 'paper', on: :member
-    resources :counts
+    resources :counts do
+      get 'label', on: :member
+    end
   end
-
-  # mount StripeEvent::Engine, at: '/stripe-events'
 
   post 'stripe-webhook', to: 'webhooks#receive', as: 'stripe_webhook'
 

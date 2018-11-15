@@ -1,0 +1,25 @@
+<table class="item-table table-bordered">
+  <tr>
+    <td class="img" rowspan="3" style='width: 33%;'>
+      <img src="http://placekitten.com/140/140">
+    </td>
+    <td colspan="2" style='width: 66%;'>
+      <p class="name"><%= count.item.name %></p>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <p class="uid">UID: <%= count.item.uid %></p>
+    </td>
+    <td>
+      <p class="tech">Tech: <%= count.tech_names %></p>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2">
+      <% unless count.item.only_loose? %>
+        <p class="tech">Qty per box: <%= number_with_delimiter(count.item.quantity_per_box) %></p>
+      <% end %>
+    </td>
+  </tr>
+</table>

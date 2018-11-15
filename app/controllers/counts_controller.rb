@@ -176,9 +176,12 @@ class CountsController < ApplicationController
       @count.update_attributes(modified_params)
       redirect_to edit_inventory_path(@inventory)
     end
-
-
   end
+
+  def label
+    # print full sheet of lables for this one item
+  end
+
 
   def destroy
     authorize @count = Count.find(params[:id])

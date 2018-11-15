@@ -14,6 +14,10 @@ class Component < ApplicationRecord
 
   has_many :counts, dependent: :destroy
 
+  def uid
+    "C" + id.to_s.rjust(3, "0")
+  end
+
   def technology
     technologies.first
   end

@@ -17,6 +17,10 @@ class Material < ApplicationRecord
 
   monetize :price_cents, :additional_cost_cents, :shipping_cost_cents, :wire_transfer_cost_cents, allow_nil: true, numericality: { greater_than_or_equal_to: 0 }
 
+  def uid
+    "M" + id.to_s.rjust(3, "0")
+  end
+
   def reorder_total_cost
     (min_order * price ) + shipping_cost + wire_transfer_cost + additional_cost
   end
