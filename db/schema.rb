@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_10_15_003645) do
+ActiveRecord::Schema.define(version: 2018_11_29_202104) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -19,7 +19,6 @@ ActiveRecord::Schema.define(version: 2018_10_15_003645) do
     t.string "name", null: false
     t.integer "sample_size"
     t.float "sample_weight"
-    t.string "common_id"
     t.boolean "completed_tech", default: false
     t.datetime "deleted_at"
     t.datetime "created_at", null: false
@@ -28,6 +27,7 @@ ActiveRecord::Schema.define(version: 2018_10_15_003645) do
     t.float "tare_weight", default: 0.0
     t.text "comments"
     t.boolean "only_loose", default: false
+    t.text "description"
     t.index ["deleted_at"], name: "index_components_on_deleted_at"
   end
 
@@ -190,6 +190,7 @@ ActiveRecord::Schema.define(version: 2018_10_15_003645) do
     t.integer "wire_transfer_cost_cents", default: 0, null: false
     t.string "wire_transfer_cost_currency", default: "USD", null: false
     t.boolean "only_loose", default: false
+    t.text "description"
     t.index ["deleted_at"], name: "index_materials_on_deleted_at"
     t.index ["supplier_id"], name: "index_materials_on_supplier_id"
   end
@@ -219,6 +220,7 @@ ActiveRecord::Schema.define(version: 2018_10_15_003645) do
     t.text "comments"
     t.bigint "supplier_id"
     t.boolean "only_loose", default: false
+    t.text "description"
     t.index ["deleted_at"], name: "index_parts_on_deleted_at"
     t.index ["supplier_id"], name: "index_parts_on_supplier_id"
   end
