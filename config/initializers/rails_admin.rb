@@ -160,6 +160,9 @@ RailsAdmin.config do |config|
     configure :deleted_at do
       show
     end
+    configure :description do
+      label 'Label Description'
+    end
 
     exclude_fields :extrapolate_technology_components, :extrapolate_component_parts, :counts
   end
@@ -181,6 +184,9 @@ RailsAdmin.config do |config|
     end
     configure :deleted_at do
       show
+    end
+    configure :description do
+      label 'Label Description'
     end
 
     exclude_fields :extrapolate_technology_parts, :extrapolate_component_parts, :extrapolate_material_parts, :counts
@@ -204,6 +210,9 @@ RailsAdmin.config do |config|
     end
     configure :deleted_at do
       show
+    end
+    configure :description do
+      label 'Label Description'
     end
 
     exclude_fields :extrapolate_material_parts, :counts
