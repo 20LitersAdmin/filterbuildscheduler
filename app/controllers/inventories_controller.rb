@@ -163,7 +163,6 @@ class InventoriesController < ApplicationController
     @print_navbar = true
     authorize @inventory = Inventory.latest
     @counts = @inventory.counts.sort_by { |c| [c.group_by_tech, c.name] }
-    @loop = (@counts.count/2.to_f).ceil 
   end
 
   def destroy
