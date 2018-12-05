@@ -16,7 +16,8 @@
   .right-border {
     border-right: 2px solid gray;
     text-align: right;
-    height: 0.25in;
+    padding-right: 6px;
+    margin-right: -2px;
   }
 }
 
@@ -47,39 +48,45 @@ table#avery8163 {
       height: 2in;
     }
 
+    .right-border {
+      height: 0.22in;
+    }
+
     .item-label {
       border: 1px solid gray;
+      margin: -1px;
       table-layout: fixed;
       width: 100%;
       text-align: center;
 
       .td-img {
         width: 50%;
+        height: 2in;
+        max-height: 2in;
         overflow: hidden;
         img {
           width: 1.75in;
           max-width: 1.75in;
+          max-height: 1.75in;
         }
       }
 
       p {
-        padding: 3px;
-        margin: 0 0 0 6px;
-
-        &.box {
-          font-weight: bold;
-        }
+        padding: 0px;
+        margin: 0 0 0 0;
       }
 
       .td-name {
         width: 50%;
         height: 0.75in;
+        max-height: 0.5in;
         font-weight: bold;
-        font-size: 1.125em;
+        font-size: 1.25em;
       }
 
       .td-desc {
         height: 0.5in;
+        max-height: 0.5in;
       }
     }
   }
@@ -93,6 +100,10 @@ table#avery8163 {
 
     tfoot { 
       display: table-footer-group;
+    }
+
+    tbody .item-label {
+      border: 0px solid white;
     }
   }
 }
