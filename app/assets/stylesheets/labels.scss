@@ -4,33 +4,84 @@
   width: 8.5in;
   margin-right: auto;
   margin-left: auto;
+
+  .border { 
+    border: 1px solid gray;
+  }
+
+  .bold {
+    font-weight: bold;
+  }
+
+  .right-border {
+    border-right: 2px solid gray;
+    text-align: right;
+    height: 0.25in;
+  }
 }
 
 table#avery8163 {
   table-layout: fixed;
-  width: 8.5in;
+  width: 100%;
 
   thead, tfoot {
     td {
       height: .5in;
     }
+
+    .spacer-gutter {
+      width: 0.155in;
+    }
+
+    .spacer-center {
+      width: 0.19in;
+    }
+
+    .spacer-label {
+      width: 4in;
+    }
   }
-}
 
-#avery8163 > tbody > tr > td {
-  height: 2in;
-}
+  tbody {
+    .label-row {
+      height: 2in;
+    }
 
-.item-table {
-  text-align: center;
+    .item-label {
+      border: 1px solid gray;
+      table-layout: fixed;
+      width: 100%;
+      text-align: center;
 
-  .img, p {
-    padding: 6px;
-    overflow: hidden;
-  }
+      .td-img {
+        width: 50%;
+        overflow: hidden;
+        img {
+          width: 1.75in;
+          max-width: 1.75in;
+        }
+      }
 
-  .uid {
-    width: 84px;
+      p {
+        padding: 3px;
+        margin: 0 0 0 6px;
+
+        &.box {
+          font-weight: bold;
+        }
+      }
+
+      .td-name {
+        width: 50%;
+        height: 0.75in;
+        font-weight: bold;
+        font-size: 1.125em;
+      }
+
+      .td-desc {
+        height: 0.5in;
+      }
+    }
   }
 }
 
@@ -45,3 +96,7 @@ table#avery8163 {
     }
   }
 }
+
+// table td {
+//   border: 1px solid gray;
+// }

@@ -25,6 +25,15 @@ class Part < ApplicationRecord
     "P" + id.to_s.rjust(3, "0")
   end
 
+  def picture
+    begin
+      ActionController::Base.helpers.asset_path(uid + '.jpg')
+
+    rescue => error
+      'http://placekitten.com/140/140'
+    end
+  end
+
   def reorder_total_cost
     (min_order * price ) + shipping_cost + wire_transfer_cost + additional_cost
   end

@@ -18,6 +18,15 @@ class Component < ApplicationRecord
     "C" + id.to_s.rjust(3, "0")
   end
 
+  def picture
+    begin
+      ActionController::Base.helpers.asset_path(uid + '.jpg')
+
+    rescue => error
+      'http://placekitten.com/140/140'
+    end
+  end
+
   def technology
     technologies.first
   end
