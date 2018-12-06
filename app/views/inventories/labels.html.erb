@@ -4,7 +4,7 @@
     <li>Print from Google Chrome</li>
     <li>Under "More Settings", set Margins to "None"</li>
     <li>There is no way to select a specific paper tray, so either remove all other paper from printer or open all other paper trays</li>
-    <li>Avery labels lay face-up in Operations Xerox 7120</li>
+    <li>Use Avery 8136 labels (4"x2", 10 per page), lay face-up in Operations Xerox 7120</li>
   </ul>
 </div>
 
@@ -29,12 +29,12 @@
         <tr class="label-row">
           <td></td> <!-- Left gutter -->
           <td>
-            <%= render partial: 'label', locals: { count: count1 } %>
+            <%= render partial: 'shared/label', locals: { count: count1 } %>
           </td>
           <td></td> <!-- Middle gutter -->
           <td>
             <% if count2.present? %>
-              <%= render partial: 'label', locals: { count: count2 } %>
+              <%= render partial: 'shared/label', locals: { count: count2 } %>
             <% end %>
           </td>
           <td></td> <!-- Right gutter -->
