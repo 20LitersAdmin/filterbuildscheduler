@@ -6,6 +6,8 @@ class CountsController < ApplicationController
     authorize @count = Count.find(params[:id])
     @inventory = @count.inventory
 
+    @count.user_id = current_user.id
+
     case @inventory.type_for_params
     when "receiving"
       @context = "Add to inventory: Use positive numbers"
@@ -15,7 +17,7 @@ class CountsController < ApplicationController
       @expected_msg = "Current:"
     when "manual"
       @context = "Count inventory: Use positive numbers or 0"
-      @expected_msg = "Expected to be:"
+      @expected_msg = "Previous:"
     when "event"
       @context = "Adjust inventory: Use positive or negative numbers"
       @expected_msg = "Current:"
