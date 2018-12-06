@@ -1,0 +1,24 @@
+<div class="container" id="labels_chooser">
+  <table class="table table-striped datatable-paging" id="inventory_show_table">
+    <thead>
+      <tr>
+        <th data-priority="1">UID</th>
+        <th data-priority="1">Item</th>
+        <th data-priority="2">For Tech</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @counts.each do |count| %>
+        <tr>
+          <td><%= count.item.uid %></td>
+          <td><%= count.name %></td>
+          <td><%= count.tech_names_short %></td>
+          <td>
+            <%= link_to 'Print Labels', label_inventory_count_path(count.inventory, count), class: 'btn yellow', target: '_blank'  %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
