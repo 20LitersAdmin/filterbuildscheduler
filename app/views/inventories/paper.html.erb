@@ -1,21 +1,42 @@
 <div class="container" id="inventory_paper">
   <div class="col-xs-12">
-    <table class="table table-condensed">
+    <table id="inv_paper_tbl" class='table'>
+      <colgroup>
+        <col style="width: 50%;">
+        <col style="width: 20%">
+        <col style="width: 10%">
+        <col style="width: 20%">
+        <col style="width: 10%">
+      </colgroup>
       <thead>
         <tr>
-          <th colspan='6' style='text-align: center;'><%= @inventory.name %></th>
-        </tr>
-        <tr>
-          <th>Item</th>
-          <th>Tech</th>
-          <th>Loose Count</th>
-          <th class='small'>Old Loose</th>
-          <th>Box Count</th>
-          <th class='small'>Old Box</th>
+          <th style='text-align: center;' colspan="5"><%= @inventory.name %> Inventory</th>
         </tr>
       </thead>
       <tbody>
-        <%= render partial: 'print_tbl', collection: @counts %>
+        <% @counts.each do |count| %>
+          <tr>
+            <td class='label-cell'>
+              <%= render partial: 'shared/label', locals: { count: count } %>
+            </td>
+            <td class='write-in'>
+              <p>Loose:</p>
+            </td>
+            <td class='prev'>
+              <p>
+                Previous: <%= number_with_delimiter count.loose_count, delimiter: ',' %>
+              </p>
+            </td>
+            <td class='write-in'>
+              <p>Box:</p>
+            </td>
+            <td class='prev'>
+              <p>
+                Previous: <%= number_with_delimiter count.box_count, delimiter: ',' %>
+              </p>
+            </td>
+          </tr>
+        <% end %>
       </tbody>
     </table>
   </div>

@@ -182,8 +182,54 @@
     thead { display: table-header-group; }
   }
 
-  th.small {
-    font-size: .75em;
+  #inv_paper_tbl {
+    table-layout: fixed;
+
+    .prev, .write-in {
+      text-align: center;
+      padding: 0px;
+    }
+
+    .write-in {
+      border-left: 1px solid gray;
+      font-weight: bold;
+    }
+
+    p {
+      padding: 0px 2px;
+      margin: 0 0 0 0;
+      font-size: .8em;
+    }
   }
+
+  .item-label {
+    table-layout: fixed;
+
+    .td-img {
+      width: 150px;
+      img {
+        max-width: 90%;
+        max-height: 62px;
+      }
+    }
+
+    .td-name {
+      font-weight: bold;
+      font-size: 1.125em;
+
+      p {
+        padding-bottom: 6px !important;
+      }
+    }
+
+    .right-border {
+      border-right: 2px solid gray;
+      text-align: right;
+      padding-right: 4px;
+      margin-right: -2px;
+      width: 20px;
+      height: 15px;
+    }
+  }  
 }
 
