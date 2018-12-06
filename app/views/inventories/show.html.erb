@@ -18,8 +18,8 @@
     <% end %>
 
     <%= link_to "Back", inventories_path, class: "btn blue" %>
-    
   </div>
+
   <div class="col-xs-12 bar-above">
     <% if @inventory.type_for_params != "manual" %>
       <%= render partial: "diff" %>
@@ -27,6 +27,7 @@
       <%= render partial: "comp" %>
     <% end %>
   </div>
+
   <div class="col-xs-12 bar-above">
     <h3>Full inventory:</h3>
   </div>
@@ -35,6 +36,7 @@
       <thead>
         <tr>
           <th data-priority="1">Item</th>
+          <th data-priority="1">UID</th>
           <th data-priority="2">For Tech</th>
           <th class="center-align">Loose Count</th>
           <th class="center-align">Unopened Boxes</th>

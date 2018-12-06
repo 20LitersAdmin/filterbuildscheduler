@@ -6,7 +6,8 @@
   <%= link_to "New Inventory", new_inventory_path(type: "manual"), class: "btn yellow use-load-screen"  %>
   <%= link_to "Receive Supplies", new_inventory_path(type: "receiving"), class: "btn blue use-load-screen" %>
   <%= link_to "Ship Supplies", new_inventory_path(type: "shipping"), class: "btn blue use-load-screen" %>
-  <%= link_to "Print Labels", labels_inventories_path(), class: "btn yellow", target: "_blank" %>
+  <%= link_to "Print All Labels", labels_inventories_path(), class: "btn yellow", target: "_blank" %>
+  <%= link_to "Print Specific Label", labels_path(), class: "btn blue", target: '_blank' %>
   <% if @latest.has_items_below_minimum? %>
     <%= link_to "Supplies Needed!", order_inventories_path(), class: "btn red use-load-screen" %>
   <% end %>
