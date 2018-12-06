@@ -178,8 +178,14 @@ class CountsController < ApplicationController
     end
   end
 
+  def labels
+    # Choose which label to print
+    @counts = Inventory.latest.counts.sort_by { |c| [c.group_by_tech, c.item.uid] }
+  end
+
   def label
     # print full sheet of lables for this one item
+    @count = Count.find(params[:id])
   end
 
 

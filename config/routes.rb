@@ -14,6 +14,7 @@ Rails.application.routes.draw do
 
   get 'info', to: 'pages#info', as: 'info'
   get 'report', to: 'pages#report', as: 'report'
+  get 'labels', to: 'counts#labels', as: 'labels'
 
   resources :events do
     collection do
