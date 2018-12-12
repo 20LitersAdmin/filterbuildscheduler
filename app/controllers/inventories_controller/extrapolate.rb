@@ -20,5 +20,4 @@ class InventoriesController
       end
     end
   end
-
 end

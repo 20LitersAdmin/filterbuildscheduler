@@ -2,6 +2,7 @@
 
 ## Things to do
 1. inv/status - not calculating based on parts_per_technology or 
+2. inv#receive_supplies is not good, math is bad, not showing "counted" items
 
 3. JQuery registration form validations (use global .has-errors css, see user#edit for good example)
 
