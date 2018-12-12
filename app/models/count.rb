@@ -58,6 +58,16 @@ class Count < ApplicationRecord
     end
   end
 
+  def tech_ids
+    ids = item.technologies.pluck(:id)
+
+    if ids.empty?
+      'n/a'
+    else
+      ids.join(',')
+    end
+  end
+
   def supplier
     item.supplier
   end
@@ -71,32 +81,40 @@ class Count < ApplicationRecord
   end
 
   def diff_from_previous(field)
-    # field == "loose" || "box"
-    prev_inv = Inventory.where("date < ?", inventory.date).order(date: :desc).first
-
-    if prev_inv.present?
-      case type
-      when "part"
-        prev_item = prev_inv.counts.where(part: part.id).first
-      when "material"
-        prev_item = prev_inv.counts.where(material: material.id).first
-      when "component"
-        prev_item = prev_inv.counts.where(component: component.id).first
-      end
-    end
-
-    old_loose = prev_item.present? ? prev_item.loose_count : 0
-    old_box   = prev_item.present? ? prev_item.unopened_boxes_count : 0
-
     if field == "loose"
-      val = loose_count - old_loose
+      loose_count - previous_loose
     elsif field == "box"
-      val = unopened_boxes_count - old_box
+      unopened_boxes_count - previous_box
     else
-      val = 0
+      0
     end
+  end
 
-    return val
+  def previous_inventory
+    Inventory.where("date < ?", inventory.date).order(date: :desc).first
+  end
+
+  def previous_count
+    prev_inv = previous_inventory
+
+    return nil unless prev_inv.present?
+      
+    case type
+    when "part"
+      prev_inv.counts.where(part: part.id).first
+    when "material"
+      prev_inv.counts.where(material: material.id).first
+    when "component"
+      prev_inv.counts.where(component: component.id).first
+    end
+  end
+
+  def previous_loose
+    previous_count.present? ? previous_count.loose_count : 0
+  end
+
+  def previous_box
+    previous_count.present? ? previous_count.unopened_boxes_count : 0
   end
 
   def total

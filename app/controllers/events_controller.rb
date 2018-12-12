@@ -101,7 +101,7 @@ class EventsController < ApplicationController
     end
 
     # Condition: they're not both 0
-    @more_than_zero = @event.technologies_built + @event.boxes_packed
+    @more_than_zero = (@event.technologies_built + @event.boxes_packed) > 0
 
     # Condition: they weren't zero, but now they are:
     @changed_to_zero = false
@@ -113,10 +113,9 @@ class EventsController < ApplicationController
     end
 
     # combine conditions
-    if @positive_numbers && ( @more_than_zero > 0 || @changed_to_zero ) && @event.technology.primary_component.present? # ESCAPE CLAUSE: @event.technology has a primary_component
+    if @positive_numbers && ( @more_than_zero || @changed_to_zero ) && @event.technology.primary_component.present? # ESCAPE CLAUSE: @event.technology has a primary_component
       @inventory = Inventory.where(event_id: @event.id).first_or_initialize
-      @inventory.update(date: Date.today, completed_at: Time.now)
-
+      
       if @inventory.counts.count == 0
         InventoriesController::CountCreate.new(@inventory)
       end
@@ -140,13 +139,14 @@ class EventsController < ApplicationController
 
       # record the results of the event in the inventory
       CountPopulate.new(@loose, @box, @event, @inventory, current_user.id)
+      
+      # subtract the sub-components and parts related to the event's technology
+      SubtractSubsets.new(@loose, @box, @event, @inventory)
+
       # extrapolate out the full inventory given the new results
       InventoriesController::Extrapolate.new(@inventory)
 
-      # FUTURE FEATURE
-      # Inventories created from events should subtract parts from components (the parts used to build the technologies_built or boxes_packed)
-      # Subtract.new(@inventory, @loose, @box)
-
+      @inventory.update(date: Date.today, completed_at: Time.now)
       @inventory_created = "Inventory created."
     end
 

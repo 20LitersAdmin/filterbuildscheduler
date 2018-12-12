@@ -1,7 +1,7 @@
 <div class="col-md-3 col-sm-4 count-parent" id="<%= 'count_' + count.id.to_s %>">
   <div class="count-div">
     <p class="count-title"><%= count.name %></p>
-    <p class="count-tech"><strong>For:</strong> <%= count.tech_names %></p>
+    <p class="count-tech"><strong>For:</strong> <%= count.tech_names_short %></p>
 
     <% if count.user_id == nil %>
       <% if count.partial_box %>
@@ -19,9 +19,9 @@
     <% end %>
   </div>
   <div class="count-filters">
-    <p class="counted" title="<%= if count.user_id != nil then 'true' else 'false' end %>"></p>
-    <p class="partial" title="<%= if count.partial_box || count.partial_loose then 'true' else 'false' end %>"></p>
-    <p class="techs" title="<%= count.item.technologies.map { |t| t.id }.to_s.gsub('[','').gsub(']','').gsub(' ','')  %>"></p>
+    <p class="counted" title="<%= count.user_id.present? %>"></p>
+    <p class="partial" title="<%= (count.partial_box || count.partial_loose) %>"></p>
+    <p class="techs" title="<%= count.tech_ids %>"></p>
   </div>
 </div>
 
