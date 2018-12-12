@@ -1,8 +1,26 @@
 # README
 
 ## Things to do
-1. inv/status - not calculating based on parts_per_technology or 
-2. inv#receive_supplies is not good, math is bad, not showing "counted" items
+1. I re-built Inventory submission:
+  * Test a manual inventory
+  * Test a receiving inventory
+  * Test a shipping inventory
+  * Test an event inventory
+
+2. I added / changed methods to Count#
+  * #diff_from_previous(field)
+  * #previous_inventory
+  * #previous_count
+  * #previous_loose
+  * #previous_box
+
+2. I created EventsController::SubtractSubsets and should write tests for it
+  * Test the class (as a model)
+  * Write a system test for event-based inventories
+  ** The inventory gets counts (EventsController::CountPopulate)
+  ** The inventory gets the results added to the apropriate counts (InventoriesController::CountUpdate)
+  ** The inventory gets subsets of components subtracted (EventsController::SubtractSubsets)
+  ** The inventory gets extrapolations (InventoriesController::Extrapolate)
 
 3. JQuery registration form validations (use global .has-errors css, see user#edit for good example)
 
