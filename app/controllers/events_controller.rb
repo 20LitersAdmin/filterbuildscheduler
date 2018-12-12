@@ -114,7 +114,10 @@ class EventsController < ApplicationController
 
     # combine conditions
     if @positive_numbers && ( @more_than_zero || @changed_to_zero ) && @event.technology.primary_component.present? # ESCAPE CLAUSE: @event.technology has a primary_component
-      @inventory = Inventory.where(event_id: @event.id).first_or_initialize
+      @inventory = Inventory.where(event_id: @event.id).first_or_create
+
+      @inventory.update(date: Date.today, completed_at: Time.now)
+      @inventory_created = "Inventory created."
       
       if @inventory.counts.count == 0
         InventoriesController::CountCreate.new(@inventory)
@@ -145,9 +148,6 @@ class EventsController < ApplicationController
 
       # extrapolate out the full inventory given the new results
       InventoriesController::Extrapolate.new(@inventory)
-
-      @inventory.update(date: Date.today, completed_at: Time.now)
-      @inventory_created = "Inventory created."
     end
 
     
@@ -171,7 +171,7 @@ class EventsController < ApplicationController
     # There are registrations associated with the event
     # The event generated some loose_count or unopened_boxes_count result
     # The "Submit Report & Email Results" button was pushed (as opposed to the "Submit Report" button)
-    if @event.emails_sent == false && @event.attendance&.positive? && @event.registrations.count&.positive? && @more_than_zero&.positive? && params[:send_report].present?
+    if @event.emails_sent == false && @event.attendance&.positive? && @event.registrations.count&.positive? && @more_than_zero && params[:send_report].present?
       @send_results_emails = true
       @event.emails_sent = true
       @results_emails_sent = "Attendees notified of results."
