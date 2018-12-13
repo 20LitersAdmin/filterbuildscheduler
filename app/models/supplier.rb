@@ -11,6 +11,8 @@ class Supplier < ApplicationRecord
   validate :valid_url?
   validates :email, :poc_email, format: { with: /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\z/i }, allow_blank: true
 
+  scope :active, -> { where(deleted_at: nil) }
+
   def valid_url?
     # Allow nil
     if url.nil?
