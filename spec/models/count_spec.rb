@@ -3,28 +3,28 @@
 require 'rails_helper'
 
 RSpec.describe Count, type: :model do
-  let(:inventory) { create :inventory }
-  let(:count_part) { create :count_part, inventory: inventory }
+  let(:inventory)  { create :inventory }
+  let(:part)       { create :part }
+  let(:count_part) { create :count_part, part: part, inventory: inventory }
   let(:count_comp) { create :count_comp, inventory: inventory }
-  let(:count_mat) { create :count_mat, inventory: inventory }
+  let(:count_mat)  { create :count_mat, inventory: inventory }
 
   let(:technology) { create :technology }
-  let(:part) { create :part }
-  let(:tech_part) { create :tech_part, technology: technology, part: part }
+  let(:tech_part)  { create :tech_part, technology: technology, part: part }
 
   let(:count_part2) { create :count_part, part: part, inventory: inventory }
-  let(:part2) { create :part, quantity_per_box: 10 }
+  let(:part2)       { create :part, quantity_per_box: 10 }
 
-  let(:part_w_min) { create :part, minimum_on_hand: 300 }
+  let(:part_w_min)      { create :part, minimum_on_hand: 300 }
   let(:tech_part_w_min) { create :tech_part, technology: technology, part: part_w_min, parts_per_technology: 1 }
-  let(:count_part_low) { create :count_part, loose_count: 150, unopened_boxes_count: 1, part: part_w_min }
+  let(:count_part_low)  { create :count_part, loose_count: 150, unopened_boxes_count: 1, part: part_w_min }
   let(:count_part_high) { create :count_part, loose_count: 550, unopened_boxes_count: 12, part: part_w_min }
   
 
   describe "must be valid" do
-    let(:no_inv) { build :count_part, inventory_id: nil }
-    let(:no_loose) { build :count_part, loose_count: nil, inventory: inventory }
-    let(:no_box) { build :count_part, unopened_boxes_count: nil, inventory: inventory }
+    let(:no_inv)    { build :count_part, inventory_id: nil }
+    let(:no_loose)  { build :count_part, loose_count: nil, inventory: inventory }
+    let(:no_box)    { build :count_part, unopened_boxes_count: nil, inventory: inventory }
     let(:no_extrap) { build :count_part, extrapolated_count: nil, inventory: inventory }
 
     it "in order to save" do
@@ -106,6 +106,44 @@ RSpec.describe Count, type: :model do
 
       expect(count_part2.diff_from_previous("loose")).to eq(5)
       expect(count_part2.diff_from_previous("box")).to eq(4)
+    end
+  end
+
+  context 'inventory-related specs:' do
+    let(:inventory_way_prev) { create :inventory, date: Date.today - 20.days }
+    let(:inventory_prev)     { create :inventory, date: Date.today - 2.days }
+    let(:count_part_prev)    { create :count_part, part: part, inventory: inventory_prev }
+    
+    describe '#previous_inventory' do
+      it 'returns the last inventory where the date is before the current inventory' do
+        inventory_prev
+
+        expect(count_part.previous_inventory).to eq inventory_prev
+      end
+    end
+
+    describe '#previous_count' do
+      it 'returns the same count from the previous inventory' do
+        count_part_prev
+
+        expect(count_part.previous_count).to eq count_part_prev
+      end
+    end
+
+    describe '#previous_loose' do
+      it 'returns the loose_count value from the previous_count' do
+        count_part_prev
+
+        expect(count_part.previous_loose).to eq count_part_prev.loose_count
+      end
+    end
+
+    describe '#previous_box' do
+      it 'returns the unopened_boxes_count value from the previous_count' do
+        count_part_prev
+        
+        expect(count_part.previous_box).to eq count_part_prev.unopened_boxes_count
+      end
     end
   end
 

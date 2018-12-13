@@ -25,9 +25,13 @@ function manageExpectations(focus) {
 
 (function() {
   $(document).on("change", "#count_unopened_boxes_count", function() {
-    manageExpectations("box");
+    if ($('div#counts_edit').attr('data-type') == 'manual') {
+      manageExpectations("box");
+    }
   });
   $(document).on("change", "#count_loose_count", function() {
-    manageExpectations("loose");
+    if ($('div#counts_edit').attr('data-type') == 'manual') {
+      manageExpectations("loose");
+    }
   });
 }());

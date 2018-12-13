@@ -101,7 +101,7 @@ class EventsController < ApplicationController
     end
 
     # Condition: they're not both 0
-    @more_than_zero = @event.technologies_built + @event.boxes_packed
+    @more_than_zero = (@event.technologies_built + @event.boxes_packed) > 0
 
     # Condition: they weren't zero, but now they are:
     @changed_to_zero = false
@@ -113,14 +113,8 @@ class EventsController < ApplicationController
     end
 
     # combine conditions
-    if @positive_numbers && ( @more_than_zero > 0 || @changed_to_zero ) && @event.technology.primary_component.present? # ESCAPE CLAUSE: @event.technology has a primary_component
-      @inventory = Inventory.where(event_id: @event.id).first_or_initialize
-      @inventory.update(date: Date.today, completed_at: Time.now)
-
-      if @inventory.counts.count == 0
-        InventoriesController::CountCreate.new(@inventory)
-      end
-
+    if @positive_numbers && ( @more_than_zero || @changed_to_zero ) && @event.technology.primary_component.present? # ESCAPE CLAUSE: @event.technology has a primary_component
+      
       # determine the values to use when populating the count
       if event_params[:technologies_built] == ''
         @loose = nil
@@ -138,16 +132,9 @@ class EventsController < ApplicationController
         @box = @event.boxes_packed
       end
 
-      # record the results of the event in the inventory
-      CountPopulate.new(@loose, @box, @event, @inventory, current_user.id)
-      # extrapolate out the full inventory given the new results
-      InventoriesController::Extrapolate.new(@inventory)
-
-      # FUTURE FEATURE
-      # Inventories created from events should subtract parts from components (the parts used to build the technologies_built or boxes_packed)
-      # Subtract.new(@inventory, @loose, @box)
-
+      @inventory = CreateInventory.new(@event, @loose, @box, current_user.id)
       @inventory_created = "Inventory created."
+      
     end
 
     
@@ -171,7 +158,7 @@ class EventsController < ApplicationController
     # There are registrations associated with the event
     # The event generated some loose_count or unopened_boxes_count result
     # The "Submit Report & Email Results" button was pushed (as opposed to the "Submit Report" button)
-    if @event.emails_sent == false && @event.attendance&.positive? && @event.registrations.count&.positive? && @more_than_zero&.positive? && params[:send_report].present?
+    if @event.emails_sent == false && @event.attendance&.positive? && @event.registrations.count&.positive? && @more_than_zero && params[:send_report].present?
       @send_results_emails = true
       @event.emails_sent = true
       @results_emails_sent = "Attendees notified of results."

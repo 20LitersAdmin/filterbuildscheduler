@@ -44,7 +44,7 @@ RSpec.describe "Managing counts:", type: :system, js: true do
       visit edit_inventory_count_path @inventory, @count
 
       expect(page).to have_content @count.name
-      expect(page).to have_content "Count inventory: Use positive numbers or 0"
+      expect(page).to have_content "Manual inventory"
     end
 
     it "can be visited by users who receive inventory" do
@@ -52,7 +52,7 @@ RSpec.describe "Managing counts:", type: :system, js: true do
       visit edit_inventory_count_path @inventory, @count
 
       expect(page).to have_content @count.name
-      expect(page).to have_content "Count inventory: Use positive numbers or 0"
+      expect(page).to have_content "Manual inventory"
     end
 
     it "can be visited by admins" do
@@ -60,7 +60,7 @@ RSpec.describe "Managing counts:", type: :system, js: true do
       visit edit_inventory_count_path @inventory, @count
 
       expect(page).to have_content @count.name
-      expect(page).to have_content "Count inventory: Use positive numbers or 0"
+      expect(page).to have_content "Manual inventory"
     end
   end
 
