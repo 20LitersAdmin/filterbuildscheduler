@@ -114,15 +114,7 @@ class EventsController < ApplicationController
 
     # combine conditions
     if @positive_numbers && ( @more_than_zero || @changed_to_zero ) && @event.technology.primary_component.present? # ESCAPE CLAUSE: @event.technology has a primary_component
-      @inventory = Inventory.where(event_id: @event.id).first_or_create
-
-      @inventory.update(date: Date.today, completed_at: Time.now)
-      @inventory_created = "Inventory created."
       
-      if @inventory.counts.count == 0
-        InventoriesController::CountCreate.new(@inventory)
-      end
-
       # determine the values to use when populating the count
       if event_params[:technologies_built] == ''
         @loose = nil
@@ -140,14 +132,9 @@ class EventsController < ApplicationController
         @box = @event.boxes_packed
       end
 
-      # record the results of the event in the inventory
-      CountPopulate.new(@loose, @box, @event, @inventory, current_user.id)
+      @inventory = CreateInventory.new(@event, @loose, @box, current_user.id)
+      @inventory_created = "Inventory created."
       
-      # subtract the sub-components and parts related to the event's technology
-      SubtractSubsets.new(@loose, @box, @event, @inventory)
-
-      # extrapolate out the full inventory given the new results
-      InventoriesController::Extrapolate.new(@inventory)
     end
 
     
