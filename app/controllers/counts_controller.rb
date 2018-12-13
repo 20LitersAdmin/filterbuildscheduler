@@ -85,7 +85,10 @@ class CountsController < ApplicationController
       render 'edit'
     else
       # and finally, set the values
-      @count.user_id = current_user.id
+      unless params[:partial_loose].present? || params[:partial_box].present?
+        @count.user_id = current_user.id
+      end
+
       if @inventory.manual?
         if count_params[:loose_count].present? && !@count.partial_box
           @count.loose_count = count_params[:loose_count].to_i
