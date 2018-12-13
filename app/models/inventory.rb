@@ -9,8 +9,24 @@ class Inventory < ApplicationRecord
 
   scope :latest, -> { order(date: :desc, created_at: :desc).first }
   scope :former, -> { order(date: :desc, created_at: :desc).drop(1) }
+  scope :active, -> { where(deleted_at: nil) }
 
   validates :date, presence: true
+
+  def self.last
+    if Inventory.latest.id == Inventory.all.to_a[-1].id
+      super
+    else
+      puts 'HEY! --> `.last` is not reliable if you want the "most recent inventory performed".', 'Did you mean to use `.latest?` (Yn)'
+      input = gets.strip
+
+      if input == 'Y' || input == 'y'
+        Inventory.latest
+      else
+        super
+      end
+    end
+  end
 
   def name
     date.strftime("%-m/%-d/%y") + ": " + type

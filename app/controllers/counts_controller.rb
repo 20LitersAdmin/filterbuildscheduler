@@ -6,37 +6,21 @@ class CountsController < ApplicationController
     authorize @count = Count.find(params[:id])
     @inventory = @count.inventory
 
-    case @inventory.type_for_params
-    when "receiving"
-      @context = "Add to inventory: Use positive numbers"
-      @expected_msg = "Current:"
-    when "shipping"
-      @context = "Remove from inventory: Use negative numbers"
-      @expected_msg = "Current:"
-    when "manual"
-      @context = "Count inventory: Use positive numbers or 0"
-      @expected_msg = "Previous:"
-    when "event"
-      @context = "Adjust inventory: Use positive or negative numbers"
-      @expected_msg = "Current:"
-    end
-
     # Set form values
-    @loose_val = ''
-    @box_val = ''
-
-    if @count.partial_box?
-      @box_val = @count.unopened_boxes_count
+    if @inventory.manual?
+      if @count.user_id.present? || @count.partial_box? || @count.partial_loose?
+        @loose_val = @count.loose_count
+        @box_val = @count.unopened_boxes_count
+      end
+    else
+      @box_val = @count.diff_from_previous("box") unless @count.diff_from_previous("box") == 0
+      @loose_val = @count.diff_from_previous("loose") unless @count.diff_from_previous("loose") == 0
     end
+  end
 
-    if @count.partial_loose?
-      @loose_val = @count.loose_count
-    end
-
-    if @count.user_id.present?
-      @loose_val = @count.loose_count
-      @box_val = @count.unopened_boxes_count
-    end
+  def show
+    authorize @count = Count.find(params[:id])
+    redirect_to edit_inventory_count_path(@count.inventory, @count)
   end
 
   def update
@@ -44,30 +28,30 @@ class CountsController < ApplicationController
     @inventory = @count.inventory
 
     # VALIDATIONS
-    if @inventory.receiving? || @inventory.manual?
+    if @inventory.manual? || @inventory.receiving?
       # receiving and manual inventories must have positive numbers
       if count_params[:loose_count].to_i < 0
-        @count.errors.add(:loose_count, "Loose Count can't be negative for this type of inventory.")
+        @count.errors.add(:loose_count, "Must use positive numbers for this type of inventory.")
       end
       if count_params[:unopened_boxes_count].to_i < 0
-        @count.errors.add(:unopened_boxes_count, "Box Count can't be negative for this type of inventory.")
+        @count.errors.add(:unopened_boxes_count, "Must use positive numbers for this type of inventory.")
       end
     end
 
     if @inventory.shipping?
       # for logical safety, shipping inventory #s must be negative
       if count_params[:loose_count].to_i > 0
-        @count.errors.add(:loose_count, "Loose Count can't be positive for this type of inventory.")
+        @count.errors.add(:loose_count, "Must use negative numbers when shipping inventory.")
       end
       if count_params[:unopened_boxes_count].to_i > 0
-        @count.errors.add(:unopened_boxes_count, "Box Count can't be positive for this type of inventory.")
+        @count.errors.add(:unopened_boxes_count, "Must use negative numbers when shipping inventory.")
       end
 
-      if @count.loose_count + count_params[:loose_count].to_i < 0
-        @count.errors.add(:loose_count, "You only have #{@count.loose_count} to ship")
+      if @count.previous_loose + count_params[:loose_count].to_i < 0
+        @count.errors.add(:loose_count, "You only have #{@count.previous_loose} to ship")
       end
-      if @count.unopened_boxes_count + count_params[:unopened_boxes_count].to_i < 0
-        @count.errors.add(:unopened_boxes_count, "You only have #{@count.unopened_boxes_count} to ship")
+      if @count.previous_box + count_params[:unopened_boxes_count].to_i < 0
+        @count.errors.add(:unopened_boxes_count, "You only have #{@count.previous_loose} to ship")
       end
     end
 
@@ -85,62 +69,41 @@ class CountsController < ApplicationController
     if params[:commit].present? # "Submit" button was pushed
       @count.partial_box = false
       @count.partial_loose = false
-      @count.user_id = current_user.id
-    end
-
-    # and finally, set the values
-    if @inventory.manual?
-      if count_params[:loose_count].present?
-        @count.loose_count = count_params[:loose_count].to_i
-      end
-      if count_params[:unopened_boxes_count].present?
-        @count.unopened_boxes_count = count_params[:unopened_boxes_count].to_i
-      end
-    else # @inventory.receiving || @inventory.shipping # @inventory.event_id.present?
-      if count_params[:loose_count].present?
-        @count.loose_count = @count.previous_loose + count_params[:loose_count].to_i
-      end
-      if count_params[:unopened_boxes_count].present?
-        @count.unopened_boxes_count = @count.previous_box + count_params[:unopened_boxes_count].to_i
-      end
     end
 
     if @count.errors.any?
-      case @inventory.type_for_params
-      when "receiving"
-        @context = "Add to inventory: Use positive numbers"
-        @expected_msg = "Current:"
-      when "shipping"
-        @context = "Remove from inventory: Use negative numbers"
-        @expected_msg = "Current:"
-      when "manual"
-        @context = "Count inventory: Use positive numbers or 0"
-        @expected_msg = "Previous:"
-      when "event"
-        @context = "Adjust inventory: Use positive or negative numbers"
-        @expected_msg = "Current:"
-      end
-
-      # counts with user_ids have been saved at least once. counts marked as partials still need work
-      if @count.user_id.present? || @count.partial_box || @count.partial_loose
-        if @inventory.type_for_params == "manual"
+      # Set vars for 'edit' view
+      if @inventory.manual?
+        if @count.user_id.present? || @count.partial_box? || @count.partial_loose?
           @loose_val = @count.loose_count
           @box_val = @count.unopened_boxes_count
-        else # "shipping" || "receiving" || "event"
-          @loose_val = @count.diff_from_previous("loose")
-          @box_val = @count.diff_from_previous("box")
         end
-      elsif @inventory.type_for_params == "event" # if it's related to an event, show the diff since the last inventory
-        @loose_val = @count.diff_from_previous("loose")
-          @box_val = @count.diff_from_previous("box")
-      else #if a count hasn't been submitted, show blanks
-        @loose_val = ''
-        @box_val = ''
+      else
+        @box_val = @count.diff_from_previous("box") unless @count.diff_from_previous("box") == 0
+        @loose_val = @count.diff_from_previous("loose") unless @count.diff_from_previous("loose") == 0
       end
       render 'edit'
     else
-      flash[:success] = "Count submitted"
+      # and finally, set the values
+      @count.user_id = current_user.id
+      if @inventory.manual?
+        if count_params[:loose_count].present? && !@count.partial_box
+          @count.loose_count = count_params[:loose_count].to_i
+        end
+        if count_params[:unopened_boxes_count].present? && !@count.partial_loose
+          @count.unopened_boxes_count = count_params[:unopened_boxes_count].to_i
+        end
+      else # @inventory.receiving || @inventory.shipping # @inventory.event_id.present?
+        if count_params[:loose_count].present? && count_params[:loose_count] != @count.diff_from_previous("loose")
+          @count.loose_count = @count.previous_loose + count_params[:loose_count].to_i
+        end
+        if count_params[:unopened_boxes_count].present? && count_params[:unopened_boxes_count] != @count.diff_from_previous("box")
+          @count.unopened_boxes_count = @count.previous_box + count_params[:unopened_boxes_count].to_i
+        end
+      end
+      
       @count.save
+      flash[:success] = "Count submitted"
       redirect_to edit_inventory_path(@inventory)
     end
   end

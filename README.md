@@ -2,17 +2,7 @@
 
 ## Things to do
 1. I re-built Inventory submission:
-  * Test a manual inventory
-  * Test a receiving inventory
-  * Test a shipping inventory
   * Test an event inventory
-
-2. I added / changed methods to Count#
-  * #diff_from_previous(field)
-  * #previous_inventory
-  * #previous_count
-  * #previous_loose
-  * #previous_box
 
 2. I created EventsController::SubtractSubsets and should write tests for it
   * Test the class (as a model)
@@ -43,10 +33,8 @@
 10. /events/lead -- SHOW TECHNOLOGY
 
 ## HMMM
-1. Inventories created from events aren't subtracting parts from components (parts used to build the technologies_built or boxes_packed)
-  - Create a file similar to extrapolate.rb to handle this
-2. In the same vain: parts.where(made_from_materials: true) is increased from previous, related materials should decrease fractionally
 3. `weeks_to_out` and `per_technology` rely on lots of `.first`s which is an issue for items that `have_many` technologies
+4. Overall, prediction of how many items can be made sux big ones
 
 ## Remind myself:
 1. production backup / development restore-from production
