@@ -121,6 +121,12 @@ hr.bar {
     float: right;
   }
 
+  .float-left {
+    display: block;
+    // width: 50%;
+    float: left;
+  }
+
 
   .form-control {
     border-radius: 0;

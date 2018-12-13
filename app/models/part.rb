@@ -21,6 +21,8 @@ class Part < ApplicationRecord
 
   monetize :price_cents, :additional_cost_cents, :shipping_cost_cents, :wire_transfer_cost_cents, allow_nil: true, numericality: { greater_than_or_equal_to: 0 }
 
+  scope :active, -> { where(deleted_at: nil) }
+
   def uid
     "P" + id.to_s.rjust(3, "0")
   end

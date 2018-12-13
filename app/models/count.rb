@@ -13,6 +13,8 @@ class Count < ApplicationRecord
 
   validates :inventory_id, :loose_count, :unopened_boxes_count, presence: true
   validates :loose_count, :unopened_boxes_count, :extrapolated_count, numericality: { only_integer: true }
+  
+  scope :active, -> { where(deleted_at: nil) }
 
   def item
     if part_id.present?

@@ -5,6 +5,15 @@ class EventsController
     def initialize(loose, box, event, inventory)
       technology = event.technology
 
+      # THIS IS FLAWED!!!
+      # SWITCH TO THIS:
+      # technology.extrapolate_technology_components
+        # iterate over and subtract against components_per_technology
+      # technology.extrapolate_technology_parts
+        # iterate over and subtract against components_per_technology
+      # technology.extrapolate_technology_materials
+        # iterate over and subtract against materials_per_technology
+
       # If there's no primary component, just bail
       return unless technology.primary_component.present?
       
