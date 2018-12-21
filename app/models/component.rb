@@ -57,4 +57,8 @@ class Component < ApplicationRecord
       0
     end
   end
+
+  def price
+    Money.new(parts.pluck(:price_cents).sum)
+  end
 end

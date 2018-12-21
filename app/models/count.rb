@@ -129,6 +129,12 @@ class Count < ApplicationRecord
     end
   end
 
+  def ttl_value
+    return '-' if inventory.completed_at.blank?
+
+    total * item.price
+  end
+
   def sort_by_user
     if user_id.present?
       1
