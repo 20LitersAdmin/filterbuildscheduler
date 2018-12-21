@@ -31,7 +31,9 @@ class Count < ApplicationRecord
   end
 
   def owner
-    item.technology.owner
+    return "N/A" unless item.technologies.present?
+
+    item.technologies.map(&:owner_acronym).join(',')
   end
 
   def type
