@@ -10,7 +10,20 @@
       <%= number_with_delimiter(count_tbl.unopened_boxes_count, delimiter: ',') %>
     <% end %>
   </td>
-  <td class="center-align"><%= number_with_delimiter(count_tbl.box_count, delimiter: ',') %></td>
-  <td class="center-align"><%= number_with_delimiter(count_tbl.available, delimiter: ',') %></td>
-  <td class="center-align"><%= number_with_delimiter(count_tbl.total, delimiter: ',') %></td>
+  <td class="center-align">
+    <% if count_tbl.item.only_loose? %>
+      -
+    <% else %>
+      <%= number_with_delimiter(count_tbl.box_count, delimiter: ',') %>
+    <% end %>
+  </td>
+  <td class="center-align">
+    <%= number_with_delimiter(count_tbl.available, delimiter: ',') %>
+  </td>
+  <td class="center-align">
+    <%= number_with_delimiter(count_tbl.total, delimiter: ',') %>
+  </td>
+  <td class="right-align">
+    <%= humanized_money_with_symbol count_tbl.ttl_value %>
+  </td>
 </tr>
