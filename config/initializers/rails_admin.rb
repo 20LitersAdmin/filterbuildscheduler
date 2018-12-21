@@ -122,8 +122,8 @@ RailsAdmin.config do |config|
     list do
       scopes [:active, :only_deleted]
       field :name
+      field :owner
       field :family_friendly
-      field :unit_rate
       field :ideal_build_length
       field :ideal_group_size
       field :ideal_leaders

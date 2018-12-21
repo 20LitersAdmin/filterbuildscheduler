@@ -1,6 +1,15 @@
 # README
 
 ## Things to do
+1. Jereme updates
+* Inventory#show
+  - Pricing on inventory (ea | available | ttl)
+  - Don't need UID
+  - Show Tech.owner
+* RailsAdmin
+* Labels
+  - tech has to fit on one line
+
 2. I created EventsController::SubtractSubsets and should write tests for it
   * Test the class (as a model)
   * Write a system test for event-based inventories
