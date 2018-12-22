@@ -2,12 +2,6 @@
 
 ## Things to do
 1. Jereme updates
-* Inventory#show
-  - Pricing on inventory (ea | available | ttl)
-  - Don't need UID
-  - Show Tech.owner
-* Items
-  - Kill additional_cost_*, shipping_cost_*, wire_transfer_cost_*
 * RailsAdmin
 * Labels
   - tech has to fit on one line

@@ -1,13 +1,13 @@
 <div id="inventory_order">  
   <div class="row" id="sticky">
     <div class="col-xs-12">
-      <h2><%= @low_counts.count %> items need to be ordered:</h2>
+      <h2 id="title"><%= @low_counts.count %> items need to be ordered:</h2>
     </div>
 
     <div class="col-xs-12 admin-div">
       <div class="col-xs-6">
         <p class="title">
-          Total: $<span id="item_ttl"><%= number_with_delimiter(@total_cost, delimiter: ",") %></span>&nbsp;<span id="supplier_ttl"><%= number_with_delimiter(@total_cost, delimiter: ",") %></span>
+          Total: $<span id="item_ttl"><%= number_with_delimiter(@total_cost, delimiter: ",") %></span><span id="supplier_ttl"><%= number_with_delimiter(@total_cost, delimiter: ",") %></span>
         </p>
       </div>
       <div class="col-xs-4 right-align">
