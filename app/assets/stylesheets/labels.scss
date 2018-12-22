@@ -88,6 +88,15 @@ table#avery8163 {
         height: 0.5in;
         max-height: 0.5in;
       }
+
+      .td-tech-names {
+        overflow: hidden;
+        white-space: nowrap;
+
+        .tiny {
+          font-size: 0.8em;
+        }
+      }
     }
   }
 }
