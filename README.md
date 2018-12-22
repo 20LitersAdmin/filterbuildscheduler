@@ -1,7 +1,7 @@
 # README
 
 ## Things to do
-1. Jereme updates
+1. Random updates
 * RailsAdmin
 * Labels
   - tech has to fit on one line
