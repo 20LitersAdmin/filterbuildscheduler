@@ -2,9 +2,11 @@
 
 ## Things to do
 1. Random updates
+* Inv#show
+  - Unit $ before Ttl Value in Full Inventory table?
 * RailsAdmin
-* Labels
-  - tech has to fit on one line
+  - Part / Material: show price on index?
+
 
 2. I created EventsController::SubtractSubsets and should write tests for it
   * Test the class (as a model)
