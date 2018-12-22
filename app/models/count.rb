@@ -31,7 +31,9 @@ class Count < ApplicationRecord
   end
 
   def owner
-    item.technology.owner
+    return "N/A" unless item.technologies.present?
+
+    item.technologies.map(&:owner_acronym).join(',')
   end
 
   def type
@@ -125,6 +127,12 @@ class Count < ApplicationRecord
     else
       available + extrapolated_count
     end
+  end
+
+  def ttl_value
+    return '-' if inventory.completed_at.blank?
+
+    total * item.price
   end
 
   def sort_by_user

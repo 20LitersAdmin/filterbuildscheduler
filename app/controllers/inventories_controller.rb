@@ -126,17 +126,13 @@ class InventoriesController < ApplicationController
     authorize @inventory = Inventory.latest
     @low_counts = @inventory.counts.select{ |count| count.reorder? }
 
+    # Counts without a supplier
     @order_counts = Count.where(id: @low_counts.map { |c| c.id })
-
     @suppliers = @order_counts.map { |c| c.supplier }.uniq
 
-    # Counts without a supplier
     @no_supplier = @order_counts.select{ |c| c.supplier == nil }
 
-    @low_counts = @inventory.counts.select{ |count| count.reorder? }
     @total_cost = @low_counts.map { |c| c.item.reorder_total_cost }.sum
-
-    @latest = Inventory.latest
   end
 
   def status
