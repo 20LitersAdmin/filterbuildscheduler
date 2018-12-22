@@ -39,6 +39,10 @@ class Technology < ApplicationRecord
     events.map { |e| e.item_goal }.sum
   end
 
+  def owner_acronym
+    owner.gsub(/([a-z]|\s)/,'')
+  end
+
   def produceable
     inventory = Inventory.latest
 

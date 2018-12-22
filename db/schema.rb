@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_11_29_202104) do
+ActiveRecord::Schema.define(version: 2018_12_22_022205) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -178,17 +178,11 @@ ActiveRecord::Schema.define(version: 2018_11_29_202104) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "quantity_per_box", default: 1
-    t.integer "additional_cost_cents", default: 0, null: false
-    t.string "additional_cost_currency", default: "USD", null: false
     t.integer "price_cents", default: 0, null: false
     t.string "price_currency", default: "USD", null: false
     t.integer "minimum_on_hand", default: 0, null: false
     t.text "comments"
     t.bigint "supplier_id"
-    t.integer "shipping_cost_cents", default: 0, null: false
-    t.string "shipping_cost_currency", default: "USD", null: false
-    t.integer "wire_transfer_cost_cents", default: 0, null: false
-    t.string "wire_transfer_cost_currency", default: "USD", null: false
     t.boolean "only_loose", default: false
     t.text "description"
     t.index ["deleted_at"], name: "index_materials_on_deleted_at"
@@ -208,15 +202,9 @@ ActiveRecord::Schema.define(version: 2018_11_29_202104) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "quantity_per_box", default: 1
-    t.integer "additional_cost_cents", default: 0, null: false
-    t.string "additional_cost_currency", default: "USD", null: false
     t.integer "price_cents", default: 0, null: false
     t.string "price_currency", default: "USD", null: false
     t.integer "minimum_on_hand", default: 0, null: false
-    t.integer "shipping_cost_cents", default: 0, null: false
-    t.string "shipping_cost_currency", default: "USD", null: false
-    t.integer "wire_transfer_cost_cents", default: 0, null: false
-    t.string "wire_transfer_cost_currency", default: "USD", null: false
     t.text "comments"
     t.bigint "supplier_id"
     t.boolean "only_loose", default: false

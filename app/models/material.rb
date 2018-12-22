@@ -15,7 +15,7 @@ class Material < ApplicationRecord
   
   belongs_to :supplier
 
-  monetize :price_cents, :additional_cost_cents, :shipping_cost_cents, :wire_transfer_cost_cents, allow_nil: true, numericality: { greater_than_or_equal_to: 0 }
+  monetize :price_cents, allow_nil: true, numericality: { greater_than_or_equal_to: 0 }
 
   scope :active, -> { where(deleted_at: nil) }
 
@@ -33,11 +33,7 @@ class Material < ApplicationRecord
   end
 
   def reorder_total_cost
-    (min_order * price ) + shipping_cost + wire_transfer_cost + additional_cost
-  end
-
-  def reorder_associated_costs
-    shipping_cost + wire_transfer_cost + additional_cost
+    min_order * price
   end
 
   def required?

@@ -1,6 +1,11 @@
 # README
 
 ## Things to do
+1. Random updates
+* RailsAdmin
+* Labels
+  - tech has to fit on one line
+
 2. I created EventsController::SubtractSubsets and should write tests for it
   * Test the class (as a model)
   * Write a system test for event-based inventories

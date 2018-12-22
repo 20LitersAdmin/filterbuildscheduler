@@ -35,8 +35,8 @@ function filterView(type, button) {
 };
 
 function stringMaker(float, fixed) {
-  fixed = float.toFixed(fixed);
-  return fixed.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  num = float.toFixed(fixed);
+  return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 };
 
 function orderTotal() {
@@ -47,7 +47,7 @@ function orderTotal() {
   var amtStr, amt;
 
   for( i = 0; i < range.length; i++ ) {
-    var booleans = range[i].find(".order_check").get();
+    var booleans = range[i].find(".order_checkbox").get();
     ttl[i] = 0;
 
     for( j = 0; j < booleans.length; j++ ) {
@@ -65,30 +65,32 @@ function orderTotal() {
 
 function toggleCheck(action,scope) {
   if(scope === "all") {
-    var booleans = $(".order_check").get();
+    var booleans = $(".order_checkbox").get();
   } else {
     // scope === id
     var tableId = "#order_supplier_tbl_" + scope
-    var booleans = $(tableId).find("input.order_check").get();
+    var booleans = $(tableId).find("input.order_checkbox").get();
   };
   
   if(action === "check") {
     for( i = 0; i < booleans.length; i++ ) {
         booleans[i].checked = true;
-        twinToggle(booleans[i]);
+        // twinSnyc(booleans[i]);
       };
   } else if(action === "uncheck") {
     for( i = 0; i < booleans.length; i++ ) {
         booleans[i].checked = false;
-        twinToggle(booleans[i]);
+        // twinSnyc(booleans[i]);
       };
   };
   orderTotal();
 };
 
-function twinToggle(twinA) {
-  var idStr = $(twinA).attr("id");
-  var state = $(twinA).prop("checked")
+function twinSnyc(checkboxA) {
+  var idStr = $(checkboxA).attr("id");
+  var inputA = $(checkboxA).parent('.order-check').siblings('.min-order').find('.min-order-field')
+  var quantity = parseFloat( $(inputA).val().replace(",","") );
+  var state = $(checkboxA).prop("checked")
   var split = idStr.split("_");
   // split: ("checkbox",["item", "supplier"],"id")
   if(split[1] === "item") {
@@ -97,28 +99,30 @@ function twinToggle(twinA) {
     var locator = "item";
   };
 
-  var twinB = "#checkbox_" + locator + "_" + split[2]
-  $(twinB).prop("checked", state)
+  var checkboxB = "#checkbox_" + locator + "_" + split[2];
+  $(checkboxB).prop("checked", state);
+
+  var inputB = "#" + locator + "_min_order_" + split[2];
+  $(inputB).val(quantity);
+  reformat(inputB);
 };
 
 function lineTotal(source) {
-  // quantity * itemCost + associatedCosts
-  var itemCostSpan = $(source).parent(".min-order").siblings(".item-cost").find(".item-cost-value");
-  var associatedCostsSpan = $(source).parent(".min-order").siblings(".order-total").find(".order-associated-costs");
-  var totalCostSpan = $(source).parent(".min-order").siblings(".order-total").find(".order-total-amt");
-  
   var quantity = parseFloat( $(source).val().replace(",","") );
+  var itemCostSpan = $(source).parent(".min-order").siblings(".item-cost").find(".item-cost-value");
   var itemCost = parseFloat( $(itemCostSpan).html().replace(",","") );
-  var associatedCosts = parseFloat( $(associatedCostsSpan).html().replace(",","") );
-  var newTotalStr = stringMaker( (quantity * itemCost) + associatedCosts, 2 );
+
+  var newTotalStr = stringMaker( (quantity * itemCost), 2 );
+  var totalCostSpan = $(source).parent(".min-order").siblings(".order-total").find(".order-total-amt");
   $(totalCostSpan).html(newTotalStr);
 };
 
 function lineCheck(source) {
-  var checkbox = $(source).parent(".min-order").siblings(".order-check").find(".order_check");
+  var checkbox = $(source).parent(".min-order").siblings(".order-check").find(".order_checkbox");
   if( $(checkbox).prop("checked") === false ) {
     $(checkbox).prop("checked", true);
   };
+  twinSnyc(checkbox);
 };
 
 function reformat(source) {
@@ -208,8 +212,8 @@ function reformat(source) {
     event.preventDefault();
   });
 
-  $(document).on("change", ".order_check", function() {
-    twinToggle(this);
+  $(document).on("change", ".order_checkbox", function() {
+    twinSnyc(this);
     orderTotal();
   });
 
