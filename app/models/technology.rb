@@ -17,7 +17,7 @@ class Technology < ApplicationRecord
   has_many :materials, through: :extrapolate_technology_materials
   accepts_nested_attributes_for :extrapolate_technology_materials, allow_destroy: true
 
-  scope :active, -> { where(deleted_at: nil) }
+  # scope :active, -> { where(deleted_at: nil) }
   scope :status_worthy, -> { where("monthly_production_rate > ?", 0).order(monthly_production_rate: "desc") }
 
   def leaders

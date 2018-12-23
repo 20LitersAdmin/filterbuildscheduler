@@ -13,7 +13,7 @@ class Component < ApplicationRecord
 
 
   has_many :counts, dependent: :destroy
-  scope :active, -> { where(deleted_at: nil) }
+  # scope :active, -> { where(deleted_at: nil) }
 
   def uid
     "C" + id.to_s.rjust(3, "0")

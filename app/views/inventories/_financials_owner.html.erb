@@ -1,1 +1,52 @@
-Owner
+<% @owners.each do |owner| %>
+  <% @counts_for_owners = @counts.find_all { |c| c.item.technologies.map(&:owner_acronym).include? owner[1] } %>
+  <% @val_unbuilt = @counts_for_owners.map { |c| c.avail_value }.sum %>
+  <% @val_ttl = @counts_for_owners.map { |c| c.ttl_value }.sum %>
+  <% @val_built = @val_built = @val_ttl - @val_unbuilt %>
+  <div class="row well">
+    <div class="col-xs-12 col-sm-6">
+      <h3>
+        <%= owner[0] + ' (' + owner[1] + ')' %>
+      </h3>
+    </div>
+    <div class="col-xs-12 col-sm-6">
+      <%= render partial: 'financials_ttl_table', locals: { unbuilt: @val_unbuilt, built: @val_built, ttl: @val_ttl } %>
+    </div>
+  </div>
+
+  <div class="row">
+    <table class="table table-striped datatable-paging" id="financials_<%= owner[1] %>">
+    <%= render partial: 'financials_thead', locals: { scope: 'owners' } %>
+    <tbody>
+      <% @counts_for_owners.each do |c| %>
+      <tr>
+        <td>
+          <%= c.name %>
+        </td>
+        <td>
+          <%= c.tech_names_short %>
+        </td>
+        <td class="right-align">
+          <%= humanized_money_with_symbol c.item.price %>
+        </td>
+        <td class="center-align">
+          <%= c.available %>
+        </td>
+        <td class="right-align">
+          <%= humanized_money_with_symbol c.avail_value %>
+        </td>
+        <td class="center-align">
+          <%= c.total %>
+        </td>
+        <td class="right-align">
+          <%= humanized_money_with_symbol c.ttl_value %>
+        </td>
+      </tr>
+    <% end %>
+    </tbody>
+  </table>
+  </div>
+  <div class="row">
+    <hr>
+  </div>
+<% end %>

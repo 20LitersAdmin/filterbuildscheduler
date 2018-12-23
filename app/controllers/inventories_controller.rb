@@ -162,20 +162,20 @@ class InventoriesController < ApplicationController
 
   def financials
     authorize @latest = Inventory.latest
+    @counts = @latest.counts
 
     @scope = params[:group]
 
     case @scope
     when 'owner'
-      @owners = Technology.all.map(&:owner).uniq
-      
+      @owners = Technology.status_worthy.map { |t| [t.owner, t.owner_acronym] }.uniq
+      @tech_by_owners = Technology.status_worthy.group(:owner)
     when 'technology'
       @technologies = Technology.status_worthy
     else #un-grouped
-      @counts = @latest.counts
-      @val_avail = @counts.map { |c| c.avail_value }.sum
+      @val_unbuilt = @counts.map { |c| c.avail_value }.sum
       @val_ttl = @counts.map { |c| c.ttl_value }.sum
-      @val_shipable = @val_ttl - @val_avail
+      @val_built = @val_ttl - @val_unbuilt
     end
   end
 
