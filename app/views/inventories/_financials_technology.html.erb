@@ -1,1 +1,52 @@
-Technology
+<% @technologies.each do |tech| %>
+  <% @counts_for_tech = @counts.find_all { |c| c.item.technologies.pluck(:id).include? tech.id } %>
+  <% @val_unbuilt = @counts_for_tech.map { |c| c.avail_value }.sum %>
+  <% @val_ttl = @counts_for_tech.map { |c| c.ttl_value }.sum %>
+  <% @val_built = @val_built = @val_ttl - @val_unbuilt %>
+  <div class="row well">
+    <div class="col-xs-12 col-sm-6">
+      <h3>
+        <%= tech.name %>
+      </h3>
+    </div>
+    <div class="col-xs-12 col-sm-6">
+      <%= render partial: 'financials_ttl_table', locals: { unbuilt: @val_unbuilt, built: @val_built, ttl: @val_ttl } %>
+    </div>
+  </div>
+
+  <div class="row">
+    <table class="table table-striped datatable-paging" id="financials_technology_<%= tech.id.to_s %>">
+    <%= render partial: 'financials_thead', locals: { scope: 'technologies' } %>
+    <tbody>
+      <% @counts_for_tech.each do |c| %>
+      <tr>
+        <td>
+          <%= c.name %>
+        </td>
+        <td>
+          <%= c.owner %>
+        </td>
+        <td class="right-align">
+          <%= humanized_money_with_symbol c.item.price %>
+        </td>
+        <td class="center-align">
+          <%= c.available %>
+        </td>
+        <td class="right-align">
+          <%= humanized_money_with_symbol c.avail_value %>
+        </td>
+        <td class="center-align">
+          <%= c.total %>
+        </td>
+        <td class="right-align">
+          <%= humanized_money_with_symbol c.ttl_value %>
+        </td>
+      </tr>
+    <% end %>
+    </tbody>
+  </table>
+  </div>
+  <div class="row">
+    <hr>
+  </div>
+<% end %>
