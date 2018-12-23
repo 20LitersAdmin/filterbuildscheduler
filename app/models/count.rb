@@ -14,7 +14,7 @@ class Count < ApplicationRecord
   validates :inventory_id, :loose_count, :unopened_boxes_count, presence: true
   validates :loose_count, :unopened_boxes_count, :extrapolated_count, numericality: { only_integer: true }
   
-  scope :active, -> { where(deleted_at: nil) }
+  # scope :active, -> { where(deleted_at: nil) }
 
   def item
     if part_id.present?
@@ -133,6 +133,10 @@ class Count < ApplicationRecord
     return '-' if inventory.completed_at.blank?
 
     total * item.price
+  end
+
+  def avail_value
+    available * item.price
   end
 
   def sort_by_user

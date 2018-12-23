@@ -1,0 +1,39 @@
+<div class="row">
+  <div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
+    <%= render partial: 'financials_ttl_table', locals: { unbuilt: @val_unbuilt, built: @val_built, ttl: @val_ttl } %>
+  </div>
+</div>
+
+<table class="table table-striped datatable-paging" id="financials_all">
+  <%= render partial: 'financials_thead', locals: { scope: 'all' } %>
+  <tbody>
+    <% @counts.each do |c| %>
+      <tr>
+        <td>
+          <%= c.name %>
+        </td>
+        <td>
+          <%= c.tech_names_short %>
+        </td>
+        <td>
+          <%= c.owner %>
+        </td>
+        <td class="right-align">
+          <%= humanized_money_with_symbol c.item.price %>
+        </td>
+        <td class="center-align">
+          <%= c.available %>
+        </td>
+        <td class="right-align">
+          <%= humanized_money_with_symbol c.avail_value %>
+        </td>
+        <td class="center-align">
+          <%= c.total %>
+        </td>
+        <td class="right-align">
+          <%= humanized_money_with_symbol c.ttl_value %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
