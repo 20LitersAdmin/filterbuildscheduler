@@ -135,6 +135,10 @@ class Count < ApplicationRecord
     total * item.price
   end
 
+  def avail_value
+    available * item.price
+  end
+
   def sort_by_user
     if user_id.present?
       1

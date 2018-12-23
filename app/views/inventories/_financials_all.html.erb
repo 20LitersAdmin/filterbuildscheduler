@@ -1,0 +1,71 @@
+<div class="row">
+  <div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
+    <table class="table">
+      <thead>
+        <tr>
+          <th class="center-align">Value of Un-built items</th>
+          <th class="center-align">Value of Built items</th>
+          <th class="center-align">Total Value</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="center-align">
+            <%= humanized_money_with_symbol @val_avail %>
+          </td>
+          <td class="center-align">
+            <%= humanized_money_with_symbol @val_shipable %>
+          </td>
+          <td class="center-align">
+            <%= humanized_money_with_symbol @val_ttl %>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<table class="table table-striped datatable-paging" id="financials_all">
+  <thead>
+    <tr>
+      <th>Item</th>
+      <th>Tech</th>
+      <th>Owner</th>
+      <th>$ each</th>
+      <th>Available</th>
+      <th>$ available</th>
+      <th>Total</th>
+      <th>$ total</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @counts.each do |c| %>
+      <tr>
+        <td>
+          <%= c.name %>
+        </td>
+        <td>
+          <%= c.tech_names_short %>
+        </td>
+        <td>
+          <%= c.owner %>
+        </td>
+        <td class="right-align">
+          <%= humanized_money_with_symbol c.item.price %>
+        </td>
+        <td class="center-align">
+          <%= c.available %>
+        </td>
+        <td class="right-align">
+          <%= humanized_money_with_symbol c.avail_value %>
+        </td>
+        <td class="center-align">
+          <%= c.total %>
+        </td>
+        <td class="right-align">
+          <%= humanized_money_with_symbol c.ttl_value %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
