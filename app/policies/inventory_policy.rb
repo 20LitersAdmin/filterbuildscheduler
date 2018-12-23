@@ -51,5 +51,9 @@ class InventoryPolicy
   def labels?
     user&.admin_or_leader? || user&.does_inventory?
   end
+
+  def financials?
+    user&.does_inventory?
+  end
 end
 

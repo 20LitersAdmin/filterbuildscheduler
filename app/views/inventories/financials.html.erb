@@ -1,0 +1,26 @@
+<div class="container" id="inventory_financials">
+  <%= render partial: 'shared/inventory_functions' %>
+  <div class="row center-align">
+    <div class="col-xs-12">
+      <h4>View by:</h4>
+    </div>
+    <div class="col-xs-12">
+      <%= link_to 'All', financials_inventories_path, class: "btn yellow #{'hidden' if @scope.nil?}" %>
+      <%= link_to 'Technology', financials_inventories_path(group: 'technology'), class: "btn yellow #{'hidden' if @scope == 'technology'}" %>
+      <%= link_to 'Owner', financials_inventories_path(group: 'owner'), class: "btn yellow #{'hidden' if @scope == 'owner'}" %>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-xs-12">
+      <% case @scope %>
+      <% when nil %>
+        <%= render partial: "financials_all" %>
+      <% when 'technology' %>
+        <%= render partial: "financials_technology" %>
+      <% when 'owner' %>
+        <%= render partial: "financials_owner" %>
+      <% end %>
+    </div>
+  </div>
+</div>
