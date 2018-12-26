@@ -5,7 +5,7 @@ class Location < ApplicationRecord
 
   validates :name, :address1, :city, :state, :zip, presence: true
 
-  # scope :active, -> { where(deleted_at: nil) }
+  scope :active, -> { where(deleted_at: nil) }
 
   def one_liner
     "#{city}, #{state} #{zip}"

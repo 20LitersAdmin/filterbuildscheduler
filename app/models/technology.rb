@@ -17,7 +17,7 @@ class Technology < ApplicationRecord
   has_many :materials, through: :extrapolate_technology_materials
   accepts_nested_attributes_for :extrapolate_technology_materials, allow_destroy: true
 
-  # scope :active, -> { where(deleted_at: nil) }
+  scope :active, -> { where(deleted_at: nil) }
   scope :status_worthy, -> { where("monthly_production_rate > ?", 0).order(monthly_production_rate: "desc") }
 
   def leaders
@@ -29,6 +29,12 @@ class Technology < ApplicationRecord
     components.where(completed_tech: true).first
   end
 
+  def price
+    return Money.new(0) if primary_component.nil?
+    
+    primary_component.price
+  end
+
   def short_name
     name.partition(" ").first
   end
@@ -36,7 +42,7 @@ class Technology < ApplicationRecord
   def event_tech_goals_within(num = 0)
     events = Event.future.within_days(num).where(technology: self)
 
-    events.map { |e| e.item_goal }.sum
+    events.map(&:item_goal).sum
   end
 
   def owner_acronym
@@ -116,8 +122,6 @@ class Technology < ApplicationRecord
         tech_items_aoh << count
       end
     end
-
-    # binding.pry
 
     tech_items_aoh.sort_by! { |hsh| hsh[:produceable] }
   end

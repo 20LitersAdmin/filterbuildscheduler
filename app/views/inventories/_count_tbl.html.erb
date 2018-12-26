@@ -1,5 +1,11 @@
 <tr>
-  <td><%= count_tbl.name %></td>
+  <td>
+    <% if current_user.is_admin? %>
+      <%= link_to count_tbl.name, rails_admin.edit_path(model_name: count_tbl.item.model_name.name, id: count_tbl.item.id) %>
+    <% else %>
+      <%= count_tbl.name %>
+    <% end %>
+  </td>
   <td><%= count_tbl.tech_names_short %></td>
   <td><%= count_tbl.owner %></td>
   <td class="center-align"><%= number_with_delimiter(count_tbl.loose_count, delimiter: ',') %></td>

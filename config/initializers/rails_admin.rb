@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'money-rails/rails_admin'
+
 RailsAdmin.config do |config|
   config.main_app_name = ["20 Liters", "Admin"]
   config.excluded_models = ['ActiveStorage::Blob', 'ActiveStorage::Attachment']
@@ -123,6 +125,9 @@ RailsAdmin.config do |config|
       scopes [:active, :only_deleted]
       field :name
       field :owner
+      field :price, :money do
+        formatted_value{ bindings[:object].price }
+      end
       field :family_friendly
       field :ideal_build_length
       field :ideal_group_size
@@ -155,6 +160,9 @@ RailsAdmin.config do |config|
       scopes [:active, :only_deleted]
       field :name
       field :technologies
+      field :price, :money do
+        formatted_value{ bindings[:object].price }
+      end
       field :completed_tech
     end
     configure :deleted_at do
@@ -173,14 +181,12 @@ RailsAdmin.config do |config|
       scopes [:active, :only_deleted]
       field :name
       field :supplier
+      field :price, :money do
+        sortable :price_cents
+      end
+      field :made_from_materials
       field :min_order
       field :weeks_to_deliver
-      field :price_cents do
-        label "Price"
-        formatted_value do
-          "$" + (value.to_f / 100).to_s
-        end
-      end
     end
     configure :deleted_at do
       show
@@ -198,14 +204,9 @@ RailsAdmin.config do |config|
       scopes [:active, :only_deleted]
       field :name
       field :supplier
+      field :price, :money
       field :min_order
       field :weeks_to_deliver
-      field :price_cents do
-        label "Price"
-        formatted_value do
-          "$" + (value.to_f / 100).to_s
-        end
-      end
       field :min_order
     end
     configure :deleted_at do
