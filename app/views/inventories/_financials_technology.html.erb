@@ -1,7 +1,7 @@
 <% @technologies.each do |tech| %>
   <% @counts_for_tech = @counts.find_all { |c| c.item.technologies.pluck(:id).include? tech.id } %>
-  <% @val_unbuilt = @counts_for_tech.map { |c| c.avail_value }.sum %>
-  <% @val_ttl = @counts_for_tech.map { |c| c.ttl_value }.sum %>
+  <% @val_unbuilt = @counts_for_tech.reject { |c| c.exclude_from_values? }.compact.map { |c| c.avail_value }.sum %>
+  <% @val_ttl = @counts_for_tech.reject { |c| c.exclude_from_values? }.compact.map { |c| c.ttl_value }.sum %>
   <% @val_built = @val_built = @val_ttl - @val_unbuilt %>
   <div class="row well">
     <div class="col-xs-12 col-sm-6">
@@ -21,7 +21,11 @@
       <% @counts_for_tech.each do |c| %>
       <tr>
         <td>
-          <%= c.name %>
+          <% if current_user.is_admin? %>
+            <%= link_to c.name, rails_admin.edit_path(model_name: c.item.model_name.name, id: c.item.id) %>
+          <% else %>
+            <%= c.name %>
+          <% end %>
         </td>
         <td>
           <%= c.owner %>
@@ -30,13 +34,13 @@
           <%= humanized_money_with_symbol c.item.price %>
         </td>
         <td class="center-align">
-          <%= c.available %>
+          <%= number_with_delimiter c.available, delimiter: ',' %>
         </td>
         <td class="right-align">
           <%= humanized_money_with_symbol c.avail_value %>
         </td>
         <td class="center-align">
-          <%= c.total %>
+          <%= number_with_delimiter c.total, delimiter: ',' %>
         </td>
         <td class="right-align">
           <%= humanized_money_with_symbol c.ttl_value %>

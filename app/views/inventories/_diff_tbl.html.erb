@@ -1,5 +1,11 @@
 <tr>
-  <td><%= diff_tbl.name %></td>
+  <td>
+    <% if current_user.is_admin? %>
+      <%= link_to diff_tbl.name, rails_admin.edit_path(model_name: diff_tbl.item.model_name.name, id: diff_tbl.item.id) %>
+    <% else %>
+      <%= diff_tbl.name %>
+    <% end %>
+  </td>
   <% if @inventory.type_for_params != "event" %>
     <td><%= diff_tbl.tech_names %></td>
   <% end %>

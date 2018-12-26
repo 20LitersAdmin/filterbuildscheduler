@@ -2,8 +2,8 @@
 
 ## Things to do
 1. Random updates
-* Inv#show
-  - Unit $ before Ttl Value in Full Inventory table?
+* Inventories#financials
+  - Including the cost of Components in values is redundant (totals need to only consider parts and materials, probably make a note about this below _financials_ttl_table)
 * RailsAdmin
   - Part / Material: show price on index?
 
