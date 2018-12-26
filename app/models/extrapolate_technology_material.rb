@@ -6,4 +6,12 @@ class ExtrapolateTechnologyMaterial < ApplicationRecord
 
   validates :material_id, :technology_id, :materials_per_technology, presence: true
   validates_numericality_of :materials_per_technology
+
+  def material_price
+    material.price
+  end
+
+  def price_per_technology
+    material.price / materials_per_technology
+  end
 end

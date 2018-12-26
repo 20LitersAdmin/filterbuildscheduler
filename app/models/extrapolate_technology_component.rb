@@ -6,4 +6,12 @@ class ExtrapolateTechnologyComponent < ApplicationRecord
 
   validates :component_id, :technology_id, :components_per_technology, presence: true
   validates :components_per_technology, numericality: { only_integer: true }
+
+  def component_price
+    component.price
+  end
+
+  def price_per_technology
+    component.price * components_per_technology
+  end
 end

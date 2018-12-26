@@ -6,4 +6,16 @@ class ExtrapolateMaterialPart < ApplicationRecord
 
   validates :material_id, :part_id, :parts_per_material, presence: true
   validates :parts_per_material, numericality: { only_integer: true }
+
+  def material_price
+    material.price
+  end
+
+  def part_price
+    if part.made_from_materials? && part.price_cents == 0
+      material.price / parts_per_material
+    else
+      part.price
+    end
+  end
 end

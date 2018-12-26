@@ -61,12 +61,11 @@ class Component < ApplicationRecord
   def price
     ary = []
     extrapolate_component_parts.each do |ecp|
-      ary << ecp.parts_per_component * ecp.part.price
-
-      if ecp.part.made_from_materials?
-        ecp.part.extrapolate_material_parts.each do |emp|
-          ary << emp.material.price / emp.parts_per_material
-        end
+      if ecp.part.made_from_materials? && ecp.part.price_cents == 0
+        emp = ecp.part.extrapolate_material_parts.first
+        ary << (emp.part_price) * ecp.parts_per_component
+      else
+        ary << ecp.part_price * ecp.parts_per_component
       end
     end
     ary.sum
