@@ -4,13 +4,23 @@
   </div>
 </div>
 
+<div class="row">
+  <div class="col-xs-12 col-sm-8 col-sm-offset-2">
+    <%= render partial: 'financials_comp_tech', locals: { counts: @built_counts } %>
+  </div>
+</div>
+
 <table class="table table-striped datatable-paging" id="financials_all">
   <%= render partial: 'financials_thead', locals: { scope: 'all' } %>
   <tbody>
     <% @counts.each do |c| %>
       <tr>
         <td>
-          <%= c.name %>
+          <% if current_user.is_admin? %>
+            <%= link_to c.name, rails_admin.edit_path(model_name: c.item.model_name.name, id: c.item.id) %>
+          <% else %>
+            <%= c.name %>
+          <% end %>
         </td>
         <td>
           <%= c.tech_names_short %>
@@ -22,13 +32,13 @@
           <%= humanized_money_with_symbol c.item.price %>
         </td>
         <td class="center-align">
-          <%= c.available %>
+          <%= number_with_delimiter c.available, delimiter: ',' %>
         </td>
         <td class="right-align">
           <%= humanized_money_with_symbol c.avail_value %>
         </td>
         <td class="center-align">
-          <%= c.total %>
+          <%= number_with_delimiter c.total, delimiter: ',' %>
         </td>
         <td class="right-align">
           <%= humanized_money_with_symbol c.ttl_value %>

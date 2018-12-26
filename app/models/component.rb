@@ -13,7 +13,7 @@ class Component < ApplicationRecord
 
 
   has_many :counts, dependent: :destroy
-  # scope :active, -> { where(deleted_at: nil) }
+  scope :active, -> { where(deleted_at: nil) }
 
   def uid
     "C" + id.to_s.rjust(3, "0")
@@ -59,6 +59,15 @@ class Component < ApplicationRecord
   end
 
   def price
-    Money.new(parts.pluck(:price_cents).sum)
+    ary = []
+    extrapolate_component_parts.each do |ecp|
+      if ecp.part.made_from_materials? && ecp.part.price_cents == 0
+        emp = ecp.part.extrapolate_material_parts.first
+        ary << (emp.part_price) * ecp.parts_per_component
+      else
+        ary << ecp.part_price * ecp.parts_per_component
+      end
+    end
+    ary.sum
   end
 end

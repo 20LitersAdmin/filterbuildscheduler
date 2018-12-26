@@ -172,10 +172,13 @@ class InventoriesController < ApplicationController
       @tech_by_owners = Technology.status_worthy.group(:owner)
     when 'technology'
       @technologies = Technology.status_worthy
+
+      # use Technology.primary_component
     else #un-grouped
-      @val_unbuilt = @counts.map { |c| c.avail_value }.sum
-      @val_ttl = @counts.map { |c| c.ttl_value }.sum
-      @val_built = @val_ttl - @val_unbuilt
+      @built_counts = @counts.joins(:component).where('components.completed_tech = ?', true)
+      @val_unbuilt = @counts.where(component_id: nil).map(&:avail_value).sum
+      @val_built = @built_counts.map(&:avail_value).sum
+      @val_ttl = @val_built + @val_unbuilt
     end
   end
 
