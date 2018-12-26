@@ -132,11 +132,19 @@ class Count < ApplicationRecord
   def ttl_value
     return '-' if inventory.completed_at.blank?
 
-    total * item.price
+    # total * item.price
+    0
   end
 
   def avail_value
-    available * item.price
+    # available * item.price
+    0
+  end
+
+  def exclude_from_values?
+    return false unless type == 'component'
+
+    !component.completed_tech?
   end
 
   def sort_by_user
