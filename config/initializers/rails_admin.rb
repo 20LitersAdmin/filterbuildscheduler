@@ -231,12 +231,36 @@ RailsAdmin.config do |config|
     parent Component
     label "Component <-> Part"
     label_plural "Components <-> Parts"
+
+    list do
+      field :component
+      field :part
+      field :parts_per_component
+      field :part_price, :money do
+        formatted_value{ bindings[:object].part_price }
+      end
+      field :price_per_component, :money do
+        formatted_value{ bindings[:object].price_per_component }
+      end
+    end
   end
 
   config.model ExtrapolateMaterialPart do
     parent Material
     label "Material <-> Part"
     label_plural "Materials <-> Parts"
+
+    list do
+      field :material
+      field :part
+      field :parts_per_material
+      field :material_price, :money do
+        formatted_value{ bindings[:object].material_price }
+      end
+      field :part_price, :money do
+        formatted_value{ bindings[:object].part_price }
+      end
+    end
   end
 
   config.model ExtrapolateTechnologyComponent do
@@ -248,6 +272,12 @@ RailsAdmin.config do |config|
       field :component
       field :technology
       field :components_per_technology
+      field :component_price, :money do
+        formatted_value{ bindings[:object].component_price }
+      end
+      field :price_per_technology, :money do
+        formatted_value{ bindings[:object].price_per_technology }
+      end
       field :required
     end
   end
@@ -261,6 +291,12 @@ RailsAdmin.config do |config|
       field :part
       field :technology
       field :parts_per_technology
+      field :part_price, :money do
+        formatted_value{ bindings[:object].part_price }
+      end
+      field :price_per_technology, :money do
+        formatted_value{ bindings[:object].price_per_technology }
+      end
       field :required
     end
   end
@@ -274,6 +310,12 @@ RailsAdmin.config do |config|
       field :material
       field :technology
       field :materials_per_technology
+      field :material_price, :money do
+        formatted_value{ bindings[:object].material_price }
+      end
+      field :price_per_technology, :money do
+        formatted_value{ bindings[:object].price_per_technology }
+      end
       field :required
     end
   end
