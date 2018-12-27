@@ -3,9 +3,14 @@
 ## Things to do
 1. Random updates
 * Inventories#financials
-  - Including the cost of Components in values is redundant (totals need to only consider parts and materials, probably make a note about this below _financials_ttl_table)
-* RailsAdmin
-  - Part / Material: show price on index?
+  - Calculating values
+    -- for grouped partials, use this as a template:
+    ```
+    @built_counts = @counts.joins(:component).where('components.completed_tech = ?', true)
+    @val_unbuilt = @counts.where(component_id: nil).map(&:avail_value).sum
+    @val_built = @built_counts.map(&:avail_value).sum
+    @val_ttl = @val_built + @val_unbuilt
+    ```
 
 
 2. I created EventsController::SubtractSubsets and should write tests for it
