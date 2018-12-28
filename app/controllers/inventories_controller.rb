@@ -161,19 +161,16 @@ class InventoriesController < ApplicationController
   end
 
   def financials
-    authorize @latest = Inventory.latest
+    authorize @latest = Inventory.latest_completed
     @counts = @latest.counts
 
     @scope = params[:group]
 
     case @scope
     when 'owner'
-      @owners = Technology.status_worthy.map { |t| [t.owner, t.owner_acronym] }.uniq
-      @tech_by_owners = Technology.status_worthy.group(:owner)
+      @owners = Technology.order(:owner).finance_worthy.map { |t| [t.owner, t.owner_acronym] }.uniq
     when 'technology'
-      @technologies = Technology.status_worthy
-
-      # use Technology.primary_component
+      @technologies = Technology.order(:owner, :name).finance_worthy
     else #un-grouped
       @built_counts = @counts.joins(:component).where('components.completed_tech = ?', true)
       @val_unbuilt = @counts.where(component_id: nil).map(&:avail_value).sum
