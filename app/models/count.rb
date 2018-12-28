@@ -33,7 +33,7 @@ class Count < ApplicationRecord
   def owner
     return "N/A" unless item.technologies.present?
 
-    item.technologies.map(&:owner_acronym).join(',')
+    item.technologies.map(&:owner_acronym).uniq.join(',')
   end
 
   def type
@@ -132,19 +132,18 @@ class Count < ApplicationRecord
   def ttl_value
     return '-' if inventory.completed_at.blank?
 
-    # total * item.price
-    0
+    total * item.price
   end
 
   def avail_value
-    # available * item.price
-    0
-  end
-
-  def exclude_from_values?
-    return false unless type == 'component'
-
-    !component.completed_tech?
+    return available * item.price unless item.class == Part
+    
+    if part.made_from_materials? && part.price_cents == 0
+      emp = part.extrapolate_material_parts.first
+      available * emp.part_price
+    else
+      available * item.price
+    end
   end
 
   def sort_by_user
