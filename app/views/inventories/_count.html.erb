@@ -1,22 +1,30 @@
 <div class="col-md-3 col-sm-4 count-parent" id="<%= 'count_' + count.id.to_s %>">
-  <div class="count-div">
-    <p class="count-title"><%= count.name %></p>
-    <p class="count-tech"><strong>For:</strong> <%= count.tech_names_short %></p>
-
-    <% if count.user_id == nil %>
-      <% if count.partial_box %>
-        <%= link_to "Loose Count", edit_inventory_count_path(@inventory, count), class: "btn empty fullwidth use-load-screen" %>
-      <% elsif count.partial_loose %>
-        <%= link_to "Box Count", edit_inventory_count_path(@inventory, count), class: "btn empty fullwidth use-load-screen" %>
-      <% else %>
-        <%= link_to @btn_text, edit_inventory_count_path(@inventory, count), class: "btn yellow fullwidth use-load-screen" %>
-      <% end %>
-    <% else %>
-      <p class="current-count">
-        <strong>Avail:</strong> <%= count.available %>
+  <div class="count-div" style="background-image: url('<%= count.item.picture %>');">
+    <div class="layer">
+      <p class="count-title">
+        <%= count.name %>
       </p>
-      <%= link_to "Edit", edit_inventory_count_path(@inventory, count), class: "btn blue fullwidth use-load-screen" %>
-    <% end %>
+      <p class="count-tech">
+        <strong><%= count.item.uid %></strong>
+        <br>
+        <strong>For: <%= count.tech_names_short %></strong>
+      </p>
+
+      <% if count.user_id == nil %>
+        <% if count.partial_box %>
+          <%= link_to "Loose Count", edit_inventory_count_path(@inventory, count), class: "btn empty fullwidth use-load-screen" %>
+        <% elsif count.partial_loose %>
+          <%= link_to "Box Count", edit_inventory_count_path(@inventory, count), class: "btn empty fullwidth use-load-screen" %>
+        <% else %>
+          <%= link_to @btn_text, edit_inventory_count_path(@inventory, count), class: "btn yellow fullwidth use-load-screen" %>
+        <% end %>
+      <% else %>
+        <p class="current-count">
+          <strong>Avail:</strong> <%= count.available %>
+        </p>
+        <%= link_to "Edit", edit_inventory_count_path(@inventory, count), class: "btn blue fullwidth use-load-screen" %>
+      <% end %>
+    </div>
   </div>
   <div class="count-filters">
     <p class="counted" title="<%= count.user_id.present? %>"></p>
