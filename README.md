@@ -1,25 +1,15 @@
 # README
 
 ## Things to do
-1. Random updates
-* Inventories#financials
-  - Calculating values
-    -- for grouped partials, use this as a template:
-    ```
-    @built_counts = @counts.joins(:component).where('components.completed_tech = ?', true)
-    @val_unbuilt = @counts.where(component_id: nil).map(&:avail_value).sum
-    @val_built = @built_counts.map(&:avail_value).sum
-    @val_ttl = @val_built + @val_unbuilt
-    ```
-
-
-2. I created EventsController::SubtractSubsets and should write tests for it
+1. I created EventsController::SubtractSubsets and should write tests for it
   * Test the class (as a model)
   * Write a system test for event-based inventories
   ** The inventory gets counts (EventsController::CountPopulate)
   ** The inventory gets the results added to the apropriate counts (InventoriesController::CountUpdate)
   ** The inventory gets subsets of components subtracted (EventsController::SubtractSubsets)
   ** The inventory gets extrapolations (InventoriesController::Extrapolate)
+
+2. I created label views and financial view and I should write tests for them.
 
 3. JQuery registration form validations (use global .has-errors css, see user#edit for good example)
 
@@ -42,6 +32,6 @@
 
 ## Remind myself:
 1. production backup / development restore-from production
-  - User.all.each do |u| u.update(password: "password", password_confirmation: "password") end
+  - User.first.update(password: "password", password_confirmation: "password")
 2. "Your branch is n commits behind master" - git fetch origin
 3. git remote prune origin --dry-run

@@ -20,6 +20,15 @@ class Technology < ApplicationRecord
   scope :active, -> { where(deleted_at: nil) }
   scope :status_worthy, -> { where("monthly_production_rate > ?", 0).order(monthly_production_rate: "desc") }
 
+  # fake scope
+  def self.finance_worthy
+    ary = []
+    Technology.all.each do |technology|
+      ary << technology if technology.price.positive?
+    end
+    ary
+  end
+
   def leaders
     users.where(is_leader: true)
   end
