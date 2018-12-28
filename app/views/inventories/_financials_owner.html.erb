@@ -1,8 +1,10 @@
 <% @owners.each do |owner| %>
-  <% @counts_for_owners = @counts.find_all { |c| c.item.technologies.map(&:owner_acronym).include? owner[1] } %>
-  <% @val_unbuilt = @counts_for_owners.map { |c| c.avail_value }.sum %>
-  <% @val_ttl = @counts_for_owners.map { |c| c.ttl_value }.sum %>
-  <% @val_built = @val_built = @val_ttl - @val_unbuilt %>
+  <% counts_for_owners = @counts.find_all { |c| c.item.technologies.map(&:owner_acronym).include? owner[1] } %>
+  <% @counts_for_owners = Count.where(id: counts_for_owners.map(&:id)) %>
+  <% @built_counts = @counts_for_owners.joins(:component).where('components.completed_tech = ?', true) %>
+  <% @val_unbuilt = @counts_for_owners.where(component_id: nil).map(&:avail_value).sum %>
+  <% @val_built = @built_counts.map(&:avail_value).sum %>
+  <% @val_ttl = @val_built + @val_unbuilt %>
   <div class="row well">
     <div class="col-xs-12 col-sm-6">
       <h3>
