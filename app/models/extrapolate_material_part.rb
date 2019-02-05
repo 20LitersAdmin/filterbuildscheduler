@@ -5,14 +5,14 @@ class ExtrapolateMaterialPart < ApplicationRecord
   belongs_to :part, inverse_of: :extrapolate_material_parts
 
   validates :material_id, :part_id, :parts_per_material, presence: true
-  validates :parts_per_material, numericality: { only_integer: true }
+  validates :parts_per_material, numericality: { greater_than: 0 }
 
   def material_price
     material.price
   end
 
   def part_price
-    if part.made_from_materials? && part.price_cents == 0
+    if part.made_from_materials? && part.price_cents.zero?
       material.price / parts_per_material
     else
       part.price
