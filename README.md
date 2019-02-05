@@ -1,9 +1,6 @@
 # README
 
 ## Things to do
-0. Shipping Box 20x20x20:
-  - extrapolate_component_parts: needs record, should == .008
-
 1. I created EventsController::SubtractSubsets and should write tests for it
   * Test the class (as a model)
   * Write a system test for event-based inventories
