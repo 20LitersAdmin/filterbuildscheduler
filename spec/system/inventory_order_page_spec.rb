@@ -126,7 +126,7 @@ RSpec.describe 'Order supplies page', type: :system, js: true do
 
     context 'displays a price based upon checkboxes' do
       # Why these fail? I have no idea. They work in UX testing.
-      pending 'on the item view' do
+      it 'on the item view' do
         expect(find(:css, '#item_ttl').native.text).to eq @cost_check
 
         click_link 'uncheck_all'
@@ -136,7 +136,7 @@ RSpec.describe 'Order supplies page', type: :system, js: true do
         expect(find(:css, '#item_ttl').native.text).to eq @cost_check
       end
 
-      pending 'on the supplier view' do
+      it 'on the supplier view' do
         click_link 'supplier_btn'
 
         expect(find(:css, '#supplier_ttl').native.text).to eq @cost_check
@@ -149,7 +149,7 @@ RSpec.describe 'Order supplies page', type: :system, js: true do
       end
     end
 
-    pending 'checks the apropriate box when the order quantity is changed' do
+    it 'checks the apropriate box when the order quantity is changed' do
       # UX testing shows this works, but I don't know why the test won't pass
       count_str = find('#order_item_tbl tbody').first('tr')[:id]
       count = Count.find(count_str)
@@ -169,7 +169,7 @@ RSpec.describe 'Order supplies page', type: :system, js: true do
       expect(checkbox).to be_checked
     end
 
-    pending 'keeps the twin checkboxes in sync' do
+    it 'keeps the twin checkboxes in sync' do
       # UX testing shows this works, but I don't know why the test won't pass
       count = Count.first
 
