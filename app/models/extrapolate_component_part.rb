@@ -5,10 +5,10 @@ class ExtrapolateComponentPart < ApplicationRecord
   belongs_to :part, inverse_of: :extrapolate_component_parts
 
   validates :component_id, :part_id, :parts_per_component, presence: true
-  validates :parts_per_component, numericality: { only_integer: true }
+  validates :parts_per_component, numericality: { greater_than: 0 }
 
   def part_price
-    if part.made_from_materials? && part.price_cents == 0
+    if part.made_from_materials? && part.price_cents.zero?
       ary = []
       emp = part.extrapolate_material_parts.first
       ary << emp.material.price / emp.parts_per_material
