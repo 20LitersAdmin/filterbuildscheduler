@@ -5,7 +5,7 @@ class ExtrapolateTechnologyPart < ApplicationRecord
   belongs_to :part, inverse_of: :extrapolate_technology_parts
 
   validates :technology_id, :part_id, :parts_per_technology, presence: true
-  validates :parts_per_technology, numericality: { only_integer: true }
+  validates :parts_per_technology, numericality: { greater_than: 0 }
 
   def part_price
     if part.made_from_materials? && part.price_cents == 0
