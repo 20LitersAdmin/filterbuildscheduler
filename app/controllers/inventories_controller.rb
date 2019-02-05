@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class InventoriesController < ApplicationController
-
   def index
     @latest = Inventory.latest
     @inventories = Inventory.former
@@ -11,32 +10,30 @@ class InventoriesController < ApplicationController
 
   def show
     authorize @inventory = Inventory.find(params[:id])
-    @counts = @inventory.counts.sort_by {|c| - c.name }
+    @counts = @inventory.counts.sort_by { |c| - c.name }
 
-    if @inventory.type_for_params == "manual"
+    if @inventory.type_for_params == 'manual'
       # show only what's ready for shipping
-      @primary_components = Component.where(completed_tech: true).map { |c| c.id }
-      @primary_component_counts = @inventory.counts.where(component_id: @primary_components).sort_by {|c| - c.name }
+      @primary_components = Component.where(completed_tech: true).map(&:id)
+      @primary_component_counts = @inventory.counts.where(component_id: @primary_components).sort_by { |c| - c.name }
     else
       # show only what's changed
-      @diff_counts = @inventory.counts.where.not(user_id: nil).sort_by {|c| - c.name }
+      @diff_counts = @inventory.counts.where.not(user_id: nil).sort_by { |c| - c.name }
     end
 
-    if @inventory.type_for_params == "event"
-      @event = Event.find(@inventory.event_id)
-    end
+    @event = Event.find(@inventory.event_id) if @inventory.type_for_params == 'event'
 
     @latest = Inventory.latest
   end
 
   def new
-    authorize @inventory = Inventory.new()
+    authorize @inventory = Inventory.new
     # What kind of inventory to make?
     # Inventories created by Events#update won't hit this action
     case params[:type]
-    when "receiving"
+    when 'receiving'
       @inventory.receiving = true
-    when "shipping"
+    when 'shipping'
       @inventory.shipping = true
     else # created manually
       @inventory.manual = true
@@ -48,14 +45,14 @@ class InventoriesController < ApplicationController
 
     @matching = Inventory.where(date: Date.parse(@date)).last
 
-    if inventory_params[:receiving] == "true"
-      @type = "receiving"
-    elsif inventory_params[:shipping] == "true"
-      @type = "shipping"
-    elsif inventory_params[:manual] == "true"
-      @type = "manual"
+    if inventory_params[:receiving] == 'true'
+      @type = 'receiving'
+    elsif inventory_params[:shipping] == 'true'
+      @type = 'shipping'
+    elsif inventory_params[:manual] == 'true'
+      @type = 'manual'
     else
-      @type = "unknown"
+      @type = 'unknown'
     end
 
     if @matching&.type_for_params == @type
@@ -70,9 +67,9 @@ class InventoriesController < ApplicationController
     CountCreate.new(@inventory)
 
     if @inventory.errors.any?
-      flash[:warning] = @inventory.errors.first.join(": ")
+      flash[:warning] = @inventory.errors.first.join(': ')
     else
-      flash[:success] = "The inventory has been created."
+      flash[:success] = 'The inventory has been created.'
       redirect_to inventories_path
     end
   end
@@ -84,7 +81,7 @@ class InventoriesController < ApplicationController
 
     @tech_ids = []
     @inventory.counts.each do |c|
-      @tech_ids << c.item.technologies.map { |t| t.id }
+      @tech_ids << c.item.technologies.map(&:id)
     end
 
     @tech_ids.flatten!
@@ -92,22 +89,21 @@ class InventoriesController < ApplicationController
 
     @techs = Technology.find(@tech_ids)
 
-    if params[:unlock] == "true"
+    if params[:unlock] == 'true'
       @inventory.completed_at = nil
       @inventory.save
     end
 
     case @inventory.type_for_params
-    when "receiving"
-      @btn_text = "Receive"
-    when "shipping"
-      @btn_text = "Ship"
-    when "manual"
-      @btn_text = "Count"
+    when 'receiving'
+      @btn_text = 'Receive'
+    when 'shipping'
+      @btn_text = 'Ship'
+    when 'manual'
+      @btn_text = 'Count'
     else
-      @btn_text = "Adjust"
+      @btn_text = 'Adjust'
     end
-
   end
 
   def update
@@ -116,21 +112,20 @@ class InventoriesController < ApplicationController
     @inventory.update(inventory_params)
     Extrapolate.new(@inventory)
 
-    if @inventory.type_for_params == "manual" || @inventory.has_items_below_minimum?
-      InventoryMailer.delay.notify(@inventory, current_user)
-    end
+    InventoryMailer.delay.notify(@inventory, current_user) if @inventory.type_for_params == 'manual' || @inventory.has_items_below_minimum?
+
     redirect_to inventories_path
   end
 
   def order
     authorize @inventory = Inventory.latest
-    @low_counts = @inventory.counts.select{ |count| count.reorder? }
+    @low_counts = @inventory.counts.select(&:reorder?)
 
     # Counts without a supplier
-    @order_counts = Count.where(id: @low_counts.map { |c| c.id })
-    @suppliers = @order_counts.map { |c| c.supplier }.uniq
+    @order_counts = Count.where(id: @low_counts.map(&:id))
+    @suppliers = @order_counts.map(&:supplier).uniq
 
-    @no_supplier = @order_counts.select{ |c| c.supplier == nil }
+    @no_supplier = @order_counts.select { |c| c.supplier.nil? }
 
     @total_cost = @low_counts.map { |c| c.item.reorder_total_cost }.sum
   end
@@ -140,7 +135,7 @@ class InventoriesController < ApplicationController
 
     @techs = Technology.status_worthy
 
-    @finder = "status"
+    @finder = 'status'
   end
 
   def paper
@@ -171,7 +166,7 @@ class InventoriesController < ApplicationController
       @owners = Technology.order(:owner).finance_worthy.map { |t| [t.owner, t.owner_acronym] }.uniq
     when 'technology'
       @technologies = Technology.order(:owner, :name).finance_worthy
-    else #un-grouped
+    else # un-grouped
       @built_counts = @counts.joins(:component).where('components.completed_tech = ?', true)
       @val_unbuilt = @counts.where(component_id: nil).map(&:avail_value).sum
       @val_built = @built_counts.map(&:avail_value).sum
