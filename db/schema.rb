@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_12_22_022205) do
+ActiveRecord::Schema.define(version: 2019_02_04_230339) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -96,7 +96,7 @@ ActiveRecord::Schema.define(version: 2018_12_22_022205) do
   create_table "extrapolate_component_parts", force: :cascade do |t|
     t.bigint "component_id", null: false
     t.bigint "part_id", null: false
-    t.integer "parts_per_component", default: 1, null: false
+    t.decimal "parts_per_component", precision: 8, scale: 4, default: "1.0", null: false
     t.index ["component_id", "part_id"], name: "by_component_and_part", unique: true
     t.index ["part_id", "component_id"], name: "by_part_and_component", unique: true
   end
@@ -104,7 +104,7 @@ ActiveRecord::Schema.define(version: 2018_12_22_022205) do
   create_table "extrapolate_material_parts", force: :cascade do |t|
     t.bigint "material_id", null: false
     t.bigint "part_id", null: false
-    t.integer "parts_per_material", default: 1, null: false
+    t.decimal "parts_per_material", precision: 8, scale: 4, default: "1.0", null: false
     t.index ["material_id", "part_id"], name: "by_material_and_part", unique: true
     t.index ["part_id", "material_id"], name: "by_part_and_material", unique: true
   end
@@ -112,7 +112,7 @@ ActiveRecord::Schema.define(version: 2018_12_22_022205) do
   create_table "extrapolate_technology_components", force: :cascade do |t|
     t.bigint "component_id", null: false
     t.bigint "technology_id", null: false
-    t.integer "components_per_technology", default: 1, null: false
+    t.decimal "components_per_technology", precision: 8, scale: 4, default: "1.0", null: false
     t.boolean "required", default: false
     t.index ["component_id", "technology_id"], name: "by_component_and_technology", unique: true
     t.index ["technology_id", "component_id"], name: "by_technology_and_component", unique: true
@@ -121,7 +121,7 @@ ActiveRecord::Schema.define(version: 2018_12_22_022205) do
   create_table "extrapolate_technology_materials", force: :cascade do |t|
     t.bigint "technology_id"
     t.bigint "material_id"
-    t.float "materials_per_technology", default: 1.0, null: false
+    t.decimal "materials_per_technology", precision: 8, scale: 4, default: "1.0", null: false
     t.boolean "required", default: false, null: false
     t.index ["material_id", "technology_id"], name: "index_materials_technologies_on_material"
     t.index ["material_id"], name: "index_extrapolate_technology_materials_on_material_id"
@@ -132,7 +132,7 @@ ActiveRecord::Schema.define(version: 2018_12_22_022205) do
   create_table "extrapolate_technology_parts", force: :cascade do |t|
     t.bigint "part_id", null: false
     t.bigint "technology_id", null: false
-    t.integer "parts_per_technology", default: 1, null: false
+    t.decimal "parts_per_technology", precision: 8, scale: 4, default: "1.0", null: false
     t.boolean "required", default: false
     t.index ["part_id", "technology_id"], name: "by_part_and_technology", unique: true
     t.index ["technology_id", "part_id"], name: "by_technology_and_part", unique: true

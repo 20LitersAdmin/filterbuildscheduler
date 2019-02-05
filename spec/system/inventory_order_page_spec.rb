@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe "Order supplies page", type: :system, js: true do
+RSpec.describe 'Order supplies page', type: :system, js: true do
   before :each do
     @inventory = FactoryBot.create(:inventory)
     @supplier1 = FactoryBot.create(:supplier)
@@ -26,7 +26,7 @@ RSpec.describe "Order supplies page", type: :system, js: true do
     2.times { FactoryBot.create(:material, supplier: @supplier2, minimum_on_hand: 20, weeks_to_deliver: 4) }
     Material.all.each do |m|
       FactoryBot.create(:material_part, material: m, part: Part.find(Random.rand(Part.first.id..Part.last.id)) )
-      #every material needs an extrapolate_material_parts && an extrapolate_component_parts through the part.
+      # every material needs an extrapolate_material_parts && an extrapolate_component_parts through the part.
       ExtrapolateComponentPart.where(component: Component.find(Random.rand(Component.first.id..Component.last.id)), part: m.extrapolate_material_parts.first.part).first_or_create
       # comp_part = FactoryBot.build(:comp_part, component: Component.find(Random.rand(Component.first.id..Component.last.id)), part: m.extrapolate_material_parts.first.part )
       # comp_part.save #allows for soft-fail if the record is a duplicate
@@ -44,76 +44,76 @@ RSpec.describe "Order supplies page", type: :system, js: true do
     clean_up!
   end
 
-  context "when visited by" do
-    it "anon users redirects to sign_in page" do
+  context 'when visited by' do
+    it 'anon users redirects to sign_in page' do
       visit order_inventories_path
 
-      expect(page).to have_content "You need to sign in first"
-      expect(page).to have_content "Sign in"
+      expect(page).to have_content 'You need to sign in first'
+      expect(page).to have_content 'Sign in'
     end
 
-    it "builders redirects to home page" do
+    it 'builders redirects to home page' do
       sign_in FactoryBot.create(:user)
 
       visit order_inventories_path
 
-      expect(page).to have_content "You don't have permission"
-      expect(page).to have_content "Upcoming Builds"
+      expect(page).to have_content 'You don\'t have permission'
+      expect(page).to have_content 'Upcoming Builds'
     end
 
-    it "leaders redirects to home page" do
+    it 'leaders redirects to home page' do
       sign_in FactoryBot.create(:leader)
 
       visit order_inventories_path
 
-      expect(page).to have_content "You don't have permission"
-      expect(page).to have_content "Upcoming Builds"
+      expect(page).to have_content 'You don\'t have permission'
+      expect(page).to have_content 'Upcoming Builds'
     end
 
-    it "inventory users shows the page" do
+    it 'inventory users shows the page' do
       sign_in FactoryBot.create(:user, does_inventory: true)
       visit order_inventories_path
 
-      expect(page).to have_content "items need to be ordered:"
+      expect(page).to have_content 'items need to be ordered:'
     end
 
-    it "users who receive inventory emails shows the page" do
+    it 'users who receive inventory emails shows the page' do
       sign_in FactoryBot.create(:user, send_inventory_emails: true)
       visit order_inventories_path
 
-      expect(page).to have_content "items need to be ordered:"
+      expect(page).to have_content 'items need to be ordered:'
     end
 
-    it "admins shows the page" do
+    it 'admins shows the page' do
       sign_in FactoryBot.create(:admin)
       visit order_inventories_path
 
-      expect(page).to have_content "items need to be ordered:"
+      expect(page).to have_content 'items need to be ordered:'
     end
   end
 
-  context "shows items that need to be ordered" do
+  context 'shows items that need to be ordered' do
     before :each do
       sign_in FactoryBot.create(:admin)
       visit order_inventories_path
     end
 
-    it "in a single table" do
-      expect(page).to have_css("table#order_item_tbl")
-      expect(page).to have_css("table#order_item_tbl tbody tr", count: 17)
+    it 'in a single table' do
+      expect(page).to have_css('table#order_item_tbl')
+      expect(page).to have_css('table#order_item_tbl tbody tr', count: 17)
     end
 
-    it "by supplier" do
-      click_link "By Supplier"
+    it 'by supplier' do
+      click_link 'By Supplier'
 
-      expect(page).to have_css("table.datatable-order-supplier", count: 3)
+      expect(page).to have_css('table.datatable-order-supplier', count: 3)
       expect(page).to have_content @supplier1.name
       expect(page).to have_content @supplier2.name
-      expect(page).to have_content "Items without a supplier:"
+      expect(page).to have_content 'Items without a supplier:'
     end
   end
 
-  context "has js that" do
+  context 'has js that' do
     before :each do
       sign_in FactoryBot.create(:admin)
 
@@ -124,62 +124,62 @@ RSpec.describe "Order supplies page", type: :system, js: true do
       visit order_inventories_path
     end
 
-    context "displays a price based upon checkboxes" do
+    context 'displays a price based upon checkboxes' do
       # Why these fail? I have no idea. They work in UX testing.
-      it "on the item view" do
-        expect(find(:css, "#item_ttl").native.text).to eq @cost_check
+      it 'on the item view' do
+        expect(find(:css, '#item_ttl').native.text).to eq @cost_check
 
-        click_link "uncheck_all"
-        expect(find(:css, "#item_ttl").native.text).to eq "0.00"
+        click_link 'uncheck_all'
+        expect(find(:css, '#item_ttl').native.text).to eq '0.00'
 
-        click_link "check_all"
-        expect(find(:css, "#item_ttl").native.text).to eq @cost_check
+        click_link 'check_all'
+        expect(find(:css, '#item_ttl').native.text).to eq @cost_check
       end
 
-      it "on the supplier view" do
-        click_link "supplier_btn"
+      it 'on the supplier view' do
+        click_link 'supplier_btn'
 
-        expect(find(:css, "#supplier_ttl").native.text).to eq @cost_check
+        expect(find(:css, '#supplier_ttl').native.text).to eq @cost_check
 
-        click_link "uncheck_all"
-        expect(find(:css, "#supplier_ttl").native.text).to eq "0.00"
+        click_link 'uncheck_all'
+        expect(find(:css, '#supplier_ttl').native.text).to eq '0.00'
 
-        click_link "check_all"
-        expect(find(:css, "#supplier_ttl").native.text).to eq @cost_check
+        click_link 'check_all'
+        expect(find(:css, '#supplier_ttl').native.text).to eq @cost_check
       end
     end
 
-    it "checks the apropriate box when the order quantity is changed" do
+    it 'checks the apropriate box when the order quantity is changed' do
       # UX testing shows this works, but I don't know why the test won't pass
       count_str = find('#order_item_tbl tbody').first('tr')[:id]
       count = Count.find(count_str)
 
-      checkbox = find("#checkbox_item_" + count.id.to_s)
+      checkbox = find('#checkbox_item_' + count.id.to_s)
 
       expect(checkbox).to be_checked
 
-      click_link "uncheck_all"
+      click_link 'uncheck_all'
 
       expect(checkbox).to_not be_checked
 
-      field_id = "item_min_order_" + count.id.to_s
+      field_id = 'item_min_order_' + count.id.to_s
       fill_in(field_id, with: count.item.min_order + 200)
-      find("#title").click
+      find('#title').click
 
       expect(checkbox).to be_checked
     end
 
-    it "keeps the twin checkboxes in sync" do
+    it 'keeps the twin checkboxes in sync' do
       # UX testing shows this works, but I don't know why the test won't pass
       count = Count.first
 
-      twin_a = find("#checkbox_item_" + count.id.to_s)
-      twin_b = find("#checkbox_supplier_" + count.id.to_s, visible: false)
+      twin_a = find('#checkbox_item_' + count.id.to_s)
+      twin_b = find('#checkbox_supplier_' + count.id.to_s, visible: false)
 
       expect(twin_a).to be_checked
       expect(twin_b).to be_checked
 
-      click_link "uncheck_all"
+      click_link 'uncheck_all'
 
       expect(twin_a).to_not be_checked
       expect(twin_b).to_not be_checked
@@ -189,10 +189,10 @@ RSpec.describe "Order supplies page", type: :system, js: true do
       expect(twin_a).to be_checked
       expect(twin_b).to be_checked
 
-      click_link "supplier_btn"
+      click_link 'supplier_btn'
 
-      twin_a = find("#checkbox_item_" + count.id.to_s, visible: false)
-      twin_b = find("#checkbox_supplier_" + count.id.to_s)
+      twin_a = find('#checkbox_item_' + count.id.to_s, visible: false)
+      twin_b = find('#checkbox_supplier_' + count.id.to_s)
 
       twin_b.set(false)
 

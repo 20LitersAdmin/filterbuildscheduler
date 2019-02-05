@@ -11,7 +11,6 @@ class Component < ApplicationRecord
   has_many :parts, through: :extrapolate_component_parts
   accepts_nested_attributes_for :extrapolate_component_parts, allow_destroy: true
 
-
   has_many :counts, dependent: :destroy
   scope :active, -> { where(deleted_at: nil) }
 
