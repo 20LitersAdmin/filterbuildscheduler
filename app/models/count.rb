@@ -13,7 +13,7 @@ class Count < ApplicationRecord
 
   validates :inventory_id, :loose_count, :unopened_boxes_count, presence: true
   validates :loose_count, :unopened_boxes_count, :extrapolated_count, numericality: { only_integer: true }
-  
+
   # scope :active, -> { where(deleted_at: nil) }
 
   def item
@@ -102,7 +102,7 @@ class Count < ApplicationRecord
     prev_inv = previous_inventory
 
     return nil unless prev_inv.present?
-      
+
     case type
     when "part"
       prev_inv.counts.where(part: part.id).first
@@ -137,7 +137,7 @@ class Count < ApplicationRecord
 
   def avail_value
     return available * item.price unless item.class == Part
-    
+
     if part.made_from_materials? && part.price_cents == 0
       emp = part.extrapolate_material_parts.first
       available * emp.part_price
@@ -175,36 +175,35 @@ class Count < ApplicationRecord
   end
 
   def can_produce_x_parent
-    if available == 0
+    if available.zero?
       0
     else
       case type
-      when "material"
+      when 'material'
         if material.extrapolate_material_parts.any?
           # Materials are larger than parts (1 material makes many parts)
-          available * material.extrapolate_material_parts.first.parts_per_material
+          available * material.extrapolate_material_parts.first.parts_per_material.to_i
         else
           available
         end
-      when "part"
+      when 'part'
         if part.extrapolate_component_parts.any?
-          available / part.extrapolate_component_parts.first.parts_per_component
+          available / part.extrapolate_component_parts.first.parts_per_component.to_i
         else
           available
         end
-      when "component"
+      when 'component'
         available / item.per_technology
-      end 
+      end
     end
   end
 
   def weeks_to_out
-    if available == 0
+    if available.zero?
       0
     else
       mpr = item.technology.present? ? item.technology.monthly_production_rate : 0
-      can_produce_x_tech / ( mpr / 4.0 )
+      can_produce_x_tech / (mpr / 4.0)
     end
   end
-
 end

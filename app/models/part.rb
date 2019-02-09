@@ -24,13 +24,12 @@ class Part < ApplicationRecord
   scope :active, -> { where(deleted_at: nil) }
 
   def uid
-    "P" + id.to_s.rjust(3, "0")
+    'P' + id.to_s.rjust(3, '0')
   end
 
   def picture
     begin
       ActionController::Base.helpers.asset_path('uids/' + uid + '.jpg')
-
     rescue => error
       'http://placekitten.com/140/140'
     end
@@ -52,9 +51,9 @@ class Part < ApplicationRecord
     if extrapolate_technology_parts.first.present?
       per_tech = extrapolate_technology_parts.first.parts_per_technology.to_f
     elsif extrapolate_component_parts.first.present?
-      ppc = extrapolate_component_parts.first.parts_per_component
+      ppc = extrapolate_component_parts.first.parts_per_component.to_f
       component = extrapolate_component_parts.first.component
-      cpt = component.extrapolate_technology_components.first.components_per_technology
+      cpt = component.extrapolate_technology_components.first.components_per_technology.to_f
       per_tech = ppc.to_f * cpt
     else
       per_tech = 0.0

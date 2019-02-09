@@ -11,7 +11,7 @@ class ExtrapolateTechnologyPart < ApplicationRecord
     if part.made_from_materials? && part.price_cents == 0
       ary = []
       part.extrapolate_material_parts.each do |emp|
-        ary << emp.material.price / emp.parts_per_material
+        ary << emp.material.price / emp.parts_per_material.to_f
       end
       ary.sum
     else
@@ -20,6 +20,6 @@ class ExtrapolateTechnologyPart < ApplicationRecord
   end
 
   def price_per_technology
-    part_price * parts_per_technology
+    part_price * parts_per_technology.to_f
   end
 end

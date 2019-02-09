@@ -21,7 +21,7 @@ class Inventory < ApplicationRecord
       puts 'HEY! --> `.last` is not reliable if you want the "most recent inventory performed".', 'Did you mean to use `.latest?` (Yn)'
       input = gets.strip
 
-      if input == 'Y' || input == 'y'
+      if %w[Y y].include? input
         Inventory.latest
       else
         super
@@ -30,49 +30,45 @@ class Inventory < ApplicationRecord
   end
 
   def name
-    date.strftime("%-m/%-d/%y") + ": " + type
+    date.strftime('%-m/%-d/%y') + ': ' + type
   end
 
   def name_title
-    date.strftime("%m-%d-%y") + " " + type
+    date.strftime('%m-%d-%y') + ' ' + type
   end
 
   def type
     if event_id.present?
-      type = "Event Based"
+      type = 'Event Based'
     elsif receiving
-      type = "Items Received"
+      type = 'Items Received'
     elsif shipping
-      type = "Items Shipped"
+      type = 'Items Shipped'
     elsif manual
-      type = "Manual Inventory"
+      type = 'Manual Inventory'
     else
-      type = "Unknown"
+      type = 'Unknown'
     end
     type
   end
 
   def type_for_params
     if receiving
-      type = "receiving"
+      type = 'receiving'
     elsif shipping
-      type = "shipping"
+      type = 'shipping'
     elsif manual
-      type = "manual"
+      type = 'manual'
     elsif event_id.present?
-      type = "event"
+      type = 'event'
     else
-      type = "unknown"
+      type = 'unknown'
     end
     type
   end
 
   def has_items_below_minimum?
-    if counts.select{ |count| count.reorder? }.count > 0
-      true
-    else
-      false
-    end
+    counts.select(&:reorder?).count.positive?
   end
 
   def item_count
@@ -81,17 +77,17 @@ class Inventory < ApplicationRecord
 
   def count_summary
     if receiving
-      item_count.to_s + " of " + counts.count.to_s + " items received."
+      item_count.to_s + ' of ' + counts.count.to_s + ' items received.'
     elsif shipping
-      item_count.to_s + " of " + counts.count.to_s + " items shipped."
+      item_count.to_s + ' of ' + counts.count.to_s + ' items shipped.'
     else
-      item_count.to_s + " of " + counts.count.to_s + " items counted."
+      item_count.to_s + ' of ' + counts.count.to_s + ' items counted.'
     end
   end
 
   def primary_counts
     # find the components that represent completed technologies
-    @primary_comp_ids = Component.where(completed_tech: true).map { |c| c.id }
+    @primary_comp_ids = Component.where(completed_tech: true).map(&:id)
     # get the count records of these components
     counts.where(component_id: @primary_comp_ids)
   end

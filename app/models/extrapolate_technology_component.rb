@@ -12,6 +12,6 @@ class ExtrapolateTechnologyComponent < ApplicationRecord
   end
 
   def price_per_technology
-    component.price * components_per_technology
+    component.price * components_per_technology.to_f
   end
 end

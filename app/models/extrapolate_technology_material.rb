@@ -13,6 +13,6 @@ class ExtrapolateTechnologyMaterial < ApplicationRecord
   end
 
   def price_per_technology
-    material.price / materials_per_technology
+    material.price / materials_per_technology.to_f
   end
 end

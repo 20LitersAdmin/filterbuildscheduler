@@ -18,56 +18,47 @@ class Event < ApplicationRecord
   validate :registrations_are_valid?
   validate :leaders_are_valid?
 
-  scope :active, -> { where(deleted_at: nil) }
-  scope :non_private, -> { where(is_private: false) }
-  scope :future, -> { where('end_time > ?', Time.now).order(start_time: :asc) }
-  scope :within_days, -> (num) { where('start_time <= ?', Time.now + num.days) }
-  scope :past, -> { where('end_time <= ?', Time.now).order(start_time: :desc) }
+  scope :active,       -> { where(deleted_at: nil) }
+  scope :non_private,  -> { where(is_private: false) }
+  scope :future,       -> { where('end_time > ?', Time.now).order(start_time: :asc) }
+  scope :within_days,  ->(num) { where('start_time <= ?', Time.now + num.days) }
+  scope :past,         -> { where('end_time <= ?', Time.now).order(start_time: :desc) }
   scope :needs_report, -> { where('start_time <= ?', Time.now).where(attendance: 0).order(start_time: :desc) }
   scope :closed, -> { where('start_time <= ?', Time.now).order(start_time: :desc) }
 
-
   # Not working as expected
-  # scope :still_needs_leaders, -> { joins(:registrations).group("events.id").having("count(CASE WHEN registrations.leader THEN 1 END) < events.max_leaders") }
-
+  # scope :still_needs_leaders, -> { joins(:registrations).group('events.id').having('count(CASE WHEN registrations.leader THEN 1 END) < events.max_leaders') }
 
   def in_the_past?
-    return end_time <= Time.now
+    end_time <= Time.now
   end
 
   def has_begun?
-    return start_time < Time.now
+    start_time < Time.now
   end
 
   def dates_are_valid?
     return if start_time.nil? || end_time.nil?
+
     # accuracy to within a minute
     diff = ((end_time - start_time) / 1.minute).round
-    if !diff.positive?
-      errors.add(:end_time, 'must be after start time')
-    end
+    errors.add(:end_time, 'must be after start time') unless diff.positive?
   end
 
   def registrations_are_valid?
     return if min_registrations.nil? || max_registrations.nil?
-    if min_registrations > max_registrations
-      errors.add(:max_registrations, 'must be greater than min registrations')
-    end
 
-    if total_registered > max_registrations
-      errors.add(:max_registrations, 'there are more registered attendees than the event max registrations')
-    end
+    errors.add(:max_registrations, 'must be greater than min registrations') if min_registrations > max_registrations
+
+    errors.add(:max_registrations, 'there are more registered attendees than the event max registrations') if total_registered > max_registrations
   end
 
   def leaders_are_valid?
     return if min_leaders.nil? || max_leaders.nil?
-    if min_leaders > max_leaders
-      errors.add(:max_leaders, 'must be greater than min leaders')
-    end
 
-    if leaders_registered.count > max_leaders
-      errors.add(:max_leaders, 'there are more registered leaders than the event max leaders')
-    end
+    errors.add(:max_leaders, 'must be greater than min leaders') if min_leaders > max_leaders
+
+    errors.add(:max_leaders, 'there are more registered leaders than the event max leaders') if leaders_registered.count > max_leaders
   end
 
   def format_time_range
@@ -80,108 +71,92 @@ class Event < ApplicationRecord
 
   def format_date_only
     if start_time.beginning_of_day == end_time.beginning_of_day
-      start_time.strftime("%a, %-m/%-d")
+      start_time.strftime('%a, %-m/%-d')
     else
-      start_time.strftime("%a, %-m/%-d %l:%M%P") + end_time.strftime(" to %a, %-m/%-d %l:%M%P")
+      start_time.strftime('%a, %-m/%-d %l:%M%P') + end_time.strftime(' to %a, %-m/%-d %l:%M%P')
     end
   end
 
   def format_time_only
     if start_time.beginning_of_day == end_time.beginning_of_day
-      start_time.strftime("%l:%M%P") + end_time.strftime(" - %l:%M%P")
+      start_time.strftime('%l:%M%P') + end_time.strftime(' - %l:%M%P')
     else
-      " "
+      ' '
     end
   end
 
   def full_title
-    start_time.strftime("%-m/%-d") + " - " + title
+    start_time.strftime('%-m/%-d') + ' - ' + title
   end
 
-  # pass total_registered("only_deleted") to get access to registrations.only_deleted
-  def total_registered(scope = "")
-    if scope == "only_deleted"
-      if registrations.only_deleted.exists?
-        registrations.only_deleted.map { |r| r.guests_registered }.sum + non_leaders_registered("only_deleted").count
-      else
-        0
-      end
+  # pass total_registered('only_deleted') to get access to registrations.only_deleted
+  def total_registered(scope = '')
+    if scope == 'only_deleted'
+      registrations.only_deleted.exists? ? registrations.only_deleted.map(&:guests_registered).sum + non_leaders_registered('only_deleted').count : 0
     else
-      if registrations.exists?
-        registrations.map { |r| r.guests_registered }.sum + non_leaders_registered.count
-      else
-        0
-      end
+      registrations.exists? ? registrations.map(&:guests_registered).sum + non_leaders_registered.count : 0
     end
   end
 
-  def total_registered_w_leaders(scope = "")
-    if scope == "only_deleted"
-      if registrations.only_deleted.exists?
-        registrations.only_deleted.map { |r| r.guests_registered }.sum + registrations.only_deleted.count
-      else
-        0
-      end
+  def total_registered_w_leaders(scope = '')
+    if scope == 'only_deleted'
+      registrations.only_deleted.exists? ? registrations.only_deleted.map(&:guests_registered).sum + registrations.only_deleted.count : 0
     else
-      if registrations.exists?
-        registrations.map { |r| r.guests_registered }.sum + registrations.count
-      else
-        0
-      end
+      registrations.exists? ? registrations.map(&:guests_registered).sum + registrations.count : 0
     end
   end
 
-  def non_leaders_registered(scope = "")
-    if scope == "only_deleted"
+  def non_leaders_registered(scope = '')
+    if scope == 'only_deleted'
       registrations.only_deleted.non_leader
     else
       registrations.non_leader
     end
   end
 
-  def leaders_registered(scope = "")
-    if scope == "only_deleted"
+  def leaders_registered(scope = '')
+    if scope == 'only_deleted'
       registrations.only_deleted.registered_as_leader
     else
       registrations.registered_as_leader
     end
   end
 
-  def registrations_filled?(scope = "")
-    if scope == "only_deleted"
-      total_registered("only_deleted") >= max_registrations
+  def registrations_filled?(scope = '')
+    if scope == 'only_deleted'
+      total_registered('only_deleted') >= max_registrations
     else
       total_registered >= max_registrations
     end
   end
 
-  def registrations_remaining(scope = "")
-    if scope == "only_deleted"
-      max_registrations - total_registered("only_deleted")
+  def registrations_remaining(scope = '')
+    if scope == 'only_deleted'
+      max_registrations - total_registered('only_deleted')
     else
       max_registrations - total_registered
     end
   end
 
-  def does_not_need_leaders?(scope = "")
-    if scope == "only_deleted"
-      leaders_registered("only_deleted").count >= max_leaders
+  def does_not_need_leaders?(scope = '')
+    if scope == 'only_deleted'
+      leaders_registered('only_deleted').count >= max_leaders
     else
       leaders_registered.count >= max_leaders
     end
   end
 
-  def really_needs_leaders?(scope = "")
-    if scope == "only_deleted"
-      leaders_registered("only_deleted").count < min_leaders
+  def really_needs_leaders?(scope = '')
+    if scope == 'only_deleted'
+      leaders_registered('only_deleted').count < min_leaders
     else
       leaders_registered.count < min_leaders
     end
   end
 
-  def needs_leaders?(scope = "")
-    if scope == "only_deleted"
-      leaders_registered("only_deleted").count < max_leaders
+  def needs_leaders?(scope = '')
+    if scope == 'only_deleted'
+      leaders_registered('only_deleted').count < max_leaders
     else
       leaders_registered.count < max_leaders
     end
@@ -197,9 +172,9 @@ class Event < ApplicationRecord
 
   def privacy_humanize
     if is_private == true
-      "Private Event"
+      'Private Event'
     else
-      "Public Event"
+      'Public Event'
     end
   end
 
@@ -208,59 +183,50 @@ class Event < ApplicationRecord
   end
 
   def leaders_names
-    if leaders_registered.present?
-      registrations.registered_as_leader.map { |r| r.user.fname }.join(', ')
-    end
+    registrations.registered_as_leader.map { |r| r.user.fname }.join(', ') if leaders_registered.present?
   end
 
   def leaders_names_full
-    if leaders_registered.present?
-      registrations.registered_as_leader.map { |r| r.user.name }.join(', ')
+    registrations.registered_as_leader.map { |r| r.user.name }.join(', ') if leaders_registered.present?
+  end
+
+  def you_are_attendee(user, scope = '')
+    if scope == 'only_deleted'
+      ' (including you)' if user && registrations.only_deleted.where(user_id: user.id).where(leader: false).present?
+    else
+      ' (including you)' if user && registrations.where(user_id: user.id).where(leader: false).present?
     end
   end
 
-  def you_are_attendee(user, scope = "")
-    if scope == "only_deleted"
-      if user && registrations.only_deleted.where(user_id: user.id).where(leader: false).present?
-        " (including you)"
-      end
+  def you_are_leader(user, scope = '')
+    if scope == 'only_deleted'
+      ' (including you)' if user&.is_leader && registrations.only_deleted.where(user_id: user.id).where(leader: true).present?
     else
-      if user && registrations.where(user_id: user.id).where(leader: false).present?
-        " (including you)"
-      end
-    end
-  end
-
-  def you_are_leader(user, scope = "")
-    if scope == "only_deleted"
-      if user&.is_leader && registrations.only_deleted.where(user_id: user.id).where(leader: true).present?
-        " (including you)"
-      end
-    else
-      if user&.is_leader && registrations.where(user_id: user.id).where(leader: true).present?
-        " (including you)"
-      end
+      ' (including you)' if user&.is_leader && registrations.where(user_id: user.id).where(leader: true).present?
     end
   end
 
   def technology_results
-    return 0 if incomplete?
-    return 0 if !technology.primary_component.present?
+    return 0 if incomplete? || !technology.primary_component.present?
+
     (boxes_packed * technology.primary_component.quantity_per_box) + technologies_built
   end
 
   def results_people
-    return 0 if technology.people == 0 || technology_results == 0
-     technology_results * technology.people
+    return 0 if technology.people.zero? || technology_results.zero?
+
+    technology_results * technology.people
   end
 
   def results_timespan
-    return 0 if technology.lifespan_in_years == 0 || technology_results == 0
+    return 0 if technology.lifespan_in_years.zero? || technology_results.zero?
+
     technology.lifespan_in_years
   end
 
   def results_liters_per_day
-    return 0 if technology.liters_per_day == 0 || technology_results == 0
+    return 0 if technology.liters_per_day.zero? || technology_results.zero?
+
     technology_results * technology.liters_per_day
   end
 

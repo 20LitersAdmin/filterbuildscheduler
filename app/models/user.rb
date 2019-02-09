@@ -7,23 +7,23 @@ class User < ApplicationRecord
   # :confirmable, :lockable, :timeoutable and :omniauthable
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :trackable, :validatable
-  scope :leaders, -> { where(is_leader: true)}
+  scope :leaders, -> { where(is_leader: true) }
   scope :admins, -> { where(is_admin: true) }
-  scope :builders, -> { where.not(is_admin: true).where.not(is_leader: true).where.not(does_inventory: true)}
+  scope :builders, -> { where.not(is_admin: true).where.not(is_leader: true).where.not(does_inventory: true) }
   scope :for_monthly_report, -> { builders.where(email_opt_out: false).where('created_at >= ?', Date.today.beginning_of_month) }
-  
+
   has_many :registrations
   has_many :events, through: :registrations
   has_and_belongs_to_many :technologies
   has_many :counts
-  belongs_to :primary_location, class_name: "Location", primary_key: "id", foreign_key: "primary_location_id", optional: true
+  belongs_to :primary_location, class_name: 'Location', primary_key: 'id', foreign_key: 'primary_location_id', optional: true
 
   validates :fname, :lname, :email, presence: true
 
   before_save :ensure_authentication_token, :check_phone_format
 
-  after_save :update_kindful, if: Proc.new { |user| user.saved_change_to_fname? || user.saved_change_to_lname? || user.saved_change_to_email? || user.saved_change_to_email_opt_out? || user.saved_change_to_phone? }
-  
+  after_save :update_kindful, if: ->(user) { user.saved_change_to_fname? || user.saved_change_to_lname? || user.saved_change_to_email? || user.saved_change_to_email_opt_out? || user.saved_change_to_phone? }
+
   scope :active, -> { where(deleted_at: nil) }
 
   def admin_or_leader?
@@ -44,7 +44,8 @@ class User < ApplicationRecord
 
   def can_lead_event?(event)
     return false unless admin_or_leader?
-    return event.technology.nil? || technologies.exists?(event.technology.id)
+
+    event.technology.nil? || technologies.exists?(event.technology.id)
   end
 
   def registered?(event)
@@ -61,11 +62,11 @@ class User < ApplicationRecord
     elsif is_leader?
       # finds future events OR events the leader registered for
       Event.distinct.joins('LEFT JOIN registrations ON registrations.event_id = events.id')
-         .where('start_time >= ? OR registrations.user_id = ?', Time.now, id)
+           .where('start_time >= ? OR registrations.user_id = ?', Time.now, id)
     else
       # finds public events OR events the user has registered for
       Event.distinct.joins('LEFT JOIN registrations ON registrations.event_id = events.id')
-         .where('is_private = false OR registrations.user_id = ?', id)
+           .where('is_private = false OR registrations.user_id = ?', id)
     end
   end
 
@@ -74,23 +75,19 @@ class User < ApplicationRecord
   end
 
   def ensure_authentication_token
-    if authentication_token.blank?
-      self.authentication_token = generate_authentication_token
-    end
+    self.authentication_token = generate_authentication_token if authentication_token.blank?
   end
 
   def check_phone_format
-    if phone.present? && phone.match('^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$').nil?
-      # Remove any non-numbers, and any symbols that aren't part of [(,),-,.,+]
-      phone.gsub!(/[^\d,(,),+,\s,.,-]/,'')
-    end
+    # Remove any non-numbers, and any symbols that aren't part of [(,),-,.,+]
+    phone.gsub!(/[^\d,(,),+,\s,.,-]/,'') if phone.present? && phone.match('^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$').nil?
   end
 
   def latest_event
-    if registrations.count > 0
+    if registrations.count.positive?
       registrations.includes(:event).order('events.start_time DESC').first.event.full_title
     else
-      "No Event"
+      'No Event'
     end
   end
 
@@ -106,7 +103,7 @@ class User < ApplicationRecord
   end
 
   def custom_path
-    # this allows for a form field that handles page redirects based on values: "admin", "self"
+    # this allows for a form field that handles page redirects based on values: 'admin', 'self'
   end
 
   private
