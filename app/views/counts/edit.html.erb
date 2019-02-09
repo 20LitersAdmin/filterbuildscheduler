@@ -39,16 +39,16 @@
                 <span id="previous_box_count"><%= @count.previous_box %></span>
               </div>
             </div>
-          </div>    
+          </div>
         <% end %>
         <%= f.submit "Submit", class: "btn yellow fullwidth use-load-screen" %>
-        
+
         <% if @inventory.manual? && !@count.item.only_loose? %>
           <div class="col-xs-12 col-sm-6">
             <% if @count.partial_loose? %>
               <h4 class="center">Ready to Submit</h4>
             <% else %>
-              <%= f.button :submit, name: "partial_loose", value: "Partial Count: Loose", class: "btn blue fullwidth use-load-screen" %>  
+              <%= f.button :submit, name: "partial_loose", value: "Partial Count: Loose", class: "btn blue fullwidth use-load-screen" %>
             <% end %>
           </div>
           <div class="col-xs-12 col-sm-6">

@@ -3,7 +3,7 @@
 require 'money-rails/rails_admin'
 
 RailsAdmin.config do |config|
-  config.main_app_name = ["20 Liters", "Admin"]
+  config.main_app_name = ['20 Liters', 'Admin']
   config.excluded_models = ['ActiveStorage::Blob', 'ActiveStorage::Attachment']
 
   ### Popular gems integration
@@ -20,8 +20,10 @@ RailsAdmin.config do |config|
   module RailsAdmin::Adapters::ActiveRecord
     def get(id)
       return unless object = scoped.where(primary_key => id).first
+
       AbstractObject.new object
     end
+
     def scoped
       model.unscoped
     end
@@ -61,9 +63,6 @@ RailsAdmin.config do |config|
       field :sign_in_count
       field :last_sign_in_at
     end
-    configure :deleted_at do
-      show
-    end
 
     exclude_fields :registrations, :counts
   end
@@ -79,9 +78,6 @@ RailsAdmin.config do |config|
       field :location
       field :is_private
       field :leaders_names_full
-    end
-    configure :deleted_at do
-      show
     end
 
     exclude_fields :registrations, :users, :inventory
@@ -99,9 +95,6 @@ RailsAdmin.config do |config|
       field :guests_registered
       field :guests_attended
     end
-    configure :deleted_at do
-      show
-    end
   end
 
   config.model Location do
@@ -114,9 +107,6 @@ RailsAdmin.config do |config|
       field :address2
       field :zip
     end
-    configure :deleted_at do
-      show
-    end
   end
 
   config.model Technology do
@@ -126,15 +116,12 @@ RailsAdmin.config do |config|
       field :name
       field :owner
       field :price, :money do
-        formatted_value{ bindings[:object].price }
+        formatted_value { bindings[:object].price }
       end
       field :family_friendly
       field :ideal_build_length
       field :ideal_group_size
       field :ideal_leaders
-    end
-    configure :deleted_at do
-      show
     end
 
     exclude_fields :extrapolate_technology_parts, :extrapolate_technology_components
@@ -149,24 +136,21 @@ RailsAdmin.config do |config|
       field :poc_name
       field :poc_email
     end
-    configure :deleted_at do
-      show
-    end
   end
 
   config.model Component do
     weight 4
     list do
       scopes [:active, :only_deleted]
+      field :uid do
+        sortable :id
+      end
       field :name
       field :technologies
       field :price, :money do
-        formatted_value{ bindings[:object].price }
+        formatted_value { bindings[:object].price }
       end
       field :completed_tech
-    end
-    configure :deleted_at do
-      show
     end
     configure :description do
       label 'Label Description'
@@ -179,6 +163,9 @@ RailsAdmin.config do |config|
     weight 5
     list do
       scopes [:active, :only_deleted]
+      field :uid do
+        sortable :id
+      end
       field :name
       field :supplier
       field :price, :money do
@@ -187,9 +174,6 @@ RailsAdmin.config do |config|
       field :made_from_materials
       field :min_order
       field :weeks_to_deliver
-    end
-    configure :deleted_at do
-      show
     end
     configure :description do
       label 'Label Description'
@@ -202,15 +186,15 @@ RailsAdmin.config do |config|
     weight 6
     list do
       scopes [:active, :only_deleted]
+      field :uid do
+        sortable :id
+      end
       field :name
       field :supplier
       field :price, :money
       field :min_order
       field :weeks_to_deliver
       field :min_order
-    end
-    configure :deleted_at do
-      show
     end
     configure :description do
       label 'Label Description'
@@ -229,44 +213,44 @@ RailsAdmin.config do |config|
 
   config.model ExtrapolateComponentPart do
     parent Component
-    label "Component <-> Part"
-    label_plural "Components <-> Parts"
+    label 'Component <-> Part'
+    label_plural 'Components <-> Parts'
 
     list do
       field :component
       field :part
       field :parts_per_component
       field :part_price, :money do
-        formatted_value{ bindings[:object].part_price }
+        formatted_value { bindings[:object].part_price }
       end
       field :price_per_component, :money do
-        formatted_value{ bindings[:object].price_per_component }
+        formatted_value { bindings[:object].price_per_component }
       end
     end
   end
 
   config.model ExtrapolateMaterialPart do
     parent Material
-    label "Material <-> Part"
-    label_plural "Materials <-> Parts"
+    label 'Material <-> Part'
+    label_plural 'Materials <-> Parts'
 
     list do
       field :material
       field :part
       field :parts_per_material
       field :material_price, :money do
-        formatted_value{ bindings[:object].material_price }
+        formatted_value { bindings[:object].material_price }
       end
       field :part_price, :money do
-        formatted_value{ bindings[:object].part_price }
+        formatted_value { bindings[:object].part_price }
       end
     end
   end
 
   config.model ExtrapolateTechnologyComponent do
     parent Component
-    label "Technology <-> Component"
-    label_plural "Technologies <-> Components"
+    label 'Technology <-> Component'
+    label_plural 'Technologies <-> Components'
 
     list do
       field :component
@@ -284,18 +268,18 @@ RailsAdmin.config do |config|
 
   config.model ExtrapolateTechnologyPart do
     parent Part
-    label "Technology <-> Part"
-    label_plural "Technologies <-> Parts"
+    label 'Technology <-> Part'
+    label_plural 'Technologies <-> Parts'
 
     list do
       field :part
       field :technology
       field :parts_per_technology
       field :part_price, :money do
-        formatted_value{ bindings[:object].part_price }
+        formatted_value { bindings[:object].part_price }
       end
       field :price_per_technology, :money do
-        formatted_value{ bindings[:object].price_per_technology }
+        formatted_value { bindings[:object].price_per_technology }
       end
       field :required
     end
@@ -303,18 +287,18 @@ RailsAdmin.config do |config|
 
   config.model ExtrapolateTechnologyMaterial do
     parent Material
-    label "Technology <-> Material"
-    label_plural "Technologies <-> Materials"
+    label 'Technology <-> Material'
+    label_plural 'Technologies <-> Materials'
 
     list do
       field :material
       field :technology
       field :materials_per_technology
       field :material_price, :money do
-        formatted_value{ bindings[:object].material_price }
+        formatted_value { bindings[:object].material_price }
       end
       field :price_per_technology, :money do
-        formatted_value{ bindings[:object].price_per_technology }
+        formatted_value { bindings[:object].price_per_technology }
       end
       field :required
     end

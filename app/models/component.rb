@@ -15,7 +15,7 @@ class Component < ApplicationRecord
   scope :active, -> { where(deleted_at: nil) }
 
   def uid
-    "C" + id.to_s.rjust(3, "0")
+    'C' + id.to_s.rjust(3, '0')
   end
 
   def picture
@@ -33,7 +33,7 @@ class Component < ApplicationRecord
 
   def per_technology
     if extrapolate_technology_components.any?
-      extrapolate_technology_components.first.components_per_technology
+      extrapolate_technology_components.first.components_per_technology.to_i
     else
       1
     end
@@ -60,11 +60,13 @@ class Component < ApplicationRecord
   def price
     ary = []
     extrapolate_component_parts.each do |ecp|
-      if ecp.part.made_from_materials? && ecp.part.price_cents == 0
+      next if ecp.part.nil?
+
+      if ecp.part.made_from_materials? && ecp.part.price_cents.zero?
         emp = ecp.part.extrapolate_material_parts.first
-        ary << (emp.part_price) * ecp.parts_per_component
+        ary << emp.part_price * ecp.parts_per_component.to_i
       else
-        ary << ecp.part_price * ecp.parts_per_component
+        ary << ecp.part_price * ecp.parts_per_component.to_i
       end
     end
     ary.sum

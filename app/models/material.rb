@@ -12,7 +12,7 @@ class Material < ApplicationRecord
   accepts_nested_attributes_for :extrapolate_technology_materials, allow_destroy: true
 
   has_many :counts, dependent: :destroy
-  
+
   belongs_to :supplier
 
   monetize :price_cents, allow_nil: true, numericality: { greater_than_or_equal_to: 0 }
@@ -20,13 +20,12 @@ class Material < ApplicationRecord
   scope :active, -> { where(deleted_at: nil) }
 
   def uid
-    "M" + id.to_s.rjust(3, "0")
+    'M' + id.to_s.rjust(3, '0')
   end
 
   def picture
     begin
       ActionController::Base.helpers.asset_path('uids/' + uid + '.jpg')
-
     rescue => error
       'http://placekitten.com/140/140'
     end
@@ -46,14 +45,14 @@ class Material < ApplicationRecord
 
   def per_technology
     if extrapolate_material_parts.first.present?
-      ppm = extrapolate_material_parts.first.parts_per_material
+      ppm = extrapolate_material_parts.first.parts_per_material.to_f
 
       part = extrapolate_material_parts.first.part
-      ppc = part.extrapolate_component_parts.first.parts_per_component
+      ppc = part.extrapolate_component_parts.first.parts_per_component.to_f
       component = part.extrapolate_component_parts.first.component
-      cpt = component.extrapolate_technology_components.first.components_per_technology
+      cpt = component.extrapolate_technology_components.first.components_per_technology.to_f
       # per_tech = 1.0 / ( ( ppm / ppc ) * cpt )
-      per_tech = (cpt * ppc.to_f ) / ppm
+      per_tech = (cpt * ppc.to_f) / ppm
     else
       per_tech = 0.0
     end
@@ -79,5 +78,4 @@ class Material < ApplicationRecord
       end
     end
   end
-  
 end
