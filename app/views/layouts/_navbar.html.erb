@@ -34,7 +34,7 @@
             </li>
           <% end %>
           <% if current_user %>
-            <% if current_user.does_inventory? || current_user.is_admin? %>
+            <% if current_user.can_do_inventory? %>
               <li><%= link_to 'Inventory', inventories_path, class: "use-load-screen" %></li>
             <% end %>
             <% if current_user.is_admin?   %>
