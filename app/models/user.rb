@@ -9,10 +9,10 @@ class User < ApplicationRecord
          :recoverable, :rememberable, :trackable, :validatable
   scope :leaders, -> { where(is_leader: true) }
   scope :admins, -> { where(is_admin: true) }
-  scope :builders, -> { where.not(is_admin: true).where.not(is_leader: true).where.not(does_inventory: true) }
+  scope :builders, -> { where(is_admin: false, is_leader: false, does_inventory: false, send_notification_emails: false, send_inventory_emails: false) }
   scope :for_monthly_report, -> { builders.where(email_opt_out: false).where('created_at >= ?', Date.today.beginning_of_month) }
 
-  has_many :registrations
+  has_many :registrations, dependent: :destroy
   has_many :events, through: :registrations
   has_and_belongs_to_many :technologies
   has_many :counts
@@ -30,8 +30,8 @@ class User < ApplicationRecord
     is_admin? || is_leader?
   end
 
-  def does_inventory?
-    does_inventory || is_admin || send_inventory_emails
+  def can_do_inventory?
+    does_inventory? || is_admin? || send_inventory_emails?
   end
 
   def name
