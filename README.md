@@ -35,3 +35,4 @@
   - User.first.update(password: "password", password_confirmation: "password")
 2. "Your branch is n commits behind master" - git fetch origin
 3. git remote prune origin --dry-run
+4. `Record.only_deleted.each do |record| record.really_destroy! end`

@@ -12,7 +12,7 @@
     <%= link_to "Supplies Needed!", order_inventories_path(), class: "btn red use-load-screen" %>
   <% end %>
   <%= link_to "Tech Status", status_inventories_path, class: "btn blue use-load-screen"  %>
-  <% if current_user&.does_inventory? %>
+  <% if current_user&.can_do_inventory? %>
     <%= link_to 'Financials', financials_inventories_path, class: 'btn yellow use-load-screen' %>
   <% end %>
 </div>
