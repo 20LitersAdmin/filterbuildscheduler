@@ -30,4 +30,10 @@
 # available at http://guides.rubyonrails.org/i18n.html.
 
 en:
-  hello: "Hello world"
+  admin:
+    actions:
+      restore:
+        menu: 'Restore'
+        title: 'Restore'
+        breadcrumb: 'Restore'
+        done: 'restored, along with associated records'

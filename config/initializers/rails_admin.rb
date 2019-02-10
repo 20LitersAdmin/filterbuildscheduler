@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 require 'money-rails/rails_admin'
+require 'rails_admin/adapters/active_record'
+
+require Rails.root.join('lib', 'rails_admin', 'restore.rb')
+require Rails.root.join('lib', 'rails_admin', 'paranoid_delete.rb')
 
 RailsAdmin.config do |config|
   config.main_app_name = ['20 Liters', 'Admin']
@@ -16,7 +20,6 @@ RailsAdmin.config do |config|
 
   #
   # Monkey patch to remove default_scope
-  require 'rails_admin/adapters/active_record'
   module RailsAdmin::Adapters::ActiveRecord
     def get(id)
       return unless object = scoped.where(primary_key => id).first
@@ -312,11 +315,8 @@ RailsAdmin.config do |config|
     bulk_delete
     show
     edit
-    delete
     show_in_app
-
-    ## With an audit adapter, you can add:
-    # history_index
-    # history_show
+    paranoid_delete # lib/rails_admin/paranoid_delete.rb
+    restore         # lib/rails_admin/restore.rb
   end
 end
