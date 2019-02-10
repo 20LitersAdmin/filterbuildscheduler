@@ -37,3 +37,8 @@ en:
         title: 'Restore'
         breadcrumb: 'Restore'
         done: 'restored, along with associated records'
+      paranoid-delete:
+        menu: 'Delete'
+        title: 'Delete'
+        breadcrumb: 'Delete'
+        done: 'deleted, but can be restored'
