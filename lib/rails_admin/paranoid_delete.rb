@@ -10,9 +10,11 @@ module RailsAdmin
         RailsAdmin::Config::Actions.register(self)
 
         register_instance_option :visible? do
-          return true unless %w[Component Count Event Inventory Location Material Part Registration Supplier Technology User].include? bindings[:object].class.to_s
-
-          !bindings[:object].deleted?
+          if %w[Component Count Event Inventory Location Material Part Registration Supplier Technology User].include? bindings[:object].class.to_s
+            !bindings[:object].deleted?
+          else
+            true
+          end
         end
 
         register_instance_option :member do
