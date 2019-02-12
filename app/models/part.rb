@@ -35,6 +35,13 @@ class Part < ApplicationRecord
     end
   end
 
+  def cprice
+    return price unless (price.nil? || price.zero?) && made_from_materials?
+
+    emp = extrapolate_material_parts.first
+    emp.material.price / emp.parts_per_material
+  end
+
   def reorder_total_cost
     min_order * price
   end
