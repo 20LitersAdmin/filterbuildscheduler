@@ -171,8 +171,9 @@ RailsAdmin.config do |config|
       end
       field :name
       field :supplier
-      field :price, :money do
-        sortable :price_cents
+      field :cprice, :money do
+        label 'Price'
+        formatted_value { bindings[:object].cprice }
       end
       field :made_from_materials
       field :min_order
