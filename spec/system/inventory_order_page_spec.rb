@@ -4,7 +4,7 @@ require 'rails_helper'
 
 RSpec.describe 'Order supplies page', type: :system, js: true do
   before :each do
-    @inventory = FactoryBot.create(:inventory)
+    @inventory = FactoryBot.create(:inventory, completed_at: Time.now)
     @supplier1 = FactoryBot.create(:supplier)
     @supplier2 = FactoryBot.create(:supplier)
 
