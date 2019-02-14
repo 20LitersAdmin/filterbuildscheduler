@@ -23,7 +23,7 @@ class InventoriesController < ApplicationController
 
     @event = Event.find(@inventory.event_id) if @inventory.type_for_params == 'event'
 
-    @latest = Inventory.latest
+    @latest = Inventory.latest_completed
   end
 
   def new
@@ -118,7 +118,7 @@ class InventoriesController < ApplicationController
   end
 
   def order
-    authorize @inventory = Inventory.latest
+    authorize @inventory = Inventory.latest_completed
     @low_counts = @inventory.counts.select(&:reorder?)
 
     # Counts without a supplier
@@ -131,7 +131,7 @@ class InventoriesController < ApplicationController
   end
 
   def status
-    authorize @inventory = Inventory.latest
+    authorize @inventory = Inventory.latest_completed
 
     @techs = Technology.status_worthy
 
