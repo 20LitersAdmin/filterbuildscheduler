@@ -48,7 +48,7 @@ class Component < ApplicationRecord
   end
 
   def total
-    count = Count.where(inventory: Inventory.latest, component: self).first
+    count = Count.where(inventory: Inventory.latest_completed, component: self).first
 
     if count
       count.total
