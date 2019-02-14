@@ -111,7 +111,7 @@
             <div class="panel-body">
               <% if @lead_events.length.positive? %>
                 <div class="event-container">
-                  <%= render partial: 'events/event', collection: @leading_events %>
+                  <%= render partial: 'events/event', collection: @lead_events %>
                 </div>
               <% else %>
                 <p>No past events</p>
