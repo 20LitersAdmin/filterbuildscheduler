@@ -8,9 +8,7 @@ class EventsController < ApplicationController
     @events = our_events.future
     @user = current_user
 
-    if @user&.admin_or_leader?
-      @past_events = our_events.needs_report
-    end
+    @past_events = our_events.needs_report if @user&.admin_or_leader?
   end
 
   def show
@@ -114,7 +112,7 @@ class EventsController < ApplicationController
 
     # combine conditions
     if @positive_numbers && ( @more_than_zero || @changed_to_zero ) && @event.technology.primary_component.present? # ESCAPE CLAUSE: @event.technology has a primary_component
-      
+
       # determine the values to use when populating the count
       if event_params[:technologies_built] == ''
         @loose = nil
@@ -134,10 +132,10 @@ class EventsController < ApplicationController
 
       @inventory = CreateInventory.new(@event, @loose, @box, current_user.id)
       @inventory_created = "Inventory created."
-      
+
     end
 
-    
+
     if @event.start_time_was > Time.now && (@event.start_time_changed? || @event.end_time_changed? || @event.location_id_changed? || @event.technology_id_changed? || @event.is_private_changed?)
       # Can't use delayed_job because ActiveModel::Dirty doesn't persist
       EventMailer.changed(@event, current_user).deliver!
@@ -150,7 +148,7 @@ class EventsController < ApplicationController
         end
       end
     end
-    
+
     @send_results_emails = false
     # CONDITIONS:
     # This is the first time the event report is being submitted (emails_sent == false)
