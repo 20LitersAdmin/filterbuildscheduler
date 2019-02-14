@@ -3,7 +3,12 @@
 <tr>
   <td>
     <h4 id="<%= "tech_" + tech_tbl.id.to_s %>" class="tech-title">
-      <%= tech_tbl.name %>
+      <%= tech_tbl.primary_component.name %>
+    </h4>
+  </td>
+  <td>
+    <h4 id="<%= "tech_" + tech_tbl.id.to_s %>" class="tech-title">
+      <%= tech_tbl.owner_acronym %>
     </h4>
   </td>
   <td class="center tech-produceable">
