@@ -64,7 +64,7 @@ RSpec.describe 'Register for Event', type: :system do
         expect(second_count).to eq first_count + 1
       end
 
-      fit 'to register a leader and send an email' do
+      it 'to register a leader and send an email' do
         user = FactoryBot.create(:leader)
         sign_in user
         user.technologies << event.technology
@@ -72,10 +72,7 @@ RSpec.describe 'Register for Event', type: :system do
         visit event_path event
 
         check 'registration_accept_waiver'
-        element = find('#registration_leader')
-        expect(element.checked?).to eq false
         check 'registration_leader'
-        expect(element.checked?).to eq true
 
         first_count = Delayed::Job.count
 
