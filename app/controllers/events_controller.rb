@@ -15,7 +15,7 @@ class EventsController < ApplicationController
     authorize @event = Event.find(params[:id])
     @registration = @event.registrations.where(user: current_user).first_or_initialize
 
-    @registration.leader = params[:leader].present? && current_user&.can_lead_event?(@event)
+    @registration.leader = (params[:leader].present? && current_user&.can_lead_event?(@event)) if @registration.new_record?
 
     @tech_img = @event.technology.img_url if @event.technology&.img_url.present?
 

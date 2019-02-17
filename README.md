@@ -1,6 +1,8 @@
 # README
 
 ## Things to do
+0. Event#show: using url `?leader=true` somehow kills registering as a leader unless you come from `events/lead`
+
 1. I created EventsController::SubtractSubsets and should write tests for it
   * Test the class (as a model)
   * Write a system test for event-based inventories
@@ -20,8 +22,6 @@
   - Number of events held
   - List of high-participating builders (3+ builds, not leader)
   - List of leaders && participating
-
-5. inv/status - relies on finalized inventory.
 
 8. SAM3 min orders
 
