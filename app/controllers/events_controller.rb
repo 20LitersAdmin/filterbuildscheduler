@@ -146,7 +146,7 @@ class EventsController < ApplicationController
     end
 
     if @event.save
-      flash[:success] = 'Event updated. #{@admins_notified} #{@users_notified} #{@results_emails_sent} #{@inventory_created}'
+      flash[:success] = "Event updated. #{@admins_notified} #{@users_notified} #{@results_emails_sent} #{@inventory_created}"
 
       @event.registrations.where(attended: true).each do |r|
         RegistrationMailer.delay.event_results(r) if @send_results_emails == true

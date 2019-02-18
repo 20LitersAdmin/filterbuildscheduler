@@ -124,7 +124,7 @@ RSpec.describe 'To create an event report', type: :system do
       expect(second_count).to eq first_count
     end
 
-    fit 'and submit it while sending an email', js: true do
+    it 'and submit it while sending an email', js: true do
       fill_in 'event_technologies_built', with: 350
       fill_in 'event_boxes_packed', with: 3
       click_link 'btn_check_all'
@@ -150,7 +150,7 @@ RSpec.describe 'To create an event report', type: :system do
       expect(second_count).to eq first_count + 5
     end
 
-    fit 'and submit it to create an inventory' do
+    it 'and submit it to create an inventory' do
       prev_inv = FactoryBot.create(:inventory, date: Date.today - 2.days)
       component_ct = FactoryBot.create(:component_ct)
       FactoryBot.create(:count_comp, inventory: prev_inv, component: component_ct, loose_count: 0, unopened_boxes_count: 0)
