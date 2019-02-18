@@ -117,7 +117,7 @@ RSpec.describe 'Order supplies page', type: :system, js: true do
     before :each do
       sign_in FactoryBot.create(:admin)
 
-      low_counts = @inventory.counts.select { |count| count.reorder? }
+      low_counts = @inventory.counts.select(&:reorder?)
       total_cost = low_counts.map { |c| c.item.reorder_total_cost }.sum
       @cost_check = total_cost.to_s.reverse.gsub(/(\d{3})(?=\d)/, '\\1,').reverse
 
