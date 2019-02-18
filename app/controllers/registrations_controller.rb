@@ -162,12 +162,12 @@ class RegistrationsController < ApplicationController
 
   def user_params
     # If the form comes from Event#show, the user is nested in the params.
-    if params[:registration][:form_source] == "admin"
+    if params[:registration][:form_source] == 'admin'
       params.require(:user).permit(:fname,
-                                    :lname,
-                                    :email,
-                                    :phone,
-                                    :email_opt_out)
+                                   :lname,
+                                   :email,
+                                   :phone,
+                                   :email_opt_out)
     else
       params[:registration].require(:user).permit(:fname,
                                                   :lname,
@@ -194,9 +194,7 @@ class RegistrationsController < ApplicationController
     user_email = params[:user_email].presence
     user = user_token && user_email && User.find_by_email(user_email.to_s)
 
-    if user && Devise.secure_compare(user.authentication_token, params[:user_token])
-      sign_in user
-    end
+    sign_in user if user && Devise.secure_compare(user.authentication_token, params[:user_token])
   end
 
   def find_or_initialize_user(data)
@@ -206,9 +204,7 @@ class RegistrationsController < ApplicationController
     user.phone ||= data[:phone]
     # If the user hasn't been opted out, allow the form to opt them out
     # But, if the user has been opted out, don't allow the form to opt them back in
-    if user.email_opt_out == false && data[:email_opt_out] == "1"
-      user.email_opt_out = true
-    end
+    user.email_opt_out = user.email_opt_out == false && data[:email_opt_out] == '1'
 
     user
   end

@@ -10,9 +10,7 @@ RSpec.describe 'Register for Event', type: :system do
   end
 
   context 'logged in user' do
-
     context 'shows the registration_signedin partial' do
-
       it 'without leader checkbox for a builder' do
         user = FactoryBot.create(:user)
         sign_in user
@@ -40,11 +38,9 @@ RSpec.describe 'Register for Event', type: :system do
         expect(page).to have_field 'registration_leader'
         expect(page).to have_css("input[name='commit']")
       end
-
     end
 
     context 'can be filled out and submitted' do
-
       it 'to register a builder and send an email' do
         user = FactoryBot.create(:user)
         sign_in user
@@ -200,8 +196,7 @@ RSpec.describe 'Register for Event', type: :system do
 
           click_submit
 
-          # leader_tbl_text = page.all('table#leaders_tbl td').map(&:text)
-          # builder_tbl_text = page.all('table#builders_tbl td').map(&:text)
+          builder_tbl_text = page.all('table#builders_tbl td').map(&:text)
 
           expect(page).to have_content 'Registrations for ' + event.full_title
           expect(builder_tbl_text).to have_content user.name
