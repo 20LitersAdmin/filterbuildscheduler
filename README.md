@@ -21,11 +21,11 @@
   - List of high-participating builders (3+ builds, not leader)
   - List of leaders && participating
 
-5. inv/status - relies on finalized inventory.
-
 8. SAM3 min orders
 
 9. Part <-> Material could be `has_one` instead of `has_many`
+
+10. User#show events sections show card views, switch to a table view and make not click-able
 
 ## HMMM
 1. `weeks_to_out` and `per_technology` rely on lots of `.first`s which is an issue for items that `have_many` technologies

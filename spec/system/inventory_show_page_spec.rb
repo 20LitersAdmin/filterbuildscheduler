@@ -4,7 +4,7 @@ require 'rails_helper'
 
 RSpec.describe "Inventory show page", type: :system do
   before :each do
-    @inventory = FactoryBot.create(:inventory)
+    @inventory = FactoryBot.create(:inventory, completed_at: Time.now)
   end
 
   after :all do

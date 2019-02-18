@@ -1,9 +1,10 @@
 <tr>
-  <td><%= link_to "Lead", event_path(table), class: "btn yellow" %></td>
+  <td><%= link_to "Lead", event_path(table, leader: true), class: "btn yellow" %></td>
   <td><%= table.title %></td>
   <td><%= table.technology.name %></td>
   <td><%= table.format_date_only %></td>
   <td><%= table.format_time_only %></td>
+  <td><%= table.location.name %></td>
   <td><%= table.total_registered %></td>
   <td><%= table.leaders_names_full %></td>
   <td><%= table.max_leaders - table.leaders_registered.count %></td>
