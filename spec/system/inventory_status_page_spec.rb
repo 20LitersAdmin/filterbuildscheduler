@@ -110,7 +110,7 @@ RSpec.describe "Inventory status page", type: :system, js: true do
 
     it "shows a list of technologies with a monthly_production_rate > 0" do
       expect(page).to have_css("h4.tech-title", count: 4)
-      expect(page).to have_content(Technology.first.name)
+      expect(page).to have_css("#tech_#{Technology.first.id.to_s}")
       expect(page).to have_css("#tech_#{Technology.second.id.to_s}")
       expect(page).to_not have_css("#tech_#{Technology.last.id.to_s}")
     end

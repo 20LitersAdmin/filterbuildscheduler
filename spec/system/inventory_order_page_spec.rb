@@ -4,7 +4,7 @@ require 'rails_helper'
 
 RSpec.describe 'Order supplies page', type: :system, js: true do
   before :each do
-    @inventory = FactoryBot.create(:inventory)
+    @inventory = FactoryBot.create(:inventory, completed_at: Time.now)
     @supplier1 = FactoryBot.create(:supplier)
     @supplier2 = FactoryBot.create(:supplier)
 
@@ -117,7 +117,7 @@ RSpec.describe 'Order supplies page', type: :system, js: true do
     before :each do
       sign_in FactoryBot.create(:admin)
 
-      low_counts = @inventory.counts.select{ |count| count.reorder? }
+      low_counts = @inventory.counts.select(&:reorder?)
       total_cost = low_counts.map { |c| c.item.reorder_total_cost }.sum
       @cost_check = total_cost.to_s.reverse.gsub(/(\d{3})(?=\d)/, '\\1,').reverse
 
@@ -125,8 +125,8 @@ RSpec.describe 'Order supplies page', type: :system, js: true do
     end
 
     context 'displays a price based upon checkboxes' do
-      # Why these fail? I have no idea. They work in UX testing.
       it 'on the item view' do
+        # UX check passes, CircleCI passes, local fails
         expect(find(:css, '#item_ttl').native.text).to eq @cost_check
 
         click_link 'uncheck_all'
@@ -137,6 +137,7 @@ RSpec.describe 'Order supplies page', type: :system, js: true do
       end
 
       it 'on the supplier view' do
+        # UX check passes, CircleCI passes, local fails
         click_link 'supplier_btn'
 
         expect(find(:css, '#supplier_ttl').native.text).to eq @cost_check
@@ -150,7 +151,7 @@ RSpec.describe 'Order supplies page', type: :system, js: true do
     end
 
     it 'checks the apropriate box when the order quantity is changed' do
-      # UX testing shows this works, but I don't know why the test won't pass
+      # UX check passes, CircleCI passes, local fails
       count_str = find('#order_item_tbl tbody').first('tr')[:id]
       count = Count.find(count_str)
 
@@ -170,7 +171,7 @@ RSpec.describe 'Order supplies page', type: :system, js: true do
     end
 
     it 'keeps the twin checkboxes in sync' do
-      # UX testing shows this works, but I don't know why the test won't pass
+      # UX check passes, CircleCI passes, local fails
       count = Count.first
 
       twin_a = find('#checkbox_item_' + count.id.to_s)

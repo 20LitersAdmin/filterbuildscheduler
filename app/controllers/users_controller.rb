@@ -20,15 +20,15 @@ class UsersController < ApplicationController
                              .where('events.end_time > ?', Time.now)
                              .map(&:event)
     @lead_events = @user.registrations
-                         .where(leader: true)
-                         .joins(:event)
-                         .where('events.end_time < ?', Time.now)
-                         .map(&:event)
+                        .where(leader: true)
+                        .joins(:event)
+                        .where('events.end_time < ?', Time.now)
+                        .map(&:event)
     @attended_events = @user.registrations
-                             .where(leader: false)
-                             .joins(:event)
-                             .where('events.end_time < ?', Time.now)
-                             .map(&:event)
+                            .where(leader: false)
+                            .joins(:event)
+                            .where('events.end_time < ?', Time.now)
+                            .map(&:event)
   end
 
   def edit
@@ -73,8 +73,8 @@ class UsersController < ApplicationController
 
   def comm_complete
     @user_ids = params[:user_ids]
-    
-    if @user_ids.present? 
+
+    if @user_ids.present?
       User.find(@user_ids).each do |u|
         u.email_opt_out = true
         u.save

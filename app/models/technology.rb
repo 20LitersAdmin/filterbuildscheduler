@@ -59,7 +59,7 @@ class Technology < ApplicationRecord
   end
 
   def produceable
-    inventory = Inventory.latest
+    inventory = Inventory.latest_completed
 
     # narrow the inventory counts down to just related to this technology
     counts_aoh = []
