@@ -106,6 +106,22 @@ $(document).on("turbolinks:load", function(){
       "<'col-xs-8'p>",
   });
 
+  $('.datatable-slim-nosort').DataTable({
+    retrieve: true,
+    order: false,
+    paging: false,
+    responsive: true,
+    autoWidth: false,
+    info: false,
+    dom:
+      "<'col-xs-4 no-overflow'l>"+
+      "<'col-xs-8 no-overflow'f>"+
+      "t"+
+      "<'col-xs-8'p>",
+  });
+
+
+
   $('.datatable-search').DataTable({
     retrieve: true,
     order: [],
