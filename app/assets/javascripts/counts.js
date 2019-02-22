@@ -34,4 +34,10 @@ function manageExpectations(focus) {
       manageExpectations("loose");
     }
   });
+
+  $(document).on("change", "#tech_select", function() {
+    var techId = '?tech=' + $(this).val();
+    var currentLocation = window.location.pathname
+    window.location.replace(currentLocation + techId)
+  });
 }());

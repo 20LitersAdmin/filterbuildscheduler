@@ -104,7 +104,7 @@ class CountsController < ApplicationController
           @count.unopened_boxes_count = @count.previous_box + count_params[:unopened_boxes_count].to_i
         end
       end
-      
+
       @count.save
       flash[:success] = "Count submitted"
       redirect_to edit_inventory_path(@inventory)
@@ -114,6 +114,14 @@ class CountsController < ApplicationController
   def labels
     # Choose which label to print
     @counts = Inventory.latest.counts.sort_by { |c| [c.group_by_tech, c.item.uid] }
+  end
+
+  def item_list
+    # Item list by technology
+    @technologies = Technology.status_worthy.reorder(:name)
+    @technology = params[:tech].present? ? @technologies.find(params[:tech]) : @technologies.first
+    @counts = Inventory.latest.counts.find_all { |count| count.technology == @technology }.sort_by(&:name)
+    # badbad
   end
 
   def label

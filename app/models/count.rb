@@ -26,39 +26,43 @@ class Count < ApplicationRecord
     end
   end
 
+  def technology
+    item.technology
+  end
+
   def name
     item.name
   end
 
   def owner
-    return "N/A" unless item.technologies.present?
+    return 'N/A' unless item.technologies.present?
 
     item.technologies.map(&:owner_acronym).uniq.join(',')
   end
 
   def type
     if part_id.present?
-      "part"
+      'part'
     elsif material_id.present?
-      "material"
+      'material'
     else
-      "component"
+      'component'
     end
   end
 
   def tech_names
-    if item.technologies.map { |t| t.name }.empty?
-      "not associated"
+    if item.technologies.map(&:name).empty?
+      'not associated'
     else
-      item.technologies.map { |t| t.name }.join(", ")
+      item.technologies.map(&:name).join(', ')
     end
   end
 
   def tech_names_short
-    if item.technologies.map { |t| t.name }.empty?
-      "n/a"
+    if item.technologies.map(&:name).empty?
+      'n/a'
     else
-      item.technologies.map { |t| t.name.gsub(' Filter', '').gsub(' for Bucket', '') }.join(", ")
+      item.technologies.map { |t| t.name.gsub(' Filter', '').gsub(' for Bucket', '') }.join(', ')
     end
   end
 
@@ -85,9 +89,9 @@ class Count < ApplicationRecord
   end
 
   def diff_from_previous(field)
-    if field == "loose"
+    if field == 'loose'
       loose_count - previous_loose
-    elsif field == "box"
+    elsif field == 'box'
       unopened_boxes_count - previous_box
     else
       0
@@ -95,7 +99,7 @@ class Count < ApplicationRecord
   end
 
   def previous_inventory
-    Inventory.where("date < ?", inventory.date).order(date: :desc).first
+    Inventory.where('date < ?', inventory.date).order(date: :desc).first
   end
 
   def previous_count
@@ -104,11 +108,11 @@ class Count < ApplicationRecord
     return nil unless prev_inv.present?
 
     case type
-    when "part"
+    when 'part'
       prev_inv.counts.where(part: part.id).first
-    when "material"
+    when 'material'
       prev_inv.counts.where(material: material.id).first
-    when "component"
+    when 'component'
       prev_inv.counts.where(component: component.id).first
     end
   end
@@ -122,11 +126,7 @@ class Count < ApplicationRecord
   end
 
   def total
-    if inventory.completed_at == nil
-      "Not Finalized"
-    else
-      available + extrapolated_count
-    end
+    inventory.completed_at.nil? ? 'Not Finalized' : available + extrapolated_count
   end
 
   def ttl_value
@@ -138,7 +138,7 @@ class Count < ApplicationRecord
   def avail_value
     return available * item.price unless item.class == Part
 
-    if part.made_from_materials? && part.price_cents == 0
+    if part.made_from_materials? && part.price_cents.zero?
       emp = part.extrapolate_material_parts.first
       available * emp.part_price
     else
@@ -155,55 +155,35 @@ class Count < ApplicationRecord
   end
 
   def group_by_tech
-     item.technologies.map(&:id).sort.first || 999
+    item.technologies.map(&:id).sort.first || 999
   end
 
   def reorder?
-    answer = false
-    if type != "component" && available < item.minimum_on_hand
-      answer = true
-    end
-    answer
+    type != 'component' && available < item.minimum_on_hand
   end
 
   def can_produce_x_tech
-    if available == 0
-      0
-    else
+    available.zero? ? 0 : available / item.per_technology
+  end
+
+  def can_produce_x_parent
+    return 0 if available.zero?
+
+    case type
+    when 'material'
+      # Materials are larger than parts (1 material makes many parts)
+      material.extrapolate_material_parts.any? ? available * material.extrapolate_material_parts.first.parts_per_material.to_i : available
+    when 'part'
+      part.extrapolate_component_parts.any? ? available / part.extrapolate_component_parts.first.parts_per_component.to_i : available
+    when 'component'
       available / item.per_technology
     end
   end
 
-  def can_produce_x_parent
-    if available.zero?
-      0
-    else
-      case type
-      when 'material'
-        if material.extrapolate_material_parts.any?
-          # Materials are larger than parts (1 material makes many parts)
-          available * material.extrapolate_material_parts.first.parts_per_material.to_i
-        else
-          available
-        end
-      when 'part'
-        if part.extrapolate_component_parts.any?
-          available / part.extrapolate_component_parts.first.parts_per_component.to_i
-        else
-          available
-        end
-      when 'component'
-        available / item.per_technology
-      end
-    end
-  end
-
   def weeks_to_out
-    if available.zero?
-      0
-    else
-      mpr = item.technology.present? ? item.technology.monthly_production_rate : 0
-      can_produce_x_tech / (mpr / 4.0)
-    end
+    return 0 if available.zero?
+
+    mpr = item.technology.present? ? item.technology.monthly_production_rate : 0
+    can_produce_x_tech / (mpr / 4.0)
   end
 end
