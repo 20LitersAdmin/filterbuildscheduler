@@ -1,13 +1,10 @@
 # frozen_string_literal: true
 
 class UsersController < ApplicationController
-
-  before_action :find_and_authorize_user, only: [:show, :edit, :update, :delete]
+  before_action :find_and_authorize_user, only: %i[show edit update delete]
 
   def show
-    if @user.has_no_password
-      flash[:warning] = "You haven't set your password yet, please do so now."
-    end
+    flash[:warning] = 'You haven\'t set your password yet, please do so now.' if @user.has_no_password
 
     @leading_events = @user.registrations
                            .where(leader: true)
@@ -32,23 +29,20 @@ class UsersController < ApplicationController
   end
 
   def edit
-    if @user.has_no_password
-      flash[:warning] = "You haven't set your password yet, please do so now."
-    end
+    flash[:warning] = 'You haven\'t set your password yet, please do so now.' if @user.has_no_password
   end
 
   def update
-    if @user.valid_password?(params[:user][:password])
-      modified_params = user_params_no_pws
-    else
-      modified_params = user_params
-    end
+    modified_params = params[:user][:password].blank? && params[:user][:password_confirmation].blank? ? user_params_no_pws : user_params
 
     if @user.update(modified_params)
-      flash[:success] = "Info updated!"
+      flash[:success] = 'Info updated!'
+
       if modified_params[:password].present?
-        DeviseMailer.password_change(@user).deliver!
+        DeviseMailer.password_change(@user).deliver_now!
+        sign_out @user
       end
+
       redirect_to show_user_path @user
     else
       render 'edit'
@@ -57,7 +51,7 @@ class UsersController < ApplicationController
 
   def delete
     @user.delete
-    flash[:danger] = "User deleted"
+    flash[:danger] = 'User deleted'
     redirect_to users_path
   end
 
@@ -68,7 +62,7 @@ class UsersController < ApplicationController
     @cancelled_events = Event.only_deleted
     @closed_events = Event.closed
 
-    @finder = "communication"
+    @finder = 'communication'
   end
 
   def comm_complete
@@ -93,20 +87,19 @@ class UsersController < ApplicationController
 
   def user_params
     params.require(:user).permit :fname,
-                                  :lname,
-                                  :email,
-                                  :phone,
-                                  :email_opt_out,
-                                  :password,
-                                  :password_confirmation
+                                 :lname,
+                                 :email,
+                                 :phone,
+                                 :email_opt_out,
+                                 :password,
+                                 :password_confirmation
   end
 
   def user_params_no_pws
     params.require(:user).permit :fname,
-                                  :lname,
-                                  :email,
-                                  :phone,
-                                  :email_opt_out
+                                 :lname,
+                                 :email,
+                                 :phone,
+                                 :email_opt_out
   end
-
 end

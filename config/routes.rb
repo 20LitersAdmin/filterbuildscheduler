@@ -33,6 +33,10 @@ Rails.application.routes.draw do
         get 'restore'
         get 'messenger'
         post 'sender'
+        get 'reconfirms'
+      end
+      member do
+        get 'reconfirm'
       end
     end
   end

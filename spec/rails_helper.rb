@@ -36,6 +36,7 @@ require 'rspec/retry'
 
 ActiveRecord::Migration.maintain_test_schema!
 Capybara.server = :puma
+FactoryBot.use_parent_strategy = false
 
 RSpec.configure do |config|
   config.include FactoryBot::Syntax::Methods
@@ -58,6 +59,10 @@ RSpec.configure do |config|
 
   config.expect_with :rspec do |expectations|
     expectations.syntax = [:should, :expect]
+  end
+
+  config.before(:each) do
+    Faker::UniqueGenerator.clear
   end
 
   config.before(:each, type: :system) do
