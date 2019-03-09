@@ -1,8 +1,6 @@
 # README
 
 ## Things to do
-0. FEATURE: `/events/#/registrations` (registrations/index.html.erb) should have 'resend registration confirmation emails' button
-0. FEATURE: `/events/#/registrations` => `table#builders_tbl` (registrations/index.html.erb) should have 'resend confirmation' button
 0. counts#item_list table should include `#{item}s_per_technology` column (maybe create an `items_per_technology` method on Count?)
 0. I removed the button for "All Labels", which is `Inventory#labels`. Could be removed?
 1. I created EventsController::SubtractSubsets and should write tests for it
