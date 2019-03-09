@@ -35,8 +35,8 @@ RSpec.describe Event, type: :model do
 
   let(:component_ct) { create :component_ct }
   let(:tech_comp) { create :tech_comp, component: component_ct, technology: technology }
-  
-  describe "must be valid" do
+
+  describe 'must be valid' do
     let(:unsaved_event)         { build :event }
     let(:no_title)              { build :event, title: nil }
     let(:no_location)           { build :event, location_id: nil }
@@ -46,7 +46,7 @@ RSpec.describe Event, type: :model do
     let(:no_technologiesbuilt)  { build :event, technologies_built: nil }
     let(:no_boxespacked)        { build :event, boxes_packed: nil }
 
-    it "in order to save" do
+    it 'in order to save' do
       expect(unsaved_event.save).to eq true
       expect(no_starttime.save).to be_falsey
       expect(no_endtime.save).to be_falsey
@@ -64,25 +64,25 @@ RSpec.describe Event, type: :model do
     end
   end
 
-  describe "#dates_are_valid?" do
+  describe '#dates_are_valid?' do
     let(:same_times) { build :event, start_time: Time.now, end_time: Time.now }
     let(:bad_times) { build :event, start_time: Time.now, end_time: Time.now - 3.hours }
-    
-    it "must have start and end times" do
+
+    it 'must have start and end times' do
       expect(no_starttime.dates_are_valid?).to eq nil
       expect(no_endtime.dates_are_valid?).to eq nil
       expect(event.dates_are_valid?).to eq nil
     end
 
-    it "must have a start time that comes before end time" do
+    it 'must have a start time that comes before end time' do
       same_times.save
       bad_times.save
-      expect(same_times.errors.messages[:end_time]).to eq ["must be after start time"]
-      expect(bad_times.errors.messages[:end_time]).to eq ["must be after start time"]
+      expect(same_times.errors.messages[:end_time]).to eq ['must be after start time']
+      expect(bad_times.errors.messages[:end_time]).to eq ['must be after start time']
     end
   end
 
-  describe "#registrations_are_valid?" do
+  describe '#registrations_are_valid?' do
     let(:same_registrations) { build :event, min_registrations: 3, max_registrations: 3 }
     let(:less_registrations) { build :event, min_registrations: 23, max_registrations: 3 }
 
@@ -92,19 +92,19 @@ RSpec.describe Event, type: :model do
     let(:reg4) { build :registration, event: event2, guests_registered: 10 }
     let(:reg5) { build :registration, event: event2, guests_registered: 10 }
 
-    it "must have min and max registrations" do
+    it 'must have min and max registrations' do
       expect(event.registrations_are_valid?).to eq nil
       expect(no_minleaders.registrations_are_valid?).to eq nil
       expect(no_maxleaders.registrations_are_valid?).to eq nil
     end
 
-    it "must have a min registration that is less than the max registrations" do
+    it 'must have a min registration that is less than the max registrations' do
       expect(same_registrations.registrations_are_valid?).to eq nil
       less_registrations.save
-      expect(less_registrations.errors.messages[:max_registrations]).to eq ["must be greater than min registrations"]
+      expect(less_registrations.errors.messages[:max_registrations]).to eq ['must be greater than min registrations']
     end
 
-    it "can't have more registrations than the max" do
+    it 'can\'t have more registrations than the max' do
       event2.registrations << reg3
       event2.registrations << reg4
       event2.registrations << reg5
@@ -112,7 +112,7 @@ RSpec.describe Event, type: :model do
     end
   end
 
-  describe "#leaders_are_valid?" do
+  describe '#leaders_are_valid?' do
     let(:same_leaders) { build :event, min_leaders: 2, max_leaders: 2 }
     let(:less_leaders) { build :event, min_leaders: 23, max_leaders: 2 }
 
@@ -122,19 +122,19 @@ RSpec.describe Event, type: :model do
     let(:reg4) { build :registration_leader, event: event3 }
     let(:reg5) { build :registration_leader, event: event3 }
 
-    it "must have min and max leaders" do
+    it 'must have min and max leaders' do
       expect(event.leaders_are_valid?).to eq nil
       expect(no_minleaders.leaders_are_valid?).to eq nil
       expect(no_maxleaders.leaders_are_valid?).to eq nil
     end
-    
-    it "must have a min leader that is less than the max leader" do
+
+    it 'must have a min leader that is less than the max leader' do
       expect(same_leaders.leaders_are_valid?).to eq nil
       less_leaders.save
-      expect(less_leaders.errors.messages[:max_leaders]).to eq ["must be greater than min leaders"]
+      expect(less_leaders.errors.messages[:max_leaders]).to eq ['must be greater than min leaders']
     end
 
-    it "can't have more leader registrations than the max" do
+    it 'can\'t have more leader registrations than the max' do
       event3.registrations << reg3
       event3.registrations << reg4
       event3.registrations << reg5
@@ -180,7 +180,7 @@ RSpec.describe Event, type: :model do
       expect(event.non_leaders_registered.count).to eq 2
       expect(event.total_registered_w_leaders).to eq 8
     end
-    
+
     it "takes a scope to handle only_deleted records" do
       expect(event.non_leaders_registered("only_deleted").count).to eq(0)
 
@@ -250,7 +250,7 @@ RSpec.describe Event, type: :model do
       expect(event.registrations_remaining("only_deleted")).to eq(5)
       event.registrations << reg_del2
       expect(event.registrations_remaining("only_deleted")).to eq(0)
-    end    
+    end
   end
 
   describe "#does_not_need_leaders?" do

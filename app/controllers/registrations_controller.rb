@@ -1,23 +1,21 @@
 # frozen_string_literal: true
 
 class RegistrationsController < ApplicationController
-  before_action :find_registration, only: [:edit, :update, :destroy]
+  before_action :find_event
+  before_action :find_registration, only: %i[edit update destroy reconfirm]
 
   def index
-    @event = Event.find(params[:event_id])
     authorize @registrations = @event.registrations.non_leader
     @leaders = @event.registrations.registered_as_leader
     @deleted = @event.registrations.only_deleted
   end
 
   def new
-    @event = Event.find(params[:event_id])
     authorize @registration = Registration.new(event_id: @event.id)
   end
 
   def create
     waiver_accepted = params[:registration].delete(:accept_waiver)
-    @event = Event.find(params[:event_id])
 
     case params[:registration][:form_source]
     when 'admin'
@@ -127,8 +125,6 @@ class RegistrationsController < ApplicationController
   end
 
   def restore
-    @event = Event.find(params[:event_id])
-
     @count = @event.registrations.only_deleted.count
 
     @event.registrations.only_deleted.each do |r|
@@ -141,11 +137,11 @@ class RegistrationsController < ApplicationController
   end
 
   def messenger
-    authorize @event = Event.find(params[:event_id])
+    authorize @event
   end
 
   def sender
-    authorize @event = Event.find(params[:event_id])
+    authorize @event
     @subject = params[:subject]
     @message = params[:message]
     @sender = current_user
@@ -154,7 +150,23 @@ class RegistrationsController < ApplicationController
     end
     EventMailer.delay.messenger_reporter(@event, @subject, @message, @sender)
 
-    flash[:success] = "Message sent!"
+    flash[:success] = 'Message sent!'
+    redirect_to event_registrations_path(@event)
+  end
+
+  # re-send all registrations confirmation emails
+  def reconfirms
+    @event.registrations.each do |registration|
+      RegistrationMailer.delay.created(registration)
+    end
+    flash[:success] = "Sending confirmation emails to #{@event.registrations.size} registrants"
+    redirect_to event_registrations_path(@event)
+  end
+
+  # re-send single registration confirmation email
+  def reconfirm
+    RegistrationMailer.created(@registration).deliver_now!
+    flash[:success] = "Re-sent confirmation to #{@registration.user.name}"
     redirect_to event_registrations_path(@event)
   end
 
@@ -183,6 +195,10 @@ class RegistrationsController < ApplicationController
                                          :leader,
                                          :guests_registered,
                                          :accommodations)
+  end
+
+  def find_event
+    @event = Event.find(params[:event_id])
   end
 
   def find_registration
