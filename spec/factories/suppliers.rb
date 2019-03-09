@@ -2,10 +2,10 @@
 
 FactoryBot.define do
   factory :supplier do
-    name { Faker::Company.name}
+    name { Faker::Company.unique.name }
     url { Faker::Internet.url }
     email { Faker::Internet.safe_email }
-    poc_name { Faker::DrWho.character }
+    poc_name { Faker::TvShows::DrWho.character }
     poc_email { Faker::Internet.safe_email }
     comments { Faker::Company.catch_phrase }
   end

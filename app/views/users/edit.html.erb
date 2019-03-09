@@ -10,6 +10,9 @@
       <%= f.input :email, required: true, autofocus: true %>
       <%= f.input :phone, required: false, autofocus: true %>
 
+      <div>
+        <h4>Password requirements: 6 to 128 characters</h4>
+      </div>
       <% if @user.has_no_password %>
         <%= f.input :password, autocomplete: "off", hint: "You haven't set a password yet, please do so now.", required: false, label_html: {class: "has-error"}, input_html: { class: "has-error" } %>
         <%= f.input :password_confirmation, required: false, label_html: {class: "has-error"}, input_html: { class: "has-error" } %>
