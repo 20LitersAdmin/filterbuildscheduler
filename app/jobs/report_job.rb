@@ -3,10 +3,10 @@
 class ReportJob < ApplicationJob
   queue_as :default
 
-  def perform(*args)
+  def perform(*_args)
     inventory = Inventory.latest_completed
-    puts "-+ Sending monthly report"
-    ReportMailer.monthly(inventory).deliver!
-    puts "-+ Done sending"
+    puts '-+ Sending monthly report'
+    ReportMailer.monthly(inventory).deliver_now!
+    puts '-+ Done sending'
   end
 end
