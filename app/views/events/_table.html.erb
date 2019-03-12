@@ -1,5 +1,11 @@
 <tr>
-  <td><%= link_to "Lead", event_path(table, leader: true), class: "btn yellow" %></td>
+  <td>
+    <% if current_user.is_admin? %>
+      <%= link_to "Manage", leaders_event_path(table), class: "btn yellow" %>
+    <% else %>
+      <%= link_to "Lead", event_path(table, leader: true), class: "btn yellow" %>
+    <% end %>
+  </td>
   <td><%= table.title %></td>
   <td><%= table.technology.name %></td>
   <td><%= table.format_date_only %></td>
