@@ -25,6 +25,7 @@ class User < ApplicationRecord
 
   before_save :ensure_authentication_token, :check_phone_format
 
+  # https://github.com/plataformatec/devise/issues/5033
   before_save do |user|
     if user.will_save_change_to_encrypted_password?
       user.restore_encrypted_password! unless user.encrypted_password.present?
