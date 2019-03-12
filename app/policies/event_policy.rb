@@ -59,6 +59,18 @@ class EventPolicy < ApplicationPolicy
     user&.admin_or_leader?
   end
 
+  def leaders?
+    user&.is_admin?
+  end
+
+  def leader_unregister?
+    user&.is_admin?
+  end
+
+  def leader_register?
+    user&.is_admin?
+  end
+
   def restore?
     user&.admin_or_leader?
   end
