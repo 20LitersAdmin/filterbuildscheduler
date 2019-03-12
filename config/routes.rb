@@ -27,6 +27,9 @@ Rails.application.routes.draw do
       get 'attendance'
       get 'restore'
       get 'poster'
+      get 'leaders'
+      get 'leader_unregister'
+      get 'leader_register'
     end
     resources :registrations do
       collection do
