@@ -212,7 +212,6 @@ class EventsController < ApplicationController
 
   def lead
     @user = current_user
-
     @events = []
 
     Event.future.each do |e|
@@ -222,8 +221,41 @@ class EventsController < ApplicationController
     end
 
     authorize @events.first
-
     @finder = 'lead'
+  end
+
+  def leaders
+    authorize @event = Event.find(params[:id])
+
+    @leaders = User.leaders
+    @already_registered_leaders = User.find(@event.registrations.registered_as_leader.pluck(:user_id))
+    @remaining_leaders = @leaders - @already_registered_leaders
+  end
+
+  def leader_unregister
+    authorize @event = Event.find(params[:id])
+    @registration = @event.registrations.registered_as_leader.where(user_id: params[:user_id]).first
+
+    if @registration.blank?
+      flash[:error] = 'Oops, something went wrong.'
+    else
+      @registration.delete
+      flash[:success] = "#{@registration.user.name} was unregistered."
+    end
+
+    redirect_to leaders_event_path(@event)
+  end
+
+  def leader_register
+    authorize @event = Event.find(params[:id])
+    @registration = @event.registrations.with_deleted.where(user_id: params[:user_id]).first_or_initialize
+
+    @registration.leader = true
+    @registration.restore if @registration.deleted?
+    @registration.save
+
+    flash[:success] = "Registered #{@registration.user.name}."
+    redirect_to leaders_event_path(@event)
   end
 
   def restore

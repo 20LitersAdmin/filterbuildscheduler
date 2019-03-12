@@ -7,16 +7,17 @@ class User < ApplicationRecord
   # :confirmable, :lockable, :timeoutable and :omniauthable
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :trackable, :validatable
-  scope :leaders, -> { where(is_leader: true) }
-  scope :admins, -> { where(is_admin: true) }
-  scope :builders, -> { where(is_admin: false, is_leader: false, does_inventory: false, send_notification_emails: false, send_inventory_emails: false) }
-  scope :for_monthly_report, -> { builders.where(email_opt_out: false).where('created_at >= ?', Date.today.beginning_of_month) }
 
   has_many :registrations, dependent: :destroy
   has_many :events, through: :registrations
   has_and_belongs_to_many :technologies
   has_many :counts
   belongs_to :primary_location, class_name: 'Location', primary_key: 'id', foreign_key: 'primary_location_id', optional: true
+
+  scope :leaders, -> { where(is_leader: true) }
+  scope :admins, -> { where(is_admin: true) }
+  scope :builders, -> { where(is_admin: false, is_leader: false, does_inventory: false, send_notification_emails: false, send_inventory_emails: false) }
+  scope :for_monthly_report, -> { builders.where(email_opt_out: false).where('created_at >= ?', Date.today.beginning_of_month) }
 
   validates :fname, :lname, :email, presence: true
 
