@@ -99,7 +99,7 @@ class Count < ApplicationRecord
   end
 
   def previous_inventory
-    Inventory.where('date < ?', inventory.date).order(date: :desc).first
+    Inventory.latest_since(inventory.created_at)
   end
 
   def previous_count

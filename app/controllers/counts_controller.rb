@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class CountsController < ApplicationController
-
   def edit
     authorize @count = Count.find(params[:id])
     @inventory = @count.inventory
@@ -13,8 +12,8 @@ class CountsController < ApplicationController
         @box_val = @count.unopened_boxes_count
       end
     else
-      @box_val = @count.diff_from_previous("box") unless @count.diff_from_previous("box") == 0
-      @loose_val = @count.diff_from_previous("loose") unless @count.diff_from_previous("loose") == 0
+      @box_val = @count.diff_from_previous('box') unless @count.diff_from_previous('box').zero?
+      @loose_val = @count.diff_from_previous('loose') unless @count.diff_from_previous('loose').zero?
     end
   end
 
@@ -30,29 +29,17 @@ class CountsController < ApplicationController
     # VALIDATIONS
     if @inventory.manual? || @inventory.receiving?
       # receiving and manual inventories must have positive numbers
-      if count_params[:loose_count].to_i < 0
-        @count.errors.add(:loose_count, "Must use positive numbers for this type of inventory.")
-      end
-      if count_params[:unopened_boxes_count].to_i < 0
-        @count.errors.add(:unopened_boxes_count, "Must use positive numbers for this type of inventory.")
-      end
+      @count.errors.add(:loose_count, 'Must use positive numbers for this type of inventory.') if count_params[:loose_count].to_i.negative?
+      @count.errors.add(:unopened_boxes_count, 'Must use positive numbers for this type of inventory.') if count_params[:unopened_boxes_count].to_i.negative?
     end
 
     if @inventory.shipping?
       # for logical safety, shipping inventory #s must be negative
-      if count_params[:loose_count].to_i > 0
-        @count.errors.add(:loose_count, "Must use negative numbers when shipping inventory.")
-      end
-      if count_params[:unopened_boxes_count].to_i > 0
-        @count.errors.add(:unopened_boxes_count, "Must use negative numbers when shipping inventory.")
-      end
+      @count.errors.add(:loose_count, 'Must use negative numbers when shipping inventory.') if count_params[:loose_count].to_i.positive?
+      @count.errors.add(:unopened_boxes_count, 'Must use negative numbers when shipping inventory.') if count_params[:unopened_boxes_count].to_i.positive?
 
-      if @count.previous_loose + count_params[:loose_count].to_i < 0
-        @count.errors.add(:loose_count, "You only have #{@count.previous_loose} to ship")
-      end
-      if @count.previous_box + count_params[:unopened_boxes_count].to_i < 0
-        @count.errors.add(:unopened_boxes_count, "You only have #{@count.previous_loose} to ship")
-      end
+      @count.errors.add(:loose_count, "You only have #{@count.previous_loose} to ship") if (@count.previous_loose + count_params[:loose_count].to_i).negative?
+      @count.errors.add(:unopened_boxes_count, "You only have #{@count.previous_box} to ship") if (@count.previous_box + count_params[:unopened_boxes_count].to_i).negative?
     end
 
     # Partial counts are not complete, thus user_id should be set to nil
@@ -79,34 +66,24 @@ class CountsController < ApplicationController
           @box_val = @count.unopened_boxes_count
         end
       else
-        @box_val = @count.diff_from_previous("box") unless @count.diff_from_previous("box") == 0
-        @loose_val = @count.diff_from_previous("loose") unless @count.diff_from_previous("loose") == 0
+        @box_val = @count.diff_from_previous('box') unless @count.diff_from_previous('box').zero?
+        @loose_val = @count.diff_from_previous('loose') unless @count.diff_from_previous('loose').zero?
       end
       render 'edit'
     else
       # and finally, set the values
-      unless params[:partial_loose].present? || params[:partial_box].present?
-        @count.user_id = current_user.id
-      end
+      @count.user_id = current_user.id unless params[:partial_loose].present? || params[:partial_box].present?
 
       if @inventory.manual?
-        if count_params[:loose_count].present? && !@count.partial_box
-          @count.loose_count = count_params[:loose_count].to_i
-        end
-        if count_params[:unopened_boxes_count].present? && !@count.partial_loose
-          @count.unopened_boxes_count = count_params[:unopened_boxes_count].to_i
-        end
+        @count.loose_count = count_params[:loose_count].to_i if count_params[:loose_count].present? && !@count.partial_box
+        @count.unopened_boxes_count = count_params[:unopened_boxes_count].to_i if count_params[:unopened_boxes_count].present? && !@count.partial_loose
       else # @inventory.receiving || @inventory.shipping # @inventory.event_id.present?
-        if count_params[:loose_count].present? && count_params[:loose_count] != @count.diff_from_previous("loose")
-          @count.loose_count = @count.previous_loose + count_params[:loose_count].to_i
-        end
-        if count_params[:unopened_boxes_count].present? && count_params[:unopened_boxes_count] != @count.diff_from_previous("box")
-          @count.unopened_boxes_count = @count.previous_box + count_params[:unopened_boxes_count].to_i
-        end
+        @count.loose_count = @count.previous_loose + count_params[:loose_count].to_i if count_params[:loose_count].present? && count_params[:loose_count] != @count.diff_from_previous('loose')
+        @count.unopened_boxes_count = @count.previous_box + count_params[:unopened_boxes_count].to_i if count_params[:unopened_boxes_count].present? && count_params[:unopened_boxes_count] != @count.diff_from_previous('box')
       end
 
       @count.save
-      flash[:success] = "Count submitted"
+      flash[:success] = 'Count submitted'
       redirect_to edit_inventory_path(@inventory)
     end
   end
@@ -129,7 +106,6 @@ class CountsController < ApplicationController
     @count = Count.find(params[:id])
   end
 
-
   def destroy
     authorize @count = Count.find(params[:id])
     @inventory = @count.inventory
@@ -141,5 +117,4 @@ class CountsController < ApplicationController
     params.require(:count).permit :components_id, :parts_id, :materials_id,
                                   :loose_count, :unopened_boxes_count, :deleted_at
   end
-
 end
