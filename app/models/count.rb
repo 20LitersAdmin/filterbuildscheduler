@@ -99,7 +99,7 @@ class Count < ApplicationRecord
   end
 
   def previous_inventory
-    Inventory.find(inventory.id - 1)
+    Inventory.latest_since(inventory.created_at)
   end
 
   def previous_count
