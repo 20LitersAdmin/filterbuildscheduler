@@ -7,7 +7,10 @@
     <% end %>
   </td>
   <td>
-    <%= order_tbl.tech_names %>
+    <%= order_tbl.tech_names_short %>
+  </td>
+  <td>
+    <%= order_tbl.owner %>
   </td>
   <td class="center-align">
     <%= number_with_delimiter(order_tbl.available, delimiter: ',') %>
