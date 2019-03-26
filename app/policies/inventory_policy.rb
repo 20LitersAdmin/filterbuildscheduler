@@ -40,6 +40,10 @@ class InventoryPolicy
     user&.can_do_inventory?
   end
 
+  def order_all?
+    user&.can_do_inventory?
+  end
+
   def status?
     user&.admin_or_leader? || user&.can_do_inventory?
   end

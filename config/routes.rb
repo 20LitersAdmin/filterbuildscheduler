@@ -47,6 +47,7 @@ Rails.application.routes.draw do
   resources :inventories do
     collection do
       get 'order'
+      get 'order_all'
       get 'status'
       get 'labels'
       get 'financials'
