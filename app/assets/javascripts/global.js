@@ -159,7 +159,7 @@ $(document).on("turbolinks:load", function(){
       }
     },
     columns: [
-      null, null, null, null, null, null, null, null, null,
+      null, null, null, null, null, null, null, null, null, null,
       { "orderDataType": "dom-checkbox", "orderSequence": [ "desc" ] }
     ]
   });
@@ -183,7 +183,7 @@ $(document).on("turbolinks:load", function(){
       }
     },
     columns: [
-      null, null, null, null, null, null, null, null, null,
+      null, null, null, null, null, null, null, null, null, null,
       { "orderDataType": "dom-checkbox", "orderSequence": [ "desc" ] }
     ]
   });
