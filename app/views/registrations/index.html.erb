@@ -29,6 +29,9 @@
           <th>Guests</th>
           <th></th>
           <th></th>
+          <% unless @event.in_the_past? %>
+            <th></th>
+          <% end %>
         </tr>
       </thead>
       <tbody>
