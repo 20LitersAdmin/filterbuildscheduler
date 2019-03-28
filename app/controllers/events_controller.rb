@@ -253,6 +253,7 @@ class EventsController < ApplicationController
     @registration.leader = true
     @registration.restore if @registration.deleted?
     @registration.save
+    RegistrationMailer.created(@registration).deliver_now!
 
     flash[:success] = "Registered #{@registration.user.name}."
     redirect_to leaders_event_path(@event)
