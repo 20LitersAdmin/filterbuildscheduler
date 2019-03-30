@@ -2,6 +2,11 @@ $(document).on("turbolinks:load", function(){
   // User#show and Pages#info accordion symbol switching
   $(".panel-title").children("a").addClass("accordion-link")
 
+  $("a.prevent_default").on("click", function(){
+    event.preventDefault;
+    return false;
+  });
+
   $('.datetimepicker').each(function(){
     var theValue = Date(this.value);
     $(this).datetimepicker({
