@@ -20,7 +20,7 @@
       </div>
     </div>
 
-    <% if @past_events_for_admins_or_leaders.present? %>
+    <% if @past_events.present? %>
       <div class="event-container">
         <h2 class="heading">Open Builds (report is missing)</h2>
         <%= render partial: 'events/event', collection: @past_events %>
