@@ -156,13 +156,6 @@ class InventoriesController < ApplicationController
     @counts = @inventory.counts.sort_by { |c| [c.group_by_tech, c.name] }
   end
 
-  def labels
-    # print labels for all Parts, Materials and Components in the system
-    @print_navbar = true
-    authorize @inventory = Inventory.latest
-    @counts = @inventory.counts.sort_by { |c| [c.group_by_tech, c.name] }
-  end
-
   def destroy
     authorize @inventory = Inventory.find(params[:id])
   end
