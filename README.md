@@ -1,5 +1,11 @@
 # README
 
+
+#order_all page:
+1. Add # per technology column to all tables
+2. Add supplier colum to item table
+3. Limit view to owner [VWF or 20L]
+
 ## Things to do
 0. counts#item_list table should include `#{item}s_per_technology` column (maybe create an `items_per_technology` method on Count?)
 0. I removed the button for "All Labels", which is `Inventory#labels`. Could be removed?
@@ -24,8 +30,7 @@
   - List of leaders && participating
 
 8. SAM3 min orders
-
-9. Part <-> Material could be `has_one` instead of `has_many`
+9. SAM2 items in dB
 
 10. User#show events sections show card views, switch to a table view and make not click-able
 
@@ -36,7 +41,16 @@
 
 ## Remind myself:
 1. production backup / development restore-from production
-  - User.first.update(password: "password", password_confirmation: "password")
+  - `User.first.update(password: "password", password_confirmation: "password")`
 2. "Your branch is n commits behind master" - git fetch origin
 3. git remote prune origin --dry-run
 4. `Record.only_deleted.each do |record| record.really_destroy! end`
+5. `orphans = User.builders.left_outer_joins(:registrations).where(registrations: { id: nil })`
+
+
+## Data cleanup:
+1. Inventory/Parts/Materials/Components data:
+- `invs = Inventory.where('date < ?', '2019-01-01')`
+- `invs.each { |inv| inv.really_destroy! }`
+2. Events/Registrations
+3. Users
