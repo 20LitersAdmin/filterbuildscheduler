@@ -3,15 +3,16 @@
     <span aria-hidden="true">&times;</span>
   </button>
   <p>Available functions:</p>
-  <%= link_to "New Inventory", new_inventory_path(type: "manual"), class: "btn yellow use-load-screen"  %>
-  <%= link_to "Receive Supplies", new_inventory_path(type: "receiving"), class: "btn blue use-load-screen" %>
-  <%= link_to "Ship Supplies", new_inventory_path(type: "shipping"), class: "btn blue use-load-screen" %>
-  <%= link_to "Item List", item_list_path(), class: "btn yellow", target: "_blank" %>
-  <%= link_to "Print Labels", labels_path(), class: "btn yellow", target: '_blank' %>
+  <%= link_to 'New Inventory', new_inventory_path(type: 'manual'), class: 'btn yellow use-load-screen'  %>
+  <%= link_to 'Receive Supplies', new_inventory_path(type: 'receiving'), class: 'btn blue use-load-screen' %>
+  <%= link_to 'Ship Supplies', new_inventory_path(type: 'shipping'), class: 'btn blue use-load-screen' %>
+  <%= link_to 'Item List', item_list_path(), class: 'btn yellow', target: '_blank' %>
+  <%= link_to 'Print Labels', labels_path(), class: 'btn yellow', target: '_blank' %>
   <% if @latest.has_items_below_minimum? %>
-    <%= link_to "Supplies Needed!", order_inventories_path(), class: "btn red use-load-screen" %>
+    <%= link_to 'Items Needed!', order_inventories_path(), class: 'btn red use-load-screen' %>
   <% end %>
-  <%= link_to "Tech Status", status_inventories_path, class: "btn blue use-load-screen"  %>
+  <%= link_to 'Order Items', order_all_inventories_path(), class: 'btn yellow use-load-screen' %>
+  <%= link_to 'Tech Status', status_inventories_path, class: 'btn blue use-load-screen'  %>
   <% if current_user&.can_do_inventory? %>
     <%= link_to 'Financials', financials_inventories_path, class: 'btn yellow use-load-screen' %>
   <% end %>
