@@ -1,10 +1,10 @@
 <div id="inventory_order">
   <div class="row" id="sticky">
     <div class="col-xs-12 col-sm-10">
-      <h2 id="title"><%= @low_counts.count %> items need to be ordered:</h2>
+      <h2 id="title"><%= @low_counts.count %> items need to be ordered<%= ' for ' if @selected_owner || @selected_tech %><%= @selected_owner unless @selected_tech.present? %><%= @selected_tech&.name %>:</h2>
     </div>
     <div class="col-xs-12 col-sm-2 right-align match-h2">
-      <%= link_to 'View All', order_all_inventories_path, class: 'btn empty' %>
+      <%= link_to 'View All', order_all_inventories_path, class: 'btn empty use-load-screen' %>
     </div>
 
     <div class="col-xs-12 admin-div">
@@ -26,6 +26,22 @@
         </a>
       </div>
     </div>
+  </div>
+
+  <div class="row spacer-bottom spacer-top well">
+    <%= form_tag order_inventories_path(), method: 'get', class: 'form-inline', enforce_utf8: false do %>
+      <div class="col-xs-12 col-sm-4 form-group">
+        <label for='owner'>Owner:</label>
+        <%= select_tag 'owner', options_for_select(@owners_select, @selected_owner_acronym), { id: 'owner', class: 'form-control', include_blank: true } %>
+      </div>
+      <div class="col-xs-12 col-sm-4 form-group">
+        <label for="tech">Technology:</label>
+        <%= select_tag 'tech', options_for_select(@technologies_select, @selected_tech_id), { id: 'tech', class: 'form-control', include_blank: true } %>
+      </div>
+      <div class="col-xs-12 col-sm-4 right-align form-group">
+        <%= submit_tag "Filter", class: 'btn yellow', name: nil %>
+      </div>
+    <% end %>
   </div>
 
   <div class="row" id="scrolling">

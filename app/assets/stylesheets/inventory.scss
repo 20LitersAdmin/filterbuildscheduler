@@ -34,8 +34,9 @@
 .match-h2 {
   min-height: 63px;
   text-align: right;
-  a.btn {
+  a.btn, select, label {
     margin-top: 15px;
+    vertical-align: middle;
   }
 }
 
@@ -130,7 +131,7 @@
       padding-left: 4px;
       padding-right: 4px;
     }
-  }  
+  }
 
   #finalize_form {
     display: none;
@@ -244,6 +245,6 @@
       width: 20px;
       height: 15px;
     }
-  }  
+  }
 }
 

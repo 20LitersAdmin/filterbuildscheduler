@@ -49,6 +49,13 @@ hr.bar {
   margin-top: 12px;
 }
 
+.spacer-bottom {
+  margin-bottom: 2em;
+}
+.spacer-top {
+  margin-top: 2em;
+}
+
 .twentyliters {
   text-rendering: optimizelegibility;
   -webkit-font-smoothing: antialiased;
@@ -87,7 +94,6 @@ hr.bar {
   .admin-div {
     padding-top: .5em;
     padding-bottom: .75em;
-    margin-bottom: 2em;
     background-color: $slightly-darker-light-grey;
     border-radius: 2px;
     border-bottom: 2px solid $yellow;
@@ -294,7 +300,7 @@ hr.bar {
       font-size: 11px;
     }
   }
-  
+
   .thin hr {
     margin: -6px 0px 0px 0px;
   }
@@ -352,6 +358,10 @@ hr.bar {
   border-color: $light-blue;
   color: $grey;
   text-align: center;
+}
+
+.light-blue {
+  color: $light-blue
 }
 
 
