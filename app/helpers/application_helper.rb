@@ -29,6 +29,10 @@ module ApplicationHelper
     end
   end
 
+  def human_float(float, precision = 2)
+    float.round(precision)
+  end
+
   def human_boolean(boolean)
     boolean ? 'Yes' : 'No'
   end

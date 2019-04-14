@@ -1,4 +1,6 @@
 $(document).on("turbolinks:load", function(){
+  $("#load_screen").hide();
+
   // User#show and Pages#info accordion symbol switching
   $(".panel-title").children("a").addClass("accordion-link")
 
@@ -164,7 +166,7 @@ $(document).on("turbolinks:load", function(){
       }
     },
     columns: [
-      null, null, null, null, null, null, null, null, null, null,
+      null, null, null, null, null, null, null, null, null, null, null, null,
       { "orderDataType": "dom-checkbox", "orderSequence": [ "desc" ] }
     ]
   });
@@ -188,36 +190,35 @@ $(document).on("turbolinks:load", function(){
       }
     },
     columns: [
-      null, null, null, null, null, null, null, null, null, null,
+      null, null, null, null, null, null, null, null, null, null, null,
       { "orderDataType": "dom-checkbox", "orderSequence": [ "desc" ] }
     ]
   });
+
+  // Inventory#order && Inventory#order_all tooltips
+  $(function () {
+    $('[data-toggle="tooltip"]').tooltip()
+  });
+
+  // User#show and Pages#info accordion symbol switching
+  function collapsedFAs(clicked) {
+    var collapsed = $('div[aria-expanded="false"]').get();
+    var id = "";
+
+    for( i = 0; i < collapsed.length; i++) {
+      id = "#" + $(collapsed[i]).attr("aria-labelledby");
+      $(id).find(".fa-minus").hide();
+      $(id).find(".fa-plus").show();
+    };
+  };
+
+  $(document).on("click", "a.accordion-link", function() {
+    $(this).children(".fa").toggle();
+
+    collapsedFAs(this);
+  });
+
+  $(document).on("click", ".use-load-screen", function() {
+    $("#load_screen").show();
+  });
 });
-
-// User#show and Pages#info accordion symbol switching
-function collapsedFAs(clicked) {
-  var collapsed = $('div[aria-expanded="false"]').get();
-  var id = "";
-
-  for( i = 0; i < collapsed.length; i++) {
-    id = "#" + $(collapsed[i]).attr("aria-labelledby");
-    $(id).find(".fa-minus").hide();
-    $(id).find(".fa-plus").show();
-  }
-}
-
-$(document).on("click", "a.accordion-link", function() {
-  $(this).children(".fa").toggle();
-
-  collapsedFAs(this);
-});
-
-$(document).on("click", ".use-load-screen", function() {
-  $("#load_screen").show();
-});
-
-$(document).on("turbolinks:load", function() {
-  $("#load_screen").hide();
-});
-
-

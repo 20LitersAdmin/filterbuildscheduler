@@ -1,11 +1,5 @@
 # README
 
-
-#order_all page:
-1. Add # per technology column to all tables
-2. Add supplier colum to item table
-3. Limit view to owner [VWF or 20L]
-
 ## Things to do
 0. counts#item_list table should include `#{item}s_per_technology` column (maybe create an `items_per_technology` method on Count?)
   - what did I make this for?
@@ -20,6 +14,8 @@
 2. I created label views and financial view and I should write tests for them.
 
 3. JQuery registration form validations (use global .has-errors css, see user#edit for good example)
+
+4. Part has_one material (instead of has_many)
 
 9. Stats framework (for time period) (visible to Admin)
   - Number of technologies by type
@@ -36,6 +32,9 @@
 
 ## HMMM
 1. `weeks_to_out` and `per_technology` rely on lots of `.first`s which is an issue for items that `have_many` technologies
+- Part#technology
+- Material#technology
+- Component#technologies
 2. Tech Status sux big ones and needs some work (the 4-level deep problem)
 3. EventsController::SubtractSubsets.subtract! only goes 1 level deep.
 
