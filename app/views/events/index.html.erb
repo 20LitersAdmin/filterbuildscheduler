@@ -13,12 +13,14 @@
         </div>
       <% end %>
     </div>
-    <div class="event-container">
-      <h2 class="heading">Get notified when new build events are available!</h2>
-      <div class="action-container">
-        <a href="https://20liters.kindful.com/register/volunteer" target="_blank" class="btn yellow">Join the Email List</a>
+    <% if !current_user&.admin_or_leader? %>
+      <div class="event-container">
+        <h2 class="heading">Get notified when new build events are available!</h2>
+        <div class="action-container">
+          <a href="https://20liters.kindful.com/register/volunteer" target="_blank" class="btn yellow">Join the Email List</a>
+        </div>
       </div>
-    </div>
+    <% end %>
 
     <% if @past_events.present? %>
       <div class="event-container">

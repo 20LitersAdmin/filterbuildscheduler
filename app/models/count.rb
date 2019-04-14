@@ -32,6 +32,10 @@ class Count < ApplicationRecord
     item.technology
   end
 
+  def technologies
+    item.technologies
+  end
+
   def name
     item.name
   end
@@ -157,7 +161,7 @@ class Count < ApplicationRecord
   end
 
   def group_by_tech
-    item.technologies.map(&:id).sort.first || 999
+    item.technologies.map(&:id).min || 999
   end
 
   def reorder?
