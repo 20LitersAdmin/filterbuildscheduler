@@ -49,21 +49,19 @@ Rails.application.routes.draw do
       get 'order'
       get 'order_all'
       get 'status'
-      get 'labels'
       get 'financials'
     end
     get 'paper', on: :member
     resources :counts do
       get 'label', on: :member
+      get 'labels', on: :collection
     end
   end
 
   post 'stripe-webhook', to: 'webhooks#receive', as: 'stripe_webhook'
 
-  if Rails.env.development?
-    mount LetterOpenerWeb::Engine, at: "/letter_opener"
-  end
+  mount LetterOpenerWeb::Engine, at: '/letter_opener' if Rails.env.development?
 
   # catch-all for bad urls
-  get "*path", to:  'pages#route_error'
+  get '*path', to:  'pages#route_error'
 end

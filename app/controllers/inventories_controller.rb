@@ -119,8 +119,26 @@ class InventoriesController < ApplicationController
 
   def order
     authorize @inventory = Inventory.latest_completed
-    @low_counts = @inventory.counts.select(&:reorder?)
 
+    @selected_owner_acronym = params[:owner] if params[:owner].present?
+    @selected_owner = @selected_owner_acronym ? find_owner_from_acronym(@selected_owner_acronym) : nil
+    @technologies = @selected_owner ? Technology.status_worthy.where(owner: @selected_owner) : Technology.status_worthy
+
+    @owners_select = Technology.status_worthy.map { |t| [t.owner, t.owner_acronym] }.uniq
+    @technologies_select = @technologies.map { |t| [t.name, t.id] }
+
+    @selected_tech_id = @technologies.find(params[:tech]).id if params[:tech].present?
+    @selected_tech = @technologies.find(@selected_tech_id) if @selected_tech_id
+
+    if @selected_tech_id
+      @low_counts = @inventory.counts.select { |c| c.reorder? && c.technologies.map(&:id).include?(@selected_tech_id) }
+    elsif @selected_owner_acronym
+      @low_counts = @inventory.counts.select { |c| c.reorder? && c.owner.include?(@selected_owner_acronym) }
+    else
+      @low_counts = @inventory.counts.select(&:reorder?)
+    end
+
+    # @low_counts.is_a?(ActiveRecord::Relation) == false
     @order_counts = Count.where(id: @low_counts.map(&:id))
     @suppliers = @order_counts.map(&:supplier).uniq
 
@@ -132,7 +150,24 @@ class InventoriesController < ApplicationController
 
   def order_all
     authorize @inventory = Inventory.latest_completed
-    @counts = @inventory.counts.not_components
+
+    @selected_owner_acronym = params[:owner] if params[:owner].present?
+    @selected_owner = @selected_owner_acronym ? find_owner_from_acronym(@selected_owner_acronym) : nil
+    @technologies = @selected_owner ? Technology.status_worthy.where(owner: @selected_owner) : Technology.status_worthy
+
+    @owners_select = Technology.status_worthy.map { |t| [t.owner, t.owner_acronym] }.uniq
+    @technologies_select = @technologies.map { |t| [t.name, t.id] }
+
+    @selected_tech_id = @technologies.find(params[:tech]).id if params[:tech].present?
+    @selected_tech = @technologies.find(@selected_tech_id) if @selected_tech_id
+
+    if @selected_tech_id
+      @counts = @inventory.counts.not_components.select { |c| c.technologies.map(&:id).include?(@selected_tech_id) }
+    elsif @selected_owner_acronym
+      @counts = @inventory.counts.not_components.select { |c| c.owner.include?(@selected_owner_acronym) }
+    else
+      @counts = @inventory.counts.not_components
+    end
 
     @suppliers = @counts.map(&:supplier).uniq
 
@@ -153,13 +188,6 @@ class InventoriesController < ApplicationController
   def paper
     @print_navbar = true
     authorize @inventory = Inventory.find(params[:id])
-    @counts = @inventory.counts.sort_by { |c| [c.group_by_tech, c.name] }
-  end
-
-  def labels
-    # print labels for all Parts, Materials and Components in the system
-    @print_navbar = true
-    authorize @inventory = Inventory.latest
     @counts = @inventory.counts.sort_by { |c| [c.group_by_tech, c.name] }
   end
 
@@ -191,5 +219,9 @@ class InventoriesController < ApplicationController
   def inventory_params
     params.require(:inventory).permit :date, :reported, :receiving, :shipping, :manual, :deleted_at, :event_id, :completed_at,
                                       counts_attributes: [:id, :user_id, :inventory_id, :component_id, :part_id, :material_id, :loose_count, :unopened_boxes_count, :deleted_at]
+  end
+
+  def find_owner_from_acronym(owner)
+    Technology.status_worthy.map { |t| [t.owner_acronym, t.owner] }.uniq.to_h[owner]
   end
 end

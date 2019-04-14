@@ -10,8 +10,20 @@
     <%= order_tbl.tech_names_short %>
   </td>
   <td>
+    <%= human_float(order_tbl.item.per_technology) %>
+  </td>
+  <td>
     <%= order_tbl.owner %>
   </td>
+  <% if @locator == 'item' %>
+    <td>
+      <% if supplier = order_tbl.item.supplier %>
+        <%= link_to supplier.name, rails_admin.edit_path(model_name: supplier.model_name.name, id: supplier.id) %>
+      <% elsif order_tbl.item.made_from_materials? %>
+        <i>material</i> <%= fa_icon "question-circle", class: 'light-blue', data: { toggle: 'tooltip', placement: 'right'}, title: "Made from #{order_tbl.item.materials.first.name}: #{order_tbl.item.materials.first.supplier.name}" %>
+      <% end %>
+    </td>
+  <% end %>
   <td class="center-align">
     <%= number_with_delimiter(order_tbl.available, delimiter: ',') %>
   </td>
