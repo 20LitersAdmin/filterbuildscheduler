@@ -1,6 +1,10 @@
 # README
 
 ## Things to do
+0. I can view old public events. I shouldn't be able to.
+  - e.g.: https://make.20liters.org/events/47; https://make.20liters.org/events/49
+  - event.in_the_past? && !user.admin_or_leader?
+
 0. counts#item_list table should include `#{item}s_per_technology` column (maybe create an `items_per_technology` method on Count?)
   - what did I make this for?
 1. I created EventsController::SubtractSubsets and should write tests for it
