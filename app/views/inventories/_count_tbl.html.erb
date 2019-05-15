@@ -6,8 +6,9 @@
       <%= count_tbl.name %>
     <% end %>
   </td>
-  <td><%= count_tbl.tech_names_short %></td>
   <td><%= count_tbl.owner %></td>
+  <td><%= count_tbl.tech_names_short %></td>
+  <td class="center-align"><%= number_with_precision(count_tbl.per_technology.to_f, delimiter: ',', precision: 2, strip_insignificant_zeros: true) %></td>
   <td class="center-align"><%= number_with_delimiter(count_tbl.loose_count, delimiter: ',') %></td>
   <td class="center-align">
     <% if count_tbl.item.only_loose? %>
