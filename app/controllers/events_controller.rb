@@ -220,7 +220,9 @@ class EventsController < ApplicationController
       end
     end
 
-    authorize @events.first
+    if @events.any?
+      authorize @events.first
+    end
     @finder = 'lead'
   end
 
