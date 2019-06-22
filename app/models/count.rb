@@ -104,6 +104,10 @@ class Count < ApplicationRecord
     end
   end
 
+  def per_technology
+    item.per_technology
+  end
+
   def previous_inventory
     Inventory.latest_since(inventory.created_at)
   end

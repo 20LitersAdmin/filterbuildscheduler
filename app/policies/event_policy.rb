@@ -28,13 +28,9 @@ class EventPolicy < ApplicationPolicy
     if event.in_the_past?
       if user&.is_admin?
         true
-      elsif user&.is_leader?
+      elsif user&.is_leader? && user.leading?(event)
         # only show it if the leader led the event
-        if event.registrations.where(user: user).where(leader: true).present?
-          true
-        else
-          false
-        end
+        true
       else # anonymous users and builders can't see past events
         false
       end

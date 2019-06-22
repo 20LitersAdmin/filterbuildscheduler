@@ -1,8 +1,8 @@
 # README
 
 ## Things to do
-0. counts#item_list table should include `#{item}s_per_technology` column (maybe create an `items_per_technology` method on Count?)
-  - what did I make this for?
+0. system should print a bill of materials per technology, with option to specificy # of technologies to produce
+
 1. I created EventsController::SubtractSubsets and should write tests for it
   * Test the class (as a model)
   * Write a system test for event-based inventories
@@ -13,9 +13,9 @@
 
 2. I created label views and financial view and I should write tests for them.
 
-3. JQuery registration form validations (use global .has-errors css, see user#edit for good example)
-
 4. Part has_one material (instead of has_many)
+
+5. `events/closed` should be a datatable, not boxes
 
 9. Stats framework (for time period) (visible to Admin)
   - Number of technologies by type
