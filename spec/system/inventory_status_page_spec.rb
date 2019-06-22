@@ -125,9 +125,9 @@ RSpec.describe "Inventory status page", type: :system, js: true do
 
       expect(page).not_to have_css("div.popover")
 
-      title = "button[data-original-title='#{Technology.first.name} items']"
+      btn = "button[id='btn_tech_#{Technology.first.id}']"
 
-      find(title).click
+      find(btn).click
 
       expect(page).to have_css("div.popover")
     end

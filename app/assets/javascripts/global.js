@@ -23,6 +23,12 @@ $(document).on("turbolinks:load", function(){
       maxDate: this.value
     });
   });
+  $('.datepicker-nomax').each(function(){
+    $(this).datetimepicker({
+      date: this.value,
+      format: 'MMM DD YYYY'
+    });
+  });
 
   /* Create an array with the values of all the checkboxes in a column */
   $.fn.dataTable.ext.order['dom-checkbox'] = function  ( settings, col ) {
