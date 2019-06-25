@@ -44,6 +44,12 @@ Rails.application.routes.draw do
     end
   end
 
+  resources :technologies, only: [:index] do
+    member do
+      get 'materials'
+    end
+  end
+
   resources :inventories do
     collection do
       get 'order'
