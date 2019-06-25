@@ -2,6 +2,7 @@
 
 ## Things to do
 0. system should print a bill of materials per technology, with option to specificy # of technologies to produce
+- remove item-list
 
 1. I created EventsController::SubtractSubsets and should write tests for it
   * Test the class (as a model)
