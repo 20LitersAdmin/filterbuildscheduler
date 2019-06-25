@@ -1,8 +1,6 @@
 # README
 
 ## Things to do
-0. system sends too many emails for event reminder to admins
-
 0. system should print a bill of materials per technology, with option to specificy # of technologies to produce
 
 1. I created EventsController::SubtractSubsets and should write tests for it
