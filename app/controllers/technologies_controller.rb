@@ -3,10 +3,12 @@
 class TechnologiesController < ApplicationController
   def index
     # select technology for /materials
-    authorize @techs = Technology.status_worthy
+    authorize @techs = Technology.list_worthy
   end
 
-  def materials
+  def items
     authorize @technology = Technology.find(params[:id])
+
+    @components = @technology.components.required
   end
 end

@@ -1,0 +1,32 @@
+<div class="container">
+  <div class="row">
+    <div class="col">
+      <h3><%= @technology.name + " Item List:" %></h3>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col">
+      <table class="table table-bordered" id="<%= 'list_item_tbl_' + @technology.id.to_s %>">
+        <thead>
+          <th></th>
+          <th></th>
+          <th></th>
+          <th># needed</th>
+          <th></th>
+        </thead>
+        <tbody>
+          <%= render partial: 'component', collection: @components %>
+          <tr>
+            <th>Parts:</th>
+            <th></th>
+            <th></th>
+            <th># needed</th>
+            <th></th>
+          </tr>
+          <!-- render a partial of loose parts -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

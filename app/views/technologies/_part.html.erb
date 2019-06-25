@@ -1,0 +1,11 @@
+<tr>
+  <td></td>
+  <td>
+    <%= part.name %>
+  </td>
+  <td>
+    <%= part.extrapolate_component_parts.where(component: component).first.parts_per_component %>
+  </td>
+  <td># needed</td>
+  <td>chkbx</td>
+</tr>

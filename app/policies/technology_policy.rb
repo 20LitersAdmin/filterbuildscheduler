@@ -12,7 +12,7 @@ class TechnologyPolicy
     user&.can_do_inventory?
   end
 
-  def materials?
+  def items?
     user&.can_do_inventory?
   end
 end

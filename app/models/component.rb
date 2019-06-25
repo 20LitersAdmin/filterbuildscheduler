@@ -13,6 +13,7 @@ class Component < ApplicationRecord
 
   has_many :counts, dependent: :destroy
   scope :active, -> { where(deleted_at: nil) }
+  scope :required, -> { joins(:extrapolate_technology_components).where.not(completed_tech: true).where(extrapolate_technology_components: {required: true }) }
 
   def uid
     'C' + id.to_s.rjust(3, '0')

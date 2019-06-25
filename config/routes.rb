@@ -15,7 +15,7 @@ Rails.application.routes.draw do
   get 'info', to: 'pages#info', as: 'info'
   get 'report', to: 'pages#report', as: 'report'
   get 'labels', to: 'counts#labels', as: 'labels'
-  get 'item-list', to: 'counts#item_list', as: 'item_list'
+  # get 'item-list', to: 'counts#item_list', as: 'item_list'
 
   resources :events do
     collection do
@@ -46,7 +46,7 @@ Rails.application.routes.draw do
 
   resources :technologies, only: [:index] do
     member do
-      get 'materials'
+      get 'items'
     end
   end
 

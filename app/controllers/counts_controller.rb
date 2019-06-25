@@ -93,13 +93,11 @@ class CountsController < ApplicationController
     @counts = Inventory.latest.counts.sort_by { |c| [c.group_by_tech, c.item.uid] }
   end
 
-  def item_list
-    # Item list by technology
-    @technologies = Technology.status_worthy.reorder(:name)
-    @technology = params[:tech].present? ? @technologies.find(params[:tech]) : @technologies.first
-    @counts = Inventory.latest.counts.find_all { |count| count.technology == @technology }.sort_by(&:name)
-    # badbad
-  end
+  # def item_list
+  #   @technologies = Technology.status_worthy.reorder(:name)
+  #   @technology = params[:tech].present? ? @technologies.find(params[:tech]) : @technologies.first
+  #   @counts = Inventory.latest.counts.find_all { |count| count.technology == @technology }.sort_by(&:name)
+  # end
 
   def label
     # print full sheet of lables for this one item
