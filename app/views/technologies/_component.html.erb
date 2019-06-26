@@ -1,0 +1,34 @@
+<tr>
+  <th colspan="3">Component:</th>
+  <th>#/Tech</th>
+  <th>avail.</th>
+  <th>need</th>
+  <th>actual</th>
+</tr>
+<tr>
+  <td>
+    <%= component.uid %>
+  </td>
+  <td colspan="2">
+    <%= component.name %>
+  </td>
+  <td style="text-align: right">
+    <%= number_with_delimiter(component.per_technology, delimiter: ',') %>
+  </td>
+  <td style="text-align: right">
+    <%= number_with_delimiter(component.available, delimiter: ',') %>
+  </td>
+  <td style="text-align: right">
+    <%= number_with_delimiter(component.per_technology * @quantity, delimiter: ',') %>
+  </td>
+  <td></td>
+</tr>
+<tr>
+  <th></th>
+  <th colspan="2">Parts in component:</th>
+  <th>#/Component:</th>
+  <th>avail.</th>
+  <th>need</th>
+  <th>actual</th>
+</tr>
+<%= render partial: "part", collection: component.parts.order(:name), locals: { component: component } %>

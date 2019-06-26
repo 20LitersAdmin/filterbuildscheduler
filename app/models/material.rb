@@ -18,9 +18,18 @@ class Material < ApplicationRecord
   monetize :price_cents, allow_nil: true, numericality: { greater_than_or_equal_to: 0 }
 
   scope :active, -> { where(deleted_at: nil) }
+  scope :required, -> { joins(:extrapolate_technology_materials).where(extrapolate_technology_materials: { required: true }) }
 
-  def uid
-    'M' + id.to_s.rjust(3, '0')
+  def available
+    if latest_count.present?
+      latest_count.available
+    else
+      0
+    end
+  end
+
+  def latest_count
+    Count.where(inventory: Inventory.latest_completed, material: self).first
   end
 
   def picture
@@ -28,18 +37,6 @@ class Material < ApplicationRecord
       ActionController::Base.helpers.asset_path('uids/' + uid + '.jpg')
     rescue => error
       'http://placekitten.com/140/140'
-    end
-  end
-
-  def reorder_total_cost
-    min_order * price
-  end
-
-  def required?
-    if extrapolate_technology_materials.any?
-      extrapolate_technology_materials.first.required?
-    else
-      false
     end
   end
 
@@ -60,6 +57,18 @@ class Material < ApplicationRecord
     per_tech
   end
 
+  def reorder_total_cost
+    min_order * price
+  end
+
+  def required?
+    if extrapolate_technology_materials.any?
+      extrapolate_technology_materials.first.required?
+    else
+      false
+    end
+  end
+
   def technology
     # The path from materials to technologies can vary:
     # Material ->(materials_technologies)-> Technology
@@ -77,5 +86,9 @@ class Material < ApplicationRecord
         component.technologies.first
       end
     end
+  end
+
+  def uid
+    'M' + id.to_s.rjust(3, '0')
   end
 end
