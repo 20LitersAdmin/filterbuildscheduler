@@ -23,15 +23,11 @@ class Part < ApplicationRecord
 
   scope :active, -> { where(deleted_at: nil) }
 
-  def uid
-    'P' + id.to_s.rjust(3, '0')
-  end
-
-  def picture
-    begin
-      ActionController::Base.helpers.asset_path('uids/' + uid + '.jpg')
-    rescue => error
-      'http://placekitten.com/140/140'
+  def available
+    if latest_count.present?
+      latest_count.available
+    else
+      0
     end
   end
 
@@ -42,15 +38,15 @@ class Part < ApplicationRecord
     emp.material.price / emp.parts_per_material
   end
 
-  def reorder_total_cost
-    min_order * price
+  def latest_count
+    Count.where(inventory: Inventory.latest_completed, part: self).first
   end
 
-  def required?
-    if extrapolate_technology_parts.any?
-      extrapolate_technology_parts.first.required?
-    else
-      false
+  def picture
+    begin
+      ActionController::Base.helpers.asset_path('uids/' + uid + '.jpg')
+    rescue => error
+      'http://placekitten.com/140/140'
     end
   end
 
@@ -69,6 +65,18 @@ class Part < ApplicationRecord
     per_tech
   end
 
+  def reorder_total_cost
+    min_order * price
+  end
+
+  def required?
+    if extrapolate_technology_parts.any?
+      extrapolate_technology_parts.first.required?
+    else
+      false
+    end
+  end
+
   def technology
     # The path from parts to technologies can vary:
     # Part ->(extrap_technology_parts)-> Technology
@@ -81,5 +89,9 @@ class Part < ApplicationRecord
     elsif extrapolate_component_parts.first.present?
       components.first.technologies.first
     end
+  end
+
+  def uid
+    'P' + id.to_s.rjust(3, '0')
   end
 end

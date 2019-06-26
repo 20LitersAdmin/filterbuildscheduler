@@ -1,13 +1,17 @@
 <div class="container">
   <div class="row">
     <%= form_tag items_technology_path(@technology.id), method: 'get', class: 'form-inline', enforce_uft8: false do %>
-      <div class="col-md-8">
+      <div class="col-md-5">
         <h3><%= @technology.name + " Item List:" %></h3>
       </div>
-      <div class="col-md-2 no-print">
-        <%= number_field_tag 'q', @quantity, { min: 0, step: 1 } %>
+      <div class="col-md-2 no-print form-group">
+        <%= number_field_tag 'q', @quantity_val, { min: 0, step: 1, class: 'form-control', placeholder: 'Quantity' } %>
       </div>
-      <div class="col-md-2 no-print">
+      <div class="col-md-3 no-print form-group">
+        <label for="i">Ignore Component Avail.</label>
+        <%= check_box_tag 'i', '1', @ignore_component_counts %>
+      </div>
+      <div class="col-md-2 no-print form-group">
         <%= submit_tag "Set Quantity", class: 'btn yellow', name: nil %>
       </div>
     <% end %>
@@ -29,13 +33,19 @@
           <tr>
             <th colspan="2">Parts:</th>
             <th>#/Tech:</th>
-            <th>have</th>
+            <th>avail.</th>
             <th>need</th>
             <th>actual</th>
           </tr>
           <%= render partial: "part", collection: @loose_parts.order(:name), locals: { technology: @technology } %>
         </tbody>
       </table>
+    </div>
+  </div>
+
+  <div class="row no-print">
+    <div class="col right-align">
+      <%= link_to "Back", technologies_path(), class: 'btn blue'  %>
     </div>
   </div>
 </div>
