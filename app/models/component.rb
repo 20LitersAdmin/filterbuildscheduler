@@ -13,9 +13,18 @@ class Component < ApplicationRecord
 
   has_many :counts, dependent: :destroy
   scope :active, -> { where(deleted_at: nil) }
+  scope :required, -> { joins(:extrapolate_technology_components).where.not(completed_tech: true).where(extrapolate_technology_components: { required: true }) }
 
-  def uid
-    'C' + id.to_s.rjust(3, '0')
+  def available
+    if latest_count.present?
+      latest_count.available
+    else
+      0
+    end
+  end
+
+  def latest_count
+    Count.where(inventory: Inventory.latest_completed, component: self).first
   end
 
   def picture
@@ -26,33 +35,11 @@ class Component < ApplicationRecord
     end
   end
 
-  def technology
-    technologies.first
-  end
-
   def per_technology
     if extrapolate_technology_components.any?
       extrapolate_technology_components.first.components_per_technology.to_i
     else
       1
-    end
-  end
-
-  def required?
-    if extrapolate_technology_components.any?
-      extrapolate_technology_components.first.required?
-    else
-      false
-    end
-  end
-
-  def total
-    count = Count.where(inventory: Inventory.latest_completed, component: self).first
-
-    if count
-      count.total
-    else
-      0
     end
   end
 
@@ -69,5 +56,29 @@ class Component < ApplicationRecord
       end
     end
     ary.sum
+  end
+
+  def required?
+    if extrapolate_technology_components.any?
+      extrapolate_technology_components.first.required?
+    else
+      false
+    end
+  end
+
+  def technology
+    technologies.first
+  end
+
+  def total
+    if latest_count
+      latest_count.total
+    else
+      0
+    end
+  end
+
+  def uid
+    'C' + id.to_s.rjust(3, '0')
   end
 end

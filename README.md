@@ -1,10 +1,6 @@
 # README
 
 ## Things to do
-0. system sends too many emails for event reminder to admins
-
-0. system should print a bill of materials per technology, with option to specificy # of technologies to produce
-
 1. I created EventsController::SubtractSubsets and should write tests for it
   * Test the class (as a model)
   * Write a system test for event-based inventories
@@ -15,11 +11,15 @@
 
 2. I created label views and financial view and I should write tests for them.
 
+3. I created technology index view and items view and I should write tests for them.
+
 4. Part has_one material (instead of has_many)
 
 5. `events/closed` should be a datatable, not boxes
 
-9. Stats framework (for time period) (visible to Admin)
+6. User#show events sections show card views, switch to a table view and make not click-able
+
+7. Stats framework (for time period) (visible to Admin)
   - Number of technologies by type
   - Number of vol hours (event length * attendance )
   - Number of volunteers engaged (could be duplicated)
@@ -29,8 +29,7 @@
 
 8. SAM3 min orders
 9. SAM2 items in dB
-
-10. User#show events sections show card views, switch to a table view and make not click-able
+10. Check Item Lists against reality
 
 ## HMMM
 1. `weeks_to_out` and `per_technology` rely on lots of `.first`s which is an issue for items that `have_many` technologies
