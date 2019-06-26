@@ -22,7 +22,8 @@
       <table class="table table-bordered" id="<%= 'list_item_tbl_' + @technology.id.to_s %>">
         <colgroup>
           <col style="width: 2%;">
-          <col style="width: 70%;">
+          <col style="width: 2%;">
+          <col style="width: 68%;">
           <col style="width: 7%;">
           <col style="width: 7%;">
           <col style="width: 7%;">
@@ -31,13 +32,21 @@
         <tbody>
           <%= render partial: 'component', collection: @components %>
           <tr>
-            <th colspan="2">Parts:</th>
+            <th colspan="3">Parts:</th>
             <th>#/Tech:</th>
             <th>avail.</th>
             <th>need</th>
             <th>actual</th>
           </tr>
-          <%= render partial: "part", collection: @loose_parts.order(:name), locals: { technology: @technology } %>
+          <%= render partial: "part", collection: @loose_parts.order(:name) %>
+          <tr>
+            <th colspan="3">Materials:</th>
+            <th>#/Tech:</th>
+            <th>avail.</th>
+            <th>need</th>
+            <th>actual</th>
+          </tr>
+          <%= render partial: "material", collection: @technology.materials.order(:name) %>
         </tbody>
       </table>
     </div>
