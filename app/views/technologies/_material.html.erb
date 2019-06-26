@@ -1,0 +1,21 @@
+<tr>
+  <td>
+    <%= material.uid %>
+  </td>
+  <td colspan="2">
+    <%= "#{material.name}" %>
+    <span style="font-style: italic;">
+      <%= "(for #{material.parts.map(&:name).to_sentence})" %>
+    </span>
+  </td>
+  <td style="text-align: right;">
+    <%= human_float(material.per_technology, 4) %>
+  </td>
+  <td style="text-align: right;">
+    <%= number_with_delimiter(material.available, delimiter: ',') %>
+  </td>
+  <td style="text-align: right;">
+    <%= human_float(material.per_technology * @quantity, 4) %>
+  </td>
+  <td></td>
+</tr>

@@ -18,13 +18,13 @@ class Material < ApplicationRecord
   monetize :price_cents, allow_nil: true, numericality: { greater_than_or_equal_to: 0 }
 
   scope :active, -> { where(deleted_at: nil) }
+  scope :required, -> { joins(:extrapolate_technology_materials).where(extrapolate_technology_materials: { required: true }) }
 
   def available
-      if latest_count.present?
-        latest_count.available
-      else
-        0
-      end
+    if latest_count.present?
+      latest_count.available
+    else
+      0
     end
   end
 

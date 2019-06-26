@@ -1,4 +1,4 @@
-<% parts_per_float = defined?(component) ? part.extrapolate_component_parts.where(component: component).first.parts_per_component : part.extrapolate_technology_parts.where(technology: technology).first.parts_per_technology %>
+<% parts_per_float = defined?(component) ? part.extrapolate_component_parts.where(component: component).first.parts_per_component : part.extrapolate_technology_parts.where(technology: @technology).first.parts_per_technology %>
 <% parts_per = parts_per_float == parts_per_float.to_i ? parts_per_float.to_i : parts_per_float %>
 <% ppq = defined?(component) && !@ignore_component_counts ? (parts_per * @quantity) - component.available : parts_per * @quantity %>
 <% ppq = 0 if ppq < 0 %>
@@ -6,10 +6,21 @@
   <% if defined?(component) %>
     <td></td>
     <td>
+      <%= part.uid %>
+    </td>
+    <td>
   <% else %>
+    <td>
+      <%= part.uid %>
+    </td>
     <td colspan="2">
   <% end %>
-    <%= part.name %>
+      <%= "#{part.name}" %>
+    <% if part.made_from_materials? && part.materials.any? %>
+      <span style="font-style: italic;">
+        <%= "(made from #{part.materials.first.name})" %>
+      </span>
+    <% end %>
   </td>
   <td style="text-align: right">
     <%= number_with_delimiter(parts_per, delimiter: ',') %>
