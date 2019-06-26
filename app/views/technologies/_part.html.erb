@@ -1,11 +1,23 @@
+<% parts_per_float = defined?(component) ? part.extrapolate_component_parts.where(component: component).first.parts_per_component : part.extrapolate_technology_parts.where(technology: technology).first.parts_per_technology %>
+<% parts_per = parts_per_float == parts_per_float.to_i ? parts_per_float.to_i : parts_per_float %>
+<% ppq = parts_per * @quantity %>
 <tr>
-  <td></td>
-  <td>
+  <% if defined?(component) %>
+    <td></td>
+    <td>
+  <% else %>
+    <td colspan="2">
+  <% end %>
     <%= part.name %>
   </td>
-  <td>
-    <%= part.extrapolate_component_parts.where(component: component).first.parts_per_component %>
+  <td style="text-align: right">
+    <%= parts_per %>
   </td>
-  <td># needed</td>
-  <td>chkbx</td>
+  <td style="text-align: right">
+    have
+  </td>
+  <td style="text-align: right">
+    <%= ppq == ppq.to_i ? ppq.to_i : ppq %>
+  </td>
+  <td></td>
 </tr>
