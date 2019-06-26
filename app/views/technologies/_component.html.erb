@@ -1,24 +1,31 @@
 <tr>
-  <th colspan="2">Component</th>
-  <th># per Tech</th>
-  <th></th>
-  <th></th>
+  <th colspan="2">Component:</th>
+  <th>#/Tech</th>
+  <th>have</th>
+  <th>need</th>
+  <th>actual</th>
 </tr>
 <tr>
   <td colspan="2">
     <%= component.name %>
   </td>
-  <td>
+  <td style="text-align: right">
     <%= component.per_technology %>
   </td>
-  <td># needed</td>
-  <td>chkbx</td>
+  <td style="text-align: right">
+    have
+  </td>
+  <td style="text-align: right">
+    <%= component.per_technology * @quantity %>
+  </td>
+  <td></td>
 </tr>
 <tr>
   <th></th>
   <th>Parts in component:</th>
-  <th># per Component:</th>
-  <th></th>
-  <th></th>
+  <th>#/Component:</th>
+  <th>have</th>
+  <th>need</th>
+  <th>actual</th>
 </tr>
 <%= render partial: "part", collection: component.parts.order(:name), locals: { component: component } %>
