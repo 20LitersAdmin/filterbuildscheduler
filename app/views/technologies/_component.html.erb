@@ -1,7 +1,7 @@
 <tr>
   <th colspan="2">Component:</th>
   <th>#/Tech</th>
-  <th>have</th>
+  <th>avail.</th>
   <th>need</th>
   <th>actual</th>
 </tr>
@@ -10,13 +10,13 @@
     <%= component.name %>
   </td>
   <td style="text-align: right">
-    <%= component.per_technology %>
+    <%= number_with_delimiter(component.per_technology, delimiter: ',') %>
   </td>
   <td style="text-align: right">
-    have
+    <%= number_with_delimiter(component.available, delimiter: ',') %>
   </td>
   <td style="text-align: right">
-    <%= component.per_technology * @quantity %>
+    <%= number_with_delimiter(component.per_technology * @quantity, delimiter: ',') %>
   </td>
   <td></td>
 </tr>
@@ -24,7 +24,7 @@
   <th></th>
   <th>Parts in component:</th>
   <th>#/Component:</th>
-  <th>have</th>
+  <th>avail.</th>
   <th>need</th>
   <th>actual</th>
 </tr>
