@@ -32,6 +32,14 @@ class CountPolicy
     user&.can_do_inventory?
   end
 
+  def labels?
+    user&.can_do_inventory?
+  end
+
+  def label?
+    user&.can_do_inventory?
+  end
+
   def destroy?
     user&.is_admin?
   end
