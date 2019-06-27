@@ -133,8 +133,6 @@ $(document).on("turbolinks:load", function(){
       "<'col-xs-8'p>",
   });
 
-
-
   $('.datatable-search').DataTable({
     retrieve: true,
     order: [],
@@ -199,6 +197,31 @@ $(document).on("turbolinks:load", function(){
       null, null, null, null, null, null, null, null, null, null, null,
       { "orderDataType": "dom-checkbox", "orderSequence": [ "desc" ] }
     ]
+  });
+
+  $('.datatable-order-events').DataTable({
+    retrieve: true,
+    order: [[1, "desc"]],
+    pageLength: 25,
+    lengthMenu: [[25, 50, 100, -1], [25, 50, 100, "All"] ],
+    responsive: true,
+    autoWidth: false,
+    info: false,
+    dom:
+      "<'col-xs-12 no-overflow center' B>"+
+      "<'col-xs-4 no-overflow'l>"+
+      "<'col-xs-8 no-overflow'f>"+
+      "t"+
+      "<'col-xs-8'p>",
+    buttons: [ 'copy', 'csv', 'excel', 'print' ],
+    language: {
+      paginate: {
+        first: "&#8676",
+        previous: "&#8592",
+        next: "&#8594",
+        last: "&#8677"
+      }
+    }
   });
 
   // Inventory#order && Inventory#order_all tooltips

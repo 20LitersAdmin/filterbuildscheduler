@@ -12,6 +12,9 @@
       <% else %>
         <i>Ages 12+</i>
       <% end %>
+      <% if event_cancelled.is_private? %>
+        | <i>Private Event</i>
+      <% end %>
     </div>
 
     <%= link_to "Restore Event & Registrations", restore_event_path(event_cancelled, recursive: "true"), class: "btn btn-primary empty restore", id: "event_and_registrations_" + event_cancelled.id.to_s %>
@@ -36,10 +39,6 @@
           <%= event_cancelled.leaders_registered("only_deleted").count %> of <%= event_cancelled.max_leaders %> Leaders Registered<%= event_cancelled.you_are_leader(@user, "only_deleted") %>.
 
         </div>
-      <% end %>
-
-      <% if event_cancelled.is_private %>
-        <div class="bar blue">This event is private</div>
       <% end %>
     </div>
   </div>
