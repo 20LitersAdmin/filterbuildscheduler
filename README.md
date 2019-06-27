@@ -1,6 +1,10 @@
 # README
 
 ## Things to do
+5. `events/closed` should be a datatable, not boxes
+
+6. User#show events sections show card views, switch to a table view and make not click-able
+
 1. I created EventsController::SubtractSubsets and should write tests for it
   * Test the class (as a model)
   * Write a system test for event-based inventories
@@ -10,10 +14,6 @@
   ** The inventory gets extrapolations (InventoriesController::Extrapolate)
 
 4. Part has_one material (instead of has_many)
-
-5. `events/closed` should be a datatable, not boxes
-
-6. User#show events sections show card views, switch to a table view and make not click-able
 
 7. Stats framework (for time period) (visible to Admin)
   - Number of technologies by type
