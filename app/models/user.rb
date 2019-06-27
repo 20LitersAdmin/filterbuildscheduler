@@ -40,32 +40,6 @@ class User < ApplicationRecord
     is_admin? || is_leader?
   end
 
-  def can_do_inventory?
-    does_inventory? || is_admin? || send_inventory_emails?
-  end
-
-  def name
-    "#{fname} #{lname}"
-  end
-
-  def password_required?
-    false
-  end
-
-  def can_lead_event?(event)
-    return false unless admin_or_leader?
-
-    event.technology.nil? || technologies.exists?(event.technology.id)
-  end
-
-  def registered?(event)
-    Registration.where(user: self, event: event).present?
-  end
-
-  def leading?(event)
-    Registration.where(user: self, event: event, leader: true).present?
-  end
-
   def available_events
     if admin_or_leader?
       Event.all
@@ -76,17 +50,22 @@ class User < ApplicationRecord
     end
   end
 
+  def can_do_inventory?
+    does_inventory? || is_admin? || send_inventory_emails?
+  end
+
+  def can_lead_event?(event)
+    return false unless admin_or_leader?
+
+    event.technology.nil? || technologies.exists?(event.technology.id)
+  end
+
+  def custom_path
+    # this allows for a form field that handles page redirects based on values: 'admin', 'self'
+  end
+
   def has_no_password
     !encrypted_password.present?
-  end
-
-  def ensure_authentication_token
-    self.authentication_token = generate_authentication_token if authentication_token.blank?
-  end
-
-  def check_phone_format
-    # Remove any non-numbers, and any symbols that aren't part of [(,),-,.,+]
-    phone.gsub!(/[^\d,(,),+,\s,.,-]/,'') if phone.present? && phone.match('^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$').nil?
   end
 
   def latest_event
@@ -95,6 +74,22 @@ class User < ApplicationRecord
     else
       'No Event'
     end
+  end
+
+  def leading?(event)
+    Registration.where(user: self, event: event, leader: true).present?
+  end
+
+  def name
+    "#{fname} #{lname}"
+  end
+
+  def password_required?
+    false
+  end
+
+  def registered?(event)
+    Registration.where(user: self, event: event).present?
   end
 
   def self.to_csv
@@ -108,8 +103,12 @@ class User < ApplicationRecord
     end
   end
 
-  def custom_path
-    # this allows for a form field that handles page redirects based on values: 'admin', 'self'
+  def total_volunteer_hours
+    self.registrations.attended.includes(:event).map { |r| r.event.length }.sum
+  end
+
+  def total_guests
+    self.registrations.attended.map(&:guests_attended).sum
   end
 
   private
@@ -123,5 +122,14 @@ class User < ApplicationRecord
 
   def update_kindful
     KindfulClient.new.import_user(self)
+  end
+
+  def ensure_authentication_token
+    self.authentication_token = generate_authentication_token if authentication_token.blank?
+  end
+
+  def check_phone_format
+    # Remove any non-numbers, and any symbols that aren't part of [(,),-,.,+]
+    phone.gsub!(/[^\d,(,),+,\s,.,-]/,'') if phone.present? && phone.match('^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$').nil?
   end
 end
