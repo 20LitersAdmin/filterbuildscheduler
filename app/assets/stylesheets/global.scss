@@ -325,9 +325,14 @@ hr.bar {
   box-shadow: 0 0 5px #888;
   margin-left: 2%;
   margin-right: 2%;
+  margin-bottom: 1em;
 
   &.col-md-6 {
     width: 46%;
+  }
+
+  &.col-md-12 {
+    width: 96%;
   }
 }
 
