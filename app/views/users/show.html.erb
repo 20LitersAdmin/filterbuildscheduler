@@ -8,6 +8,44 @@
     <% end %>
   </div>
 
+  <div class="row">
+    <div class="col-md-12 emphasis-div">
+      <h3>Stats</h3>
+      <table class="table table-bordered">
+        <colgroup>
+          <col style="width: 50%">
+          <col style="width: 50%">
+        </colgroup>
+        <tbody>
+          <tr>
+            <th>Volunteer hours:</th>
+            <td>
+              <%= human_float(@user.total_volunteer_hours, 2) %>
+            </td>
+          </tr>
+          <tr>
+            <th># of Registrations:</th>
+            <td>
+              <%= @user.registrations.size %>
+            </td>
+          </tr>
+          <tr>
+            <th># of Attendances:</th>
+            <td>
+              <%= @user.registrations.attended.size %>
+            </td>
+          </tr>
+          <tr>
+            <th># of Guests total:</th>
+            <td>
+              <%= @user.total_guests %>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
   <% if @user.is_leader || @user.is_admin %>
     <div class="row">
       <div class="col-md-6 emphasis-div">
@@ -63,7 +101,18 @@
             <div class="panel-body">
               <% if @leading_events.length.positive? %>
                 <div class="event-container">
-                  <%= render partial: 'events/event', collection: @leading_events %>
+                  <table class="table table-striped datatable-order-events-slim">
+                    <thead>
+                      <tr>
+                        <th>Name</th>
+                        <th>Date</th>
+                        <th>Tech</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <%= render partial: 'events/event_tbl_slim', collection: @leading_events %>
+                    </tbody>
+                  </table>
                 </div>
               <% else %>
                 <p>No upcoming events</p>
@@ -87,7 +136,18 @@
           <div class="panel-body">
             <% if @attending_events.length.positive? %>
               <div class="event-container">
-                <%= render partial: 'events/event', collection: @attending_events %>
+                <table class="table table-striped datatable-order-events-slim">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Date</th>
+                      <th>Tech</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <%= render partial: 'events/event_tbl_slim', collection: @attending_events %>
+                  </tbody>
+                </table>
               </div>
             <% else %>
               <p>No upcoming events</p>
@@ -111,7 +171,18 @@
             <div class="panel-body">
               <% if @lead_events.length.positive? %>
                 <div class="event-container">
-                  <%= render partial: 'events/event', collection: @lead_events %>
+                  <table class="table table-striped datatable-order-events-slim">
+                    <thead>
+                      <tr>
+                        <th>Name</th>
+                        <th>Date</th>
+                        <th>Tech</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <%= render partial: 'events/event_tbl_slim', collection: @lead_events %>
+                    </tbody>
+                  </table>
                 </div>
               <% else %>
                 <p>No past events</p>
@@ -135,7 +206,18 @@
           <div class="panel-body">
             <% if @attended_events.length.positive? %>
               <div class="event-container">
-                <%= render partial: 'events/event', collection: @attended_events %>
+                <table class="table table-striped datatable-order-events-slim">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Date</th>
+                      <th>Tech</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <%= render partial: 'events/event_tbl_slim', collection: @attended_events %>
+                  </tbody>
+                </table>
               </div>
             <% else %>
               <p>No past events</p>
