@@ -2,7 +2,7 @@
   <div class="row">
     <%= form_tag items_technology_path(@technology.id), method: 'get', class: 'form-inline', enforce_uft8: false do %>
       <div class="col-md-5">
-        <h3><%= @technology.name + " Item List:" %></h3>
+        <h3><%= "#{@technology.name} Item List:" %></h3>
       </div>
       <div class="col-md-2 no-print form-group">
         <%= number_field_tag 'q', @quantity_val, { min: 0, step: 1, class: 'form-control', placeholder: 'Quantity' } %>
