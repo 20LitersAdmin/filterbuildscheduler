@@ -1,11 +1,18 @@
 @import 'variables';
+// `/labels`
+#labels_chooser {
+  img.table-img {
+    width: 80px;
+  }
+}
 
+// `/inventories/#id/counts/#id/label`
 #inventory_labels, #paper_labels {
   width: 8.5in;
   margin-right: auto;
   margin-left: auto;
 
-  .border { 
+  .border {
     border: 1px solid gray;
   }
 
@@ -103,11 +110,11 @@ table#avery8163 {
 
 @media print {
   table#avery8163 {
-    thead { 
+    thead {
       display: table-header-group;
     }
 
-    tfoot { 
+    tfoot {
       display: table-footer-group;
     }
 

@@ -23,12 +23,14 @@
   </td>
   <td></td>
 </tr>
-<tr>
-  <th></th>
-  <th colspan="2">Parts in component:</th>
-  <th>#/Component:</th>
-  <th>avail.</th>
-  <th>need</th>
-  <th>actual</th>
-</tr>
-<%= render partial: "part", collection: component.parts.order(:name), locals: { component: component } %>
+<% if component.parts.any? %>
+  <tr>
+    <th></th>
+    <th colspan="2">Parts in component:</th>
+    <th>#/Component:</th>
+    <th>avail.</th>
+    <th>need</th>
+    <th>actual</th>
+  </tr>
+  <%= render partial: "part", collection: component.parts.order(:name), locals: { component: component } %>
+<% end %>
