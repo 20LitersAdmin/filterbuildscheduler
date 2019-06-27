@@ -1,8 +1,6 @@
 # README
 
 ## Things to do
-5. `events/closed` should be a datatable, not boxes
-
 6. User#show events sections show card views, switch to a table view and make not click-able
 
 1. I created EventsController::SubtractSubsets and should write tests for it

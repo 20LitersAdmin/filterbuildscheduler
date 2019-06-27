@@ -3,9 +3,31 @@
     <%= render partial: 'shared/event_functions' %>
   <% end %>
   <div class="event-container">
-    <h2 class="heading">Closed Builds</h2>
+    <div class="row">
+      <h2 class="heading">Closed Builds</h2>
+    </div>
     <% if @closed_events.any? %>
-      <%= render partial: 'events/event_tbl', collection: @closed_events %>
+      <div class="row">
+        <div class="col">
+          <table class="table table-striped datatable-order-events">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Date</th>
+                <th>Tech</th>
+                <th># built</th>
+                <th># boxes packed</th>
+                <th># leaders</th>
+                <th># builders</th>
+                <th>Volunteer hours</th>
+              </tr>
+            </thead>
+            <tbody>
+              <%= render partial: 'events/event_tbl', collection: @closed_events %>
+            </tbody>
+          </table>
+        </div>
+      </div>
     <% else %>
       <h4>No closed events in the system.</h4>
     <% end %>
