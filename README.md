@@ -9,8 +9,6 @@
   ** The inventory gets subsets of components subtracted (EventsController::SubtractSubsets)
   ** The inventory gets extrapolations (InventoriesController::Extrapolate)
 
-2. I created financial view and I should write tests for them.
-
 4. Part has_one material (instead of has_many)
 
 5. `events/closed` should be a datatable, not boxes
