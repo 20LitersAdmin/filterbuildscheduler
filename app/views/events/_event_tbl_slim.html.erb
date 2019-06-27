@@ -1,0 +1,18 @@
+<tr>
+  <td>
+    <% if @user&.admin_or_leader? %>
+      <%= link_to event_tbl_slim.title, event_path(event_tbl_slim) %>
+      <% if event_tbl_slim.needs_report? && event_tbl_slim.in_the_past? %>
+        <span style="font-style: italic;">(no report)</span>
+      <% end %>
+    <% else %>
+      <%= event_tbl_slim.title %>
+    <% end %>
+  </td>
+  <td data-sort='<%= event_tbl_slim.start_time.strftime("%Y%m%d%H%M%s") %>'>
+    <%= event_tbl_slim.format_time_range %>
+  </td>
+  <td>
+    <%= event_tbl_slim.technology.short_name %>
+  </td>
+</tr>
