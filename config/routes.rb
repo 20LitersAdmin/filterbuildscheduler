@@ -59,7 +59,6 @@ Rails.application.routes.draw do
     get 'paper', on: :member
     resources :counts do
       get 'label', on: :member
-      get 'labels', on: :collection
     end
   end
 
