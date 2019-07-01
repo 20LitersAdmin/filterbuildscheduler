@@ -5,8 +5,13 @@ class ReportJob < ApplicationJob
 
   def perform(*_args)
     inventory = Inventory.latest_completed
-    puts '-+ Sending monthly report'
-    ReportMailer.monthly(inventory).deliver_now!
+    if inventory.present? && inventory.report_sent_at.nil?
+      puts '-+ Sending monthly report'
+      ReportMailer.monthly(inventory).deliver_now!
+      inventory.update(report_sent_at: Time.zone.now)
+    else
+      puts '-+ No report to send'
+    end
     puts '-+ Done sending'
   end
 end
