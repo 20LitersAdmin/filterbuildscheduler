@@ -41,7 +41,9 @@ class Material < ApplicationRecord
   end
 
   def per_technology
-    if extrapolate_material_parts.first.present?
+    if extrapolate_technology_materials.first.present?
+      per_tech = extrapolate_technology_materials.first.materials_per_technology
+    elsif extrapolate_material_parts.first.present?
       ppm = extrapolate_material_parts.first.parts_per_material.to_f
 
       part = extrapolate_material_parts.first.part
