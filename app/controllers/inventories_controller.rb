@@ -43,7 +43,7 @@ class InventoriesController < ApplicationController
   def create
     @date = inventory_params[:date]
 
-    @matching = Inventory.where(date: Date.parse(@date)).last
+    @matching = Inventory.where(date: Date.parse(@date)).latest
 
     if inventory_params[:receiving] == 'true'
       @type = 'receiving'

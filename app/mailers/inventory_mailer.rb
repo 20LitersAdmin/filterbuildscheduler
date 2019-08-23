@@ -9,9 +9,10 @@ class InventoryMailer < ApplicationMailer
     @user = user
     @recipients = User.where(send_inventory_emails: true).map { |u| u.email }
 
-    if @inventory.has_items_below_minimum?
-      @low_items = @inventory.counts.select{ |count| count.reorder? }
-    end
+    @prime_counts = @inventory.primary_counts
+    comps = Component.where(id: @prime_counts.map(&:component_id))
+    tech_ids = comps.joins(:technologies).map { |c| c.technologies.map(&:id) }.flatten.uniq
+    @owners = Technology.status_worthy.where(id: tech_ids).map(&:owner).uniq
 
     mail(to: @recipients, subject: '[20 Liters] Finalized Inventory Available')
   end

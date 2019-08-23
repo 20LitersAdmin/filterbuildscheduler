@@ -3,6 +3,6 @@
 class InventoryMailerPreview < ActionMailer::Preview
 
   def notify
-    InventoryMailer.notify(Inventory.last, User.first)
+    InventoryMailer.notify(Inventory.latest, User.first)
   end
 end
