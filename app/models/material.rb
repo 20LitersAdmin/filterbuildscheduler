@@ -32,6 +32,10 @@ class Material < ApplicationRecord
     Count.where(inventory: Inventory.latest_completed, material: self).first
   end
 
+  def made_from_materials?
+    false
+  end
+
   def picture
     begin
       ActionController::Base.helpers.asset_path('uids/' + uid + '.jpg')
