@@ -69,7 +69,7 @@ RSpec.describe "Creating a new inventory", type: :system do
       expect(page).to have_css("input#inventory_receiving[value='false']", visible: false)
       expect(page).to have_css("input#inventory_shipping[value='false']", visible: false)
     end
-    
+
     it "?type=manual it establishes a manual inventory" do
       visit new_inventory_path(type: "manual")
       expect(page).to have_css("input#inventory_manual[value='true']", visible: false)
