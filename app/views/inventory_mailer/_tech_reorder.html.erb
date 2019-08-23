@@ -1,0 +1,14 @@
+<tr style="border: 1px solid #4a4a4a; border-collapse: collapse; padding: 6px;">
+  <td style="border: 1px solid #4a4a4a; border-collapse: collapse; padding: 6px;">
+    <%= tech_reorder.name %>
+  </td>
+  <td style="border: 1px solid #4a4a4a; border-collapse: collapse; padding: 6px;">
+    <%= number_with_delimiter(tech_reorder.available, delimiter: ',') %>
+  </td>
+  <td style="border: 1px solid #4a4a4a; border-collapse: collapse; padding: 6px;">
+    <%= number_with_delimiter(tech_reorder.item.minimum_on_hand, delimiter: ',') %>
+  </td>
+  <td style="border: 1px solid #4a4a4a; border-collapse: collapse; padding: 6px;">
+    <%= number_with_delimiter(tech_reorder.item.weeks_to_deliver, delimiter: ',') %>
+  </td>
+</tr>

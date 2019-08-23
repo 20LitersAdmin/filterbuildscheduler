@@ -43,7 +43,7 @@ class InventoriesController < ApplicationController
   def create
     @date = inventory_params[:date]
 
-    @matching = Inventory.where(date: Date.parse(@date)).last
+    @matching = Inventory.where(date: Date.parse(@date)).latest
 
     if inventory_params[:receiving] == 'true'
       @type = 'receiving'
@@ -55,7 +55,7 @@ class InventoriesController < ApplicationController
       @type = 'unknown'
     end
 
-    if @matching&.type_for_params == @type
+    if @matching.present? && @matching.type_for_params == @type
       # No two inventories of the same type on the same day
       flash[:warning] = "A #{@type} inventory already exists for #{inventory_params[:date]}, please use that one."
       return redirect_to inventories_path
