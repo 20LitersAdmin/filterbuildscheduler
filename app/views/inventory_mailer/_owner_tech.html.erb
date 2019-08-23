@@ -1,0 +1,37 @@
+<p><strong><%= "#{owner_tech}:" %></strong></p>
+<% techs = Technology.status_worthy.where(owner: owner_tech) %>
+<% comps = Component.where(id: techs.map { |t| t.primary_component.id }) %>
+<table style="border: 1px solid #4a4a4a; border-collapse: collapse;">
+  <thead>
+    <tr style="border: 1px solid #4a4a4a; border-collapse: collapse;">
+      <th style="text-align: left; border: 1px solid #4a4a4a; border-collapse: collapse; padding: 6px;">
+        Technology
+      </th>
+      <th style="text-align: center; border: 1px solid #4a4a4a; border-collapse: collapse; padding: 6px;">
+        Loose Count
+      </th>
+      <th style="text-align: center; border: 1px solid #4a4a4a; border-collapse: collapse; padding: 6px;">
+        Packed Boxes
+      </th>
+      <th>Total Available</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @prime_counts.where(component: comps).each do |c| %>
+      <tr style="border: 1px solid #4a4a4a; border-collapse: collapse; padding: 6px;">
+        <td style="border: 1px solid #4a4a4a; border-collapse: collapse; padding: 6px;">
+          <%= c.component.name %>
+        </td>
+        <td style="text-align: center; border: 1px solid #4a4a4a; border-collapse: collapse; padding: 6px;">
+          <%= number_with_delimiter(c.loose_count, delimiter: ',') %>
+        </td>
+        <td style="text-align: center; border: 1px solid #4a4a4a; border-collapse: collapse; padding: 6px;">
+          <%= number_with_delimiter(c.unopened_boxes_count, delimiter: ',') %>
+        </td>
+        <td style="text-align: center; border: 1px solid #4a4a4a; border-collapse: collapse; padding: 6px;">
+          <%= number_with_delimiter(c.available, delimiter: ',') %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

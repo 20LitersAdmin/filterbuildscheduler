@@ -6,86 +6,15 @@
   <p>Finalized by: <%= @user.name %></p>
 </div>
 <div class="whole" style="position: relative; min-height: 1px; padding-left: 15px; padding-right: 15px; float: left; width: 100%;">
-  <p><strong>Completed Technologies:</strong></p>
-  <table style="border: 1px solid #4a4a4a; border-collapse: collapse;">
-    <thead>
-      <tr style="border: 1px solid #4a4a4a; border-collapse: collapse;">
-        <th style="text-align: left; border: 1px solid #4a4a4a; border-collapse: collapse; padding: 6px;">
-          Technology
-        </th>
-        <th style="text-align: center; border: 1px solid #4a4a4a; border-collapse: collapse; padding: 6px;">
-          Loose Count
-        </th>
-        <th style="text-align: center; border: 1px solid #4a4a4a; border-collapse: collapse; padding: 6px;">
-          Packed Boxes
-        </th>
-        <th>Total Available</th>
-      </tr>
-    </thead>
-    <tbody>
-      <% @inventory.primary_counts.each do |c| %>
-        <tr style="border: 1px solid #4a4a4a; border-collapse: collapse; padding: 6px;">
-          <td style="border: 1px solid #4a4a4a; border-collapse: collapse; padding: 6px;">
-            <%= c.component.name %>
-          </td>
-          <td style="text-align: center; border: 1px solid #4a4a4a; border-collapse: collapse; padding: 6px;">
-            <%= number_with_delimiter(c.loose_count, delimiter: ',') %>
-          </td>
-          <td style="text-align: center; border: 1px solid #4a4a4a; border-collapse: collapse; padding: 6px;">
-            <%= number_with_delimiter(c.unopened_boxes_count, delimiter: ',') %>
-          </td>
-          <td style="text-align: center; border: 1px solid #4a4a4a; border-collapse: collapse; padding: 6px;">
-            <%= number_with_delimiter(c.available, delimiter: ',') %>
-          </td>
-        </tr>
-      <% end %>
-    </tbody>
-  </table>
+  <h3><strong>Completed Technologies:</strong></h3>
+  <%= render partial: 'owner_tech', collection: @owners %>
 </div>
 <div class="whole" style="position: relative; min-height: 1px; padding-left: 15px; padding-right: 15px; float: left; width: 100%;">
-  <p><strong>Reorder Items:</strong></p>
-  <table style="border: 1px solid #4a4a4a; border-collapse: collapse;">
-    <thead>
-      <tr style="border: 1px solid #4a4a4a; border-collapse: collapse;">
-        <th style="text-align: left; border: 1px solid #4a4a4a; border-collapse: collapse; padding: 6px;">
-          Item
-        </th>
-        <th style="text-align: center; border: 1px solid #4a4a4a; border-collapse: collapse; padding: 6px;">
-          For Tech
-        </th>
-        <th style="text-align: center; border: 1px solid #4a4a4a; border-collapse: collapse; padding: 6px;">
-          Available
-        </th>
-        <th style="text-align: center; border: 1px solid #4a4a4a; border-collapse: collapse; padding: 6px;">
-          Minimum
-        </th>
-        <th style="text-align: center; border: 1px solid #4a4a4a; border-collapse: collapse; padding: 6px;">
-          Weeks to deliver
-        </th>
-      </tr>
-    </thead>
-    <tbody>
-      <% @low_items.each do |i| %>
-        <tr style="border: 1px solid #4a4a4a; border-collapse: collapse; padding: 6px;">
-          <td style="border: 1px solid #4a4a4a; border-collapse: collapse; padding: 6px;">
-            <%= i.name %>
-          </td>
-          <td style="border: 1px solid #4a4a4a; border-collapse: collapse; padding: 6px;">
-            <%= i.tech_names %>
-          </td>
-          <td style="border: 1px solid #4a4a4a; border-collapse: collapse; padding: 6px;">
-            <%= number_with_delimiter(i.available, delimiter: ',') %>
-          </td>
-          <td style="border: 1px solid #4a4a4a; border-collapse: collapse; padding: 6px;">
-            <%= number_with_delimiter(i.item.minimum_on_hand, delimiter: ',') %>
-          </td>
-          <td style="border: 1px solid #4a4a4a; border-collapse: collapse; padding: 6px;">
-            <%= number_with_delimiter(i.item.weeks_to_deliver, delimiter: ',') %>
-          </td>
-        </tr>
-      <% end %>
-    </tbody>
-  </table>
+  <hr>
+</div>
+<div class="whole" style="position: relative; min-height: 1px; padding-left: 15px; padding-right: 15px; float: left; width: 100%;">
+  <h3><strong>Reorder Items:</strong></h3>
+  <%= render partial: 'owner_reorder', collection: @owners %>
 </div>
 <div class="whole" style="position: relative; min-height: 1px; padding-left: 15px; padding-right: 15px; float: left; width: 50%; text-align: center; margin-top: 32px;">
   <%= link_to "See the full inventory", inventory_url(@inventory), class: "btn yellow", target: "_blank", style: "display: inline-block; margin-bottom: 0; font-weight: normal; text-align: center; vertical-align: middle; border: 1px solid transparent; white-space: nowrap; padding: 6px 12px; font-size: 14px; text-decoration: none; color: #4a4a4a; background-color: #fce000; border-color: ##fcc900;" %>
