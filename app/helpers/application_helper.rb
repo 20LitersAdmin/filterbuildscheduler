@@ -36,4 +36,10 @@ module ApplicationHelper
   def human_boolean(boolean)
     boolean ? 'Yes' : 'No'
   end
+
+  def human_number(integer)
+    return '-' if integer.nil? || integer.zero?
+
+    number_with_delimiter(integer, delimiter: ',')
+  end
 end

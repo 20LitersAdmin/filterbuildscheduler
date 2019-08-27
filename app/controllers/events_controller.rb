@@ -79,6 +79,7 @@ class EventsController < ApplicationController
     @results_emails_sent = ''
     # CREATE AN INVENTORY WHEN AN EVENT REPORT IS SUBMITTED UNDER CERTAIN CONDITIONS.
     # Fields in question: technologies_built, boxes_packed
+    # This is the first time the event report is being submitted (@event.emails_sent == false)
     # Conditions: They're not negative AND ( they're not both 0 OR they weren't zero but now they are. )
     # ESCAPE CLAUSE: the event's technology doesn't have a primary_component
 
@@ -95,7 +96,7 @@ class EventsController < ApplicationController
     @changed_to_zero = true if @event.boxes_packed_was != 0 && @event.boxes_packed.zero?
 
     # combine conditions
-    if @positive_numbers && (@more_than_zero || @changed_to_zero) && @event.technology.primary_component.present? # ESCAPE CLAUSE: @event.technology has a primary_component
+    if @positive_numbers && (@more_than_zero || @changed_to_zero) && @event.technology.primary_component.present? && @event.emails_sent == false
 
       # determine the values to use when populating the count
       if event_params[:technologies_built] == ''

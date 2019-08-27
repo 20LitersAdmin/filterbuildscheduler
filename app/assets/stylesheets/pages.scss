@@ -16,12 +16,12 @@
         text-decoration: none;
         color: black;
       }
-      
+
       .fa-minus {
         display: none;
       }
 
-      
+
   }
   .panel-body a {
     color: black;
@@ -36,5 +36,11 @@
     .fa-minus {
       display: inline-block;
     }
+  }
+}
+
+#vol_report {
+  #event_detail, #people_detail {
+    display: none;
   }
 }
