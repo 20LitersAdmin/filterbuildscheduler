@@ -1,0 +1,11 @@
+<tr>
+  <td>
+    <%= report_builder.name %>
+  </td>
+  <td>
+    <%= @registrations.builders.where(user: report_builder).size %>
+  </td>
+  <td>
+    <%= @registrations.builders.where(user: report_builder).joins(:event).map { |r| r.event.length }.sum %>
+  </td>
+</tr>

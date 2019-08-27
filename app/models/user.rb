@@ -111,6 +111,20 @@ class User < ApplicationRecord
     self.registrations.attended.map(&:guests_attended).sum
   end
 
+  def events_led_between(start_date: nil, end_date: nil)
+    return nil unless is_leader?
+
+    if start_date.present? && end_date.present?
+      Event.where(end_time: start_date..end_date).where(id: registrations.attended.joins(:event).map { |r| r.event_id }).order(start_time: :asc)
+    elsif start_date.present?
+      Event.where('start_time >= ?', start_date).where(id: registrations.attended.joins(:event).map { |r| r.event_id }).order(start_time: :asc)
+    elsif end_date.present?
+      Event.where('end_time <= ?', end_date).where(id: registrations.attended.joins(:event).map { |r| r.event_id }).order(start_time: :asc)
+    else
+      Event.where(id: registrations.attended.joins(:event).map { |r| r.event_id }).order(start_time: :asc)
+    end
+  end
+
   private
 
   def generate_authentication_token

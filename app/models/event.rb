@@ -30,6 +30,10 @@ class Event < ApplicationRecord
     attendance - leaders_attended
   end
 
+  def builders_hours
+    builders_attended * length
+  end
+
   def complete?
     attendance.present? && start_time < Time.now
   end
@@ -116,6 +120,10 @@ class Event < ApplicationRecord
 
   def leaders_attended
     registrations.leaders.attended.size
+  end
+
+  def leaders_hours
+    leaders_attended * length
   end
 
   def length
