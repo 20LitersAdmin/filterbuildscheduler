@@ -15,8 +15,8 @@ class PagesController < ApplicationController
 
   def vol_report
     start_year = Date.today.month >= 7 ? Date.today.year - 1 : Date.today.year
-    @start_date = params[:start].present? ? params[:start] : Date.new(start_year, 7, 1)
-    @end_date = params[:end].present? ? params[:end] : Date.new(start_year + 1, 6, 30)
+    @start_date = params[:start].present? ? params[:start].to_date : Date.new(start_year, 7, 1)
+    @end_date = params[:end].present? ? params[:end].to_date : Date.new(start_year + 1, 6, 30)
 
     @events = Event.where(end_time: @start_date..@end_date).order(start_time: :asc)
 
