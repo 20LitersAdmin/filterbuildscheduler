@@ -1,3 +1,11 @@
+<div class="admin-div col-xs-12 center">
+  <button type="button" class="close" id="hide_admin">
+    <span aria-hidden="true">&times;</span>
+  </button>
+  <p>Available reports:</p>
+  <%= link_to 'Volunteer Report', vol_report_path(), class: 'btn yellow'  %>
+</div>
+
 <h1>Will be able to:</h1>
 <ul>
   <li>Set a timeframe (start, end)</li>
@@ -41,7 +49,7 @@
     </tr>
     <tr>
       <td>Volunteer value (use Fed rate)</td>
-      <td>#</td>  
+      <td>#</td>
     </tr>
   </tbody>
 </table>

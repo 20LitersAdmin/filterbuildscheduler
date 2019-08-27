@@ -1,0 +1,215 @@
+<div class="col-xs-12" id="vol_report">
+  <div class="row">
+    <div class="col-xs-6">
+      <p>Start: <%= @start_date.strftime('%m/%d/%y') %></p>
+    </div>
+    <div class="col-xs-6">
+      <p>End: <%= @end_date.strftime('%m/%d/%y') %></p>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-xs-12">
+      <h2>Events:</h2>
+    </div>
+    <div class="col-xs-12">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Stats</th>
+            <th>#s</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th>Events</th>
+            <td>
+              <%= human_number(@events.size) %>
+            </td>
+          </tr>
+          <tr>
+            <th>Hours</th>
+            <td>
+              <%= human_number(@events.map(&:length).sum) %>
+            </td>
+          </tr>
+          <tr>
+            <th>Leaders (duplicated)</th>
+            <td>
+              <%= human_number(@events.map(&:leaders_attended).sum) %>
+            </td>
+          </tr>
+          <tr>
+            <th>Leader Hrs</th>
+            <td>
+              <%= human_number(@events.map(&:leaders_hours).sum) %>
+            </td>
+          </tr>
+          <tr>
+            <th>Builders (duplicated)</th>
+            <td>
+              <%= human_number(@events.map(&:builders_attended).sum) %>
+            </td>
+          </tr>
+          <tr>
+            <th>Builder Hrs</th>
+            <td>
+              <%= human_number(@events.map(&:builders_hours).sum) %>
+            </td>
+          </tr>
+          <tr>
+            <th>Volunteers (duplicated)</th>
+            <td>
+              <%= human_number(@events.map(&:attendance).sum) %>
+            </td>
+          </tr>
+          <tr>
+            <th>Volunteer Hrs</th>
+            <td>
+              <%= human_number(@events.map(&:volunteer_hours).sum) %>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-xs-12">
+      <p>
+        <%= link_to 'See the details', '#', id: 'toggle_event_detail'  %>
+      </p>
+    </div>
+  </div>
+  <div class="row" id='event_detail'>
+    <div class="col-xs-12">
+      <table class="table datatable-export">
+        <thead>
+          <tr>
+            <th>Event</th>
+            <th>Length</th>
+            <th>Leaders</th>
+            <th>Leader Hrs</th>
+            <th>Builders</th>
+            <th>Builder Hrs</th>
+            <th>Ttl Hrs</th>
+          </tr>
+        </thead>
+        <tfoot>
+          <tr>
+            <th>
+              <%= human_number(@events.size) %>
+            </th>
+            <th>
+              <%= human_number(@events.map(&:length).sum) %>
+            </th>
+            <th>
+              <%= human_number(@events.map(&:leaders_attended).sum) %>
+            </th>
+            <th>
+              <%= human_number(@events.map(&:leaders_hours).sum) %>
+            </th>
+            <th>
+              <%= human_number(@events.map(&:builders_attended).sum) %>
+            </th>
+            <th>
+              <%= human_number(@events.map(&:builders_hours).sum) %>
+            </th>
+            <th>
+              <%= human_number(@events.map(&:volunteer_hours).sum) %>
+            </th>
+          </tr>
+        </tfoot>
+        <tbody>
+          <%= render partial: 'report_event', collection: @events %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="row">
+    <hr />
+  </div>
+  <div class="row">
+    <div class="col-xs-12">
+      <h2>People:</h2>
+    </div>
+    <div class="col-xs-12">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Stats</th>
+            <th>#s</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th>Unique leaders</th>
+            <td>
+              <%= @leaders.size %>
+            </td>
+          </tr>
+          <tr>
+            <th>Unique builders (no guests)</th>
+            <td>
+              <%= @all_builders.size %>
+            </td>
+          </tr>
+          <tr>
+            <th>Unique builders (w/ guests)</th>
+            <td>
+              <%= @registrations.builders.count + @registrations.builders.map(&:guests_attended).sum %>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-xs-12">
+      <p>
+        <%= link_to 'See the details', '#', id: 'toggle_people_detail'  %>
+      </p>
+    </div>
+  </div>
+  <div class="row" id="people_detail">
+    <div class="col-xs-12">
+      <table class="table datatable-export">
+        <thead>
+          <tr>
+            <th>Leaders</th>
+            <th># of events</th>
+            <th># of hours</th>
+          </tr>
+        </thead>
+        <tbody>
+          <%= render partial: 'report_leader', collection: @leaders %>
+        </tbody>
+        <tfoot>
+          <tr>
+            <th>
+              <%= human_number(@leaders.size) %>
+            </th>
+            <th>
+              <%= human_number(@events.size) %>
+            </th>
+            <th>
+              <%= human_number(@events.map(&:leaders_hours).sum) %>
+            </th>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+    <div class="col-xs-12">
+      <table class="table datatable-export">
+        <thead>
+          <tr>
+            <th>Repeat Builders</th>
+            <th># of events</th>
+            <th># of hours</th>
+          </tr>
+        </thead>
+        <tbody>
+          <%= render partial: 'report_builder', collection: @return_builders %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
