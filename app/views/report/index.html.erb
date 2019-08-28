@@ -1,16 +1,17 @@
-<div class="admin-div col-xs-12 center">
+<div class="admin-div col-xs-12 center" id="admin_bar">
   <button type="button" class="close" id="hide_admin">
     <span aria-hidden="true">&times;</span>
   </button>
   <p>Available reports:</p>
-  <%= link_to 'Volunteer Report', vol_report_path(), class: 'btn yellow'  %>
+  <%= link_to 'Volunteer Report', volunteers_report_index_path(), class: 'btn yellow'  %>
+  <%= link_to 'Leader Report', leaders_report_index_path(), class: 'btn yellow'  %>
 </div>
 
-<h1>Will be able to:</h1>
-<ul>
-  <li>Set a timeframe (start, end)</li>
-  <li>Export to Excel, CSV, PDF (using datatable)</li>
-</ul>
+<div class="col-xs-12" id="date_bar_col">
+ <div class="row">
+   <%= render partial: 'date_bar' %>
+ </div>
+</div>
 
 <h1>Will be able to see:</h1>
 <h3>By technology:</h3>

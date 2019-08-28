@@ -82,6 +82,10 @@ class Event < ApplicationRecord
     start_time.strftime('%-m/%-d') + ' - ' + title
   end
 
+  def full_title_w_year
+    start_time.strftime('%-m/%-d/%y') + ' - ' + title
+  end
+
   def has_begun?
     start_time < Time.now
   end

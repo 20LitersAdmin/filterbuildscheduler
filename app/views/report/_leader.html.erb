@@ -1,0 +1,11 @@
+<tr>
+  <td>
+    <%= leader.name %>
+  </td>
+  <td>
+    <%= human_number @registrations.leaders.where(user: leader).size %>
+  </td>
+  <td>
+    <%= human_float @registrations.leaders.where(user: leader).joins(:event).map { |r| r.event.length }.sum %>
+  </td>
+</tr>
