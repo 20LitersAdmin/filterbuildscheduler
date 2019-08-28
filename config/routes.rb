@@ -13,9 +13,14 @@ Rails.application.routes.draw do
   get :waiver, controller: :application
 
   get 'info', to: 'pages#info', as: 'info'
-  get 'report', to: 'pages#report', as: 'report'
-  get 'vol_report', to: 'pages#vol_report', as: 'vol_report'
   get 'labels', to: 'counts#labels', as: 'labels'
+
+  resources :report, only: [:index] do
+    collection do
+      get 'volunteers'
+      get 'leaders'
+    end
+  end
 
   resources :events do
     collection do

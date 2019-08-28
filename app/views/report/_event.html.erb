@@ -1,0 +1,23 @@
+<tr>
+  <td>
+    <%= link_to event.full_title, event_path(event), target: '_blank' %>
+  </td>
+  <td>
+    <%= human_number(event.length) %>
+  </td>
+  <td>
+    <%= human_number(event.leaders_attended) %>
+  </td>
+  <td>
+    <%= human_number(event.leaders_hours) %>
+  </td>
+  <td>
+    <%= human_number(event.builders_attended) %>
+  </td>
+  <td>
+    <%= human_number(event.builders_hours) %>
+  </td>
+  <td>
+    <%= human_number(event.volunteer_hours) %>
+  </td>
+</tr>

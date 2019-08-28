@@ -1,0 +1,20 @@
+<div class="admin-div col-xs-12 center">
+  <div class="row">
+    <%= form_tag url_for, method: 'get', class: 'form-inline', enforce_utf8: false do %>
+      <div class="col-xs-3 form-group">
+        <label for="start">Start:</label>
+        <%= date_field_tag 'start', @start_date %>
+      </div>
+      <div class="col-xs-3">
+        <label for="end">End:</label>
+        <%= date_field_tag 'end', @end_date %>
+      </div>
+      <div class="col-xs-3">
+        <%= submit_tag "Search", class: 'btn yellow', name: nil  %>
+      </div>
+      <div class="col-xs-3">
+        <%= link_to "Back", report_index_path(), class: 'btn blue'  %>
+      </div>
+    <% end %>
+  </div>
+</div>

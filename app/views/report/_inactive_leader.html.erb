@@ -1,0 +1,12 @@
+<% events = inactive_leader.registrations.registered_as_leader.includes(:event).order('events.start_time DESC') %>
+<tr>
+  <td>
+    <%= inactive_leader.name %>
+  </td>
+  <td>
+    <%= events.first&.event&.full_title_w_year %>
+  </td>
+  <td>
+    <%= human_number events.size %>
+  </td>
+</tr>

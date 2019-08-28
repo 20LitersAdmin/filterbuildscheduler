@@ -1,12 +1,8 @@
 <div class="col-xs-12" id="vol_report">
   <div class="row">
-    <div class="col-xs-6">
-      <p>Start: <%= @start_date.strftime('%m/%d/%y') %></p>
-    </div>
-    <div class="col-xs-6">
-      <p>End: <%= @end_date.strftime('%m/%d/%y') %></p>
-    </div>
+    <%= render partial: 'date_bar', locals: { source: 'volunteer' } %>
   </div>
+
   <div class="row">
     <div class="col-xs-12">
       <h2>Events:</h2>
@@ -29,7 +25,7 @@
           <tr>
             <th>Hours</th>
             <td>
-              <%= human_number(@events.map(&:length).sum) %>
+              <%= human_float(@events.map(&:length).sum) %>
             </td>
           </tr>
           <tr>
@@ -41,7 +37,7 @@
           <tr>
             <th>Leader Hrs</th>
             <td>
-              <%= human_number(@events.map(&:leaders_hours).sum) %>
+              <%= human_float(@events.map(&:leaders_hours).sum) %>
             </td>
           </tr>
           <tr>
@@ -53,7 +49,7 @@
           <tr>
             <th>Builder Hrs</th>
             <td>
-              <%= human_number(@events.map(&:builders_hours).sum) %>
+              <%= human_float(@events.map(&:builders_hours).sum) %>
             </td>
           </tr>
           <tr>
@@ -65,7 +61,7 @@
           <tr>
             <th>Volunteer Hrs</th>
             <td>
-              <%= human_number(@events.map(&:volunteer_hours).sum) %>
+              <%= human_float(@events.map(&:volunteer_hours).sum) %>
             </td>
           </tr>
         </tbody>
@@ -99,27 +95,27 @@
               <%= human_number(@events.size) %>
             </th>
             <th>
-              <%= human_number(@events.map(&:length).sum) %>
+              <%= human_float(@events.map(&:length).sum) %>
             </th>
             <th>
               <%= human_number(@events.map(&:leaders_attended).sum) %>
             </th>
             <th>
-              <%= human_number(@events.map(&:leaders_hours).sum) %>
+              <%= human_float(@events.map(&:leaders_hours).sum) %>
             </th>
             <th>
               <%= human_number(@events.map(&:builders_attended).sum) %>
             </th>
             <th>
-              <%= human_number(@events.map(&:builders_hours).sum) %>
+              <%= human_float(@events.map(&:builders_hours).sum) %>
             </th>
             <th>
-              <%= human_number(@events.map(&:volunteer_hours).sum) %>
+              <%= human_float(@events.map(&:volunteer_hours).sum) %>
             </th>
           </tr>
         </tfoot>
         <tbody>
-          <%= render partial: 'report_event', collection: @events %>
+          <%= render partial: 'event', collection: @events %>
         </tbody>
       </table>
     </div>
@@ -180,7 +176,7 @@
           </tr>
         </thead>
         <tbody>
-          <%= render partial: 'report_leader', collection: @leaders %>
+          <%= render partial: 'leader', collection: @leaders %>
         </tbody>
         <tfoot>
           <tr>
@@ -191,7 +187,7 @@
               <%= human_number(@events.size) %>
             </th>
             <th>
-              <%= human_number(@events.map(&:leaders_hours).sum) %>
+              <%= human_float(@events.map(&:leaders_hours).sum) %>
             </th>
           </tr>
         </tfoot>
@@ -207,7 +203,7 @@
           </tr>
         </thead>
         <tbody>
-          <%= render partial: 'report_builder', collection: @return_builders %>
+          <%= render partial: 'builder', collection: @return_builders %>
         </tbody>
       </table>
     </div>
