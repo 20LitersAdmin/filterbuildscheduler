@@ -2,7 +2,7 @@ function filterView(type, button) {
   // type == "count" or "tech"
   var btnId = $(button).attr("id");
   var target = "." + btnId;
-  
+
   if (type == "count") {
     var goal = "true"
     var parentId = ""
@@ -71,7 +71,7 @@ function toggleCheck(action,scope) {
     var tableId = "#order_supplier_tbl_" + scope
     var booleans = $(tableId).find("input.order_checkbox").get();
   };
-  
+
   if(action === "check") {
     for( i = 0; i < booleans.length; i++ ) {
         booleans[i].checked = true;
@@ -164,14 +164,23 @@ function reformat(source) {
     var term = $("#search").val().toUpperCase();
     var collection = $(".count-parent").get();
     var title;
+    var uid;
 
     if (term === "") {
       $('.count-parent').show();
     } else {
       for ( i = 0; i < collection.length; i++ ) {
-      title = $(collection[i]).find(".count-title")
-      if ( $(title).html().toUpperCase().indexOf(term) === -1 ) {
+      title = $(collection[i]).find(".count-title");
+      uid = $(collection[i]).find(".count-uid");
+      tech = $(collection[i]).find(".count-tech");
+      if (
+        $(title).html().toUpperCase().indexOf(term) === -1
+        && $(uid).html().toUpperCase().indexOf(term) === -1
+        && $(tech).html().toUpperCase().indexOf(term) === -1
+        ) {
         $(collection[i]).hide();
+      } else {
+        $(collection[i]).show();
       };
     };
     }
