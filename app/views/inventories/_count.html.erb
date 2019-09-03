@@ -5,9 +5,13 @@
         <%= count.name %>
       </p>
       <p class="count-tech">
-        <strong><%= count.item.uid %></strong>
+        <strong class="count-uid">
+          <%= count.item.uid %>
+        </strong>
         <br>
-        <strong>For: <%= count.tech_names_short %></strong>
+        <strong class="count-tech">
+          For: <%= count.tech_names_short %>
+        </strong>
       </p>
 
       <% if count.user_id == nil %>
