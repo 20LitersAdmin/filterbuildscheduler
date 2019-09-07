@@ -2,6 +2,9 @@
  *
  *= require_tree .
  *= require_self
+ *= require dataTables/bootstrap/3/jquery.dataTables.bootstrap
+ *= require dataTables/extras/dataTables.responsive
+ *= require dataTables/extras/dataTables.fixedHeader
  */
 
 @import "bootstrap-sprockets";
@@ -9,3 +12,4 @@
 @import "variables";
 @import "font-awesome";
 @import "bootstrap-datetimepicker";
+@import "dataTables/extras/dataTables.fixedHeader";
