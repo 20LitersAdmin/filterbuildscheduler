@@ -82,7 +82,7 @@ class Part < ApplicationRecord
     # Part ->(extrap_technology_parts)-> Technology
     # Part ->(extrap_component_parts)-> Component ->(extrap_component_parts)-> Technology
 
-    # FLAWED: e.g. 3" core has 2 technologies
+    # FLAWED: when one part belongs to two technologies, then .first is a bad idea
 
     if technologies.first.present?
       technologies.first
