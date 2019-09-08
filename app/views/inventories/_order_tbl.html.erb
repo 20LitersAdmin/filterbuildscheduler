@@ -45,9 +45,16 @@
   </td>
 
   <td class="order-total right-align">
-    $<span class="order-total-amt"><%= human_number(order_tbl.item.reorder_total_cost)%></span>
+    $<span class="order-total-amt"><%= number_with_delimiter(order_tbl.item.reorder_total_cost, delimiter: ',')%></span>
   </td>
   <td class="order-check center-align">
-    <%= check_box_tag 'checkbox_' + @locator + "_" +  order_tbl.id.to_s, 1, true, class: "order_checkbox" %>
+    <% if order_tbl.item.on_order? %>
+      <i>
+        Ordered <%= human_number(order_tbl.item.last_ordered_quantity) %>
+        <br>on <%= human_date(order_tbl.item.last_ordered_at) %>
+      </i>
+    <% else %>
+      <%= check_box_tag 'checkbox_' + @locator + "_" +  order_tbl.id.to_s, 1, false, class: "order_checkbox" %>
+    <% end %>
   </td>
 </tr>
