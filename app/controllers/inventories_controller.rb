@@ -110,7 +110,12 @@ class InventoriesController < ApplicationController
     authorize @inventory = Inventory.find(params[:id])
 
     @inventory.update(inventory_params)
+
+    # set count.extrapolated_count field values for all counts that are parts
     Extrapolate.new(@inventory)
+
+    # set :last_received_at and :last_received_quantity on active counts
+    Receive.new(@inventory)
 
     InventoryMailer.delay.notify(@inventory, current_user) if @inventory.type_for_params == 'manual' || @inventory.has_items_below_minimum?
 
