@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_07_01_185941) do
+ActiveRecord::Schema.define(version: 2019_09_07_172731) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -186,6 +186,10 @@ ActiveRecord::Schema.define(version: 2019_07_01_185941) do
     t.bigint "supplier_id"
     t.boolean "only_loose", default: false
     t.text "description"
+    t.datetime "last_ordered_at"
+    t.integer "last_ordered_quantity"
+    t.datetime "last_received_at"
+    t.integer "last_received_quantity"
     t.index ["deleted_at"], name: "index_materials_on_deleted_at"
     t.index ["supplier_id"], name: "index_materials_on_supplier_id"
   end
@@ -210,6 +214,10 @@ ActiveRecord::Schema.define(version: 2019_07_01_185941) do
     t.bigint "supplier_id"
     t.boolean "only_loose", default: false
     t.text "description"
+    t.datetime "last_ordered_at"
+    t.integer "last_ordered_quantity"
+    t.datetime "last_received_at"
+    t.integer "last_received_quantity"
     t.index ["deleted_at"], name: "index_parts_on_deleted_at"
     t.index ["supplier_id"], name: "index_parts_on_supplier_id"
   end

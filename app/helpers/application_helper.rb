@@ -42,4 +42,12 @@ module ApplicationHelper
 
     number_with_delimiter(integer, delimiter: ',')
   end
+
+  def human_date(date_or_datetime)
+    date_or_datetime.strftime('%-m/%-d/%y')
+  end
+
+  def human_datetime(datetime)
+    datetime.strftime('%-m/%-d/%y %l:%M')
+  end
 end

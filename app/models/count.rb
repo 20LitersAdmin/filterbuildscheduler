@@ -15,6 +15,7 @@ class Count < ApplicationRecord
   validates :loose_count, :unopened_boxes_count, :extrapolated_count, numericality: { only_integer: true }
 
   scope :not_components, -> { where(component_id: nil) }
+  scope :changed, -> { where.not(user_id: nil) }
 
   # scope :active, -> { where(deleted_at: nil) }
 
