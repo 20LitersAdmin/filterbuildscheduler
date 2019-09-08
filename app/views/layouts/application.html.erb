@@ -43,7 +43,11 @@
         </div>
       <% end %>
     <% end %>
-    <div class='container'>
+    <% if controller_name == 'inventories' %>
+      <div class='container-full'>
+    <% else %>
+      <div class='container'>
+    <% end %>
       <%= flash_messages %>
       <div class='row'>
         <%= yield %>

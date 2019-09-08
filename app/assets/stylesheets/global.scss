@@ -16,6 +16,13 @@ html {
   overflow: hidden;
 }
 
+div.container-full {
+  padding-right: 15px;
+  padding-left: 15px;
+  margin-right: 3em;
+  margin-left: 3em;
+}
+
 form .has-error {
   color: $red !important;
   border-color: $red !important;

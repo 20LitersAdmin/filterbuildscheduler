@@ -8,8 +8,6 @@ class InventoriesController
 
       @counts = @inventory.counts.changed.not_components
 
-      byebug
-
       @counts.each do |c|
         prev = c.previous_count
         c.item.tap do |i|
@@ -18,8 +16,6 @@ class InventoriesController
           i.save
         end
       end
-
-      byebug
     end
   end
 end
