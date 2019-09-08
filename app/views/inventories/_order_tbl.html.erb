@@ -2,7 +2,7 @@
 <tr id="<%= order_tbl.id %>">
   <td>
     <% if current_user.is_admin? %>
-      <%= link_to order_tbl.name, rails_admin.edit_path(model_name: order_tbl.item.model_name.name, id: order_tbl.item.id) %>
+      <%= link_to order_tbl.name, rails_admin.edit_path(model_name: order_tbl.item.model_name.name, id: order_tbl.item.id), target: "_blank" %>
     <% else %>
       <%= order_tbl.name %>
     <% end %>
