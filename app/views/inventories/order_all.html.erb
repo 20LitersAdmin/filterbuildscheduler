@@ -7,25 +7,7 @@
       <%= link_to 'Only Low', order_inventories_path, class: 'btn empty use-load-screen' %>
     </div>
 
-    <div class="col-xs-12 admin-div">
-      <div class="col-xs-6">
-        <p class="title">
-          Total: $<span id="item_ttl"><%= number_with_delimiter(@total_cost, delimiter: ",") %></span><span id="supplier_ttl"><%= number_with_delimiter(@total_cost, delimiter: ",") %></span>
-        </p>
-      </div>
-      <div class="col-xs-4 right-align">
-        <%= link_to "By Item", "#", class: "btn yellow match-title", id: "item_btn" %>
-        <%= link_to "By Supplier", "#", class: "btn yellow match-title", id: "supplier_btn" %>
-      </div>
-      <div class="col-xs-2 right-align">
-        <a href="#" class="btn blue btn-check" id="check_all">
-          <%= fa_stacked_icon "check", base: "square-o" %> <span class="btn-text">all</span>
-        </a>
-        <a href="#" class="btn blue btn-check" id="uncheck_all">
-          <%= fa_stacked_icon "square", base: "square-o" %> <span class="btn-text">all</span>
-        </a>
-      </div>
-    </div>
+    <%= render partial: 'order_admin_div' %>
   </div>
 
   <div class="row spacer-bottom spacer-top well">

@@ -36,6 +36,10 @@ class Material < ApplicationRecord
     false
   end
 
+  def on_order?
+    last_ordered_at.present? && (last_received_at.nil? || last_ordered_at > last_received_at)
+  end
+
   def picture
     begin
       ActionController::Base.helpers.asset_path('uids/' + uid + '.jpg')

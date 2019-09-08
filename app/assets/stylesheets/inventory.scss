@@ -162,6 +162,18 @@
     }
   }
 
+  #order_item_tbl {
+    thead th {
+      position: sticky !important;
+      top: 129px;
+      background: white;
+    }
+
+    .too-late {
+      background-color: $light-red;
+    }
+  }
+
   #scrolling {
     .btn-check {
       margin-top: 30px;

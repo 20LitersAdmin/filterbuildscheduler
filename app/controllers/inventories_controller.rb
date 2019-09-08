@@ -110,7 +110,12 @@ class InventoriesController < ApplicationController
     authorize @inventory = Inventory.find(params[:id])
 
     @inventory.update(inventory_params)
+
+    # set count.extrapolated_count field values for all counts that are parts
     Extrapolate.new(@inventory)
+
+    # set :last_received_at and :last_received_quantity on active counts
+    Receive.new(@inventory)
 
     InventoryMailer.delay.notify(@inventory, current_user) if @inventory.type_for_params == 'manual' || @inventory.has_items_below_minimum?
 
@@ -127,7 +132,7 @@ class InventoriesController < ApplicationController
     @owners_select = Technology.status_worthy.map { |t| [t.owner, t.owner_acronym] }.uniq
     @technologies_select = @technologies.map { |t| [t.name, t.id] }
 
-    @selected_tech_id = @technologies.find(params[:tech]).id if params[:tech].present?
+    @selected_tech_id = @technologies.where(id: params[:tech])&.first&.id if params[:tech].present?
     @selected_tech = @technologies.find(@selected_tech_id) if @selected_tech_id
 
     if @selected_tech_id
@@ -144,8 +149,6 @@ class InventoriesController < ApplicationController
 
     # Counts without a supplier
     @no_supplier = @order_counts.select { |c| c.supplier.nil? }
-
-    @total_cost = @low_counts.map { |c| c.item.reorder_total_cost }.sum
   end
 
   def order_all
@@ -173,8 +176,6 @@ class InventoriesController < ApplicationController
 
     # Counts without a supplier
     @no_supplier = @counts.select { |c| c.supplier.nil? }
-
-    @total_cost = @counts.map { |c| c.item.reorder_total_cost }.sum
   end
 
   def status

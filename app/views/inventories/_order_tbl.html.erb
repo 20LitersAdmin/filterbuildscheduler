@@ -1,7 +1,8 @@
+<% too_late = order_tbl.item.weeks_to_deliver > order_tbl.weeks_to_out %>
 <tr id="<%= order_tbl.id %>">
   <td>
     <% if current_user.is_admin? %>
-      <%= link_to order_tbl.name, rails_admin.edit_path(model_name: order_tbl.item.model_name.name, id: order_tbl.item.id) %>
+      <%= link_to order_tbl.name, rails_admin.edit_path(model_name: order_tbl.item.model_name.name, id: order_tbl.item.id), target: "_blank" %>
     <% else %>
       <%= order_tbl.name %>
     <% end %>
@@ -24,29 +25,36 @@
       <% end %>
     </td>
   <% end %>
-  <td class="center-align">
-    <%= number_with_delimiter(order_tbl.available, delimiter: ',') %>
+  <td class="center-align <%= 'too-late' if too_late %>">
+    <%= human_number(order_tbl.available) %>
   </td>
-  <td class="center-align">
-    <%= number_with_delimiter(order_tbl.item.minimum_on_hand, delimiter: ',') %>
+  <td class="center-align <%= 'too-late' if too_late %>">
+    <%= human_number(order_tbl.item.minimum_on_hand) %>
   </td>
-  <td class="center-align">
-    <%= number_with_precision( order_tbl.weeks_to_out, precision: 1 ) %>
+  <td class="center-align <%= 'too-late' if too_late %>">
+    <%= human_float(order_tbl.weeks_to_out) %>
   </td>
-  <td class="center-align">
-    <%= number_with_delimiter(order_tbl.item.weeks_to_deliver, delimiter: ',') %>
+  <td class="center-align <%= 'too-late' if too_late %>">
+    <%= human_float(order_tbl.item.weeks_to_deliver) %>
   </td>
   <td class="item-cost right-align">
     $<span class="item-cost-value"><%= order_tbl.item.price %></span>
   </td>
   <td class="min-order">
-    <%= text_field_tag @locator + '_min_order_' + order_tbl.id.to_s, number_with_delimiter(order_tbl.item.min_order, delimiter: ','), class: "min-order-field right-align", min: 0 %>
+    <%= text_field_tag @locator + '_min_order_' + order_tbl.id.to_s, human_number(order_tbl.item.min_order), class: "min-order-field right-align", min: 0 %>
   </td>
 
   <td class="order-total right-align">
     $<span class="order-total-amt"><%= number_with_delimiter(order_tbl.item.reorder_total_cost, delimiter: ',')%></span>
   </td>
   <td class="order-check center-align">
-    <%= check_box_tag 'checkbox_' + @locator + "_" +  order_tbl.id.to_s, 1, true, class: "order_checkbox" %>
+    <% if order_tbl.item.on_order? %>
+      <i>
+        Ordered <%= human_number(order_tbl.item.last_ordered_quantity) %>
+        <br>on <%= human_date(order_tbl.item.last_ordered_at) %>
+      </i>
+    <% else %>
+      <%= check_box_tag 'checkbox_' + @locator + "_" +  order_tbl.id.to_s, 1, false, class: "order_checkbox" %>
+    <% end %>
   </td>
 </tr>
