@@ -7,7 +7,7 @@
       <%= order_tbl.name %>
     <% end %>
   </td>
-  <td>
+  <td class="small-text">
     <%= order_tbl.tech_names_short %>
   </td>
   <td>
@@ -17,7 +17,7 @@
     <%= order_tbl.owner %>
   </td>
   <% if @locator == 'item' %>
-    <td>
+    <td class="item-supplier small-text">
       <% if supplier = order_tbl.item.supplier %>
         <%= link_to supplier.name, rails_admin.edit_path(model_name: supplier.model_name.name, id: supplier.id) %>
       <% elsif order_tbl.item.made_from_materials? %>
@@ -40,6 +40,13 @@
   <td class="item-cost right-align">
     $<span class="item-cost-value"><%= order_tbl.item.price %></span>
   </td>
+  <td class="ordered-last">
+    <% if order_tbl.item.last_ordered_at.present?  %>
+      <%= human_date(order_tbl.item.last_ordered_at) + ": " + human_number(order_tbl.item.last_ordered_quantity) %>
+    <% else %>
+      n/a
+    <% end %>
+  </td>
   <td class="min-order">
     <%= text_field_tag @locator + '_min_order_' + order_tbl.id.to_s, human_number(order_tbl.item.min_order), class: "min-order-field right-align", min: 0 %>
   </td>
@@ -47,7 +54,7 @@
   <td class="order-total right-align">
     $<span class="order-total-amt"><%= number_with_delimiter(order_tbl.item.reorder_total_cost, delimiter: ',')%></span>
   </td>
-  <td class="order-check center-align">
+  <td class="order-check center-align small-text">
     <% if order_tbl.item.on_order? %>
       <i>
         Ordered <%= human_number(order_tbl.item.last_ordered_quantity) %>
