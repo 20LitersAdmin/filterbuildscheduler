@@ -35,6 +35,9 @@ class Part < ApplicationRecord
     return price unless (price.nil? || price.zero?) && made_from_materials?
 
     emp = extrapolate_material_parts.first
+
+    return Money.new(0) if emp.nil?
+
     emp.material.price / emp.parts_per_material
   end
 
