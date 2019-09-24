@@ -1,8 +1,6 @@
 # README
 
 ## Things to do
-0. Monthly report sends a few hundred times. Make it stop.
-
 1. I created EventsController::SubtractSubsets and should write tests for it
   * Test the class (as a model)
   * Write a system test for event-based inventories
@@ -10,6 +8,11 @@
   ** The inventory gets the results added to the apropriate counts (InventoriesController::CountUpdate)
   ** The inventory gets subsets of components subtracted (EventsController::SubtractSubsets)
   ** The inventory gets extrapolations (InventoriesController::Extrapolate)
+
+2. Ability to reserve dates / times. e.g.:
+  - Thursdays from 4-7pm, Sundays from 8-10am
+  - A specific date & time
+  - A range of dates, all day
 
 4. Part has_one material (instead of has_many)
 
