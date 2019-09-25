@@ -22,7 +22,7 @@ RailsAdmin.config do |config|
   # Monkey patch to remove default_scope
   module RailsAdmin::Adapters::ActiveRecord
     def get(id)
-      return unless object = scoped.where(primary_key => id).first
+      return unless object == scoped.where(primary_key => id).first
 
       AbstractObject.new object
     end
@@ -47,14 +47,14 @@ RailsAdmin.config do |config|
   ## To disable Gravatar integration in Navigation Bar set to false
   # config.show_gravatar = true
 
-  config.authorize_with do |controller|
+  config.authorize_with do |_controller|
     redirect_to main_app.root_path unless current_user&.is_admin?
   end
 
   config.model User do
     weight 0
     list do
-      scopes [:active, :leaders, :admins, :only_deleted]
+      scopes %i[active leaders admins only_deleted]
       field :email
       field :fname
       field :lname
@@ -74,7 +74,7 @@ RailsAdmin.config do |config|
     weight 1
     object_label_method :format_time_range
     list do
-      scopes [:active, :future, :past, :needs_report, :closed, :only_deleted]
+      scopes %i[active future past needs_report closed only_deleted]
       field :start_time
       field :end_time
       field :title
@@ -90,7 +90,7 @@ RailsAdmin.config do |config|
     weight 0
     parent Event
     list do
-      scopes [:active, :only_deleted]
+      scopes %i[active only_deleted]
       field :event
       field :user
       field :attended
@@ -104,7 +104,7 @@ RailsAdmin.config do |config|
     weight 1
     parent Event
     list do
-      scopes [:active, :only_deleted]
+      scopes %i[active only_deleted]
       field :name
       field :address1
       field :address2
@@ -112,10 +112,70 @@ RailsAdmin.config do |config|
     end
   end
 
+  # config.model Reservation do
+  #   weight 2
+  #   parent Event
+  #   list do
+  #     field :name
+  #     field :display_date do
+  #       formatted_value { bindings[:object].display_date }
+  #     end
+  #     field :recurrence
+  #     field :expire_time
+  #     field :user do
+  #       label 'Creator'
+  #       formatted_value { bindings[:object].user.name }
+  #     end
+  #   end
+  #   edit do
+  #     group :first do
+  #       field :name
+  #     end
+  #     group :day do
+  #       label 'Reserve a specific timeframe'
+  #       help 'To reserve a whole day, start at 12:00am and end at 11:59pm'
+  #       field :start_time
+  #       field :end_time
+  #     end
+  #     group :recurring do
+  #       label 'Recurring reservation'
+  #       field :recurring
+  #       field :recurrence
+  #       field :expire_date do
+  #         help 'When does this reservation expire?'
+  #       end
+  #     end
+  #     group :recurring_daily do
+  #       label 'Daily recurring reservations'
+  #       help 'What time each day should be reserved?'
+  #       field :start_time_of_day
+  #       field :end_time_of_day
+  #     end
+  #     group :recurring_weekly do
+  #       label 'Weekly recurring reservations'
+  #       help 'If the reservation is for a specific time every week, also fill out Start Time of Day and End Time of Day under Daily Recurring Reservations'
+  #       field :day_of_week
+  #     end
+  #     group :recurring_monthly do
+  #       label 'Monthly recurring reservations'
+  #       help 'If the reservation is for a specific time every month, also fill out Start Time of Day and End Time of Day under Daily Recurring Reservations'
+  #       field :date_of_month do
+  #         help 'Use a number or text like "2nd Monday"'
+  #       end
+  #     end
+  #     group :recurring_annually do
+  #       label 'Annualy recurring reservations'
+  #       help 'If the reservation is for a specific time, also fill out Start Time of Day and End Time of Day under Daily Recurring Reservations'
+  #       field :date_of_year
+  #     end
+  #     exclude_fields :created_at, :updated_at, :user_id
+  #   end
+  # end
+
   config.model Technology do
     weight 2
     list do
-      scopes [:active, :only_deleted]
+      scopes %i[active only_deleted]
       field :name
       field :owner
       field :price, :money do
@@ -133,7 +193,7 @@ RailsAdmin.config do |config|
   config.model Supplier do
     weight 3
     list do
-      scopes [:active, :only_deleted]
+      scopes %i[active only_deleted]
       field :name
       field :url
       field :poc_name
@@ -144,7 +204,7 @@ RailsAdmin.config do |config|
   config.model Component do
     weight 4
     list do
-      scopes [:active, :only_deleted]
+      scopes %i[active only_deleted]
       field :uid do
         sortable :id
       end
@@ -165,7 +225,7 @@ RailsAdmin.config do |config|
   config.model Part do
     weight 5
     list do
-      scopes [:active, :only_deleted]
+      scopes %i[active only_deleted]
       field :uid do
         sortable :id
       end
@@ -189,7 +249,7 @@ RailsAdmin.config do |config|
   config.model Material do
     weight 6
     list do
-      scopes [:active, :only_deleted]
+      scopes %i[active only_deleted]
       field :uid do
         sortable :id
       end
@@ -261,10 +321,10 @@ RailsAdmin.config do |config|
       field :technology
       field :components_per_technology
       field :component_price, :money do
-        formatted_value{ bindings[:object].component_price }
+        formatted_value { bindings[:object].component_price }
       end
       field :price_per_technology, :money do
-        formatted_value{ bindings[:object].price_per_technology }
+        formatted_value { bindings[:object].price_per_technology }
       end
       field :required
     end

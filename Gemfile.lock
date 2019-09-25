@@ -73,6 +73,7 @@ GEM
       xpath (~> 3.2)
     childprocess (0.9.0)
       ffi (~> 1.0, >= 1.0.11)
+    chronic (0.10.2)
     coderay (1.1.2)
     coffee-rails (4.2.2)
       coffee-script (>= 2.2.0)
@@ -398,6 +399,7 @@ DEPENDENCIES
   bootstrap-sass
   bootstrap3-datetimepicker-rails
   capybara
+  chronic (= 0.10.2)
   database_cleaner
   delayed_cron_job (~> 0.7.2)
   delayed_job (~> 4.1)

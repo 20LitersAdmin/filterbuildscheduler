@@ -8,6 +8,8 @@ Metrics/AbcSize:
   Enabled: false
 Metrics/ClassLength:
   Enabled: false
+Style/ClassAndModuleChildren:
+  Enabled: false
 Style/Documentation:
   Enabled: false
 Style/SymbolArray:
@@ -21,7 +23,7 @@ Style/DoubleNegation:
 Style/MixinUsage:
   Exclude:
     - spec/*
-Layout/IndentHash:
+Layout/IndentFirstHashElement:
   Enabled: false
 Lint/AmbiguousBlockAssociation:
   Enabled: false

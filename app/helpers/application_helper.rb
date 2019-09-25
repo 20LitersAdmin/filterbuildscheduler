@@ -44,12 +44,13 @@ module ApplicationHelper
   end
 
   def human_date(date_or_datetime)
-    return "-" if date_or_datetime.nil?
+    return '-' if date_or_datetime.nil?
+
     date_or_datetime.strftime('%-m/%-d/%y')
   end
 
   def human_datetime(datetime)
-    return "-" if date_or_datetime.nil?
+    return '-' if date_or_datetime.nil?
 
     datetime.strftime('%-m/%-d/%y %l:%M')
   end

@@ -18,7 +18,7 @@ module BuildPlanner
 
     config.active_job.queue_adapter = :delayed_job
 
-    config.action_mailer.default_url_options = { host: "make.20liters.org"}
+    config.action_mailer.default_url_options = { host: 'make.20liters.org' }
     config.action_mailer.preview_path = "#{Rails.root}/spec/mailers/previews"
 
     config.serve_static_assets = true
