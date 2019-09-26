@@ -30,11 +30,14 @@ Rails.application.routes.draw do
     end
     member do
       get 'attendance'
+      get 'replicate'
+      get 'replicate_occurrences'
+      put 'replicator'
       get 'restore'
-      get 'poster'
       get 'leaders'
       get 'leader_unregister'
       get 'leader_register'
+      get 'poster'
     end
     resources :registrations do
       collection do
@@ -73,5 +76,5 @@ Rails.application.routes.draw do
   mount LetterOpenerWeb::Engine, at: '/letter_opener' if Rails.env.development?
 
   # catch-all for bad urls
-  get '*path', to:  'pages#route_error'
+  # get '*path', to: 'pages#route_error'
 end
