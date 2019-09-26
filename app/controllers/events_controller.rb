@@ -31,7 +31,13 @@ class EventsController < ApplicationController
   end
 
   def new
-    authorize @event = Event.new
+    if params[:source_event].blank?
+      @indicator = 'new'
+      authorize @event = Event.new
+    else
+      @indicator = 'duplicate'
+      authorize @event = Event.find(params[:source_event]).dup
+    end
 
     @finder = 'new'
   end
@@ -277,6 +283,53 @@ class EventsController < ApplicationController
     else
       redirect_to events_path
     end
+  end
+
+  def replicate
+    @event = Event.find(params[:id])
+
+    @replicator = Replicator.new
+  end
+
+  def replicate_occurrences
+    return nil if params[:f].blank?
+
+    replicator = Replicator.new
+
+    replicator.tap do |r|
+      r.event_id = Event.find(params[:id]).id
+      r.start_time = DateTime.parse(params[:s] + ' -0400')
+      r.end_time = DateTime.parse(params[:e] + ' -0400')
+      r.frequency = params[:f]
+      r.occurrences = params[:o].blank? ? 1 : params[:o].to_i
+    end
+
+    start_schedule = IceCube::Schedule.new(now = replicator.start_time)
+    end_schedule = IceCube::Schedule.new(now = replicator.end_time)
+
+    if replicator.frequency == 'weekly'
+      start_schedule.add_recurrence_rule IceCube::Rule.weekly.count(replicator.occurrences)
+      end_schedule.add_recurrence_rule IceCube::Rule.weekly.count(replicator.occurrences)
+    else # == 'monthly'
+      start_schedule.add_recurrence_rule IceCube::Rule.monthly.count(replicator.occurrences)
+      end_schedule.add_recurrence_rule IceCube::Rule.monthly.count(replicator.occurrences)
+    end
+
+    ary = []
+
+    start_schedule.all_occurrences.each_with_index do |s, i|
+      # DateTime.parse(s).strftime('%-m/%-d/%y %l:%M')
+      hsh = { s: DateTime.parse(s.to_s).strftime('%a %-m/%-d/%y %-l:%M %P'), e: DateTime.parse(end_schedule.all_occurrences[i].to_s).strftime('%a %-m/%-d/%y %-l:%M %P') }
+      ary << hsh
+    end
+
+    render json: ary
+  end
+
+  def replicator
+    @base_event = Event.find(params[:id])
+    flash[:success] = params.to_s
+    redirect_to replicate_event_path(@base_event)
   end
 
   def attendance
