@@ -21,6 +21,8 @@ class Replicator
 
     base_event = Event.find(self.event_id)
 
+    new_event_ids = []
+
     start_schedule = IceCube::Schedule.new(now = self.start_time)
     end_schedule = IceCube::Schedule.new(now = self.end_time)
 
@@ -60,6 +62,8 @@ class Replicator
 
       event.save
 
+      new_event_ids << event.reload.id
+
       # replicate leader registrations
       next unless self.replicate_leaders && base_event.leaders_registered.any?
 
@@ -84,6 +88,10 @@ class Replicator
         reg.save
       end
     end
+
+    events = Event.where(id: new_event_ids)
+
+    EventMailer.replicated(events)
 
     true
   end
