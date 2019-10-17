@@ -19,6 +19,19 @@
         <%= f.input :occurrences, as: :integer, label: false %>
       </div>
     </div>
+    <% if @event.leaders_registered.any? %>
+      <div class="row">
+        <h4>Replicate leader registrations?</h4>
+        <div class="col-xs-12 col-sm-6">
+          <%= f.input :replicate_leaders, as: :boolean, label: false %>
+        </div>
+        <div class="col-xs-12 col-sm-6">
+          <p>
+            Leaders registered: <%= @event.leaders_names_full %>
+          </p>
+        </div>
+      </div>
+    <% end %>
     <div class="row">
       <div class="col-xs-12">
         <h4>Events will be created with these dates:</h4>

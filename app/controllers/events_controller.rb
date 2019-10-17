@@ -292,44 +292,35 @@ class EventsController < ApplicationController
   end
 
   def replicate_occurrences
-    return nil if params[:f].blank?
+    return nil if params[:f].blank? || params[:s].blank? || params[:e].blank?
 
     replicator = Replicator.new
 
     replicator.tap do |r|
-      r.event_id = Event.find(params[:id]).id
+      r.event_id = params[:id].to_i
       r.start_time = DateTime.parse(params[:s] + ' -0400')
       r.end_time = DateTime.parse(params[:e] + ' -0400')
       r.frequency = params[:f]
       r.occurrences = params[:o].blank? ? 1 : params[:o].to_i
     end
 
-    start_schedule = IceCube::Schedule.new(now = replicator.start_time)
-    end_schedule = IceCube::Schedule.new(now = replicator.end_time)
-
-    if replicator.frequency == 'weekly'
-      start_schedule.add_recurrence_rule IceCube::Rule.weekly.count(replicator.occurrences)
-      end_schedule.add_recurrence_rule IceCube::Rule.weekly.count(replicator.occurrences)
-    else # == 'monthly'
-      start_schedule.add_recurrence_rule IceCube::Rule.monthly.count(replicator.occurrences)
-      end_schedule.add_recurrence_rule IceCube::Rule.monthly.count(replicator.occurrences)
-    end
-
-    ary = []
-
-    start_schedule.all_occurrences.each_with_index do |s, i|
-      # DateTime.parse(s).strftime('%-m/%-d/%y %l:%M')
-      hsh = { s: DateTime.parse(s.to_s).strftime('%a %-m/%-d/%y %-l:%M %P'), e: DateTime.parse(end_schedule.all_occurrences[i].to_s).strftime('%a %-m/%-d/%y %-l:%M %P') }
-      ary << hsh
-    end
-
-    render json: ary
+    render json: replicator.date_array
   end
 
   def replicator
-    @base_event = Event.find(params[:id])
-    flash[:success] = params.to_s
-    redirect_to replicate_event_path(@base_event)
+    @event = Event.find(params[:id])
+
+    replicator = Replicator.new(replicator_params)
+
+    replicator.event_id = @event.id
+
+    if replicator.go!
+      flash[:success] = 'Event was successfully replicated!'
+      redirect_to root_path
+    else
+      flash[:warning] = replicator.errors.messages
+      render replicate_event_path(@event)
+    end
   end
 
   def attendance
@@ -387,6 +378,14 @@ class EventsController < ApplicationController
                                   :contact_name,
                                   :contact_email,
                                   registrations_attributes: [:id, :user_id, :event_id, :attended, :leader, :guests_registered, :guests_attended ]
+  end
+
+  def replicator_params
+    params.require(:replicator).permit :start_time,
+                                       :end_time,
+                                       :frequency,
+                                       :occurrences,
+                                       :replicate_leaders
   end
 
   def find_stale
