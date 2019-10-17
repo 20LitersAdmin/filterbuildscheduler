@@ -9,15 +9,11 @@
   ** The inventory gets subsets of components subtracted (EventsController::SubtractSubsets)
   ** The inventory gets extrapolations (InventoriesController::Extrapolate)
 
-2. Ability to reserve dates / times. e.g.:
-  - Thursdays from 4-7pm, Sundays from 8-10am
-  - A specific date & time
-  - A range of dates, all day
-  * Trying to create an event that touches one of these dates throws an error.
-
-3. Ability to create multiple events at once:
-  - How to handle "next instance of date"? Use Rails
-  - Limit options: every week, month, quarter, year
+3. Ability to create multiple events at once: Replicator.rb
+  - See events_controller && Replicator.rb
+  - Send emails? Or batch records into 1 email? From replicator.rb instead of from event_controller
+  -- Admin notify
+  -- Leader registrations
 
 4. Part has_one material (instead of has_many)
 
