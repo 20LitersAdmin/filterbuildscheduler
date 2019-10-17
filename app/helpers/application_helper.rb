@@ -24,9 +24,9 @@ module ApplicationHelper
   end
 
   def pluralize_without_count(count, noun, text = nil)
-    if count != 0
-      count == 1 ? "#{noun}#{text}" : "#{noun.pluralize}#{text}"
-    end
+    return unless count != 0
+
+    count == 1 ? "#{noun}#{text}" : "#{noun.pluralize}#{text}"
   end
 
   def human_float(float, precision = 2)

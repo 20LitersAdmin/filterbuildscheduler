@@ -2,28 +2,28 @@
 
 class EventMailer < ApplicationMailer
   helper MailerHelper
-  default from: "filterbuilds@20liters.org"
+  default from: 'filterbuilds@20liters.org'
 
   def created(event, user)
     @event = event
     @user = user
-    @recipients = User.where(send_notification_emails: true).map { |r| r.email }
+    @recipients = User.where(send_notification_emails: true).map(&:email)
     @location = event.location
-    @summary = "[20 Liters] " + event.title + ": " + event.technology.name
+    @summary = '[20 Liters] ' + event.title + ': ' + event.technology.name
     @description = event.privacy_humanize
-    @attachment_title = "20Liters_filterbuild_" + @event.start_time.strftime("%Y%m%dT%H%M") + ".ical"
+    @attachment_title = '20Liters_filterbuild_' + @event.start_time.strftime("%Y%m%dT%H%M") + '.ical'
 
     if @event.leaders_registered.count == 1
-      @leader_count_text = "The leader is:"
+      @leader_count_text = 'The leader is:'
     elsif @event.leaders_registered.count > 1
-      @leader_count_text = "The leaders are:"
+      @leader_count_text = 'The leaders are:'
     end
 
     cal = Icalendar::Calendar.new
     cal.event do |e|
       e.dtstart = @event.start_time
       e.dtend = @event.end_time
-      e.organizer = "mailto:filterbuilds@20liters.org"
+      e.organizer = 'mailto:filterbuilds@20liters.org'
       e.attendee = @recipients
       e.location = @location.addr_one_liner
       e.summary = @summary
@@ -39,9 +39,9 @@ class EventMailer < ApplicationMailer
     @recipients = User.where(send_notification_emails: true).map { |r| r.email }
     @location = event.location
     if @event.leaders_registered.count == 1
-      @leader_count_text = "The leader is:"
+      @leader_count_text = 'The leader is:'
     elsif @event.leaders_registered.count > 1
-      @leader_count_text = "The leaders are:"
+      @leader_count_text = 'The leaders are:'
     end
 
     mail(to: @recipients, subject: '[20 Liters] Upcoming Filter Build Reminder')
@@ -57,20 +57,18 @@ class EventMailer < ApplicationMailer
     @location = Location.with_deleted.find(@event.location_id)
     @location_was = Location.with_deleted.find(@event.location_id_was)
 
-    @recipients = User.where(send_notification_emails: true).map { |r| r.email }
-    @summary = "[20 Liters] " + @event.title + ": " + @technology.name
+    @recipients = User.where(send_notification_emails: true).map(&:email)
+    @summary = '[20 Liters] ' + @event.title + ': ' + @technology.name
     @description = @event.privacy_humanize
-    @attachment_title = "20Liters_filterbuild_" + @event.start_time.strftime("%Y%m%dT%H%M") + ".ical"
+    @attachment_title = '20Liters_filterbuild_' + @event.start_time.strftime("%Y%m%dT%H%M") + '.ical'
 
-    if @start_time || @end_time || @location_id || @technology_id
-      @registered_users_notified = true
-    end
+    @registered_users_notified = true if @start_time || @end_time || @location_id || @technology_id
 
     cal = Icalendar::Calendar.new
     cal.event do |e|
       e.dtstart = @event.start_time
       e.dtend = @event.end_time
-      e.organizer = "mailto:filterbuilds@20liters.org"
+      e.organizer = 'mailto:filterbuilds@20liters.org'
       e.attendee = @recipients
       e.location = @location.addr_one_liner
       e.summary = @summary
@@ -89,9 +87,9 @@ class EventMailer < ApplicationMailer
     @registrations = @event.registrations.with_deleted
 
     if @event.leaders_registered.count == 1
-      @leader_count_text = "The leader was:"
+      @leader_count_text = 'The leader was:'
     elsif @event.leaders_registered.count > 1
-      @leader_count_text = "The leaders were:"
+      @leader_count_text = 'The leaders were:'
     end
 
     mail(to: @recipients, subject: '[20 Liters] NOTICE: Build Event Cancelled')
@@ -111,8 +109,16 @@ class EventMailer < ApplicationMailer
     @subject = '[20 Liters] ' + subject
     @message = message
     @sender = sender
-    @admins = User.where(is_admin: true).map { |u| u.email }
+    @admins = User.where(is_admin: true).map(&:email)
 
-    mail(to: @admins, subject: "[20 Liters] A Leader sent a message")
+    mail(to: @admins, subject: '[20 Liters] A Leader sent a message')
+  end
+
+  def replicated(events)
+    @events = events
+    @recipients = User.where(send_notification_emails: true).map(&:email)
+    @subject = "[20 Liters] #{events.size} were created as replicas"
+    @user = current_user
+    mail(to: @recipients, subject: @subject)
   end
 end
