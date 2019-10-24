@@ -13,6 +13,8 @@ class Replicator
 
   # rubocop:disable UselessAssignment
   # rubocop:disable RedundantSelf
+  # rubocop:disable Metrics/CyclomaticComplexity
+  # rubocop:disable Metrics/PerceivedComplexity
 
   def go!
     morph_params
@@ -38,7 +40,6 @@ class Replicator
     error_ary = []
 
     start_schedule.all_occurrences.each_with_index do |s, i|
-      binding.pry
       if s == base_event.start_time
         error_ary << { i => 'Duplicate event skipped' }
         next
@@ -82,7 +83,7 @@ class Replicator
 
         reg.valid?
 
-        errors << { i => reg.errors.messages } if reg.errors.any?
+        error_ary << { i => reg.errors.messages } if reg.errors.any?
 
         next if reg.errors.any?
 
@@ -91,6 +92,8 @@ class Replicator
         RegistrationMailer.created(reg.reload).deliver_now! unless reg.user.email_opt_out?
       end
     end
+
+    Rails.logger.warn error_ary if error_ary.any?
 
     events = Event.where(id: new_event_ids)
 
@@ -115,7 +118,7 @@ class Replicator
     ary = []
 
     start_schedule.all_occurrences.each_with_index do |s, i|
-      hsh = { s: DateTime.parse(s.to_s).strftime('%a %-m/%-d/%y %-l:%M %P'), e: DateTime.parse(end_schedule.all_occurrences[i].to_s).strftime('%a %-m/%-d/%y %-l:%M %P') }
+      hsh = { s: Time.parse(s.to_s).strftime('%a %-m/%-d/%y %-l:%M %P'), e: DateTime.parse(end_schedule.all_occurrences[i].to_s).strftime('%a %-m/%-d/%y %-l:%M %P') }
       ary << hsh
     end
 
@@ -140,4 +143,6 @@ class Replicator
 
   # rubocop:enable UselessAssignment
   # rubocop:enable RedundantSelf
+  # rubocop:enable Metrics/CyclomaticComplexity
+  # rubocop:enable Metrics/PerceivedComplexity
 end
