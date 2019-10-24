@@ -9,6 +9,11 @@
   ** The inventory gets subsets of components subtracted (EventsController::SubtractSubsets)
   ** The inventory gets extrapolations (InventoriesController::Extrapolate)
 
+3. Notify us if someone important in Kindful registers for an event
+- https://developer.kindful.com/customer/querying-guide/contact-queries#retrieve
+- Managed donor group: 26572
+- If yes, send an email to Amanda & Chip with a calendar appointment for the event.
+
 4. Part has_one material (instead of has_many)
 
 ## HMMM
