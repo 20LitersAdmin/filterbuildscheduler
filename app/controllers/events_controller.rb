@@ -313,13 +313,16 @@ class EventsController < ApplicationController
     replicator = Replicator.new(replicator_params)
 
     replicator.event_id = @event.id
+    replicator.initiator = current_user
 
     if replicator.go!
       flash[:success] = 'Event was successfully replicated!'
       redirect_to root_path
     else
       flash[:warning] = replicator.errors.messages
-      render replicate_event_path(@event)
+      @event = Event.find(params[:id])
+      @replicator = Replicator.new
+      render :replicate
     end
   end
 

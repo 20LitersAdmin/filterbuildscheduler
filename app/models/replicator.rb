@@ -9,6 +9,7 @@ class Replicator
   attr_accessor :frequency
   attr_accessor :occurrences
   attr_accessor :replicate_leaders
+  attr_accessor :initiator
 
   # rubocop:disable UselessAssignment
   # rubocop:disable RedundantSelf
@@ -37,6 +38,7 @@ class Replicator
     error_ary = []
 
     start_schedule.all_occurrences.each_with_index do |s, i|
+      binding.pry
       if s == base_event.start_time
         error_ary << { i => 'Duplicate event skipped' }
         next
@@ -64,7 +66,6 @@ class Replicator
 
       new_event_ids << event.reload.id
 
-      # replicate leader registrations
       next unless self.replicate_leaders && base_event.leaders_registered.any?
 
       base_event.leaders_registered.each do |base_reg|
@@ -86,12 +87,15 @@ class Replicator
         next if reg.errors.any?
 
         reg.save
+        # RegistrationMailer.delay.created(reg.reload) unless reg.user.email_opt_out?
+        RegistrationMailer.created(reg.reload).deliver_now! unless reg.user.email_opt_out?
       end
     end
 
     events = Event.where(id: new_event_ids)
 
-    EventMailer.replicated(events)
+    # EventMailer.delay.replicated(events, initiator)
+    EventMailer.replicated(events, initiator).deliver_now!
 
     true
   end
@@ -119,8 +123,8 @@ class Replicator
   end
 
   def morph_params
-    self.start_time = DateTime.parse(self.start_time)
-    self.end_time = DateTime.parse(self.end_time)
+    self.start_time = Time.parse(self.start_time)
+    self.end_time = Time.parse(self.end_time)
     self.occurrences = self.occurrences.to_i
     self.replicate_leaders = ActiveModel::Type::Boolean.new.cast(self.replicate_leaders)
   end
@@ -131,7 +135,7 @@ class Replicator
     errors.add(:event_id, :invalid, message: 'must be present') if self.event_id.blank?
     errors.add(:start_time, :invalid, message: 'must be present') if self.start_time.blank?
     errors.add(:end_time, :invalid, message: 'must be present') if self.end_time.blank?
-    errors.add(:replicate_leaders, :invalid, message: 'must be boolean') unless [true, false].include? self.replicate_leaders
+    errors.add(:replicate_leaders, :invalid, message: 'must be boolean') unless [true, false].include?(self.replicate_leaders) || self.replicate_leaders.nil?
   end
 
   # rubocop:enable UselessAssignment

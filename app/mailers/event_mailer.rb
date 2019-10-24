@@ -114,11 +114,11 @@ class EventMailer < ApplicationMailer
     mail(to: @admins, subject: '[20 Liters] A Leader sent a message')
   end
 
-  def replicated(events)
+  def replicated(events, initiator)
     @events = events
+    @user = initiator
     @recipients = User.where(send_notification_emails: true).map(&:email)
-    @subject = "[20 Liters] #{events.size} were created as replicas"
-    @user = current_user
+    @subject = "[20 Liters] #{events.size} #{events.size > 1 ? 'events' : 'event'} were created as replicas"
     mail(to: @recipients, subject: @subject)
   end
 end

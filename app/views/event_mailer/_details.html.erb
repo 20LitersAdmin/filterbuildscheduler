@@ -5,7 +5,7 @@
     <strong>Location:</strong> <br>
     <%= @location.name %> <br>
     <%= @location.address1 %> <br>
-    <% if @location.address2 %>
+    <% if @location.address2.present? %>
       <%= @location.address2 %> <br>
     <% end %>
     <%= @location.city %>, <%= @location.state %>  <%= @location.zip %>
