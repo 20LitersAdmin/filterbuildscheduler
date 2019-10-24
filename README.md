@@ -9,8 +9,6 @@
   ** The inventory gets subsets of components subtracted (EventsController::SubtractSubsets)
   ** The inventory gets extrapolations (InventoriesController::Extrapolate)
 
-2. Ability to duplicate events
-
 3. Notify us if someone important in Kindful registers for an event
 - https://developer.kindful.com/customer/querying-guide/contact-queries#retrieve
 - Managed donor group: 26572
