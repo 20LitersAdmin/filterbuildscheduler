@@ -1,0 +1,14 @@
+<div class="whole" style="position: relative; min-height: 1px; padding-left: 15px; padding-right: 15px; float: left; width: 100%;">
+  <h3>A filter build event has been replicated <%= pluralize(@events.size, 'time') %> by <%= @user.name %>:</h3>
+</div>
+
+<div class="whole" style="position: relative; min-height: 1px; padding-left: 15px; padding-right: 15px; float: left; width: 100%;">
+  <%= render partial: 'replica', locals: { event: @events.first, location: @events.first.location } %>
+</div>
+<div class="whole" style="position: relative; min-height: 1px; padding-left: 15px; padding-right: 15px; float: left; width: 100%;">
+  <p>It was replicated to these dates:</p>
+  <%= render partial: 'instance', collection: @events %>
+</div>
+
+
+

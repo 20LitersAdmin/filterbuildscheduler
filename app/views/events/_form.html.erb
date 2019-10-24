@@ -13,7 +13,7 @@
       </div>
     <% else %>
       <%= f.association :location %>
-    <% end %>  
+    <% end %>
     <div class='row'>
       <div class='col-sm-6'>
         <%= f.input :start_time, as: :string, input_html: {class: 'datetimepicker', :value => time_for_form(f.object.start_time) } %>
@@ -85,7 +85,17 @@
     <% end %>
 
     <% if !@event.new_record? %>
-      <%= link_to "Cancel Event", event_path(@event), method: :delete, class: 'btn red fullwidth', data: { confirm: "Are you sure you want to cancel the event? This has consequences."} %>
+      <div class="row">
+        <div class="col-xs-4">
+          <%= link_to "Duplicate", new_event_path(source_event: @event.id), class: 'btn yellow fullwidth'  %>
+        </div>
+        <div class="col-xs-4">
+          <%= link_to "Replicate", replicate_event_path(@event), class: 'btn yellow fullwidth'  %>
+        </div>
+        <div class="col-xs-4">
+          <%= link_to "Cancel", event_path(@event), method: :delete, class: 'btn red fullwidth', data: { confirm: "Are you sure you want to cancel the event? This has consequences."} %>
+        </div>
+      </div>
     <% end %>
 
    <% end %> <!-- simple form -->

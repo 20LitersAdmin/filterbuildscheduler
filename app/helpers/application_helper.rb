@@ -24,9 +24,9 @@ module ApplicationHelper
   end
 
   def pluralize_without_count(count, noun, text = nil)
-    if count != 0
-      count == 1 ? "#{noun}#{text}" : "#{noun.pluralize}#{text}"
-    end
+    return unless count != 0
+
+    count == 1 ? "#{noun}#{text}" : "#{noun.pluralize}#{text}"
   end
 
   def human_float(float, precision = 2)
@@ -44,12 +44,13 @@ module ApplicationHelper
   end
 
   def human_date(date_or_datetime)
-    return "-" if date_or_datetime.nil?
+    return '-' if date_or_datetime.nil?
+
     date_or_datetime.strftime('%-m/%-d/%y')
   end
 
   def human_datetime(datetime)
-    return "-" if date_or_datetime.nil?
+    return '-' if date_or_datetime.nil?
 
     datetime.strftime('%-m/%-d/%y %l:%M')
   end
