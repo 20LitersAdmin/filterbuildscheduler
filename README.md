@@ -10,7 +10,6 @@
   ** The inventory gets extrapolations (InventoriesController::Extrapolate)
 
 3. Ability to create multiple events at once: Replicator.rb
-  - reset dev database
   - test skips duplicate first event (if dates are not changed)
   - test emails using Foreman
   - switch back to #Mailer.delay.#method() before deployment
