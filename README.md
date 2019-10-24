@@ -9,11 +9,6 @@
   ** The inventory gets subsets of components subtracted (EventsController::SubtractSubsets)
   ** The inventory gets extrapolations (InventoriesController::Extrapolate)
 
-3. Ability to create multiple events at once: Replicator.rb
-  - test skips duplicate first event (if dates are not changed)
-  - test emails using Foreman
-  - switch back to #Mailer.delay.#method() before deployment
-
 4. Part has_one material (instead of has_many)
 
 ## HMMM
