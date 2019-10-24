@@ -10,10 +10,10 @@
   ** The inventory gets extrapolations (InventoriesController::Extrapolate)
 
 3. Ability to create multiple events at once: Replicator.rb
-  - See events_controller && Replicator.rb
-  - Send emails? Or batch records into 1 email? From replicator.rb instead of from event_controller
-  -- Admin notify
-  -- Leader registrations
+  - reset dev database
+  - test skips duplicate first event (if dates are not changed)
+  - test emails using Foreman
+  - switch back to #Mailer.delay.#method() before deployment
 
 4. Part has_one material (instead of has_many)
 

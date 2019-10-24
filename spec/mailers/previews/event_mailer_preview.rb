@@ -32,4 +32,10 @@ class EventMailerPreview < ActionMailer::Preview
   def messenger_reporter
     EventMailer.messenger_reporter(Event.first, "The Subject", "The Message goes a litle something like this", User.first)
   end
+
+  def replicated
+    events = Event.limit(5)
+    initiator = User.first
+    EventMailer.replicated(events, initiator)
+  end
 end
