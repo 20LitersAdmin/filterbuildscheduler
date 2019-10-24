@@ -5,6 +5,9 @@
   <p>Available functions:</p>
   <% if @finder == "edit" %>
     <%= link_to "Edit Event", edit_event_path(@event), class: 'btn empty width188 use-load-screen' %>
+    <% if current_user.is_admin?  %>
+      <%= link_to "Replicate", replicate_event_path(@event), class: 'btn blue' %>
+    <% end %>
     <%= link_to "Print Attendance List", attendance_event_path(@event), class: 'btn yellow use-load-screen' %>
     <%= link_to "Manage Builders", event_registrations_path(@event), class: "btn blue use-load-screen" %>
   <% end %>

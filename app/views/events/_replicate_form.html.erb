@@ -1,0 +1,48 @@
+<div class='col-xs-12 event-form'>
+  <%= simple_form_for(@replicator, method: :put, url: replicator_event_url(@event)) do |f| %>
+    <div class="row">
+      <h4>Select the next date and time when this event should occur:</h4>
+      <div class="col-xs-12 col-sm-6">
+        <%= f.input :start_time, as: :string, input_html: {class: 'datetimepicker', :value => time_for_form(@event.start_time) }  %>
+      </div>
+      <div class="col-xs-12 col-sm-6">
+        <%= f.input :end_time, as: :string, input_html: {class: 'datetimepicker', :value => time_for_form(@event.end_time) }  %>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-xs-12 col-sm-6">
+        <h4>Select how often to repeat it:</h4>
+        <%= f.input :frequency, collection: ['weekly', 'monthly'], label: false %>
+      </div>
+      <div class="col-xs-12 col-sm-6">
+        <h4>Indicate how many events to create:</h4>
+        <%= f.input :occurrences, as: :integer, label: false %>
+      </div>
+    </div>
+    <% if @event.leaders_registered.any? %>
+      <div class="row">
+        <h4>Replicate leader registrations?</h4>
+        <div class="col-xs-12 col-sm-6">
+          <%= f.input :replicate_leaders, as: :boolean, label: false %>
+        </div>
+        <div class="col-xs-12 col-sm-6">
+          <p>
+            Leaders registered: <%= @event.leaders_names_full %>
+          </p>
+        </div>
+      </div>
+    <% end %>
+    <div class="row">
+      <div class="col-xs-12">
+        <h4>Events will be created with these dates:</h4>
+      </div>
+      <div class="col-xs-12 col-sm-8 col-sm-offset-2">
+        <ol id="occurrences">
+        </ol>
+      </div>
+    </div>
+    <div class="row">
+    <%= f.button :submit, name: 'replicate', value: 'Replicate', class: 'btn blue fullwidth' %>
+    </div>
+  <% end %>
+</div>

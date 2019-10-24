@@ -16,18 +16,6 @@
 
 4. Part has_one material (instead of has_many)
 
-7. Stats framework (for time period) (visible to Admin)
-  - Number of technologies by type
-  - Number of vol hours (event length * attendance )
-  - Number of volunteers engaged (could be duplicated)
-  - Number of events held
-  - List of high-participating builders (3+ builds, not leader)
-  - List of leaders && participating
-
-8. SAM3 min orders
-9. SAM2 items in dB
-10. Check Item Lists against reality
-
 ## HMMM
 1. `weeks_to_out` and `per_technology` rely on lots of `.first`s which is an issue for items that `have_many` technologies
 - Part#technology

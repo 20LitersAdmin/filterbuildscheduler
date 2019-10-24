@@ -31,7 +31,13 @@ class EventsController < ApplicationController
   end
 
   def new
-    authorize @event = Event.new
+    if params[:source_event].blank?
+      @indicator = 'new'
+      authorize @event = Event.new
+    else
+      @indicator = 'duplicate'
+      authorize @event = Event.find(params[:source_event]).dup
+    end
 
     @finder = 'new'
   end
@@ -279,6 +285,47 @@ class EventsController < ApplicationController
     end
   end
 
+  def replicate
+    @event = Event.find(params[:id])
+
+    @replicator = Replicator.new
+  end
+
+  def replicate_occurrences
+    return nil if params[:f].blank? || params[:s].blank? || params[:e].blank?
+
+    replicator = Replicator.new
+
+    replicator.tap do |r|
+      r.event_id = params[:id].to_i
+      r.start_time = DateTime.parse(params[:s] + ' -0400')
+      r.end_time = DateTime.parse(params[:e] + ' -0400')
+      r.frequency = params[:f]
+      r.occurrences = params[:o].blank? ? 1 : params[:o].to_i
+    end
+
+    render json: replicator.date_array
+  end
+
+  def replicator
+    @event = Event.find(params[:id])
+
+    replicator = Replicator.new(replicator_params)
+
+    replicator.event_id = @event.id
+    replicator.initiator = current_user
+
+    if replicator.go!
+      flash[:success] = 'Event was successfully replicated!'
+      redirect_to root_path
+    else
+      flash[:warning] = replicator.errors.messages
+      @event = Event.find(params[:id])
+      @replicator = Replicator.new
+      render :replicate
+    end
+  end
+
   def attendance
     @event = Event.find(params[:id])
     authorize @event, :edit?
@@ -334,6 +381,14 @@ class EventsController < ApplicationController
                                   :contact_name,
                                   :contact_email,
                                   registrations_attributes: [:id, :user_id, :event_id, :attended, :leader, :guests_registered, :guests_attended ]
+  end
+
+  def replicator_params
+    params.require(:replicator).permit :start_time,
+                                       :end_time,
+                                       :frequency,
+                                       :occurrences,
+                                       :replicate_leaders
   end
 
   def find_stale

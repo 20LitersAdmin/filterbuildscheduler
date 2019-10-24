@@ -17,6 +17,29 @@ function attendanceCounter(){
   $("#event_attendance").val(count);
 }
 
+function clearOccurrences(){
+  $("ol#occurrences").empty();
+}
+
+function showOccurrences(){
+  var id = $('#event_id')
+  var startTime = $('#replicator_start_time').val();
+  var endTime = $('#replicator_end_time').val();
+  var frequency = $('#replicator_frequency').val();
+  var occurrences = $('#replicator_occurrences').val();
+  url = window.location.pathname + "_occurrences?s=" + startTime + "&e=" + endTime + "&f=" + frequency + "&o=" + occurrences
+
+  if(frequency != "") {
+    $.ajax({url: url}).done(function(response) {
+      var target = $('ol#occurrences')
+      $.each(response, function(i,hsh){
+        var append = "<li>" + hsh["s"] + " - " + hsh["e"] + "</li>"
+        target.append(append);
+      });
+    });
+  };
+}
+
 (function() {
   $(document).on("click", ".btn-accept-waiver", function() {
     $("input[type=checkbox]#registration_waiver_accepted").prop("checked", true);
@@ -62,4 +85,14 @@ function attendanceCounter(){
     });
     event.preventDefault();
   });
+
+  $(document).on("change", ":input", "form#new_replicator",function(){
+    clearOccurrences();
+    showOccurrences();
+  });
+
+  $(document).on("dp.change", ".datetimepicker", "form#new_replicator",function(){
+    clearOccurrences();
+    showOccurrences();
+  })
 }());
