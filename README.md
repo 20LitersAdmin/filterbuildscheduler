@@ -34,8 +34,11 @@
 
 
 ## Data cleanup:
-1. Inventory/Parts/Materials/Components data:
+1. Inventory data:
 - `invs = Inventory.where('date < ?', '2019-01-01')`
 - `invs.each { |inv| inv.really_destroy! }`
+2. Parts/Materials/Components (dependent: :destroy):
+- `mats = Material.only_deleted`
+- `mats.each { |m| m.really_destroy! }`
 2. Events/Registrations
 3. Users
