@@ -16,6 +16,8 @@
 
 4. Part has_one material (instead of has_many)
 
+5. Inventory#create: ability to mark some technologies as "unchanged" which would auto-carry the previous value and mark them as counted.
+
 ## HMMM
 1. `weeks_to_out` and `per_technology` rely on lots of `.first`s which is an issue for items that `have_many` technologies
 - Part#technology
