@@ -20,17 +20,17 @@ RailsAdmin.config do |config|
 
   #
   # Monkey patch to remove default_scope
-  module RailsAdmin::Adapters::ActiveRecord
-    def get(id)
-      return unless object == scoped.where(primary_key => id).first
+  # module RailsAdmin::Adapters::ActiveRecord
+  #   def get(id)
+  #     return unless object == scoped.where(primary_key => id).first
 
-      AbstractObject.new object
-    end
+  #     AbstractObject.new object
+  #   end
 
-    def scoped
-      model.unscoped
-    end
-  end
+  #   def scoped
+  #     model.unscoped
+  #   end
+  # end
 
   ## == Cancan ==
   # config.authorize_with :cancan
