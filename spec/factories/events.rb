@@ -3,7 +3,7 @@
 FactoryBot.define do
   factory :event do
     title { Faker::Games::Zelda.unique.game }
-    start_time { Faker::Time.forward(90) }
+    start_time { Faker::Time.forward(days: 20) }
     end_time { start_time + 3.hours }
     min_leaders { 1 }
     max_leaders { 2 }
@@ -15,7 +15,7 @@ FactoryBot.define do
 
   factory :recent_event, class: Event do
     title { Faker::Games::Zelda.unique.game }
-    start_time { Faker::Time.backward(5) }
+    start_time { Faker::Time.backward(days: 2) }
     end_time { start_time + 3.hours }
     min_leaders { 1 }
     max_leaders { 2 }
@@ -27,7 +27,7 @@ FactoryBot.define do
 
   factory :past_event, class: Event do
     title { Faker::Games::Zelda.unique.game }
-    start_time { Faker::Time.backward(90) }
+    start_time { Faker::Time.backward(days: 20) }
     end_time { start_time + 3.hours }
     min_leaders { 1 }
     max_leaders { 2 }
@@ -39,7 +39,7 @@ FactoryBot.define do
 
   factory :complete_event, class: Event do
     title { Faker::Games::Zelda.unique.game }
-    start_time { Time.now - 4.hours }
+    start_time { Time.now - 6.hours }
     end_time { start_time + 3.hours }
     min_leaders { 1 }
     max_leaders { 2 }
