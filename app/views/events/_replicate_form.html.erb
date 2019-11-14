@@ -42,7 +42,12 @@
       </div>
     </div>
     <div class="row">
-    <%= f.button :submit, name: 'replicate', value: 'Replicate', class: 'btn blue fullwidth' %>
+      <div class="col-xs-6">
+        <%= f.button :submit, name: 'replicate', value: 'Replicate', class: 'btn blue fullwidth' %>
+      </div>
+      <div class="col-xs-6">
+        <%= link_to 'Back', edit_event_path(@event), class: 'btn yellow fullwidth' %>
+      </div>
     </div>
   <% end %>
 </div>

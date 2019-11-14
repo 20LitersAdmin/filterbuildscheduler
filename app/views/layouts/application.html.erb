@@ -27,7 +27,7 @@
     <script type="text/javascript" src="https://cdn.datatables.net/v/bs/jszip-2.5.0/dt-1.10.16/b-1.4.2/b-colvis-1.4.2/b-html5-1.4.2/b-print-1.4.2/r-2.2.0/datatables.min.js"></script>
   </head>
 
-  <body class="twentyliters">
+  <body class="twentyliters" data-controller="<%= controller.controller_name %>" data-action="<%= controller.action_name %>">
     <%= render partial: 'layouts/navbar' %>
     <div id="load_screen" class="container fa-5x">
       <i class="fa fa-spinner fa-pulse" id="load_image"></i>
