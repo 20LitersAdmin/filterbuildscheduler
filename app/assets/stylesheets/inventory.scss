@@ -83,6 +83,9 @@
       font-weight: bold;
       padding-bottom: 6px;
       border-bottom: 2px solid #fce000;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      overflow: hidden;
     }
     .count-tech, .current-count {
       margin: 0;
