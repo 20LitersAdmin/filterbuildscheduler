@@ -37,7 +37,7 @@
 
 ## Data cleanup:
 1. Inventory data:
-- `invs = Inventory.where('date < ?', '2019-01-01')`
+- `invs = Inventory.where('date < ?', '2019-09-01')`
 - `invs.each { |inv| inv.really_destroy! }`
 2. Parts/Materials/Components (dependent: :destroy):
 - `mats = Material.only_deleted`
