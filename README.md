@@ -37,10 +37,12 @@
 
 ## Data cleanup:
 1. Inventory data:
-- `invs = Inventory.where('date < ?', '2019-09-01')`
+- `invs = Inventory.where('date < ?', '2019-11-01')`
 - `invs.each { |inv| inv.really_destroy! }`
 2. Parts/Materials/Components (dependent: :destroy):
 - `mats = Material.only_deleted`
 - `mats.each { |m| m.really_destroy! }`
-2. Events/Registrations
-3. Users
+3. Events/Registrations
+4. Users
+5. Delayed::Job:
+- `production run rails jobs:clear`
