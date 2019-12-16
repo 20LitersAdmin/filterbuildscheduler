@@ -4,6 +4,11 @@ class ReportJob < ApplicationJob
   queue_as :default
 
   def perform(*_args)
+    puts '-+ Cleaning up the ReportJob list'
+    Delayed::Job.all.each do |job|
+      job.destroy if job.name.include?('ReportJob')
+    end
+
     inventory = Inventory.latest_completed
     if inventory.present? && inventory.report_sent_at.nil?
       puts '-+ Sending monthly report'
