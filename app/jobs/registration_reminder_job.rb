@@ -4,31 +4,32 @@ class RegistrationReminderJob < ApplicationJob
   queue_as :default
 
   def perform(*args)
-    puts "-+ Creating registration reminders"
+    puts '-+ Cleaning up the RegistrationReminderJob list'
+    Delayed::Job.all.each do |job|
+      job.destroy if job.name.include?('RegistrationReminderJob')
+    end
+
+    puts '-+ Creating registration reminders'
     events = Event.where(reminder_sent_at: nil).where('start_time > ? and start_time < ?', Time.zone.now + 1.days, Time.zone.now + 2.days)
 
     events.each do |e|
       EventMailer.remind_admins(e).deliver_later
-      puts "-+-+ Admin reminder emails scheduled"
+      puts '-+-+ Admin reminder emails scheduled'
       e.registrations.where(reminder_sent_at: nil).each do |r|
         RegistrationMailer.reminder(r).deliver_later
         r.update(reminder_sent_at: Time.zone.now)
       end
       e.update(reminder_sent_at: Time.zone.now)
-      puts "-+-+ " + e.count.to_s + " event reminder email scheduled for admins"
-      puts "-+-+ " + e.registrations.count.to_s + " registration reminder email(s) scheduled"
+      puts '-+-+ ' + e.count.to_s + ' event reminder email scheduled for admins'
+      puts '-+-+ ' + e.registrations.count.to_s + ' registration reminder email(s) scheduled'
 
-      if e.registrations.count < 1
-        puts "-+-+ No registrations for " + e.full_title
-      end
+      puts '-+-+ No registrations for ' + e.full_title if e.registrations.count < 1
 
       e.update(reminder_sent_at: Time.zone.now)
     end
 
-    if events.count < 1
-      puts "-+-+ No events meet criteria"
-    end
+    puts '-+-+ No events meet criteria' if events.count < 1
 
-    puts "-+ Done creating"
+    puts '-+ Done creating'
   end
 end
