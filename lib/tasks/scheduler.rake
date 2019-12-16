@@ -8,11 +8,6 @@ task send_reminders: :environment do
 end
 
 task send_report: :environment do
-  puts 'Cleaning up the ReportJob list'
-  Delayed::Job.all.each do |job|
-    job.destroy if job.name.include?('ReportJob')
-  end
-
   puts 'Scheduling monthly report'
   ReportJob.set(cron: '30 7 1 * *').perform_later
   puts 'Done'
