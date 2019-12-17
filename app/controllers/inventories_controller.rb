@@ -38,6 +38,8 @@ class InventoriesController < ApplicationController
     else # created manually
       @inventory.manual = true
     end
+
+    @technologies = Technology.list_worthy.order(name: :asc)
   end
 
   def create
@@ -64,7 +66,7 @@ class InventoriesController < ApplicationController
     authorize @inventory = Inventory.create(inventory_params)
     @inventory.save
 
-    CountCreate.new(@inventory)
+    CountCreate.new(@inventory, technologies_params, current_user)
 
     if @inventory.errors.any?
       flash[:warning] = @inventory.errors.first.join(': ')
@@ -218,8 +220,28 @@ class InventoriesController < ApplicationController
   private
 
   def inventory_params
-    params.require(:inventory).permit :date, :reported, :receiving, :shipping, :manual, :deleted_at, :event_id, :completed_at,
-                                      counts_attributes: [:id, :user_id, :inventory_id, :component_id, :part_id, :material_id, :loose_count, :unopened_boxes_count, :deleted_at]
+    params.require(:inventory).permit :date,
+                                      :reported,
+                                      :receiving,
+                                      :shipping,
+                                      :manual,
+                                      :deleted_at,
+                                      :event_id,
+                                      :completed_at,
+                                      counts_attributes:
+                                        %i[id
+                                           user_id
+                                           inventory_id
+                                           component_id
+                                           part_id
+                                           material_id
+                                           loose_count
+                                           unopened_boxes_count
+                                           deleted_at]
+  end
+
+  def technologies_params
+    params.require(:inventory).permit technologies: []
   end
 
   def find_owner_from_acronym(owner)

@@ -1,0 +1,17 @@
+<div class="col-xs-3 col-sm-2">
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <div class="checkbox">
+        <label>
+          <%= check_box "inventory", "technologies", { multiple: true, class: 'checkbox'}, technology.id, nil %>
+          <%= technology.short_name_w_owner %>
+        </label>
+      </div>
+    </div>
+    <div class="panel-body">
+      <% if technology.img_url? %>
+        <%= image_tag technology.img_url, alt: technology.name, class: '' %>
+      <% end %>
+    </div>
+  </div>
+</div>

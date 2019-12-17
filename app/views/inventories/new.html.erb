@@ -2,14 +2,25 @@
   <h2>Create a new inventory</h2>
 </div>
 
-<div class="col-xs-12">
+<div class="col-xs-12" id="inventory_new">
   <%= simple_form_for @inventory do |f| %>
     <%= f.error_notification %>
-    <%= f.input :date, label: "Select date when inventory occured:", as: :string, input_html: { class: "datepicker-nomax", value: Date.today } %>
     <%= f.input :manual, as: :hidden %>
     <%= f.input :receiving, as: :hidden %>
     <%= f.input :shipping, as: :hidden %>
     <%= f.input :event_id, as: :hidden %>
+    <%= f.input :date, label: "Select date when inventory occured:", as: :string, input_html: { class: "datepicker-nomax", value: Date.today } %>
+    <div class="row form-inline">
+      <div class="col-xs-12">
+        <h3>Select technologies to bypass:</h3>
+        <p>
+          Bypassed technologies will have previous inventory counts carried over and be marked as already counted. They can still be edited.
+        </p>
+      </div>
+      <%= fields_for :technologies, @inventory.technologies do %>
+        <%= render partial: 'technology', collection: @technologies %>
+      <% end %>
+    </div>
     <%= f.button :submit, class: 'btn yellow fullwidth' %>
   <% end %>
 </div>

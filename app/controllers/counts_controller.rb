@@ -12,8 +12,8 @@ class CountsController < ApplicationController
         @box_val = @count.unopened_boxes_count
       end
     else
-      @box_val = @count.diff_from_previous('box') unless @count.diff_from_previous('box').zero?
       @loose_val = @count.diff_from_previous('loose') unless @count.diff_from_previous('loose').zero?
+      @box_val = @count.diff_from_previous('box') unless @count.diff_from_previous('box').zero?
     end
   end
 

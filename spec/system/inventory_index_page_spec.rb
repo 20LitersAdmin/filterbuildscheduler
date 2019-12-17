@@ -5,10 +5,10 @@ require 'rails_helper'
 RSpec.describe "Inventory#index", type: :system do
   before :each do
     @latest = FactoryBot.create(:inventory)
-    2.times { FactoryBot.create(:inventory_event, date: Faker::Time.backward(60) )}
-    2.times { FactoryBot.create(:inventory_man, date: Faker::Time.backward(60) )}
-    FactoryBot.create(:inventory_ship, date: Faker::Time.backward(30))
-    FactoryBot.create(:inventory_rec, date: Faker::Time.backward(30))
+    2.times { FactoryBot.create(:inventory_event, date: Faker::Time.backward(days: 60)) }
+    2.times { FactoryBot.create(:inventory_man, date: Faker::Time.backward(days: 60)) }
+    FactoryBot.create(:inventory_ship, date: Faker::Time.backward(days: 30))
+    FactoryBot.create(:inventory_rec, date: Faker::Time.backward(days: 30))
   end
 
   after :all do
