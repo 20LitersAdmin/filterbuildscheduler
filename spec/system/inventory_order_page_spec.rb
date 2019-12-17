@@ -8,7 +8,7 @@ RSpec.describe 'Order supplies page', type: :system, js: true do
     @supplier1 = FactoryBot.create(:supplier)
     @supplier2 = FactoryBot.create(:supplier)
 
-    tech = FactoryBot.create(:technology, monthly_production_rate: 20 )
+    tech = FactoryBot.create(:technology, monthly_production_rate: 20)
 
     3.times { FactoryBot.create(:part, supplier: @supplier1, minimum_on_hand: 20, weeks_to_deliver: 4) }
     7.times { FactoryBot.create(:part, supplier: @supplier2, minimum_on_hand: 20, weeks_to_deliver: 4) }
@@ -25,14 +25,14 @@ RSpec.describe 'Order supplies page', type: :system, js: true do
     5.times { FactoryBot.create(:material, supplier: @supplier1, minimum_on_hand: 20, weeks_to_deliver: 4) }
     2.times { FactoryBot.create(:material, supplier: @supplier2, minimum_on_hand: 20, weeks_to_deliver: 4) }
     Material.all.each do |m|
-      FactoryBot.create(:material_part, material: m, part: Part.find(Random.rand(Part.first.id..Part.last.id)) )
+      FactoryBot.create(:material_part, material: m, part: Part.find(Random.rand(Part.first.id..Part.last.id)))
       # every material needs an extrapolate_material_parts && an extrapolate_component_parts through the part.
       ExtrapolateComponentPart.where(component: Component.find(Random.rand(Component.first.id..Component.last.id)), part: m.extrapolate_material_parts.first.part).first_or_create
-      # comp_part = FactoryBot.build(:comp_part, component: Component.find(Random.rand(Component.first.id..Component.last.id)), part: m.extrapolate_material_parts.first.part )
-      # comp_part.save #allows for soft-fail if the record is a duplicate
     end
 
-    InventoriesController::CountCreate.new(@inventory)
+    @user = FactoryBot.create(:admin)
+
+    InventoriesController::CountCreate.new(@inventory, [], @user)
 
     Count.all.each do |c|
       c.loose_count = Random.rand(0..15)
