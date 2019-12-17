@@ -92,4 +92,8 @@ class Inventory < ApplicationRecord
     # get the count records of these components
     counts.where(component_id: @primary_comp_ids)
   end
+
+  def technologies
+    # inventory#new form field
+  end
 end

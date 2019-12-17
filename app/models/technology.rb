@@ -49,6 +49,10 @@ class Technology < ApplicationRecord
     name.partition(' ').first
   end
 
+  def short_name_w_owner
+    "#{short_name} (#{owner_acronym})"
+  end
+
   def event_tech_goals_within(num = 0)
     events = Event.future.within_days(num).where(technology: self)
 

@@ -1,6 +1,8 @@
 # README
 
 ## Things to do
+0. Inventory allows for selection of technologies to inventory
+
 1. I created EventsController::SubtractSubsets and should write tests for it
   * Test the class (as a model)
   * Write a system test for event-based inventories
