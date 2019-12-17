@@ -2,14 +2,14 @@
 
 class InventoriesController
   class CountCreate
-    def initialize(inventory, technology_params, user)
+    def initialize(inventory, technology_params = [], user = nil)
       @inventory = inventory
       # Is there a previous inventory?
       @latest = Inventory.former.first
       @latest_id = @latest.present? ? @latest.id : nil
 
       @tech_ids = technology_params.present? ? technology_params['technologies'].map(&:to_i) : []
-      @user_id = user.id
+      @user_id = technology_params.present? ? user.id : nil
 
       make_parts
       make_materials
