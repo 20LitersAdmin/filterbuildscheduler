@@ -64,8 +64,8 @@ Rails.application.routes.draw do
       get 'order_all'
       get 'status'
       get 'financials'
+      get 'paper'
     end
-    get 'paper', on: :member
     resources :counts do
       get 'label', on: :member
     end
