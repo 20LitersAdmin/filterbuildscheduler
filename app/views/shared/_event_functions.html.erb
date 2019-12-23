@@ -24,15 +24,15 @@
     <%= link_to "Tech Status", status_inventories_path, class: "btn yellow use-load-screen"  %>
   <% end %>
 
-  <% if current_user.is_admin? && @finder != "communication" %>
+  <% if current_user&.is_admin? && @finder != "communication" %>
     <%= link_to "User Comm. Prefs",  users_communication_path, class: 'btn yellow use-load-screen' %>
   <% end %>
 
-  <% if current_user.is_admin? && @closed_events.present? && @finder != "closed" %>
+  <% if current_user&.is_admin? && @closed_events&.present? && @finder != "closed" %>
     <%= link_to "Closed Events", closed_events_path , class: 'btn blue use-load-screen' %>
   <% end %>
 
-  <% if @cancelled_events.exists? && @finder != "cancelled" %>
+  <% if @cancelled_events&.exists? && @finder != "cancelled" %>
     <%= link_to "Cancelled Events", cancelled_events_path, class: 'btn red use-load-screen' %>
   <% end %>
 </div>

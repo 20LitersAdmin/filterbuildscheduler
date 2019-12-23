@@ -5,7 +5,6 @@
       <h2><%= @inventory.name %></h2>
     </div>
     <div class="col-xs-6 match-h2">
-      <%= link_to 'Paper Version', paper_inventory_path(@inventory), class: 'btn blue', target: '_blank'  %>
       <% if @inventory.has_items_below_minimum? %>
         <%= link_to "Items Needed!", order_inventories_path(), class: "btn red" %>
       <% end %>

@@ -190,7 +190,7 @@ class InventoriesController < ApplicationController
 
   def paper
     @print_navbar = true
-    authorize @inventory = Inventory.find(params[:id])
+    authorize @inventory = Inventory.latest
     @counts = @inventory.counts.sort_by { |c| [c.group_by_tech, c.name] }
   end
 
