@@ -2,7 +2,7 @@
   <% if current_user&.admin_or_leader? %>
     <%= render partial: 'shared/event_functions' %>
   <% end %>
-  
+
   <div class="page-header row">
     <h1><%= @event.full_title %></h1>
     <% if @event.is_private %>
@@ -29,7 +29,7 @@
         <% end %>
       </p>
       <p><strong>
-        <% if @leaders.count.positive? %>
+        <% if @leaders&.count&.positive? %>
           Event <%= pluralize_without_count(@leaders.count, 'leader') %>: <%= @leaders.map { |r| r.user.fname }.join(', ') %>
         <% end %>
       </strong></p>
