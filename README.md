@@ -1,6 +1,12 @@
 # README
 
 ## Things to do
+0. Accept button on registration modal not working
+0.1 Registration form with errors - form fields aren't persistent
+0.2 Modal page when form with errors doesn't close
+0.3 Jeff --> Jereme, Dannie, Natalie
+
+
 1. I created EventsController::SubtractSubsets and should write tests for it
   * Test the class (as a model)
   * Write a system test for event-based inventories
