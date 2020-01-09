@@ -47,6 +47,8 @@ class Replicator
 
       event = base_event.dup
 
+      # TODO: Timezone check!!
+
       event.tap do |e|
         e.start_time = s
         e.end_time = end_schedule.all_occurrences[i]

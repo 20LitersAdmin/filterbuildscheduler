@@ -5,7 +5,7 @@ module ErrorHandler
 
   included do
     rescue_from Pundit::NotAuthorizedError, with: :render_forbidden
-    # rescue_from ActiveRecord::RecordNotFound, with: :record_not_found
+    rescue_from ActiveRecord::RecordNotFound, with: :record_not_found
   end
 
   def render_forbidden
