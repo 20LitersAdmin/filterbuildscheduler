@@ -44,10 +44,13 @@ $(document).on('turbolinks:load', function() {
     };
   };
 
-  $(document).on("click", ".btn-accept-waiver", function() {
-    $("input[type=checkbox]#registration_waiver_accepted").prop("checked", true);
+  // Event/show registration form
+  $(document).on("click", "#modal_accept_waiver", function() {
+    $("#registration_accept_waiver").prop("checked", true);
     $("#waiverModal").modal('hide');
   });
+
+  // Event/edit form
   $(document).on("change", ".event_registrations_attended input[type=checkbox]", function() {
     attendanceCounter();
   });

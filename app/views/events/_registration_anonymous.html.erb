@@ -13,8 +13,7 @@
     <%= f.input :accommodations, label: 'Notes', as: :text %>
     <div>
       <h4>
-        <%= f.hidden_field :accept_waiver, value: '0' %>
-        <%= f.check_box :accept_waiver, required: true %> <strong>Accept the <a class="waiver_click" data-toggle="modal" data-target="#waiverModal"><%= f.label :accept_waiver, 'Waiver and Release' %></strong></a>
+        <%= f.check_box :accept_waiver, required: true %> <strong>Accept the <a id="waiver_click" data-toggle="modal" data-target="#waiverModal" href="#">Waiver and Release</a></strong>
       </h4>
     </div>
   <% end %>
