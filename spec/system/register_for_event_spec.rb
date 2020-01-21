@@ -117,6 +117,22 @@ RSpec.describe 'Register for Event', type: :system do
       expect(page).to have_content user.name
       expect(page).to have_link 'Change/Cancel Registration'
     end
+
+    # TODO:
+    it 'can be filled out using an existing email' do
+      user = FactoryBot.create(:user)
+
+      fill_in 'registration_user_fname', with: user.fname
+      fill_in 'registration_user_lname', with: user.lname
+      fill_in 'registration_user_email', with: user.email
+      check 'registration_accept_waiver'
+
+      # save_and_open_page
+
+      expect(page).to have_content 'Registration successful!'
+      expect(page).to have_content user.name
+      expect(page).to have_link 'Change/Cancel Registration'
+    end
   end
 
   context 'admin registering someone else' do
@@ -153,6 +169,7 @@ RSpec.describe 'Register for Event', type: :system do
         expect(saved_user.email_opt_out).to eq true
       end
 
+      # TODO:
       it 'by email only for a user that exists', js: true do
         user = FactoryBot.create(:user)
 
