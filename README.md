@@ -7,7 +7,6 @@
 
 
 0.3 Jeff --> Jereme, Dannie, Natalie
-0.6 Get rid of table head scrolling issue
 
 1. Replicate function - GMT issue??
 

@@ -22,7 +22,7 @@ class RegistrationsController < ApplicationController
       @user = find_or_initialize_user(user_params)
       @user.signed_waiver_on ||= Time.now
 
-      @leader = @user.can_lead_event?(@event)
+      # @leader = @user.can_lead_event?(@event)
       @duplicate_registration_risk = false
 
       if @event.registrations_filled?
@@ -32,11 +32,11 @@ class RegistrationsController < ApplicationController
       end
     when 'self'
       @user = current_user
-      @leader = params[:registration][:leader] || false
+      # @leader = params[:registration][:leader] || false
       @duplicate_registration_risk = false
     else
       @user = find_or_initialize_user(user_params)
-      @leader = false
+      # @leader = false
       @duplicate_registration_risk = true
     end
 
@@ -74,6 +74,7 @@ class RegistrationsController < ApplicationController
         redirect_to event_path @event
       end
     else
+
       flash[:danger] = @registration.errors.messages.map { |_k, v| v }.join(', ')
       flash[:danger] += @user.errors.messages.map { |k, v| "#{k} #{v.join(', ')}" }.join(' | ')
       if params[:registration][:form_source] == 'admin'
@@ -173,20 +174,11 @@ class RegistrationsController < ApplicationController
   private
 
   def user_params
-    # If the form comes from Event#show, the user is nested in the params.
-    if params[:registration][:form_source] == 'admin'
-      params.require(:user).permit(:fname,
-                                   :lname,
-                                   :email,
-                                   :phone,
-                                   :email_opt_out)
-    else
-      params[:registration].require(:user).permit(:fname,
-                                                  :lname,
-                                                  :email,
-                                                  :phone,
-                                                  :email_opt_out)
-    end
+    params[:registration].require(:user).permit(:fname,
+                                                :lname,
+                                                :email,
+                                                :phone,
+                                                :email_opt_out)
   end
 
   def registration_params
