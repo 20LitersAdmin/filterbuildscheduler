@@ -1,11 +1,7 @@
 # README
 
 ## Things to do
-0.2 Modal page when form with errors doesn't close
-
-0.3 Jeff --> Jereme, Dannie, Natalie
-
-1. Replicate function - GMT issue??
+1. Replicate function - GMT issue. Rewritten, just needs testing.
 
 1.A - Edit registration needs email opt out
 
