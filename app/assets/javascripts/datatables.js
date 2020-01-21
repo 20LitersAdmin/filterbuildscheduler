@@ -13,7 +13,6 @@ $(document).on("turbolinks:load", function(){
     responsive: true,
     autoWidth: false,
     info: false,
-    fixedHeader: true,
     dom:
       "<'col-xs-12 no-overflow center' B>"+
       "<'col-xs-4 no-overflow'l>"+
@@ -37,7 +36,6 @@ $(document).on("turbolinks:load", function(){
     responsive: true,
     autoWidth: false,
     info: false,
-    fixedHeader: true,
     dom:
       "t"+
       "<'col-xs-12 no-overflow center' B>",
@@ -59,7 +57,6 @@ $(document).on("turbolinks:load", function(){
     responsive: true,
     autoWidth: false,
     info: false,
-    fixedHeader: true,
     dom:
       "<'col-xs-12 no-overflow center' B>"+
       "<'col-xs-4 no-overflow'l>"+
@@ -112,7 +109,6 @@ $(document).on("turbolinks:load", function(){
     responsive: true,
     autoWidth: false,
     info: false,
-    fixedHeader: true,
     dom: "ft",
     columnDefs: [
     { "orderable": false, "targets": -1 }
@@ -127,7 +123,6 @@ $(document).on("turbolinks:load", function(){
     responsive: true,
     autoWidth: false,
     info: false,
-    fixedHeader: true,
     dom:
       "<'col-xs-12 no-overflow center' B>"+
       "<'col-xs-4 no-overflow'l>"+
@@ -155,7 +150,6 @@ $(document).on("turbolinks:load", function(){
     responsive: true,
     autoWidth: false,
     info: false,
-    fixedHeader: true,
     dom:
       "t"+
       "<'col-xs-12 no-overflow center' B>",
@@ -182,7 +176,6 @@ $(document).on("turbolinks:load", function(){
     responsive: true,
     autoWidth: false,
     info: false,
-    fixedHeader: true,
     dom:
       "<'col-xs-12 no-overflow center' B>"+
       "<'col-xs-4 no-overflow'l>"+
@@ -207,7 +200,6 @@ $(document).on("turbolinks:load", function(){
     responsive: true,
     autoWidth: false,
     info: false,
-    fixedHeader: true,
     dom:
       "<'col-xs-4 no-overflow'l>"+
       "<'col-xs-8 no-overflow'f>"+

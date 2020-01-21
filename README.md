@@ -4,12 +4,9 @@
 0. Accept button on registration modal not working
 0.1 Registration form with errors - form fields aren't persistent
 0.2 Modal page when form with errors doesn't close
+
+
 0.3 Jeff --> Jereme, Dannie, Natalie
-0.4 "Open Builds" partial should link to edit_event_path
-
-
-0.5 "Email has already been taken" - events/#id/register && events/#id (not logged in)
-
 0.6 Get rid of table head scrolling issue
 
 1. Replicate function - GMT issue??
