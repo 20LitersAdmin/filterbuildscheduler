@@ -28,6 +28,8 @@ class EventsController < ApplicationController
     @leaders = @event.registrations.registered_as_leader
 
     @finder = 'edit'
+
+    @user = current_user || User.new
   end
 
   def new

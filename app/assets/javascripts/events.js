@@ -2,9 +2,16 @@
 // All this logic will automatically be available in application.js.
 
 $(document).on('turbolinks:load', function() {
-  if(!(controllerMatches(['events']))) {
+  if(!(controllerMatches(['events','registrations']))) {
     return;
   };
+
+  // Event/show registration form
+  $(document).on("click", "#modal_accept_waiver", function() {
+    $("#registration_accept_waiver").prop("checked", true);
+    $("#waiverModal").modal('hide');
+  });
+
   function attendanceCounter(){
     var booleans = $(".event_registrations_attended input[type=checkbox]").get();
     var inputs = $(".event_registrations_guests_attended input[type=number]").get();
@@ -43,12 +50,6 @@ $(document).on('turbolinks:load', function() {
       });
     };
   };
-
-  // Event/show registration form
-  $(document).on("click", "#modal_accept_waiver", function() {
-    $("#registration_accept_waiver").prop("checked", true);
-    $("#waiverModal").modal('hide');
-  });
 
   // Event/edit form
   $(document).on("change", ".event_registrations_attended input[type=checkbox]", function() {

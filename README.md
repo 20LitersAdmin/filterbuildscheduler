@@ -1,7 +1,6 @@
 # README
 
 ## Things to do
-0. Accept button on registration modal not working
 0.2 Modal page when form with errors doesn't close
 
 0.3 Jeff --> Jereme, Dannie, Natalie
