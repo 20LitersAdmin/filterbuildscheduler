@@ -2,9 +2,7 @@
 
 ## Things to do
 0. Accept button on registration modal not working
-0.1 Registration form with errors - form fields aren't persistent
 0.2 Modal page when form with errors doesn't close
-
 
 0.3 Jeff --> Jereme, Dannie, Natalie
 
