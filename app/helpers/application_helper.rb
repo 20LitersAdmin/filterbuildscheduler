@@ -54,4 +54,10 @@ module ApplicationHelper
 
     datetime.strftime('%-m/%-d/%y %l:%M')
   end
+
+  def human_month_year(date_or_datetime)
+    return '-' if date_or_datetime.nil?
+
+    date_or_datetime.strftime('%b, %Y')
+  end
 end

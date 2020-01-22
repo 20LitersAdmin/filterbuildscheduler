@@ -9,6 +9,11 @@ class EventsController < ApplicationController
     @user = current_user
 
     @past_events = our_events.needs_report if @user&.admin_or_leader?
+
+    liters_tracker = LitersTrackerClient.new
+
+    @progress_date = liters_tracker.as_of_date
+    @stats = liters_tracker.stat_ary
   end
 
   def show

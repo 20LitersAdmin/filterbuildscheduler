@@ -4,9 +4,9 @@ class KindfulClient
   include HTTParty
 
   if Rails.env.production?
-    base_uri "https://app.kindful.com/api/v1"
+    base_uri 'https://app.kindful.com/api/v1'
   else
-    base_uri "https://app-sandbox.kindful.com/api/v1"
+    base_uri 'https://app-sandbox.kindful.com/api/v1'
   end
 
   def self.post(url, opts)
@@ -62,7 +62,7 @@ class KindfulClient
   end
 
   def headers
-    { 
+    {
       "Content-Type": "application/json",
       "Authorization": "Token token=\"#{token}\""
     }
@@ -149,7 +149,7 @@ class KindfulClient
           "stripe_charge_id": opts[:id],
           "transaction_type": "Credit",
           "card_type": opts[:source][:brand],
-         } 
+         }
       ]
     }
 
