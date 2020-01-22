@@ -39,6 +39,7 @@ RSpec.describe Replicator, type: :model do
 
     it 'returns false if attributes have errors' do
       @replicator.event_id = nil
+      @replicator.check_for_errors
 
       expect(@replicator.errors.any?).to eq true
 
