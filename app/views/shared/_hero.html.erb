@@ -1,0 +1,22 @@
+<div class="hero-img collapse in" id="collapseHero">
+  <div class="row">
+    <div class="col-xs-12">
+      <div class="row stats-row">
+        <h2>Our Progress through <%= human_month_year(@progress_date) %></h2>
+        <%= render partial: 'shared/basic_stat_block', collection: @stats %>
+      </div>
+    </div>
+    <% unless current_user&.admin_or_leader? %>
+      <div class="col-xs-12 custom-event-row">
+        <h3>Want a custom build event for your group?</h3>
+        <p>If you have a group of 6+ people we can schedule a build at your convenience.</p>
+      </div>
+      <div class="col-xs-6">
+        <%= mail_to 'filterbuild@20liters.org', 'Email Us!', class: 'btn hero float-right', target: "_blank", subject: 'Request for custom build event' %>
+      </div>
+      <div class="col-xs-6">
+        <a  class='btn hero float-left' role="button" data-toggle="collapse" href="#collapseHero" aria-expanded="true" aria-controls="collapseHero">No Thanks</a>
+      </div>
+    <% end %>
+  </div>
+</div>

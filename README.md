@@ -6,6 +6,9 @@
 - secrets.yml: check .gitignore; search for use of secret_key_base
 - should be using master.key && credentials.yml.enc EXCLUSIVELY, even in Heroku (by seeting )
 
+1. Track: track.20liters.org/stats: returns json of stats
+- make uses that json for the homepage && attendance sheet? Or separate printed page??
+
 2. I created EventsController::SubtractSubsets and should write tests for it
   * Test the class (as a model)
   * Write a system test for event-based inventories

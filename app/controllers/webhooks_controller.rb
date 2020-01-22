@@ -16,9 +16,8 @@ class WebhooksController < ApplicationController
 
     @json.deep_symbolize_keys!
 
-    if @json[:application] == "ca_14yEk8gp5dbBbYDnndXU9yTNM3Z3gyWS"
-      KindfulClient.new.import_transaction(@json)
-    end
+    # @json[:application] code indicates CauseVox transaction
+    KindfulClient.new.import_transaction(@json) if @json[:application] == 'ca_14yEk8gp5dbBbYDnndXU9yTNM3Z3gyWS'
 
     head :ok
   end
