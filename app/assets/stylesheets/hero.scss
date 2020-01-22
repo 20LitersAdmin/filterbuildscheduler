@@ -1,0 +1,61 @@
+@import "variables";
+
+.hero-img {
+  text-align: center;
+  background-image: url(https://20liters.org/wp-content/uploads/2016/07/cta-bg.jpg);
+  padding: 12px 0;
+  margin: -20px auto 20px auto;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center ;
+  box-sizing: border-box;
+  color: white;
+  h3 {
+    font-weight: bold;
+  }
+  p {
+    // font-size: 1.375em;
+    font-weight: normal;
+    margin-bottom: 12px;
+  }
+}
+
+.btn.hero {
+  border: 1px solid white !important;
+  color: white !important;
+  display: block;
+  width: 12em;
+  margin: 0.1em auto;
+  transition: all 0.14s ease-in-out;
+}
+
+.stats-row {
+  width: 85%;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+.stat-block {
+  width: 20%;
+  float: left;
+
+  .card {
+    background-color: $grey;
+    padding: 10%;
+    margin: 12px 6%;
+    height: 150px;
+
+    h1 {
+      margin-bottom: 6px;
+    }
+  }
+}
+
+.stat-block:last-child .card {
+  background-color: $yellow;
+  color: $grey;
+}
+
+.custom-event-row {
+  border-top: 2px solid #9bb4c8;
+}
