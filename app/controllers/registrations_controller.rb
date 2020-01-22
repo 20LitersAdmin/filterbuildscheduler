@@ -12,6 +12,7 @@ class RegistrationsController < ApplicationController
 
   def new
     authorize @registration = Registration.new(event_id: @event.id)
+    @user = User.new
   end
 
   def create
@@ -23,7 +24,7 @@ class RegistrationsController < ApplicationController
       @user.signed_waiver_on ||= Time.now
 
       @leader = @user.can_lead_event?(@event)
-      @duplicate_registration_risk = false
+      @duplicate_registration_risk = true
 
       if @event.registrations_filled?
         guests = registration_params[:guests_registered].present? ? registration_params[:guests_registered].to_i : 0
@@ -34,7 +35,7 @@ class RegistrationsController < ApplicationController
       @user = current_user
       @leader = params[:registration][:leader] || false
       @duplicate_registration_risk = false
-    else
+    else # 'anon'
       @user = find_or_initialize_user(user_params)
       @leader = false
       @duplicate_registration_risk = true
@@ -46,10 +47,10 @@ class RegistrationsController < ApplicationController
     # A user who exists but isn't signed in shouldn't be able to register for an event more than once.
     if @duplicate_registration_risk
       registration = Registration.where(event: @event, user: @user)
-      @registration.errors.add(:email, 'This email address has already registered for this event.') if registration.exists?
+      @user.errors.add(:email, 'This email address has already registered for this event.') if registration.exists?
     end
 
-    @registration.errors.add(:fname, 'This user isn\'t qualified to lead this event.') if registration_params[:leader] == '1' && !@user.can_lead_event?(@event)
+    @user.errors.add(:fname, 'This user isn\'t qualified to lead this event.') if registration_params[:leader] == '1' && !@leader
 
     @registration.errors.add(:accept_waiver, 'You must review and sign the Liability Waiver first') if waiver_accepted == '0'
 
@@ -74,8 +75,9 @@ class RegistrationsController < ApplicationController
         redirect_to event_path @event
       end
     else
+      # errors found
       flash[:danger] = @registration.errors.messages.map { |_k, v| v }.join(', ')
-      flash[:danger] += @user.errors.messages.map { |k, v| "#{k} #{v.join(', ')}" }.join(' | ')
+      flash[:danger] += @user.errors.messages.map { |k, v| "#{User.human_attribute_name(k)} #{v.join(', ')}" }.join(' | ')
       if params[:registration][:form_source] == 'admin'
         render 'new'
       else
@@ -87,11 +89,15 @@ class RegistrationsController < ApplicationController
   def edit
     authorize @registration
 
+    @user = @registration.user
+
     @btn_admin = params[:admin] == 'true'
   end
 
   def update
     authorize @registration
+
+    @user = @registration.user
 
     if @registration.event.registrations_filled?
       guests = registration_params[:guests_registered].present? ? registration_params[:guests_registered].to_i : 0
@@ -99,12 +105,14 @@ class RegistrationsController < ApplicationController
       @registration.event.update(max_registrations: new_max)
     end
 
+    @user.update(email_opt_out: user_params[:email_opt_out]) if ActiveModel::Type::Boolean.new.cast(user_params[:email_opt_out]) != @user.email_opt_out
+
     if @registration.errors.any?
-      flash[:danger] = @registration.errors.map { |k,v| v }.join(', ')
+      flash[:danger] = @registration.errors.map { |_k, v| v }.join(', ')
       render 'edit'
     else
       @registration.update(registration_params)
-      if params[:registration][:form_source] == "admin"
+      if params[:registration][:form_source] == 'admin'
         redirect_to event_registrations_path(@registration.event)
       else
         redirect_to event_path(@registration.event)
@@ -115,11 +123,11 @@ class RegistrationsController < ApplicationController
   def destroy
     authorize @registration
     @registration.delete
-    if params[:admin] == "true"
-      flash[:warning] = "Registration deleted."
+    if params[:admin] == 'true'
+      flash[:warning] = 'Registration deleted.'
       redirect_to event_registrations_path(@registration.event)
     else
-      flash[:warning] = "You are no longer registered."
+      flash[:warning] = 'You are no longer registered.'
       redirect_to event_path(@registration.event)
     end
   end
@@ -132,7 +140,7 @@ class RegistrationsController < ApplicationController
       r.save
     end
 
-    flash[:success] = "#{view_context.pluralize(@count, "deleted registration")} restored!"
+    flash[:success] = "#{view_context.pluralize(@count, 'deleted registration')} restored!"
     redirect_to event_registrations_path(@event)
   end
 
@@ -173,20 +181,11 @@ class RegistrationsController < ApplicationController
   private
 
   def user_params
-    # If the form comes from Event#show, the user is nested in the params.
-    if params[:registration][:form_source] == 'admin'
-      params.require(:user).permit(:fname,
-                                   :lname,
-                                   :email,
-                                   :phone,
-                                   :email_opt_out)
-    else
-      params[:registration].require(:user).permit(:fname,
-                                                  :lname,
-                                                  :email,
-                                                  :phone,
-                                                  :email_opt_out)
-    end
+    params[:registration].require(:user).permit(:fname,
+                                                :lname,
+                                                :email,
+                                                :phone,
+                                                :email_opt_out)
   end
 
   def registration_params

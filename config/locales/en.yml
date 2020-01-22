@@ -42,3 +42,15 @@ en:
         title: 'Delete'
         breadcrumb: 'Delete'
         done: 'deleted, but can be restored'
+  activerecord:
+    attributes:
+      user:
+        fname: 'First Name'
+        lname: 'Last Name'
+        phone: 'Phone (optional)'
+    errors:
+      models:
+        user:
+          attributes:
+            fname: 'First Name'
+            lname: 'Last Name'

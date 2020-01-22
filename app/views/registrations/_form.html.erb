@@ -2,11 +2,11 @@
   <%= f.error_notification %>
   <%= f.hidden_field :form_source, value: "admin" %>
   <%= f.hidden_field :event_id %>
-  <%= simple_fields_for :user do |o| %>
-    <%= o.input :fname, label: 'First Name' %>
-    <%= o.input :lname, label: 'Last Name' %>
-    <%= o.input :email, label: 'Email' %>
-    <%= o.input :phone, label: 'Phone', required: false %>
+  <%= f.simple_fields_for :user do |o| %>
+    <%= o.input :fname, input_html: { value: @user.fname } %>
+    <%= o.input :lname, input_html: { value: @user.lname } %>
+    <%= o.input :email, input_html: { value: @user.email } %>
+    <%= o.input :phone, required: false, input_html: { value: @user.phone } %>
     <div class="row">
       <div class="col-xs-6">
         <%= f.check_box :leader %>
@@ -24,7 +24,6 @@
     <% end %>
     <%= f.input :guests_registered, label: 'Guests', input_html: { min: 0, max: @event.registrations_remaining - 1 } %>
     <%= f.input :accommodations, label: 'Notes', as: :text %>
-    <%= f.hidden_field :waiver_accepted, value: '1' %>
   <% end %>
   <%= f.button :submit, class: 'btn yellow fullwidth' %>
   <%= f.button :submit, name: "commit_and_new", value: "Create & New", class: 'btn yellow fullwidth' %>
