@@ -1,8 +1,6 @@
 # README
 
 ## Things to do
-1. Replicate function - GMT issue. Rewritten, just needs testing.
-
 1.A - Edit registration needs email opt out
 
 2. I created EventsController::SubtractSubsets and should write tests for it
@@ -33,10 +31,8 @@
 ## Remind myself:
 1. production backup / development restore-from production
   - `User.first.update(password: "password", password_confirmation: "password")`
-2. "Your branch is n commits behind master" - git fetch origin
-3. git remote prune origin --dry-run
-4. `Record.only_deleted.each do |record| record.really_destroy! end`
-5. `orphans = User.builders.left_outer_joins(:registrations).where(registrations: { id: nil })`
+2. `Record.only_deleted.each do |record| record.really_destroy! end`
+3. `orphans = User.builders.left_outer_joins(:registrations).where(registrations: { id: nil })`
 
 
 ## Data cleanup:
