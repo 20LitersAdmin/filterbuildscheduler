@@ -3,26 +3,27 @@
 class Replicator
   include ActiveModel::Model
 
-  attr_accessor :event_id
-  attr_accessor :start_time
-  attr_accessor :end_time
-  attr_accessor :frequency
-  attr_accessor :interval
-  attr_accessor :occurrences
-  attr_accessor :replicate_leaders
-  attr_accessor :initiator
+  attr_accessor :event_id,
+                :start_time,
+                :end_time,
+                :frequency,
+                :interval,
+                :occurrences,
+                :replicate_leaders,
+                :initiator
 
   # rubocop:disable UselessAssignment
   # rubocop:disable RedundantSelf
   # rubocop:disable Metrics/CyclomaticComplexity
   # rubocop:disable Metrics/PerceivedComplexity
 
-  def go!
-    # test this out!!!
-
+  def initialize(*args)
+    super
     morph_params
     check_for_errors
+  end
 
+  def go!
     return false if errors.any?
 
     base_event = Event.find(event_id)
@@ -37,6 +38,13 @@ class Replicator
       if starting == base_event.start_time
         error_ary << { idx => 'Duplicate event skipped' }
         next
+      end
+
+      # handle the edge cases of recurrences that span daylight savings time changes
+      unless starting.localtime.hour == start_time.localtime.hour
+        # force the *new* times to match the hour value of the *old* times
+        starting = starting.localtime + (start_time.localtime.hour - starting.localtime.hour).hours
+        ending = ending.localtime + (end_time.localtime.hour - ending.localtime.hour).hours
       end
 
       event = base_event.dup
@@ -75,21 +83,22 @@ class Replicator
 
   # called by events_controller#replicate_occurences
   def date_array
-    start_schedule = IceCube::Schedule.new(now = self.start_time)
-    end_schedule = IceCube::Schedule.new(now = self.end_time)
-
-    if frequency == 'monthly'
-      start_schedule.add_recurrence_rule IceCube::Rule.monthly.count(self.occurrences)
-      end_schedule.add_recurrence_rule IceCube::Rule.monthly.count(self.occurrences)
-    else # 'weekly'
-      start_schedule.add_recurrence_rule IceCube::Rule.weekly.count(self.occurrences)
-      end_schedule.add_recurrence_rule IceCube::Rule.weekly.count(self.occurrences)
-    end
+    self.interval = frequency == 'monthly' ? 'months' : 'weeks'
 
     ary = []
 
-    start_schedule.all_occurrences.each_with_index do |s, i|
-      hsh = { s: Time.parse(s.to_s).strftime('%a %-m/%-d/%y %-l:%M %P'), e: DateTime.parse(end_schedule.all_occurrences[i].to_s).strftime('%a %-m/%-d/%y %-l:%M %P') }
+    occurrences.times do |idx|
+      starting = start_time + idx.send(interval.to_sym)
+      ending = end_time + idx.send(interval.to_sym)
+
+      # handle the edge cases of recurrences that span daylight savings time changes
+      unless starting.localtime.hour == start_time.localtime.hour
+        # force the *new* times to match the hour value of the *old* times
+        starting = starting.localtime + (start_time.localtime.hour - starting.localtime.hour).hours
+        ending = ending.localtime + (end_time.localtime.hour - ending.localtime.hour).hours
+      end
+
+      hsh = { s: starting.strftime('%a %-m/%-d/%y %-l:%M %P'), e: ending.strftime('%a %-m/%-d/%y %-l:%M %P') }
       ary << hsh
     end
 
@@ -97,20 +106,21 @@ class Replicator
   end
 
   def morph_params
-    self.start_time = Time.parse(start_time).utc
-    self.end_time = Time.parse(end_time).utc
-    self.occurrences = self.occurrences.to_i
-    self.replicate_leaders = ActiveModel::Type::Boolean.new.cast(self.replicate_leaders)
+    self.start_time = Time.parse(start_time).utc if start_time.class == String
+    self.end_time = Time.parse(end_time).utc if end_time.class == String
+    self.occurrences = self.occurrences.to_i if occurrences.class == String
+    self.replicate_leaders = ActiveModel::Type::Boolean.new.cast(self.replicate_leaders) if replicate_leaders.class == String
     self.interval = frequency == 'monthly' ? 'months' : 'weeks'
+    self
   end
 
   def check_for_errors
-    errors.add(:frequency, :invalid, message: 'must be either "weekly" or "monthly"') unless %w[monthly weekly].include?(self.frequency)
+    errors.add(:frequency, :invalid, message: "must be either 'weekly' or 'monthly'") unless %w[monthly weekly].include?(self.frequency)
     errors.add(:occurrences, :invalid, message: 'must be present and positive') unless self.occurrences.to_i.positive?
     errors.add(:event_id, :invalid, message: 'must be present') if self.event_id.blank?
     errors.add(:start_time, :invalid, message: 'must be present') if self.start_time.blank?
     errors.add(:end_time, :invalid, message: 'must be present') if self.end_time.blank?
-    errors.add(:replicate_leaders, :invalid, message: 'must be boolean') unless [true, false].include?(self.replicate_leaders) || self.replicate_leaders.nil?
+    errors.add(:replicate_leaders, :invalid, message: 'must be boolean') unless [true, false].include?(self.replicate_leaders)
   end
 
   # rubocop:enable UselessAssignment
