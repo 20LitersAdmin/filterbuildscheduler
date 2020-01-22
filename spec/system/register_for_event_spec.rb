@@ -117,6 +117,36 @@ RSpec.describe 'Register for Event', type: :system do
       expect(page).to have_content user.name
       expect(page).to have_link 'Change/Cancel Registration'
     end
+
+    it 'can be filled out using an existing email' do
+      user = FactoryBot.create(:user)
+
+      fill_in 'registration_user_email', with: user.email
+      check 'registration_accept_waiver'
+
+      click_submit
+
+      expect(page).to have_content 'Registration successful!'
+      expect(page).to have_content user.name
+      expect(page).to have_link 'Change/Cancel Registration'
+    end
+
+    # TODO: Why does this not work??
+    # it 'has a modal for the waiver, which checks the box', js: true do
+      # expect(page).to have_unchecked_field('registration_accept_waiver')
+
+      # click_on 'waiver_click'
+
+      # within('#waiverModal') do
+      #   expect(page).to have_content 'Waiver of Liability'
+
+      #   click_on 'Accept'
+      # end
+
+      # expect(page).to have_content event.title
+
+      # expect(page).to have_checked_field('registration_accept_waiver')
+    # end
   end
 
   context 'admin registering someone else' do
@@ -128,7 +158,7 @@ RSpec.describe 'Register for Event', type: :system do
 
     it 'shows the standard registration form' do
       expect(page).to have_content 'Register someone for ' + event.full_title
-      expect(page).to have_field 'user_fname'
+      expect(page).to have_field 'registration_user_fname'
       expect(page).to have_field 'registration_leader'
       expect(page).to have_css("input[name='commit']")
     end
@@ -137,16 +167,16 @@ RSpec.describe 'Register for Event', type: :system do
       it 'using the Create & New button' do
         user = FactoryBot.build(:user)
 
-        fill_in 'user_email', with: user.email
-        fill_in 'user_fname', with: user.fname
-        fill_in 'user_lname', with: user.lname
-        check 'user_email_opt_out'
+        fill_in 'registration_user_email', with: user.email
+        fill_in 'registration_user_fname', with: user.fname
+        fill_in 'registration_user_lname', with: user.lname
+        check 'registration_user_email_opt_out'
 
         click_button 'Create & New'
 
         expect(page).to have_content 'Registration successful!'
         expect(page).to have_content 'Register someone for ' + event.full_title
-        expect(page).to have_field 'user_fname'
+        expect(page).to have_field 'registration_user_fname'
 
         saved_user = User.find_by(email: user.email)
 
@@ -156,7 +186,7 @@ RSpec.describe 'Register for Event', type: :system do
       it 'by email only for a user that exists', js: true do
         user = FactoryBot.create(:user)
 
-        fill_in 'user_email', with: user.email
+        fill_in 'registration_user_email', with: user.email
 
         first_count = Delayed::Job.count
 
@@ -177,18 +207,18 @@ RSpec.describe 'Register for Event', type: :system do
         let(:user) { build :user }
 
         it 'with email only isn\'t successful' do
-          fill_in 'user_email', with: user.email
+          fill_in 'registration_user_email', with: user.email
           click_submit
 
-          expect(page).to have_content 'fname can\'t be blank | lname can\'t be blank'
+          expect(page).to have_content 'First Name can\'t be blank | Last Name can\'t be blank'
           expect(page).to have_content 'Register someone for ' + event.full_title
           expect(page).to have_css('input[name="commit"]')
         end
 
         it 'with all fields is successful, which sends the user\'s info to Kindful' do
-          fill_in 'user_email', with: user.email
-          fill_in 'user_fname', with: user.fname
-          fill_in 'user_lname', with: user.lname
+          fill_in 'registration_user_email', with: user.email
+          fill_in 'registration_user_fname', with: user.fname
+          fill_in 'registration_user_lname', with: user.lname
 
           first_count = Delayed::Job.count
 
@@ -213,7 +243,7 @@ RSpec.describe 'Register for Event', type: :system do
         user.technologies << event.technology
         user.save
 
-        fill_in 'user_email', with: user.email
+        fill_in 'registration_user_email', with: user.email
         check 'registration_leader'
 
         first_count = Delayed::Job.count

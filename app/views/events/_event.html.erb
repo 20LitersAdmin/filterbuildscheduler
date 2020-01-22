@@ -1,9 +1,10 @@
+<% use_edit_link ||= false %>
 <% disabled = event.registrations_filled? && !current_user&.admin_or_leader? %>
 <div class="event <%= 'disabled' if disabled %>" id="event_<%= event.id %>">
   <% if event.you_are_attendee(@user).present? || event.you_are_leader(@user).present? %>
     <%= image_tag "registered_badge.png", size: "80x80", class: "registered-badge" %>
   <% end %>
-  <%= link_to event_path(event), class: "use-load-screen #{'prevent_default' if disabled}" do %>
+  <%= link_to (use_edit_link ? edit_event_path(event) : event_path(event)), class: "use-load-screen #{'prevent_default' if disabled}" do %>
     <div class="top-part-wrapper">
       <div>
         <span class="location">Hosted by <%= event.location.name %></span>

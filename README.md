@@ -1,7 +1,12 @@
 # README
 
 ## Things to do
-1. I created EventsController::SubtractSubsets and should write tests for it
+0. .env, secrets.yml, credentials.yml.enc <--- combine
+- .env: look for ENV.fetch
+- secrets.yml: check .gitignore; search for use of secret_key_base
+- should be using master.key && credentials.yml.enc EXCLUSIVELY, even in Heroku (by seeting )
+
+2. I created EventsController::SubtractSubsets and should write tests for it
   * Test the class (as a model)
   * Write a system test for event-based inventories
   ** The inventory gets counts (EventsController::CountPopulate)
@@ -29,10 +34,8 @@
 ## Remind myself:
 1. production backup / development restore-from production
   - `User.first.update(password: "password", password_confirmation: "password")`
-2. "Your branch is n commits behind master" - git fetch origin
-3. git remote prune origin --dry-run
-4. `Record.only_deleted.each do |record| record.really_destroy! end`
-5. `orphans = User.builders.left_outer_joins(:registrations).where(registrations: { id: nil })`
+2. `Record.only_deleted.each do |record| record.really_destroy! end`
+3. `orphans = User.builders.left_outer_joins(:registrations).where(registrations: { id: nil })`
 
 
 ## Data cleanup:

@@ -3,18 +3,16 @@
   <%= f.hidden_field :form_source, value: "anon" %>
   <%= f.hidden_field :event_id %>
   <%= f.simple_fields_for :user do |o| %>
-    <%= o.error_notification %>
-    <%= o.input :fname, label: 'First Name' %>
-    <%= o.input :lname, label: 'Last Name' %>
-    <%= o.input :email, label: 'Email' %>
-    <%= o.input :phone, label: 'Phone (optional)', required: false %>
+    <%= o.input :fname, input_html: { value: @user.fname } %>
+    <%= o.input :lname, input_html: { value: @user.lname } %>
+    <%= o.input :email, input_html: { value: @user.email } %>
+    <%= o.input :phone, required: false, input_html: { value: @user.phone } %>
     <p>Room for <%= pluralize(@event.registrations_remaining - 1, 'more guest') %></p>
     <%= f.input :guests_registered, label: 'Additional Guests (excluding you)', input_html: { min: 0, max: @event.registrations_remaining - 1 } %>
     <%= f.input :accommodations, label: 'Notes', as: :text %>
     <div>
       <h4>
-        <%= f.hidden_field :accept_waiver, value: '0' %>
-        <%= f.check_box :accept_waiver, required: true %> <strong>Accept the <a class="waiver_click" data-toggle="modal" data-target="#waiverModal"><%= f.label :accept_waiver, 'Waiver and Release' %></strong></a>
+        <%= f.check_box :accept_waiver, required: true %> <strong>Accept the <a id="waiver_click" data-toggle="modal" data-target="#waiverModal" href="#">Waiver and Release</a></strong>
       </h4>
     </div>
   <% end %>

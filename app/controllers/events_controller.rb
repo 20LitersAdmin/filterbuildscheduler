@@ -28,6 +28,8 @@ class EventsController < ApplicationController
     @leaders = @event.registrations.registered_as_leader
 
     @finder = 'edit'
+
+    @user = current_user || User.new
   end
 
   def new
@@ -298,8 +300,8 @@ class EventsController < ApplicationController
 
     replicator.tap do |r|
       r.event_id = params[:id].to_i
-      r.start_time = DateTime.parse(params[:s] + ' -0400')
-      r.end_time = DateTime.parse(params[:e] + ' -0400')
+      r.start_time = Time.parse(params[:s])
+      r.end_time = Time.parse(params[:e])
       r.frequency = params[:f]
       r.occurrences = params[:o].blank? ? 1 : params[:o].to_i
     end
