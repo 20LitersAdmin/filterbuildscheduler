@@ -12,10 +12,8 @@ class Replicator
                 :replicate_leaders,
                 :initiator
 
-  # rubocop:disable UselessAssignment
   # rubocop:disable RedundantSelf
   # rubocop:disable Metrics/CyclomaticComplexity
-  # rubocop:disable Metrics/PerceivedComplexity
 
   def initialize(*args)
     super
@@ -123,8 +121,6 @@ class Replicator
     errors.add(:replicate_leaders, :invalid, message: 'must be boolean') unless [true, false].include?(self.replicate_leaders)
   end
 
-  # rubocop:enable UselessAssignment
   # rubocop:enable RedundantSelf
   # rubocop:enable Metrics/CyclomaticComplexity
-  # rubocop:enable Metrics/PerceivedComplexity
 end
