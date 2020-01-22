@@ -89,17 +89,23 @@ class RegistrationsController < ApplicationController
   def edit
     authorize @registration
 
+    @user = @registration.user
+
     @btn_admin = params[:admin] == 'true'
   end
 
   def update
     authorize @registration
 
+    @user = @registration.user
+
     if @registration.event.registrations_filled?
       guests = registration_params[:guests_registered].present? ? registration_params[:guests_registered].to_i : 0
       new_max = @registration.event.total_registered + guests + 1
       @registration.event.update(max_registrations: new_max)
     end
+
+    @user.update(email_opt_out: user_params[:email_opt_out]) if ActiveModel::Type::Boolean.new.cast(user_params[:email_opt_out]) != @user.email_opt_out
 
     if @registration.errors.any?
       flash[:danger] = @registration.errors.map { |_k, v| v }.join(', ')
