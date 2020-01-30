@@ -1,11 +1,11 @@
 # README
 
 ## Things to do
-0. basic_stat_blocks need to shrink better on mobile (Bootstrap 3)
-```
-[][][]
-[ ][ ]
-```
+0.0 `events/:id/lead` needs phone #s and business hours vs after-hours flags for leaders
+
+0.1 Needs an email leaders function:
+`email leaders: x business hours x after-hours x both [email]`
+
 1. .env, secrets.yml, credentials.yml.enc <--- combine
 - .env: look for ENV.fetch
 - secrets.yml: check .gitignore; search for use of secret_key_base
