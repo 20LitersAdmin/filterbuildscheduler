@@ -1,7 +1,12 @@
 # README
 
 ## Things to do
-0. .env, secrets.yml, credentials.yml.enc <--- combine
+0. basic_stat_blocks need to shrink better on mobile (Bootstrap 3)
+```
+[][][]
+[ ][ ]
+```
+1. .env, secrets.yml, credentials.yml.enc <--- combine
 - .env: look for ENV.fetch
 - secrets.yml: check .gitignore; search for use of secret_key_base
 - should be using master.key && credentials.yml.enc EXCLUSIVELY, even in Heroku (by seeting )
