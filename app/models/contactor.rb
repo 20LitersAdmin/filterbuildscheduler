@@ -7,29 +7,28 @@ class Contactor
                 :available_business_hours,
                 :available_after_hours,
                 :technology_ids,
-                :emails
+                :user_ids
 
   def initialize(*args)
     super
-    self.emails = []
+    self.user_ids = []
 
     return unless technology.present? && availability.present?
-
 
     self.technology_ids = []
 
     determine_availability
     collect_technologies
-    collect_emails
+    collect_ids
   end
 
-  def collect_emails
-    self.emails = User.leaders
-                      .where(available_business_hours: available_business_hours, available_after_hours: available_after_hours)
-                      .joins(:technologies)
-                      .where(technologies: { id: technology_ids } )
-                      .map(&:email)
-                      .uniq
+  def collect_ids
+    self.user_ids = User.leaders
+                        .where(available_business_hours: available_business_hours, available_after_hours: available_after_hours)
+                        .joins(:technologies)
+                        .where(technologies: { id: technology_ids } )
+                        .map(&:id)
+                        .uniq
   end
 
   private
