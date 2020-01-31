@@ -45,11 +45,6 @@ class Technology < ApplicationRecord
     primary_component.price
   end
 
-  # delete after next release
-  def short_name_calc
-    name.partition(' ').first
-  end
-
   def short_name_w_owner
     "#{short_name} (#{owner_acronym})"
   end

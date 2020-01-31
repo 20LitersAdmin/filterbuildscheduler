@@ -79,11 +79,11 @@ class UsersController < ApplicationController
   end
 
   def leaders
-    authorize @leaders = User.leaders
-
     @contactor = Contactor.new(contactor_params)
 
-    @contact_size = @contactor.emails.size
+    authorize @leaders = @contactor.user_ids.any? ? User.leaders.where(id: @contactor.user_ids) : User.leaders
+
+    @contact_size = @leaders.size
 
     @availability = [['All hours', 0], ['Business hours', 1], ['After-hours', 2]]
     @technologies = [['All', 0]]

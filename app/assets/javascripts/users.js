@@ -17,18 +17,15 @@ function emailZeroToggle() {
   if (count > 0 ) {
     $("a#contactor_email").show();
     $("input#contactor_submit").hide();
-    $("p#contactor_zero").hide();
   } else {
     $("a#contactor_email").hide();
     $("input#contactor_submit").show();
-    $("p#contactor_zero").show();
   }
 }
 
 function emailDirtyToggle() {
   $("a#contactor_email").hide();
   $("input#contactor_submit").show();
-  $("p#contactor_zero").hide();
 }
 
 (function() {
@@ -60,13 +57,33 @@ function emailDirtyToggle() {
     emailDirtyToggle();
   });
 
+  $(document).on("click", "a#contactor_email", function(){
+    var emailInput = document.getElementById("contactor_email_list");
+
+    $("input#contactor_email_list").attr("type", "text");
+    emailInput.select();
+    emailInput.setSelectionRange(0, 99999); // for mobile devices
+
+    document.execCommand("copy");
+    $("input#contactor_email_list").attr("type", "hidden");
+
+    countCommas = (emailInput.value.match(/,/g) || []).length;
+    count = countCommas + 1;
+    lang = "Copied " + count + " emails to the clipboard.";
+
+    alert(lang);
+
+    event.preventDefault();
+    false;
+  });
+
   $(document).on("change", "select.avail-select", function() {
-    userId = parseInt($(this).attr("id"));
-    a = $(this).val();
-    url = "/users/" + userId + "/availability?a=" + a;
+    var userId = parseInt($(this).attr("id"));
+    var a = $(this).val();
+    var url = "/users/" + userId + "/availability?a=" + a;
     $.ajax({url: url}).done(function(response) {
       if (response != a) {
-        console.log('An error occured.');
+        console.log('Failed.');
       } else {
         console.log('Success!');
       }
