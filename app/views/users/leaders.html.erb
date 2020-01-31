@@ -14,12 +14,12 @@
         <%= f.input :technology, collection: @technologies, include_blank: false %>
       </div>
       <div class="col-sm-2 col-xs-6">
-        <%= mail_to current_user.email, "Email #{ pluralize(@contact_size, 'Leader') }", class: 'btn yellow inline-form-btn', bcc: @contactor.emails.join(", "), target: "_blank", id: 'contactor_email', data: { count: @contact_size } %>
-        <%= f.button :submit, 'Gather emails', class: 'btn yellow inline-form-btn', id: 'contactor_submit' %>
-        <p id="contactor_zero">No leaders meet current criteria</p>
+        <%= link_to "Copy #{ pluralize(@contact_size, 'Email') }", "#!", class: 'btn yellow inline-form-btn', id: 'contactor_email', data: { count: @contact_size } %>
+        <%= f.button :submit, 'Filter', class: 'btn yellow inline-form-btn', id: 'contactor_submit' %>
       </div>
     <% end %>
   </div>
+  <%= hidden_field_tag "contactor_email_list", @leaders.map(&:email).join(', ') %>
   <div class="row">
     <div class="col-xs-12">
       <h1>Leaders:</h1>
