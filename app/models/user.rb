@@ -41,15 +41,29 @@ class User < ApplicationRecord
   end
 
   def availability
+    # [['All hours', 0], ['Business hours', 1], ['After-hours', 2]]
     return 'Not a leader' unless is_leader?
 
-    return 'All' if available_business_hours? && available_after_hours?
+    return 'All hours' if available_business_hours? && available_after_hours?
 
     return 'Business hours' if available_business_hours? && !available_after_hours?
 
     return 'After hours' if available_after_hours? && !available_business_hours
 
     'Unknown'
+  end
+
+  def availability_code
+    # [['All hours', 0], ['Business hours', 1], ['After-hours', 2]]
+    return nil unless is_leader?
+
+    return 0 if available_business_hours? && available_after_hours?
+
+    return 1 if available_business_hours? && !available_after_hours?
+
+    return 2 if available_after_hours? && !available_business_hours
+
+    nil
   end
 
   def available_events

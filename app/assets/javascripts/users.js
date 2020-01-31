@@ -60,4 +60,17 @@ function emailDirtyToggle() {
     emailDirtyToggle();
   });
 
+  $(document).on("change", "select.avail-select", function() {
+    userId = parseInt($(this).attr("id"));
+    a = $(this).val();
+    url = "/users/" + userId + "/availability?a=" + a;
+    $.ajax({url: url}).done(function(response) {
+      if (response != a) {
+        console.log('An error occured.');
+      } else {
+        console.log('Success!');
+      }
+    });
+  });
+
 }());

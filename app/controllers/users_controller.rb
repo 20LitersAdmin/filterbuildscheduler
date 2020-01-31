@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class UsersController < ApplicationController
-  before_action :find_and_authorize_user, only: %i[show edit update delete set_leader_availability]
+  before_action :find_and_authorize_user, only: %i[show edit update delete availability]
 
   def show
     flash[:warning] = 'You haven\'t set your password yet, please do so now.' if @user.has_no_password
@@ -94,13 +94,21 @@ class UsersController < ApplicationController
     @finder = 'leaders'
     @cancelled_events = Event.only_deleted
     @closed_events = Event.closed
-
-    console
   end
 
   def availability
+    # users/:id/availability?a=[0,1,2]
+    # [['All hours', 0], ['Business hours', 1], ['After-hours', 2]]
+    case params[:a]
+    when '0'
+      @user.update(available_business_hours: true, available_after_hours: true)
+    when '1'
+      @user.update(available_business_hours: true, available_after_hours: false)
+    when '2'
+      @user.update(available_business_hours: false, available_after_hours: true)
+    end
 
-    # redirect_to leaders_path
+    render json: @user.reload.availability_code
   end
 
   private

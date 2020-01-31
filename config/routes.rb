@@ -15,7 +15,7 @@ Rails.application.routes.draw do
   get 'info', to: 'pages#info', as: 'info'
   get 'labels', to: 'counts#labels', as: 'labels'
   get 'leaders', to: 'users#leaders', as: 'leaders'
-  put 'users/:id/availability', to: 'users#availability', as: 'user_availability'
+  get 'users/:id/availability', to: 'users#availability', as: 'user_availability'
 
   resources :report, only: [:index] do
     collection do

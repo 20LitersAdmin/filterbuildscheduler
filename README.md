@@ -9,6 +9,7 @@
 0.3 NEXT PRODUCTION RELEASE:
 - `Technology.all.each { |tech| tech.update(short_name: tech.short_name_calc )}`
 - `Technology.find(5).update(short_name: 'No Filter')`
+- `User.leaders.update_all(available_after_hours: true, available_business_hours: false)`
 
 1. .env, secrets.yml, credentials.yml.enc <--- combine
 - .env: look for ENV.fetch
