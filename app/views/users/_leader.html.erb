@@ -9,7 +9,7 @@
     <%= leader.phone %>
   </td>
   <td>
-    <%= leader.availability %>
+    <%= select_tag "#{leader.id}_avail", options_for_select(@availability, leader.availability_code), class: 'avail-select'  %>
   </td>
   <td>
     <%= leader.technologies.list_worthy.map(&:short_name).join(', ') %>
