@@ -43,7 +43,7 @@ class User < ApplicationRecord
   def availability
     return 'Not a leader' unless is_leader?
 
-    return 'Always' if available_business_hours? && available_after_hours?
+    return 'All' if available_business_hours? && available_after_hours?
 
     return 'Business hours' if available_business_hours? && !available_after_hours?
 
