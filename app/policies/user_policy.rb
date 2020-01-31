@@ -18,6 +18,14 @@ class UserPolicy < ApplicationPolicy
     user&.is_admin?
   end
 
+  def leaders?
+    user&.is_admin?
+  end
+
+  def availability?
+    user&.is_admin?
+  end
+
   class Scope
     attr_reader :user, :scope
 

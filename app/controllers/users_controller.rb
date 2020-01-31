@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class UsersController < ApplicationController
-  before_action :find_and_authorize_user, only: %i[show edit update delete]
+  before_action :find_and_authorize_user, only: %i[show edit update delete availability]
 
   def show
     flash[:warning] = 'You haven\'t set your password yet, please do so now.' if @user.has_no_password
@@ -78,6 +78,39 @@ class UsersController < ApplicationController
     redirect_to users_communication_path
   end
 
+  def leaders
+    authorize @leaders = User.leaders
+
+    @contactor = Contactor.new(contactor_params)
+
+    @contact_size = @contactor.emails.size
+
+    @availability = [['All hours', 0], ['Business hours', 1], ['After-hours', 2]]
+    @technologies = [['All', 0]]
+    Technology.list_worthy.each do |tech|
+      @technologies << [tech.short_name, tech.id]
+    end
+
+    @finder = 'leaders'
+    @cancelled_events = Event.only_deleted
+    @closed_events = Event.closed
+  end
+
+  def availability
+    # users/:id/availability?a=[0,1,2]
+    # [['All hours', 0], ['Business hours', 1], ['After-hours', 2]]
+    case params[:a]
+    when '0'
+      @user.update(available_business_hours: true, available_after_hours: true)
+    when '1'
+      @user.update(available_business_hours: true, available_after_hours: false)
+    when '2'
+      @user.update(available_business_hours: false, available_after_hours: true)
+    end
+
+    render json: @user.reload.availability_code
+  end
+
   private
 
   def find_and_authorize_user
@@ -100,5 +133,12 @@ class UsersController < ApplicationController
                                  :email,
                                  :phone,
                                  :email_opt_out
+  end
+
+  def contactor_params
+    if params['contactor'].present?
+      params.require(:contactor).permit :availability,
+                                        :technology
+    end
   end
 end

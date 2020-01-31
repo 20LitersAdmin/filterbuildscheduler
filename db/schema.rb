@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_09_07_172731) do
+ActiveRecord::Schema.define(version: 2020_01_30_211729) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -278,6 +278,7 @@ ActiveRecord::Schema.define(version: 2019_09_07_172731) do
     t.integer "liters_per_day", default: 0
     t.text "comments"
     t.integer "monthly_production_rate", default: 1, null: false
+    t.string "short_name"
     t.index ["deleted_at"], name: "index_technologies_on_deleted_at"
   end
 
@@ -314,6 +315,8 @@ ActiveRecord::Schema.define(version: 2019_09_07_172731) do
     t.boolean "send_notification_emails", default: false
     t.boolean "send_inventory_emails", default: false
     t.boolean "email_opt_out", default: false
+    t.boolean "available_business_hours", default: false, null: false
+    t.boolean "available_after_hours", default: false, null: false
     t.index ["authentication_token"], name: "index_users_on_authentication_token", unique: true
     t.index ["deleted_at"], name: "index_users_on_deleted_at"
     t.index ["email"], name: "index_users_on_email", unique: true

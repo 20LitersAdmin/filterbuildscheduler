@@ -20,6 +20,10 @@
     <%= link_to "Lead a Build", lead_events_path, class: 'btn yellow use-load-screen' %>
   <% end %>
 
+  <% if current_user.is_admin? && @finder != "leaders" %>
+    <%= link_to "Contact Leaders", leaders_path, class: 'btn yellow use-load-screen' %>
+  <% end %>
+
   <% if @finder != "status" %>
     <%= link_to "Tech Status", status_inventories_path, class: "btn yellow use-load-screen"  %>
   <% end %>
