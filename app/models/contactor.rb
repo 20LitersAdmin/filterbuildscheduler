@@ -11,50 +11,44 @@ class Contactor
 
   def initialize(*args)
     super
-    check_for_errors
+    self.emails = []
 
-    unless errors.any?
-      determine_availability
-      collect_technologies
-      collect_emails
-    end
+    return unless technology.present? && availability.present?
+
+
+    self.technology_ids = []
+
+    determine_availability
+    collect_technologies
+    collect_emails
   end
 
   def collect_emails
-    User.leaders
-        .where(available_business_hours: available_business_hours, available_after_hours: available_after_hours)
-        .joins(:technologies)
-        .where(technologies: { id: technology_ids} )
-        .map(&:id)
+    self.emails = User.leaders
+                      .where(available_business_hours: available_business_hours, available_after_hours: available_after_hours)
+                      .joins(:technologies)
+                      .where(technologies: { id: technology_ids } )
+                      .map(&:email)
+                      .uniq
   end
 
   private
 
-  def check_for_errors
-    errors.add[:availability, :invalid, message: "can't be blank"] unless self.availability.present?
-    errors.add[:technology, :invalid, message: "can't be blank"] unless self.technology.present?
-  end
-
   def collect_technologies
-    if technology == '0'
-      self.technology_ids = Technology.list_worthy.map(&:id)
-    else
-      self.technology_ids = [ technology.to_i ]
+    self.technology_ids = technology == '0' ? Technology.list_worthy.map(&:id) : [technology.to_i]
   end
 
   def determine_availability
+    # availability = [['All hours', 0], ['Business hours', 1], ['After-hours', 2]]
     case availability
     when '0'
-      self.available_business_hours = true
-      self.available_after_hours = true
+      self.available_business_hours = [true, false]
+      self.available_after_hours = [true, false]
     when '1'
       self.available_business_hours = true
-      self.available_after_hours = false
-    when '2'
-      self.available_business_hours = false
-      self.available_after_hours = true
-    else
-      self.available_after_hours = false
+      self.available_after_hours = [true, false]
+    else # when '2'
+      self.available_business_hours = [true, false]
       self.available_after_hours = true
     end
   end

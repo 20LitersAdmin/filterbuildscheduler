@@ -4,7 +4,7 @@ Rails.application.routes.draw do
   root to: 'events#index'
   mount RailsAdmin::Engine => '/admin', as: 'rails_admin'
 
-  devise_for :users, controllers: { sessions: "sessions" }
+  devise_for :users, controllers: { sessions: 'sessions' }
   get 'users/:id/show', to: 'users#show', as: 'show_user'
   get 'users/:id/edit', to: 'users#edit', as: 'edit_user'
   get 'users/communication', to: 'users#communication', as: 'users_communication'
@@ -15,6 +15,7 @@ Rails.application.routes.draw do
   get 'info', to: 'pages#info', as: 'info'
   get 'labels', to: 'counts#labels', as: 'labels'
   get 'leaders', to: 'users#leaders', as: 'leaders'
+  put 'users/:id/availability', to: 'users#availability', as: 'user_availability'
 
   resources :report, only: [:index] do
     collection do

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class UsersController < ApplicationController
-  before_action :find_and_authorize_user, only: %i[show edit update delete]
+  before_action :find_and_authorize_user, only: %i[show edit update delete set_leader_availability]
 
   def show
     flash[:warning] = 'You haven\'t set your password yet, please do so now.' if @user.has_no_password
@@ -83,6 +83,8 @@ class UsersController < ApplicationController
 
     @contactor = Contactor.new(contactor_params)
 
+    @contact_size = @contactor.emails.size
+
     @availability = [['All hours', 0], ['Business hours', 1], ['After-hours', 2]]
     @technologies = [['All', 0]]
     Technology.list_worthy.each do |tech|
@@ -94,6 +96,11 @@ class UsersController < ApplicationController
     @closed_events = Event.closed
 
     console
+  end
+
+  def availability
+
+    # redirect_to leaders_path
   end
 
   private
