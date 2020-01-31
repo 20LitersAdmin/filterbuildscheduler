@@ -23,9 +23,15 @@ div.container-full {
   margin-left: 3em;
 }
 
-form .has-error {
-  color: $red !important;
-  border-color: $red !important;
+form {
+  .has-error {
+    color: $red !important;
+    border-color: $red !important;
+  }
+
+  .inline-form-btn {
+    margin-top: 25px;
+  }
 }
 
 .btn.fullwidth {
@@ -112,6 +118,7 @@ hr.bar {
     position: sticky;
     top: -1px;
     z-index: 2;
+    margin-bottom: 12px;
   }
 
   .center-align {

@@ -40,6 +40,18 @@ class User < ApplicationRecord
     is_admin? || is_leader?
   end
 
+  def availability
+    return 'Not a leader' unless is_leader?
+
+    return 'Always' if available_business_hours? && available_after_hours?
+
+    return 'Business hours' if available_business_hours? && !available_after_hours?
+
+    return 'After hours' if available_after_hours? && !available_business_hours
+
+    'Unknown'
+  end
+
   def available_events
     if admin_or_leader?
       Event.all

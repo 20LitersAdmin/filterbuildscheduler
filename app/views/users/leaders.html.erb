@@ -1,0 +1,46 @@
+<div class="container user-leaders">
+  <% if current_user&.admin_or_leader? %>
+    <%= render partial: 'shared/event_functions' %>
+  <% end %>
+  <div class="row spacer-top">
+    <%= simple_form_for @contactor, method: :get, url: leaders_path do |f| %>
+      <div class="col-sm-4">
+        <h3>Email leaders with:</h3>
+      </div>
+      <div class="col-sm-3">
+        <%= f.input :availability, collection: @availability %>
+      </div>
+      <div class="col-sm-3">
+        <%= f.input :technology, collection: @technologies %>
+      </div>
+      <div class="col-sm-2">
+        <%= f.button :submit, 'Gather emails', class: 'btn yellow inline-form-btn' %>
+      </div>
+    <% end %>
+  </div>
+  <div class="row">
+    <div class="col-xs-12">
+      <h1>Leaders:</h1>
+    </div>
+    <div class="col-xs-12">
+      <table class="datatable table table-striped table-bordered" id="leaders_tbl">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Availability</th>
+            <th>Qualified:</th>
+            <% if current_user.is_admin? %>
+              <th></th>
+            <% end %>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <%= render partial: 'leader', collection: @leaders %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

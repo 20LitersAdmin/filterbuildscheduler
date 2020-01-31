@@ -78,6 +78,24 @@ class UsersController < ApplicationController
     redirect_to users_communication_path
   end
 
+  def leaders
+    authorize @leaders = User.leaders
+
+    @contactor = Contactor.new(contactor_params)
+
+    @availability = [['All hours', 0], ['Business hours', 1], ['After-hours', 2]]
+    @technologies = [['All', 0]]
+    Technology.list_worthy.each do |tech|
+      @technologies << [tech.short_name, tech.id]
+    end
+
+    @finder = 'leaders'
+    @cancelled_events = Event.only_deleted
+    @closed_events = Event.closed
+
+    console
+  end
+
   private
 
   def find_and_authorize_user
@@ -100,5 +118,12 @@ class UsersController < ApplicationController
                                  :email,
                                  :phone,
                                  :email_opt_out
+  end
+
+  def contactor_params
+    if params['contactor'].present?
+      params.require(:contactor).permit :availability,
+                                        :technology
+    end
   end
 end
