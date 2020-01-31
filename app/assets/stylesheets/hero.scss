@@ -14,7 +14,6 @@
     font-weight: bold;
   }
   p {
-    // font-size: 1.375em;
     font-weight: normal;
     margin-bottom: 12px;
   }
@@ -30,13 +29,11 @@
 }
 
 .stats-row {
-  width: 85%;
   margin-left: auto !important;
   margin-right: auto !important;
 }
 
 .stat-block {
-  width: 20%;
   float: left;
 
   .card {
@@ -46,6 +43,7 @@
     height: 150px;
 
     h1 {
+      margin-top: 16px;
       margin-bottom: 6px;
     }
   }
@@ -58,4 +56,50 @@
 
 .custom-event-row {
   border-top: 2px solid #9bb4c8;
+}
+
+@media only screen and (max-width: 767px) {
+  .stats-row {
+    width: 98%;
+
+    .stat-block {
+      width: 33%;
+
+      &:nth-child(5), &:nth-child(6) {
+        width: 50%;
+
+        .card {
+          height: 100px;
+          padding-top: 5%;
+          padding-bottom: 5%;
+
+          h1 {
+            margin-top: 6px;
+          }
+        }
+      }
+    }
+  }
+}
+
+@media only screen and (min-width: 768px) and (max-width: 1000px) {
+  .stats-row {
+    .stat-block {
+      .card {
+        h1 {
+          font-size: 26px;
+        }
+      }
+    }
+  }
+}
+
+@media only screen and (min-width: 768px) {
+  .stats-row {
+    width: 85%;
+
+    .stat-block {
+      width: 20%;
+    }
+  }
 }

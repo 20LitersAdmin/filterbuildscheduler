@@ -1,7 +1,17 @@
 # README
 
 ## Things to do
-0. .env, secrets.yml, credentials.yml.enc <--- combine
+0.0 `events/:id/lead` needs phone #s and business hours vs after-hours flags for leaders
+
+0.1 Needs an email leaders function:
+`email leaders: x business hours x after-hours x both [email]`
+
+0.3 NEXT PRODUCTION RELEASE:
+- `Technology.all.each { |tech| tech.update(short_name: tech.short_name_calc )}`
+- `Technology.find(5).update(short_name: 'No Filter')`
+- `User.leaders.update_all(available_after_hours: true, available_business_hours: false)`
+
+1. .env, secrets.yml, credentials.yml.enc <--- combine
 - .env: look for ENV.fetch
 - secrets.yml: check .gitignore; search for use of secret_key_base
 - should be using master.key && credentials.yml.enc EXCLUSIVELY, even in Heroku (by seeting )
