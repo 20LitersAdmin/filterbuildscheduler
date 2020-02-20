@@ -1,10 +1,12 @@
 <div class="hero-img collapse in" id="collapseHero">
   <div class="row">
     <div class="col-xs-12">
-      <div class="row stats-row">
-        <h2>Our Progress through <%= human_month_year(@progress_date) %></h2>
-        <%= render partial: 'shared/basic_stat_block', collection: @stats %>
-      </div>
+      <% if @stats.any? %>
+        <div class="row stats-row">
+          <h2>Our Progress through <%= human_month_year(@progress_date) %></h2>
+          <%= render partial: 'shared/basic_stat_block', collection: @stats %>
+        </div>
+      <% end %>
     </div>
     <% unless current_user&.admin_or_leader? %>
       <div class="col-xs-12 custom-event-row">
