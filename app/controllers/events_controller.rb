@@ -14,7 +14,7 @@ class EventsController < ApplicationController
       liters_tracker = LitersTrackerClient.new
       @progress_date = liters_tracker.as_of_date
       @stats = liters_tracker.stat_ary
-    rescue
+    rescue NoMethodError
       @stats = []
     end
 
