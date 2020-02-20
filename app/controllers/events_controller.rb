@@ -10,10 +10,15 @@ class EventsController < ApplicationController
 
     @past_events = our_events.needs_report if @user&.admin_or_leader?
 
-    liters_tracker = LitersTrackerClient.new
+    begin
+      liters_tracker = LitersTrackerClient.new
+      @progress_date = liters_tracker.as_of_date
+      @stats = liters_tracker.stat_ary
+    rescue NoMethodError
+      @stats = []
+    end
 
-    @progress_date = liters_tracker.as_of_date
-    @stats = liters_tracker.stat_ary
+    console
   end
 
   def show
