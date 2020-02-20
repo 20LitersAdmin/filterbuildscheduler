@@ -17,8 +17,6 @@ class EventsController < ApplicationController
     rescue NoMethodError
       @stats = []
     end
-
-    console
   end
 
   def show
