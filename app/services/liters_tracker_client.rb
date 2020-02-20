@@ -12,6 +12,6 @@ class LitersTrackerClient
 
     @as_of_date = Date.parse response.parsed_response.pop['as_of_date']
 
-    @stat_ary = response.parsed_response.map(&:symbolize_keys)
+    @stat_ary = response.parsed_response.compact.map(&:symbolize_keys)
   end
 end
