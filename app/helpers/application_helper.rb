@@ -37,7 +37,8 @@ module ApplicationHelper
     boolean ? 'Yes' : 'No'
   end
 
-  def human_number(integer)
+  def human_number(number)
+    integer = number.class == String ? number.to_i : number
     return '-' if integer.nil? || integer.zero?
 
     number_with_delimiter(integer, delimiter: ',')
