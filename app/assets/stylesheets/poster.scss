@@ -1,0 +1,81 @@
+[data-action="poster"] {
+  // auto assume 0.25in margins??
+  width: 8in;
+  height: 10.5in;
+
+  .navbar {
+    margin-bottom: 0;
+  }
+
+  .container {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
+  .container > .row {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+  }
+
+  .footer {
+    display: none;
+  }
+}
+
+.event-poster {
+  // working dimensions: 8in x 10.4in
+  width: 100%;
+  height: 100%;
+  .poster-row {
+    width: 8in;
+    float: left;
+  }
+
+  .poster-logo-div {
+      width: 3in;
+      float: left;
+    .poster-logo {
+      width: 50%;
+    }
+  }
+  .poster-title-div {
+    width: 5in;
+    float: left;
+    text-align: center;
+  }
+  .poster-event-title-div {
+    width: 8in;
+    .event-title {
+      border: 1px solid #4a4a4a;
+      text-transform: uppercase;
+    }
+  }
+
+  img {
+    width: 94%;
+    margin: auto 0;
+  }
+
+  h3.slim {
+    margin-top: 6px;
+    margin-bottom: 3px;
+  }
+
+  .poster-third {
+    width: 33%;
+    float: left;
+    height: 388px;
+  }
+
+  .poster-half {
+    width: 50%;
+    float: left;
+  }
+
+  .poster-footer {
+    margin-top: .25in;
+  }
+}
