@@ -293,63 +293,6 @@
   }
 }
 
-// event#show styling
-
-.event-poster {
-  .poster-logo, .tech-img {
-    width: 100%;
-  }
-  .poster-title {
-    margin-top: 2em;
-    text-align: center;
-  }
-  .event-title {
-    font-size: 4em;
-    border: 2px solid #4a4a4a;
-    color: #4a4a4a;
-    text-transform: uppercase;
-    padding: 12px;
-    margin: 24px;
-  }
-  .location-row, .signup-row {
-    margin-top: 48px;
-  }
-  .signup-row {
-    text-align: center;
-    border: 2px solid #4a4a4a;
-    color: #4a4a4a;
-    margin: 12px;
-    h2 {
-      text-transform: uppercase;
-    }
-  }
-}
-
-@media (max-width: 768px) {
-  .solicit-title {
-    min-height: 18px;
-  }
-
-  .solicit-text {
-    min-height: 22px;
-    padding: 6px 18px;
-  }
-
-  .inner {
-    margin: 12px auto;
-  }
-}
-
-@media (min-width: 768px) {
-  .event-form {
-    .height-75 {
-      height: 75px;
-      .event_is_private, p {
-        margin-top: 28px;
-      }
-    }
-  }
-}
 
 @media (min-width: 1200px) {
   .solicit-title {
@@ -359,13 +302,4 @@
   .solicit-text {
     min-height: 48px;
   }
-}
-
-@media print {
-  .poster-logo {
-    width: 130px !important;
-    float: right;
-    margin-top: 18px;
-  }
-
 }
