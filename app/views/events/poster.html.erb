@@ -1,101 +1,81 @@
-<div class="container event-poster">
-  <div class="row title-row">
-    <div class="col-md-3">
+<div class="event-poster">
+  <div class="poster-row">
+    <div class="poster-logo-div">
       <%= image_tag "logo-horizontal-417-208.png", class: "poster-logo" %>
     </div>
-    <div class="col-md-9 poster-title">
-      <h2>Roll up your sleeves to solve the global water crisis.</h2>
-      <h4>Take a global problem personally and solve it for the next decade.</h4>
-    </div>
-    <div class="col-xs-12">
-      <h1 class="center-align event-title"><%= @event.title %></h1>
+    <div class="poster-title-div">
+      <h3>Roll up your sleeves to<br />solve the global water crisis.</h3>
+      <h5>Take a global problem personally and solve it for the next decade.</h5>
     </div>
   </div>
-  <div class="row technology-row">
-    <div class="col-xs-12">
-      <div class="row">
-        <% if @tech_img.present? %>
-          <div class="col-xs-4">
-        <% else %>
-          <div class="col-xs-6">
-        <% end %>
-          <h2>We're Building <%= @technology.name %>s</h2>
-          <% if @technology.family_friendly %>
-            <h4>Family-friendly! Ages 4 - 104 are welcome.</h4>
-          <% else %>
-            <h4>Grown-up build</h4>
-            <i>Ages 12+ for safety reasons</i>
-          <% end %>
-          <h4><%= @tech_blurb %></h4>
-          <h4>Lasting 10 years or more, these filters change lives. Improving health, education, and income with every glass.</h4>
-        </div>
-        <% if @tech_img.present? %>
-          <div class='col-xs-4'>
-            <img src="<%= @tech_img  %>" class="tech-img">
-          </div>
-        <% end %>
-        <% if @tech_img.present? %>
-          <div class="col-xs-4">
-        <% else %>
-          <div class="col-xs-6">
-        <% end %>
-          <h2>What to expect:</h2>
-          <ul>
-            <li>You'll receive a quick overview of the global water crisis and what we're doing about it as well as a demonstration of how to build filters.</li>
-            <li>Come late or leave early as you need to</li>
-            <li>Gloves and tools will be provided</li>
-            <li>Childcare is not provided, <%= @child_statement_email %></li>
-          </ul>
-          <h2>What to bring:</h2>
-          <ul>
-            <li>A water bottle is a good idea</li>
-            <li>Comfortable, close-toed shoes</li>
-            <li>A desire to help the 383 million people without access to clean water</li>
-          </ul>
-        </div>
-      </div>
+  <div class="poster-row">
+    <div class="poster-event-title-div">
+      <h1 class="center-align event-title">
+        <%= @event.title %>
+      </h1>
     </div>
   </div>
-  <div class="row location-row">
-    <% if @location_img.present? %>
-      <div class="col-xs-6">
-    <% else %>
-      <div class="col-xs-12">
-    <% end %>
-      <h2>You Should Come.</h2>
+
+  <div class="poster-row">
+    <div class="poster-third">
+      <h2>We're Building <%= @technology.name %>s</h2>
+      <% if @technology.family_friendly %>
+        <h4>Family-friendly! Ages 4 - 104 are welcome.</h4>
+      <% else %>
+        <h4>Grown-up build</h4>
+        <i>Ages 12+ for safety reasons</i>
+      <% end %>
+      <h4><%= @tech_blurb %></h4>
+      <h4>Lasting 10 years or more, these filters change lives. Improving health, education, and income with every glass.</h4>
+    </div>
+
+    <div class="poster-third">
+      <img src="<%= @tech_img  %>" class="tech-img">
+    </div>
+
+    <div class="poster-third">
+      <h2>What to expect:</h2>
+      <ul>
+        <li>Info on the global water crisis</li>
+        <li>Hands-on training</li>
+        <li>Casual, social environment</li>
+        <li>Gloves and tools provided</li>
+        <li>Childcare is not provided, <%= @child_statement_email %></li>
+      </ul>
+      <h2>What to bring:</h2>
+      <ul>
+        <li>A water bottle is a good idea</li>
+        <li>Comfortable, close-toed shoes</li>
+        <li>A desire to help the 663 million people without access to clean water</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="poster-row">
+    <div class="poster-half">
       <h3><%= @event.format_time_range %></h3>
-      <h4><%= @event.location.name %></h4>
-      <h4><%= @event.location.address1 %></h4>
-      <% if @event.location.address2 %>
-        <div><%= @event.location.address2 %></div>
-      <% end %>
-      <div><%= @event.location.one_liner %></div>
+      <h3 class="slim"><%= @event.location.name %></h3>
+      <h5><%= @event.location.address %></h5>
+      <h5><%= @event.location.one_liner %></h5>
 
-      <% if @event.location.instructions %>
-        <div><%= @event.location.instructions %></div>
-      <% end %>
-
-      <% if @event.description.present? %>
-        <h4>Additional Event Details</h3>
-        <div><%= @event.description %></div>
+      <h3>You in? Ready to build?</h3>
+      <% if @event.is_private? %>
+        <% if @event.contact_name.present? %>
+          <h4>Talk to <%= @event.contact_name %></h4>
+          <h4><%= @event.contact_email %></h4>
+          <h4>Sign up at <%= event_url(@event) %></h4>
+        <% end %>
+      <% else %>
+        <h4>Sign up at <%= event_url(@event) %></h4>
       <% end %>
     </div>
-    <% if @location_img.present? %>
-      <div class='col-xs-6'>
-        <img src="<%= @location_img  %>" class="location-img">
-      </div>
-    <% end %>
-  </div>
-  <div class="row signup-row">
-    <h2>You in? Ready to build?</h2>
-    <% if @event.is_private? %>
-      <% if @event.contact_name.present? %>
-        <h4>Talk to <%= @event.contact_name %></h4>
-        <h4><%= @event.contact_email %></h4>
-      <% end %>
-    <% else %>
-      <h3>Visit https://make.20liters.org</h3>
-    <% end %>
+
+    <div class="poster-half">
+      <img src="<%= @location_img  %>" class="location-img">
+    </div>
   </div>
 
+  <div class="poster-row center-align poster-footer">
+    20 Liters is a 501(c)3 non profit corporation, EIN 27-3378656&nbsp;&nbsp;|&nbsp;&nbsp;20liters.org&nbsp;&nbsp;|&nbsp;&nbsp;616.528.0314
+  </div>
 </div>

@@ -14,4 +14,8 @@ class Location < ApplicationRecord
   def addr_one_liner
     "#{address1}, #{city}, #{state} #{zip}"
   end
+
+  def address
+    address2.present? ? "#{address1}, #{address2}" : address1
+  end
 end
