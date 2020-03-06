@@ -2,6 +2,15 @@
 <% parts_per = parts_per_float == parts_per_float.to_i ? parts_per_float.to_i : parts_per_float %>
 <% ppq = defined?(component) && !@ignore_component_counts ? (parts_per * @quantity) - component.available : parts_per * @quantity %>
 <% ppq = 0 if ppq < 0 %>
+<% need = ppq == ppq.to_i ? ppq.to_i : ppq %>
+<% per_box = part.quantity_per_box %>
+<% if !per_box.nil? && per_box <= 1 %>
+  <% need_boxes = 0 %>
+  <% need_loose = need %>
+<% else %>
+  <% need_boxes = (need / per_box).round(half: :down) %>
+  <% need_loose = need - (need_boxes * per_box) %>
+<% end %>
 <tr>
   <% if defined?(component) %>
     <td></td>
@@ -16,6 +25,11 @@
     <td colspan="2">
   <% end %>
       <%= "#{part.name}" %>
+    <% if !per_box.nil? && per_box > 1 %>
+      <span style="float: right;">
+        <%= "(#{human_number per_box} per box)" %>
+      </span>
+    <% end %>
     <% if part.made_from_materials? && part.materials.any? %>
       <span style="font-style: italic;">
         <%= "(made from #{part.materials.first.name})" %>
@@ -23,17 +37,24 @@
     <% end %>
   </td>
   <td style="text-align: right">
-    <%= number_with_delimiter(parts_per, delimiter: ',') %>
+    <%= human_number parts_per %>
   </td>
   <% if part.available < ppq %>
     <td style="text-align: right; color: red; font-weight: bolder; border: solid 2px red;">
   <% else %>
     <td style="text-align: right">
   <% end %>
-    <%= number_with_delimiter(part.available, delimiter: ',') %>
+    <%= human_number part.available %>
   </td>
   <td style="text-align: right">
-    <%= number_with_delimiter(ppq == ppq.to_i ? ppq.to_i : ppq, delimiter: ',') %>
+    <%= human_number need %>
   </td>
+  <td style="text-align: right">
+    <%= human_number need_boxes %>
+  </td>
+  <td style="text-align: right">
+    <%= human_number need_loose %>
+  </td>
+  <td></td>
   <td></td>
 </tr>
