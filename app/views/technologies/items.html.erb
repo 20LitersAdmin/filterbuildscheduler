@@ -23,7 +23,10 @@
         <colgroup>
           <col style="width: 2%;">
           <col style="width: 2%;">
-          <col style="width: 68%;">
+          <col style="width: 47%;">
+          <col style="width: 7%;">
+          <col style="width: 7%;">
+          <col style="width: 7%;">
           <col style="width: 7%;">
           <col style="width: 7%;">
           <col style="width: 7%;">
@@ -36,7 +39,10 @@
             <th>#/Tech:</th>
             <th>avail.</th>
             <th>need</th>
-            <th>actual</th>
+            <th>boxes</th>
+            <th>loose</th>
+            <th>boxes</th>
+            <th>loose</th>
           </tr>
           <%= render partial: "part", collection: @loose_parts.order(:name) %>
           <tr>
@@ -44,7 +50,10 @@
             <th>#/Tech:</th>
             <th>avail.</th>
             <th>need</th>
-            <th>actual</th>
+            <th>boxes</th>
+            <th>loose</th>
+            <th>boxes</th>
+            <th>loose</th>
           </tr>
           <%= render partial: "material", collection: @technology.materials.order(:name) %>
         </tbody>

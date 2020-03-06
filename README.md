@@ -1,8 +1,6 @@
 # README
 
 ## Things to do
-0. POSTER is not fitting on 1 page
-
 1. .env, secrets.yml, credentials.yml.enc <--- combine
 - .env: look for ENV.fetch
 - secrets.yml: check .gitignore; search for use of secret_key_base
