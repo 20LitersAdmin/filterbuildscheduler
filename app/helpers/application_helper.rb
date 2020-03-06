@@ -30,7 +30,7 @@ module ApplicationHelper
   end
 
   def human_float(float, precision = 2)
-    float.round(precision)
+    number_with_delimiter(float.round(precision), delimiter: ',')
   end
 
   def human_boolean(boolean)
