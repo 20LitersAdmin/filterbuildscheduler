@@ -15,12 +15,20 @@
   <% if defined?(component) %>
     <td></td>
     <td>
-      <%= part.uid %>
+      <% if current_user.is_admin? %>
+        <%= link_to part.uid, rails_admin.edit_path(model_name: part.model_name, id: part.id), target: "_blank"  %>
+      <% else %>
+        <%= part.uid %>
+      <% end %>
     </td>
     <td>
   <% else %>
     <td>
-      <%= part.uid %>
+      <% if current_user.is_admin? %>
+        <%= link_to part.uid, rails_admin.edit_path(model_name: part.model_name, id: part.id), target: "_blank"  %>
+      <% else %>
+        <%= part.uid %>
+      <% end %>
     </td>
     <td colspan="2">
   <% end %>

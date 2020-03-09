@@ -10,7 +10,11 @@
 <% end %>
 <tr>
   <td>
-    <%= material.uid %>
+    <% if current_user.is_admin? %>
+      <%= link_to material.uid, rails_admin.edit_path(model_name: material.model_name, id: material.id), target: "_blank"  %>
+    <% else %>
+      <%= material.uid %>
+    <% end %>
   </td>
   <td colspan="2">
     <%= "#{material.name}" %>
