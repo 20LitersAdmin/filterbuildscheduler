@@ -20,7 +20,11 @@
 </tr>
 <tr>
   <td>
-    <%= component.uid %>
+    <% if current_user.is_admin? %>
+      <%= link_to component.uid, rails_admin.edit_path(model_name: component.model_name, id: component.id), target: "_blank"  %>
+    <% else %>
+      <%= component.uid %>
+    <% end %>
   </td>
   <td colspan="2">
     <%= component.name %>
