@@ -12,14 +12,18 @@ class RegistrationReminderJob < ApplicationJob
     puts '-+ Creating registration reminders'
     events = Event.where(reminder_sent_at: nil).where('start_time > ? and start_time < ?', Time.zone.now + 1.days, Time.zone.now + 2.days)
 
+    # maybe an if events.any? / else ??
+
     events.each do |e|
+      # maybe these need to switch to .deliver_now
+      # or try EventMailer.delay.remind_admins(e) ??
       EventMailer.remind_admins(e).deliver_later
       puts '-+-+ Admin reminder emails scheduled'
       e.registrations.where(reminder_sent_at: nil).each do |r|
         RegistrationMailer.reminder(r).deliver_later
+        # vs. RegistrationMailer.delay.created(r) ??
         r.update(reminder_sent_at: Time.zone.now)
       end
-      e.update(reminder_sent_at: Time.zone.now)
       puts '-+-+ ' + e.count.to_s + ' event reminder email scheduled for admins'
       puts '-+-+ ' + e.registrations.count.to_s + ' registration reminder email(s) scheduled'
 
