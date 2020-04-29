@@ -9,6 +9,16 @@ class ExtrapolateMaterialPart < ApplicationRecord
   validates :material_id, :part_id, :parts_per_material, presence: true
   validates :parts_per_material, numericality: { greater_than: 0 }
 
+  scope :active, -> { where(deleted_at: nil) }
+
+  def part
+    Part.with_deleted.find(part_id)
+  end
+
+  def material
+    Material.with_deleted.find(material_id)
+  end
+
   def material_price
     material.price
   end

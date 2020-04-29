@@ -9,6 +9,16 @@ class ExtrapolateTechnologyComponent < ApplicationRecord
   validates :component_id, :technology_id, :components_per_technology, presence: true
   validates :components_per_technology, numericality: { greater_than: 0 }
 
+  scope :active, -> { where(deleted_at: nil) }
+
+  def component
+    Component.with_deleted.find(component_id)
+  end
+
+  def technology
+    Technology.with_deleted.find(technology_id)
+  end
+
   def component_price
     component.price
   end
