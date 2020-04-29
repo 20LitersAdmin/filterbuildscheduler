@@ -52,10 +52,10 @@ RSpec.configure do |config|
   # Rspec/retry settings
   # show retry status in spec process
   config.verbose_retry = true
-  # Try twice (retry once)
-  config.default_retry_count = 2
+  # show exception that triggers a retry if verbose_retry is set to true
+  config.display_try_failure_messages = true
   # Only retry when Selenium raises Net::ReadTimeout
-  config.exceptions_to_retry = [Net::ReadTimeout]
+  # config.exceptions_to_retry = [Net::ReadTimeout]
 
   config.expect_with :rspec do |expectations|
     expectations.syntax = [:should, :expect]
@@ -72,6 +72,10 @@ RSpec.configure do |config|
   config.before(:each, type: :system, js: true) do
     driven_by :selenium_chrome_headless
     Capybara.page.driver.browser.manage.window.resize_to(1920, 2024)
+  end
+
+  config.around :each, :js do |ex|
+    ex.run_with_retry retry: 3
   end
 end
 
