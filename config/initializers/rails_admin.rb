@@ -158,7 +158,9 @@ RailsAdmin.config do |config|
         sortable :id
       end
       field :name
-      field :supplier
+      field :supplier do
+        formatted_value { bindings[:object].name }
+      end
       field :cprice, :money do
         label 'Price'
         formatted_value { bindings[:object].cprice }
@@ -182,7 +184,9 @@ RailsAdmin.config do |config|
         sortable :id
       end
       field :name
-      field :supplier
+      field :supplier do
+        formatted_value { bindings[:object].name }
+      end
       field :price, :money
       field :min_order
       field :weeks_to_deliver
@@ -209,6 +213,7 @@ RailsAdmin.config do |config|
     label_plural 'Components <-> Parts'
 
     list do
+      scopes %i[active only_deleted]
       field :component
       field :part
       field :parts_per_component
@@ -227,6 +232,7 @@ RailsAdmin.config do |config|
     label_plural 'Materials <-> Parts'
 
     list do
+      scopes %i[active only_deleted]
       field :material
       field :part
       field :parts_per_material
@@ -245,6 +251,7 @@ RailsAdmin.config do |config|
     label_plural 'Technologies <-> Components'
 
     list do
+      scopes %i[active only_deleted]
       field :component
       field :technology
       field :components_per_technology
@@ -264,6 +271,7 @@ RailsAdmin.config do |config|
     label_plural 'Technologies <-> Parts'
 
     list do
+      scopes %i[active only_deleted]
       field :part
       field :technology
       field :parts_per_technology
@@ -283,6 +291,7 @@ RailsAdmin.config do |config|
     label_plural 'Technologies <-> Materials'
 
     list do
+      scopes %i[active only_deleted]
       field :material
       field :technology
       field :materials_per_technology

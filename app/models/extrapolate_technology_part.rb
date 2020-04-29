@@ -9,6 +9,16 @@ class ExtrapolateTechnologyPart < ApplicationRecord
   validates :technology_id, :part_id, :parts_per_technology, presence: true
   validates :parts_per_technology, numericality: { greater_than: 0 }
 
+  scope :active, -> { where(deleted_at: nil) }
+
+  def part
+    Part.with_deleted.find(part_id)
+  end
+
+  def technology
+    Technology.with_deleted.find(technology_id)
+  end
+
   def part_price
     if part.made_from_materials? && part.price_cents == 0
       ary = []

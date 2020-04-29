@@ -10,6 +10,16 @@ class ExtrapolateTechnologyMaterial < ApplicationRecord
   validates_numericality_of :materials_per_technology
   validates :materials_per_technology, numericality: { greater_than: 0 }
 
+  scope :active, -> { where(deleted_at: nil) }
+
+  def technology
+    Technology.with_deleted.find(technology_id)
+  end
+
+  def material
+    Material.with_deleted.find(material_id)
+  end
+
   def material_price
     material.price
   end
