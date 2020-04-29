@@ -12,10 +12,14 @@ class ExtrapolateComponentPart < ApplicationRecord
   scope :active, -> { where(deleted_at: nil) }
 
   def component
+    return unless component_id.present?
+
     Component.with_deleted.find(component_id)
   end
 
   def part
+    return unless part_id.present?
+
     Part.with_deleted.find(part_id)
   end
 

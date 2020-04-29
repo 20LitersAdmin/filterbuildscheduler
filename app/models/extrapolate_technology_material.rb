@@ -13,10 +13,14 @@ class ExtrapolateTechnologyMaterial < ApplicationRecord
   scope :active, -> { where(deleted_at: nil) }
 
   def technology
+    return unless technology_id.present?
+
     Technology.with_deleted.find(technology_id)
   end
 
   def material
+    return unless material_id.present?
+
     Material.with_deleted.find(material_id)
   end
 

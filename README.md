@@ -1,5 +1,10 @@
 # README
 
+## Next deploy:
+1. `production run rails db:migrate`
+2. `production console / CleanupService.clean_inventories!`
+3. `Count.only_deleted.each { |c| c.really_destroy! }` <-- really destroy these
+
 ## Things to do
 1. .env, secrets.yml, credentials.yml.enc <--- combine
 - .env: look for ENV.fetch

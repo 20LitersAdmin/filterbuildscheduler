@@ -12,10 +12,14 @@ class ExtrapolateMaterialPart < ApplicationRecord
   scope :active, -> { where(deleted_at: nil) }
 
   def part
+    return unless part_id.present?
+
     Part.with_deleted.find(part_id)
   end
 
   def material
+    return unless material_id.present?
+
     Material.with_deleted.find(material_id)
   end
 
