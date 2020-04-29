@@ -16,6 +16,7 @@ class Registration < ApplicationRecord
   scope :attended, -> { where(attended: true) }
   scope :leaders, -> { where(leader: true) }
   scope :builders, -> { where.not(leader: true) }
+  scope :pre_reminders, -> { where(reminder_sent_at: nil) }
 
   def form_source
     # this allows for a form field that handles page redirects based on values: "admin", "self", "anon"

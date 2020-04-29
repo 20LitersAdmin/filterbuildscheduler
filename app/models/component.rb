@@ -46,7 +46,7 @@ class Component < ApplicationRecord
   def price
     ary = []
     extrapolate_component_parts.each do |ecp|
-      next if ecp.part.nil?
+      next if ecp&.part.nil?
 
       if ecp.part.made_from_materials? && ecp.part.price_cents.zero?
         emp = ecp.part.extrapolate_material_parts.first

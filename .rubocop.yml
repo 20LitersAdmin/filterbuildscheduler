@@ -1,5 +1,19 @@
-Metrics/LineLength:
+AllCops:
+  Exclude:
+    - db/schema.rb
+  EnabledByDefault: true
+Bundler/GemComment:
   Enabled: false
+Layout/LineLength:
+  Enabled: false
+Layout/FirstHashElementIndentation:
+  Enabled: false
+Lint/AmbiguousBlockAssociation:
+  Enabled: false
+  rubocop: warning
+Lint/NumberConversion:
+  Enabled: false
+  rubocop: warning
 Metrics/MethodLength:
   Enabled: false
 Metrics/BlockLength:
@@ -10,23 +24,28 @@ Metrics/ClassLength:
   Enabled: false
 Style/ClassAndModuleChildren:
   Enabled: false
+Metrics/CyclomaticComplexity:
+  Enabled: false
+Metrics/PerceivedComplexity:
+  Enabled: false
+Naming/PredicateName:
+  Enabled: false
 Style/Documentation:
   Enabled: false
 Style/SymbolArray:
   Enabled: true
   Exclude:
     - db/migrate/*
-Style/BracesAroundHashParameters:
-  Enabled: false
 Style/DoubleNegation:
   Enabled: false
 Style/MixinUsage:
   Exclude:
     - spec/*
-Layout/IndentFirstHashElement:
+Style/MissingElse:
   Enabled: false
-Lint/AmbiguousBlockAssociation:
+Style/MethodCallWithArgsParentheses:
   Enabled: false
-AllCops:
-  Exclude:
-    - db/schema.rb
+Style/DocumentationMethod:
+  Enabled: false
+Style/Copyright:
+  Enabled: false

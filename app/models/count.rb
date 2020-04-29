@@ -17,8 +17,6 @@ class Count < ApplicationRecord
   scope :not_components, -> { where(component_id: nil) }
   scope :changed, -> { where.not(user_id: nil) }
 
-  # scope :active, -> { where(deleted_at: nil) }
-
   def item
     if part_id.present?
       Part.with_deleted.find(part_id)

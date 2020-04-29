@@ -52,7 +52,7 @@ class Part < ApplicationRecord
   def picture
     begin
       ActionController::Base.helpers.asset_path('uids/' + uid + '.jpg')
-    rescue => error
+    rescue => e
       'http://placekitten.com/140/140'
     end
   end

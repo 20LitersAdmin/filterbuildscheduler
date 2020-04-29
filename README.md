@@ -1,5 +1,10 @@
 # README
 
+## Next deploy:
+1. `production run rails db:migrate`
+2. `production console / CleanupService.clean_inventories!`
+3. `Count.only_deleted.each { |c| c.really_destroy! }` <-- really destroy these
+
 ## Things to do
 1. .env, secrets.yml, credentials.yml.enc <--- combine
 - .env: look for ENV.fetch
@@ -26,14 +31,14 @@
 ## HMMM
 1. `weeks_to_out` and `per_technology` rely on lots of `.first`s which is an issue for items that `have_many` technologies
 - Part#technology
-- Material#technology
+- Material#technologydev
 - Component#technologies
 2. Tech Status sux big ones and needs some work (the 4-level deep problem)
 3. EventsController::SubtractSubsets.subtract! only goes 1 level deep.
 
 ## Remind myself:
 1. production backup / development restore-from production
-  - `User.first.update(password: "password", password_confirmation: "password")`
+  - `User.first.reset_password("password", "password")`
 2. `Record.only_deleted.each do |record| record.really_destroy! end`
 3. `orphans = User.builders.left_outer_joins(:registrations).where(registrations: { id: nil })`
 

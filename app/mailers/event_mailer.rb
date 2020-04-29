@@ -7,7 +7,7 @@ class EventMailer < ApplicationMailer
   def created(event, user)
     @event = event
     @user = user
-    @recipients = User.where(send_notification_emails: true).map(&:email)
+    @recipients = User.notify.map(&:email)
     @location = event.location
     @summary = '[20 Liters] ' + event.title + ': ' + event.technology.name
     @description = event.privacy_humanize
@@ -36,7 +36,7 @@ class EventMailer < ApplicationMailer
 
   def remind_admins(event)
     @event = event
-    @recipients = User.where(send_notification_emails: true).map { |r| r.email }
+    @recipients = User.notify.map(&:email)
     @location = event.location
     if @event.leaders_registered.count == 1
       @leader_count_text = 'The leader is:'
@@ -57,11 +57,12 @@ class EventMailer < ApplicationMailer
     @location = Location.with_deleted.find(@event.location_id)
     @location_was = Location.with_deleted.find(@event.location_id_was)
 
-    @recipients = User.where(send_notification_emails: true).map(&:email)
+    @recipients = User.notify.map(&:email)
     @summary = '[20 Liters] ' + @event.title + ': ' + @technology.name
     @description = @event.privacy_humanize
     @attachment_title = '20Liters_filterbuild_' + @event.start_time.strftime("%Y%m%dT%H%M") + '.ical'
 
+    # These instance variables are set from line 54 `instance_variable_set`
     @registered_users_notified = true if @start_time || @end_time || @location_id || @technology_id
 
     cal = Icalendar::Calendar.new
@@ -82,7 +83,7 @@ class EventMailer < ApplicationMailer
   def cancelled(event_id, current_user)
     @event = Event.with_deleted.find(event_id)
     @user = current_user
-    @recipients = User.where(send_notification_emails: true).map { |r| r.email }
+    @recipients = User.notify.map(&:email)
     @location = Location.with_deleted.find(@event.location_id)
     @registrations = @event.registrations.with_deleted
 
@@ -109,15 +110,15 @@ class EventMailer < ApplicationMailer
     @subject = '[20 Liters] ' + subject
     @message = message
     @sender = sender
-    @admins = User.where(is_admin: true).map(&:email)
+    @recipients = User.notify.map(&:email)
 
-    mail(to: @admins, subject: '[20 Liters] A Leader sent a message')
+    mail(to: @recipients, subject: '[20 Liters] A Leader sent a message')
   end
 
   def replicated(events, initiator)
     @events = events
     @user = initiator
-    @recipients = User.where(send_notification_emails: true).map(&:email)
+    @recipients = User.notify.map(&:email)
     @subject = "[20 Liters] #{events.size} #{events.size > 1 ? 'events' : 'event'} were created as replicas"
     mail(to: @recipients, subject: @subject)
   end
