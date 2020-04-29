@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class ExtrapolateComponentPart < ApplicationRecord
+  acts_as_paranoid
+
   belongs_to :component, inverse_of: :extrapolate_component_parts
   belongs_to :part, inverse_of: :extrapolate_component_parts
 

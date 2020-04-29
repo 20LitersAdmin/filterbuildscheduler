@@ -221,6 +221,10 @@ class Event < ApplicationRecord
     technology_results * technology.liters_per_day
   end
 
+  def technology
+    Technology.with_deleted.find(technology_id)
+  end
+
   def technology_results
     return 0 if incomplete? || !technology.primary_component.present?
 
