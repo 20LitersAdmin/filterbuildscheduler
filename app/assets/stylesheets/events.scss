@@ -168,7 +168,6 @@
     }
     .bar {
       background-color: $grey;
-
       color: white;
       padding: 0.8em 0.5em 0.8em 0.5em ;
       &.yellow {
@@ -257,8 +256,11 @@
     .solicit-button {
       margin-top: 18px;
       margin-bottom: 25px;
+      max-width: 100%;
       a {
         color: #4a4a4a;
+        max-width: 100%;
+        white-space: pre-wrap;
         &:hover {
           text-decoration: none;
           color: #4a4a4a;
@@ -284,7 +286,6 @@
     line-height: 18px;
     margin-top: 14px;
     margin-bottom: 6px;
-    min-height: 72px;
     hyphens: auto;
   }
 
@@ -294,12 +295,52 @@
 }
 
 
-@media (min-width: 1200px) {
-  .solicit-title {
-    min-height: 18px;
+@media (max-width: 768px) {
+  .event-container .solicit-div .solicit-text {
+    height: 54px;
   }
+}
 
-  .solicit-text {
-    min-height: 48px;
+@media (min-width: 769px) and (max-width: 991px) {
+  .event-container .solicit-div .solicit-text {
+    height: 54px;
   }
+}
+
+@media (min-width: 992px) and (max-width: 1199px) {
+  .event-container .solicit-div .solicit-text {
+    height: 100px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .event-container .solicit-div .solicit-text {
+    height: 54px;
+  }
+}
+
+// Events#index#_solicit:
+// xs screen: 2-column
+// sm screen: 3-column
+// lg screens+: 5-column
+.col-5ths {
+    position: relative;
+    min-height: 1px;
+    padding-right: 15px;
+    padding-left: 15px;
+    margin: 6px 0;
+    width: 50%;
+    float: left;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+    .col-5ths {
+        width: 33.333%;
+    }
+}
+
+@media (min-width: 992px) {
+    .col-5ths {
+        width: 20%;
+    }
 }

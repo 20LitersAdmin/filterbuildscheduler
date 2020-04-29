@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_01_30_211729) do
+ActiveRecord::Schema.define(version: 2020_04_29_194016) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -71,7 +71,7 @@ ActiveRecord::Schema.define(version: 2020_01_30_211729) do
     t.datetime "start_time", null: false
     t.datetime "end_time", null: false
     t.string "title", null: false
-    t.string "description"
+    t.text "description"
     t.integer "min_registrations"
     t.integer "max_registrations"
     t.integer "min_leaders"
@@ -97,6 +97,7 @@ ActiveRecord::Schema.define(version: 2020_01_30_211729) do
     t.bigint "component_id", null: false
     t.bigint "part_id", null: false
     t.decimal "parts_per_component", precision: 8, scale: 4, default: "1.0", null: false
+    t.datetime "deleted_at"
     t.index ["component_id", "part_id"], name: "by_component_and_part", unique: true
     t.index ["part_id", "component_id"], name: "by_part_and_component", unique: true
   end
@@ -105,6 +106,7 @@ ActiveRecord::Schema.define(version: 2020_01_30_211729) do
     t.bigint "material_id", null: false
     t.bigint "part_id", null: false
     t.decimal "parts_per_material", precision: 8, scale: 4, default: "1.0", null: false
+    t.datetime "deleted_at"
     t.index ["material_id", "part_id"], name: "by_material_and_part", unique: true
     t.index ["part_id", "material_id"], name: "by_part_and_material", unique: true
   end
@@ -114,6 +116,7 @@ ActiveRecord::Schema.define(version: 2020_01_30_211729) do
     t.bigint "technology_id", null: false
     t.decimal "components_per_technology", precision: 8, scale: 4, default: "1.0", null: false
     t.boolean "required", default: false
+    t.datetime "deleted_at"
     t.index ["component_id", "technology_id"], name: "by_component_and_technology", unique: true
     t.index ["technology_id", "component_id"], name: "by_technology_and_component", unique: true
   end
@@ -123,6 +126,7 @@ ActiveRecord::Schema.define(version: 2020_01_30_211729) do
     t.bigint "material_id"
     t.decimal "materials_per_technology", precision: 8, scale: 4, default: "1.0", null: false
     t.boolean "required", default: false, null: false
+    t.datetime "deleted_at"
     t.index ["material_id", "technology_id"], name: "index_materials_technologies_on_material"
     t.index ["material_id"], name: "index_extrapolate_technology_materials_on_material_id"
     t.index ["technology_id", "material_id"], name: "index_materials_technologies_on_technology"
@@ -134,6 +138,7 @@ ActiveRecord::Schema.define(version: 2020_01_30_211729) do
     t.bigint "technology_id", null: false
     t.decimal "parts_per_technology", precision: 8, scale: 4, default: "1.0", null: false
     t.boolean "required", default: false
+    t.datetime "deleted_at"
     t.index ["part_id", "technology_id"], name: "by_part_and_technology", unique: true
     t.index ["technology_id", "part_id"], name: "by_technology_and_part", unique: true
   end
@@ -162,7 +167,7 @@ ActiveRecord::Schema.define(version: 2020_01_30_211729) do
     t.string "zip"
     t.string "map_url"
     t.string "photo_url"
-    t.string "instructions"
+    t.text "instructions"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.datetime "deleted_at"
@@ -229,7 +234,7 @@ ActiveRecord::Schema.define(version: 2020_01_30_211729) do
     t.boolean "leader", default: false
     t.integer "guests_registered", default: 0
     t.integer "guests_attended", default: 0
-    t.string "accommodations", default: ""
+    t.text "accommodations", default: ""
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.datetime "deleted_at"
@@ -261,7 +266,7 @@ ActiveRecord::Schema.define(version: 2020_01_30_211729) do
 
   create_table "technologies", force: :cascade do |t|
     t.string "name", null: false
-    t.string "description"
+    t.text "description"
     t.integer "ideal_build_length"
     t.integer "ideal_group_size"
     t.integer "ideal_leaders"

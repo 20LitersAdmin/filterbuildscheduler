@@ -1,8 +1,8 @@
-<div class="inventory col-sm-3">
+<div class="inventory col-sm-4 col-md-3">
   <h4><%= inventory.name %></h4>
   <p><%= inventory.count_summary %></p>
   <p>
-    <strong><%= if inventory.completed_at.present? then "FINALIZED" end %></strong> &nbsp;
+    <strong><%= if inventory.completed_at.present? then 'FINALIZED' end %></strong> &nbsp;
   </p>
   <%= link_to "View", inventory_path(inventory), class: "btn yellow use-load-screen" %>
   <% if current_user&.is_admin? %>

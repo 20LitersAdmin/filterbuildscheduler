@@ -5,16 +5,16 @@ class DeviseMailer < Devise::Mailer
   include Devise::Controllers::UrlHelpers
   default template_path: 'users/mailer'
   layout 'mailer'
-  default from: "filterbuilds@20liters.org"
+  default from: 'filterbuilds@20liters.org'
 
-  def password_change(user, opts={})
+  def password_change(user, _opts = {})
     @user = user
-    mail(to: @user.email, subject: "[20 Liters] Your password was changed" )
+    mail(to: @user.email, subject: '[20 Liters] Your password was changed' )
   end
 
-  def reset_password_instructions(user, token, opts={})
+  def reset_password_instructions(user, token, _opts = {})
     @user = user
     @token = token
-    mail(to: @user.email, subject: "[20 Liters] Reset your password" )
+    mail(to: @user.email, subject: '[20 Liters] Reset your password' )
   end
 end

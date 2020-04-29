@@ -9,10 +9,10 @@ class ApplicationController < ActionController::Base
   before_action :configure_permitted_parameters, if: :devise_controller?
 
   def waiver
-    render partial: 'users/user_waiver_form', locals: {modal: false}
+    render partial: 'users/user_waiver_form', locals: { modal: false }
   end
 
   def configure_permitted_parameters
-    devise_parameter_sanitizer.permit(:sign_up, keys: [:fname, :lname])
+    devise_parameter_sanitizer.permit(:sign_up, keys: %i[fname lname])
   end
 end
