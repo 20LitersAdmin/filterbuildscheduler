@@ -16,11 +16,12 @@ class CleanupService
 
   def self.clean_events_and_users!
     ActiveRecord::Base.logger.silence do
-      soft_delete_builds
-      soft_delete_orphans
+      # soft_delete_builds
+      # soft_delete_orphans
       # reset_non_builders
       # reset_builders
-      puts 'Done!'
+      # puts 'Done!'
+      puts 'Yeah, you don\'t really wanna do that.'
     end
   end
 

@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class ExtrapolateTechnologyPart < ApplicationRecord
+  acts_as_paranoid
+
   belongs_to :technology, inverse_of: :extrapolate_technology_parts
   belongs_to :part, inverse_of: :extrapolate_technology_parts
 
