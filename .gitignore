@@ -32,8 +32,6 @@ spec/examples.txt
 app/.DS_Store
 app/controllers/.DS_Store
 
-bin
-
 public/capybara.html
 
 # Ignore master key for decrypting credentials and more.

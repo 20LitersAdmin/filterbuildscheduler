@@ -35,7 +35,7 @@ class EventsController < ApplicationController
 
     @leaders = @event.registrations.registered_as_leader
 
-    @finder = 'edit'
+    @finder = 'show'
 
     @user = current_user || User.new
   end
@@ -115,21 +115,23 @@ class EventsController < ApplicationController
     if @positive_numbers && (@more_than_zero || @changed_to_zero) && @event.technology.primary_component.present? && @event.emails_sent == false
 
       # determine the values to use when populating the count
-      if event_params[:technologies_built] == ''
-        @loose = nil
-      elsif @event.technologies_built_changed?
-        @loose = @event.technologies_built - @event.technologies_built_was
-      else
-        @loose = @event.technologies_built
-      end
+      @loose =
+        if event_params[:technologies_built] == ''
+          nil
+        elsif @event.technologies_built_changed?
+          @event.technologies_built - @event.technologies_built_was
+        else
+          @event.technologies_built
+        end
 
-      if event_params[:boxes_packed] == ''
-        @box = nil
-      elsif @event.boxes_packed_changed?
-        @box = @event.boxes_packed - @event.boxes_packed_was
-      else
-        @box = @event.boxes_packed
-      end
+      @box =
+        if event_params[:boxes_packed] == ''
+          nil
+        elsif @event.boxes_packed_changed?
+          @event.boxes_packed - @event.boxes_packed_was
+        else
+          @event.boxes_packed
+        end
 
       @inventory = CreateInventory.new(@event, @loose, @box, current_user.id)
       @inventory_created = 'Inventory created.'
@@ -140,7 +142,7 @@ class EventsController < ApplicationController
       # Can't use delayed_job because ActiveModel::Dirty doesn't persist
       EventMailer.changed(@event, current_user).deliver_now!
       @admins_notified = 'Admins notified.'
-      if @event.registrations.exists? && ( @event.start_time_changed? || @event.end_time_changed? || @event.location_id_changed? || @event.technology_id_changed? )
+      if @event.registrations.exists? && (@event.start_time_changed? || @event.end_time_changed? || @event.location_id_changed? || @event.technology_id_changed?)
         @event.registrations.each do |registration|
           # Can't use delayed_job because ActiveModel::Dirty doesn't persist
           RegistrationMailer.event_changed(registration, @event).deliver_now!
@@ -194,7 +196,7 @@ class EventsController < ApplicationController
 
       if @event.registrations.exists?
         # Collect the registration IDs instead of the records, because the records get pushed out of default scope on paranoid deletion.
-        @registration_ids = @event.registrations.map { |r| r.id }
+        @registration_ids = @event.registrations.map(&:id)
 
         @registration_ids.each do |registration_id|
           RegistrationMailer.delay.event_cancelled(registration_id)
@@ -232,14 +234,11 @@ class EventsController < ApplicationController
     @events = []
 
     Event.future.each do |e|
-      if e.needs_leaders?
-        @events << e
-      end
+      @events << e if e.needs_leaders?
     end
 
-    if @events.any?
-      authorize @events.first
-    end
+    authorize @events.first if @events.any?
+
     @finder = 'lead'
   end
 
@@ -302,16 +301,16 @@ class EventsController < ApplicationController
   end
 
   def replicate_occurrences
-    return nil if params[:f].blank? || params[:s].blank? || params[:e].blank?
+    return if params[:f].blank? || params[:s].blank? || params[:e].blank?
 
     replicator = Replicator.new
 
     replicator.tap do |r|
-      r.event_id = params[:id].to_i
+      r.event_id = Integer(params[:id])
       r.start_time = Time.parse(params[:s])
       r.end_time = Time.parse(params[:e])
       r.frequency = params[:f]
-      r.occurrences = params[:o].blank? ? 1 : params[:o].to_i
+      r.occurrences = params[:o].blank? ? 1 : Integer(params[:o])
     end
 
     render json: replicator.date_array
@@ -353,19 +352,14 @@ class EventsController < ApplicationController
     @location = @event.location
     @location_img = @location.photo_url
 
-    if @technology.owner == 'Village Water Filters'
-      @tech_blurb = 'Sold at or below cost in over 60 developing countries, this filter is designed to be affordable for those making $2 a day.'
-    elsif @technology.owner == '20 Liters'
-      @tech_blurb = 'Distributed to the rural poor in Rwanda, this filter handles the muddy, disgusting water from the Nyabarongo River. Each filter is supported by a network of village-based volunteers, community health workers and local leaders.'
-    else
-      @tech_blurb = ''
-    end
+    @tech_blurb = @technology.description
 
-    if @technology.family_friendly
-      @child_statement_email = 'children as young as 4 can participate'
-    else
-      @child_statement_email = 'this event is best for ages 12 and up'
-    end
+    @child_statement_email =
+      if @technology.family_friendly
+        'children as young as 4 can participate'
+      else
+        'this event is best for ages 12 and up'
+      end
 
     @print_navbar = true
   end
@@ -390,7 +384,7 @@ class EventsController < ApplicationController
                                   :attendance,
                                   :contact_name,
                                   :contact_email,
-                                  registrations_attributes: [:id, :user_id, :event_id, :attended, :leader, :guests_registered, :guests_attended ]
+                                  registrations_attributes: %i[id user_id event_id attended leader guests_registered guests_attended]
   end
 
   def replicator_params

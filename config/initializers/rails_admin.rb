@@ -10,6 +10,23 @@ RailsAdmin.config do |config|
   config.main_app_name = ['20 Liters', 'Admin']
   config.excluded_models = ['ActiveStorage::Blob', 'ActiveStorage::Attachment']
 
+  # Monkey patch to remove default_scope
+  #
+  require 'rails_admin/adapters/active_record'
+
+  module RailsAdmin::Adapters::ActiveRecord
+    def get(id)
+      object = model.with_deleted.find(id)
+      return unless object == scoped.where(primary_key => id).first
+
+      AbstractObject.new object
+    end
+
+    def scoped
+      model.unscoped
+    end
+  end
+
   ### Popular gems integration
 
   ## == Devise ==
@@ -17,35 +34,6 @@ RailsAdmin.config do |config|
     warden.authenticate! scope: :user
   end
   config.current_user_method(&:current_user)
-
-  #
-  # Monkey patch to remove default_scope
-  # module RailsAdmin::Adapters::ActiveRecord
-  #   def get(id)
-  #     return unless object == scoped.where(primary_key => id).first
-
-  #     AbstractObject.new object
-  #   end
-
-  #   def scoped
-  #     model.unscoped
-  #   end
-  # end
-
-  ## == Cancan ==
-  # config.authorize_with :cancan
-
-  ## == Pundit ==
-  # config.authorize_with :pundit
-
-  ## == PaperTrail ==
-  # config.audit_with :paper_trail, 'User', 'PaperTrail::Version' # PaperTrail >= 3.0.0
-
-  ### More at https://github.com/sferik/rails_admin/wiki/Base-configuration
-
-  ## == Gravatar integration ==
-  ## To disable Gravatar integration in Navigation Bar set to false
-  # config.show_gravatar = true
 
   config.authorize_with do |_controller|
     redirect_to main_app.root_path unless current_user&.is_admin?
@@ -111,66 +99,6 @@ RailsAdmin.config do |config|
       field :zip
     end
   end
-
-  # config.model Reservation do
-  #   weight 2
-  #   parent Event
-  #   list do
-  #     field :name
-  #     field :display_date do
-  #       formatted_value { bindings[:object].display_date }
-  #     end
-  #     field :recurrence
-  #     field :expire_time
-  #     field :user do
-  #       label 'Creator'
-  #       formatted_value { bindings[:object].user.name }
-  #     end
-  #   end
-  #   edit do
-  #     group :first do
-  #       field :name
-  #     end
-  #     group :day do
-  #       label 'Reserve a specific timeframe'
-  #       help 'To reserve a whole day, start at 12:00am and end at 11:59pm'
-  #       field :start_time
-  #       field :end_time
-  #     end
-  #     group :recurring do
-  #       label 'Recurring reservation'
-  #       field :recurring
-  #       field :recurrence
-  #       field :expire_date do
-  #         help 'When does this reservation expire?'
-  #       end
-  #     end
-  #     group :recurring_daily do
-  #       label 'Daily recurring reservations'
-  #       help 'What time each day should be reserved?'
-  #       field :start_time_of_day
-  #       field :end_time_of_day
-  #     end
-  #     group :recurring_weekly do
-  #       label 'Weekly recurring reservations'
-  #       help 'If the reservation is for a specific time every week, also fill out Start Time of Day and End Time of Day under Daily Recurring Reservations'
-  #       field :day_of_week
-  #     end
-  #     group :recurring_monthly do
-  #       label 'Monthly recurring reservations'
-  #       help 'If the reservation is for a specific time every month, also fill out Start Time of Day and End Time of Day under Daily Recurring Reservations'
-  #       field :date_of_month do
-  #         help 'Use a number or text like "2nd Monday"'
-  #       end
-  #     end
-  #     group :recurring_annually do
-  #       label 'Annualy recurring reservations'
-  #       help 'If the reservation is for a specific time, also fill out Start Time of Day and End Time of Day under Daily Recurring Reservations'
-  #       field :date_of_year
-  #     end
-  #     exclude_fields :created_at, :updated_at, :user_id
-  #   end
-  # end
 
   config.model Technology do
     weight 2
@@ -369,8 +297,8 @@ RailsAdmin.config do |config|
   end
 
   config.actions do
-    dashboard                     # mandatory
-    index                         # mandatory
+    dashboard # mandatory
+    index     # mandatory
     new
     export
     bulk_delete
