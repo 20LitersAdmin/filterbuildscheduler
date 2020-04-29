@@ -46,7 +46,7 @@ RSpec.describe 'Password Reset', type: :system do
 
     expect(second_count).to eq first_count + 1
 
-    expect(email.subject).to eq '[Village Water Filters] Reset your password'
+    expect(email.subject).to eq '[20 Liters] Reset your password'
     expect(email.to[0]).to eq @user.email
     expect(email.body.parts.first.body.raw_source).to have_content 'Someone has requested a link to change your password'
   end
