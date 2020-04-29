@@ -7,7 +7,7 @@ class InventoryMailer < ApplicationMailer
   def notify(inventory, user)
     @inventory = inventory
     @user = user
-    @recipients = User.where(send_inventory_emails: true).map { |u| u.email }
+    @recipients = User.notify_inventory.map(&:email)
 
     @prime_counts = @inventory.primary_counts
     comps = Component.where(id: @prime_counts.map(&:component_id))

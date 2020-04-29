@@ -3,17 +3,19 @@
     <span aria-hidden="true">&times;</span>
   </button>
   <p>Available functions:</p>
-  <% if @finder == "edit" %>
-    <%= link_to "Edit Event", edit_event_path(@event), class: 'btn empty width188 use-load-screen' %>
-    <% if current_user.is_admin?  %>
-      <%= link_to "Replicate", replicate_event_path(@event), class: 'btn blue' %>
+  <% if @event&.persisted? %>
+    <% if @finder != "edit" %>
+      <%= link_to "Edit Event", edit_event_path(@event), class: 'btn empty width188 use-load-screen' %>
     <% end %>
+      <% if current_user.is_admin?  %>
+        <%= link_to "Replicate", replicate_event_path(@event), class: 'btn blue' %>
+      <% end %>
     <%= link_to "Print Attendance List", attendance_event_path(@event), class: 'btn yellow use-load-screen' %>
     <%= link_to "Manage Builders", event_registrations_path(@event), class: "btn blue use-load-screen" %>
   <% end %>
 
   <% if @finder != "new" %>
-    <%= link_to "New Build", new_event_path, class: 'btn yellow use-load-screen' %>
+    <%= link_to "New Build", new_event_path, class: 'btn empty use-load-screen' %>
   <% end %>
 
   <% if @finder != "lead" %>
@@ -25,7 +27,7 @@
   <% end %>
 
   <% if @finder != "status" %>
-    <%= link_to "Tech Status", status_inventories_path, class: "btn yellow use-load-screen"  %>
+    <%= link_to "Tech Status", status_inventories_path, class: "btn empty use-load-screen"  %>
   <% end %>
 
   <% if current_user&.is_admin? && @finder != "communication" %>

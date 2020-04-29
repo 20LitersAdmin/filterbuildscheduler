@@ -20,6 +20,7 @@ class Event < ApplicationRecord
 
   scope :active,       -> { where(deleted_at: nil) }
   scope :non_private,  -> { where(is_private: false) }
+  scope :pre_reminders, -> { where(reminder_sent_at: nil) }
   scope :future,       -> { where('end_time > ?', Time.now).order(start_time: :asc) }
   scope :within_days,  ->(num) { where('start_time <= ?', Time.now + num.days) }
   scope :past,         -> { where('end_time <= ?', Time.now).order(start_time: :desc) }
@@ -35,7 +36,7 @@ class Event < ApplicationRecord
   end
 
   def complete?
-    attendance.present? && start_time < Time.now
+    attendance.present? && start_time < Time.zone.now
   end
 
   def dates_are_valid?
@@ -87,7 +88,7 @@ class Event < ApplicationRecord
   end
 
   def has_begun?
-    start_time < Time.now
+    start_time < Time.zone.now
   end
 
   def incomplete?
@@ -95,7 +96,7 @@ class Event < ApplicationRecord
   end
 
   def in_the_past?
-    end_time <= Time.now
+    end_time <= Time.zone.now
   end
 
   def leaders_are_valid?

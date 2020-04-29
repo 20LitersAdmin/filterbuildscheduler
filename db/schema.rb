@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_01_30_211729) do
+ActiveRecord::Schema.define(version: 2020_04_23_012834) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -71,7 +71,7 @@ ActiveRecord::Schema.define(version: 2020_01_30_211729) do
     t.datetime "start_time", null: false
     t.datetime "end_time", null: false
     t.string "title", null: false
-    t.string "description"
+    t.text "description"
     t.integer "min_registrations"
     t.integer "max_registrations"
     t.integer "min_leaders"
@@ -162,7 +162,7 @@ ActiveRecord::Schema.define(version: 2020_01_30_211729) do
     t.string "zip"
     t.string "map_url"
     t.string "photo_url"
-    t.string "instructions"
+    t.text "instructions"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.datetime "deleted_at"
@@ -229,7 +229,7 @@ ActiveRecord::Schema.define(version: 2020_01_30_211729) do
     t.boolean "leader", default: false
     t.integer "guests_registered", default: 0
     t.integer "guests_attended", default: 0
-    t.string "accommodations", default: ""
+    t.text "accommodations", default: ""
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.datetime "deleted_at"
@@ -261,7 +261,7 @@ ActiveRecord::Schema.define(version: 2020_01_30_211729) do
 
   create_table "technologies", force: :cascade do |t|
     t.string "name", null: false
-    t.string "description"
+    t.text "description"
     t.integer "ideal_build_length"
     t.integer "ideal_group_size"
     t.integer "ideal_leaders"
