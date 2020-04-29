@@ -131,7 +131,7 @@ RSpec.describe 'Register for Event', type: :system do
       expect(page).to have_link 'Change/Cancel Registration'
     end
 
-    fit 'has a modal for the waiver, which checks the box', js: true, retry: 6 do
+    it 'has a modal for the waiver, which checks the box', js: true, retry: 6 do
       expect(page).to have_unchecked_field('registration_accept_waiver')
 
       click_on 'waiver_click'
