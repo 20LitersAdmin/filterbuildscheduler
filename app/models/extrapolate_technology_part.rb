@@ -12,10 +12,14 @@ class ExtrapolateTechnologyPart < ApplicationRecord
   scope :active, -> { where(deleted_at: nil) }
 
   def part
+    return unless part_id.present?
+
     Part.with_deleted.find(part_id)
   end
 
   def technology
+    return unless technology_id.present?
+
     Technology.with_deleted.find(technology_id)
   end
 
