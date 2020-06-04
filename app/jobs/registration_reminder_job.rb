@@ -6,6 +6,7 @@ class RegistrationReminderJob < ApplicationJob
   def perform(*_args)
     puts '-+ Cleaning up the RegistrationReminderJob list'
     Delayed::Job.all.each do |job|
+      # jobs don't have names??
       job.destroy if job.name.include?('RegistrationReminderJob')
     end
 

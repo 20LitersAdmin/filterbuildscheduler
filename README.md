@@ -1,11 +1,11 @@
 # README
 
-## Next deploy:
-1. `production run rails db:migrate`
-2. `production console / CleanupService.clean_inventories!`
-3. `Count.only_deleted.each { |c| c.really_destroy! }` <-- really destroy these
-
 ## Things to do
+0. Delayed::Jobs are not getting cleaned up (`rails jobs:clear`).
+  - Need to make sure old jobs are deleted consistently.
+  - Jobs don't have a completed_at field?
+  - Remove ReportJob from scheduler.rake
+
 1. .env, secrets.yml, credentials.yml.enc <--- combine
 - .env: look for ENV.fetch
 - secrets.yml: check .gitignore; search for use of secret_key_base
