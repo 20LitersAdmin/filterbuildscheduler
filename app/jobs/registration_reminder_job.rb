@@ -5,9 +5,7 @@ class RegistrationReminderJob < ApplicationJob
 
   def perform(*_args)
     puts '-+ Cleaning up the RegistrationReminderJob list'
-    Delayed::Job.all.each do |job|
-      job.destroy if job.name.include?('RegistrationReminderJob')
-    end
+    Delayed::Job.destroy_all
 
     puts '-+ Creating registration reminders'
     events = Event.pre_reminders.future.within_days(2)
