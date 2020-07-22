@@ -1,15 +1,9 @@
 # frozen_string_literal: true
 
-class RegistrationReminderJob < ActiveJob::Base
-  queue_as :default
+class RegistrationWorker
+  include Sidekiq::Worker
 
-  def perform(*_args)
-    puts '-+ Cleaning up the RegistrationReminderJob list'
-    Delayed::Job.all.each do |job|
-      # jobs don't have names??
-      job.destroy if job.name.include?('RegistrationReminderJob')
-    end
-
+  def perform
     puts '-+ Creating registration reminders'
     events = Event.pre_reminders.future.within_days(2)
 

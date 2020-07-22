@@ -16,7 +16,7 @@ module BuildPlanner
 
     config.time_zone = 'Eastern Time (US & Canada)'
 
-    config.active_job.queue_adapter = :delayed_job
+    config.active_job.queue_adapter = :sidekiq
 
     config.action_mailer.default_url_options = { host: 'make.20liters.org' }
     config.action_mailer.preview_path = "#{Rails.root}/spec/mailers/previews"

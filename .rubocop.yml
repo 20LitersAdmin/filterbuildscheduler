@@ -11,6 +11,8 @@ Layout/FirstHashElementIndentation:
 Lint/AmbiguousBlockAssociation:
   Enabled: false
   rubocop: warning
+Lint/ConstantResolution:
+  Enabled: false
 Lint/NumberConversion:
   Enabled: false
   rubocop: warning
