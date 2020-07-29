@@ -77,6 +77,10 @@ Rails.application.routes.draw do
 
   mount LetterOpenerWeb::Engine, at: '/letter_opener' if Rails.env.development?
 
+  authenticated :user, -> user { user.is_admin? } do
+    mount DelayedJobWeb, at: '/delayed_job'
+  end
+
   # catch-all for bad urls
   # get '*path', to: 'pages#route_error'
 end

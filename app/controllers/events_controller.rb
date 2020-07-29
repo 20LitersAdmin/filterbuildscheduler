@@ -54,7 +54,6 @@ class EventsController < ApplicationController
 
   def create
     authorize @event = Event.new(event_params)
-    authorize @event
 
     @finder = 'new'
     if @event.save
