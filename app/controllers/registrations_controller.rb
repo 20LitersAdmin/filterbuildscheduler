@@ -173,7 +173,7 @@ class RegistrationsController < ApplicationController
 
   # re-send single registration confirmation email
   def reconfirm
-    RegistrationMailer.created(@registration).deliver_now!
+    RegistrationMailer.created(@registration).deliver_now
     flash[:success] = "Re-sent confirmation to #{@registration.user.name}"
     redirect_to event_registrations_path(@event)
   end

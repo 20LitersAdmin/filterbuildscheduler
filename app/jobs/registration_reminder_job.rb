@@ -5,16 +5,18 @@ class RegistrationReminderJob < ApplicationJob
 
   def perform(*_args)
     puts '-+ Cleaning up the RegistrationReminderJob list'
-    Delayed::Job.destroy_all
+    Delayed::Job.all.each do |job|
+      job.destroy if job.queue == 'registration_reminder'
+    end
 
     puts '-+ Creating registration reminders'
     events = Event.pre_reminders.future.within_days(2)
 
     events.each do |e|
-      EventMailer.remind_admins(e).deliver_later
+      EventMailer.remind_admins(e).deliver_now
       puts '-+-+ Admin reminder emails scheduled'
       e.registrations.pre_reminders.each do |r|
-        RegistrationMailer.reminder(r).deliver_later
+        RegistrationMailer.reminder(r).deliver_now
         r.update(reminder_sent_at: Time.zone.now)
       end
       puts '-+-+ ' + e.count.to_s + ' event reminder email scheduled for admins'
