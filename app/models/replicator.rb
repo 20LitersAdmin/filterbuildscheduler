@@ -12,9 +12,6 @@ class Replicator
                 :replicate_leaders,
                 :initiator
 
-  # rubocop:disable RedundantSelf
-  # rubocop:disable Metrics/CyclomaticComplexity
-
   def initialize(*args)
     super
     morph_params
@@ -74,7 +71,7 @@ class Replicator
     events = Event.where(id: new_event_ids)
 
     # EventMailer.delay.replicated(events, initiator)
-    EventMailer.replicated(events, initiator).deliver_now!
+    EventMailer.replicated(events, initiator).deliver_now
 
     true
   end
@@ -120,7 +117,4 @@ class Replicator
     errors.add(:end_time, :invalid, message: 'must be present') if self.end_time.blank?
     errors.add(:replicate_leaders, :invalid, message: 'must be boolean') unless [true, false].include?(self.replicate_leaders)
   end
-
-  # rubocop:enable RedundantSelf
-  # rubocop:enable Metrics/CyclomaticComplexity
 end

@@ -63,7 +63,7 @@ RSpec.describe Replicator, type: :model do
     end
 
     it 'sends the EventMailer#replicated email' do
-      allow(EventMailer).to receive_message_chain('replicated.deliver_now!')
+      allow(EventMailer).to receive_message_chain('replicated.deliver_now')
 
       expect(EventMailer).to receive(:replicated)
 

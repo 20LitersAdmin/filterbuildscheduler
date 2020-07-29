@@ -39,7 +39,7 @@ class UsersController < ApplicationController
       flash[:success] = 'Info updated!'
 
       if modified_params[:password].present?
-        DeviseMailer.password_change(@user).deliver_now!
+        DeviseMailer.password_change(@user).deliver_now
         sign_out @user
       end
 
