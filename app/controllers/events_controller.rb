@@ -4,7 +4,7 @@ class EventsController < ApplicationController
   before_action :find_stale
 
   def index
-    our_events = policy_scope(Event).includes(:location, registrations: :user)
+    our_events = policy_scope(Event)
     @events = our_events.future
     @user = current_user
 
@@ -139,12 +139,12 @@ class EventsController < ApplicationController
 
     if @event.start_time_was > Time.now && (@event.start_time_changed? || @event.end_time_changed? || @event.location_id_changed? || @event.technology_id_changed? || @event.is_private_changed?)
       # Can't use delayed_job because ActiveModel::Dirty doesn't persist
-      EventMailer.changed(@event, current_user).deliver_now!
+      EventMailer.changed(@event, current_user).deliver_now
       @admins_notified = 'Admins notified.'
       if @event.registrations.exists? && (@event.start_time_changed? || @event.end_time_changed? || @event.location_id_changed? || @event.technology_id_changed?)
         @event.registrations.each do |registration|
           # Can't use delayed_job because ActiveModel::Dirty doesn't persist
-          RegistrationMailer.event_changed(registration, @event).deliver_now!
+          RegistrationMailer.event_changed(registration, @event).deliver_now
           @users_notified = 'All registered builders notified.'
         end
       end
@@ -270,7 +270,7 @@ class EventsController < ApplicationController
     @registration.leader = true
     @registration.restore if @registration.deleted?
     @registration.save
-    RegistrationMailer.created(@registration).deliver_now!
+    RegistrationMailer.created(@registration).deliver_now
 
     flash[:success] = "Registered #{@registration.user.name}."
     redirect_to leaders_event_path(@event)

@@ -13,10 +13,10 @@ class RegistrationReminderJob < ApplicationJob
     events = Event.pre_reminders.future.within_days(2)
 
     events.each do |e|
-      EventMailer.delay.remind_admins(e)
+      EventMailer.remind_admins(e).deliver_now
       puts '-+-+ Admin reminder emails scheduled'
       e.registrations.pre_reminders.each do |r|
-        RegistrationMailer.delay.reminder(r)
+        RegistrationMailer.reminder(r).deliver_now
         r.update(reminder_sent_at: Time.zone.now)
       end
       puts '-+-+ ' + e.count.to_s + ' event reminder email scheduled for admins'
