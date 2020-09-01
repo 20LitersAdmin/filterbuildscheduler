@@ -39,6 +39,25 @@ class Count < ApplicationRecord
     item.name
   end
 
+  def link_text
+    # return the correct link text for inventory/:id/edit
+    return 'Edit' unless user_id.nil?
+
+    return 'Loose Count' if partial_box
+
+    return 'Box Count' if partial_loose
+
+    Constants::Inventory::COUNT_BTN_TEXT[inventory.type_for_params]
+  end
+
+  def link_class
+    return 'blue' unless user_id.nil?
+
+    return 'empty' if partial_box || partial_loose
+
+    'yellow'
+  end
+
   def owner
     return 'N/A' unless item.technologies.present?
 

@@ -15,6 +15,11 @@ class CountsController < ApplicationController
       @loose_val = @count.diff_from_previous('loose') unless @count.diff_from_previous('loose').zero?
       @box_val = @count.diff_from_previous('box') unless @count.diff_from_previous('box').zero?
     end
+
+    respond_to do |format|
+      format.html
+      format.js { render 'edit.js.erb' }
+    end
   end
 
   def show
