@@ -1,5 +1,6 @@
 function filterView(type, button) {
   // type == "count" or "tech"
+  // button ids: [clear, uncounted, partial, counted]
   var btnId = $(button).attr("id");
   var target = "." + btnId;
 
