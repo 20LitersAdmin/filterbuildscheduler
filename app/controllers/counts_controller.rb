@@ -1,6 +1,15 @@
 # frozen_string_literal: true
 
 class CountsController < ApplicationController
+  def polled_index
+    authorize @counts = Count.updated_since(Time.now.utc - 30.seconds)
+
+    respond_to do |format|
+      format.html
+      format.json { render 'polled_index.json' }
+    end
+  end
+
   def edit
     authorize @count = Count.find(params[:id])
     @inventory = @count.inventory
@@ -88,8 +97,14 @@ class CountsController < ApplicationController
       end
 
       @count.save
-      flash[:success] = 'Count submitted'
-      redirect_to edit_inventory_path(@inventory)
+      respond_to do |format|
+        format.html do
+          flash[:success] = 'Count submitted'
+          redirect_to edit_inventory_path(@inventory)
+        end
+
+        format.js { render 'update.js.erb' }
+      end
     end
   end
 
