@@ -44,11 +44,43 @@
     <div class="btn-group btn-group-sm">
       <input type="text" name="search" id="search" placeholder="Search...">
     </div>
+    <div class="btn-group btn-group-sm">
+      <button type="button" class="btn blue count-btn" id="calculator" data-toggle='modal' data-target="#calculator_modal">Calculator</button>
+    </div>
   </div>
 
   <div class="col-xs-12" id="counts_div">
     <div class="row">
       <%= render partial: "count", collection: @counts %>
+    </div>
+  </div>
+
+  <div class='modal fade' id='edit_count_modal' tab-index='-1' role='dialog'>
+    <div class="modal-dialog" role='document'>
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        </div>
+        <div class="modal-body row" id='count_modal_body'>
+          <p>Oops! Something broke.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <div class='modal fade' id='calculator_modal' tab-index='-1' role='dialog'>
+    <div class="modal-dialog" role='document'>
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        </div>
+        <div class="modal-body" id='count_modal_body'>
+          <div class="row">
+            <%= render partial: 'shared/calculator'  %>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
