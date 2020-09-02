@@ -5,11 +5,11 @@ class CountsController < ApplicationController
   before_action :set_inventory, only: %i[polled_index edit show update destroy]
 
   def polled_index
-    # returns an array of Count IDs that have been updated in the last 30 seconds
-    authorize @counts = Count.updated_since(Time.now - 1.minute)
+    # If the inventory is less than 1 minute old, return an empty ActiveRecord object
+    # otherwise, it would return all Counts until 1 minute had passed
+    authorize @counts = @inventory.updated_at > Time.now - 1.minute ? Count.none : Count.updated_since(Time.now - 1.minute)
 
     respond_to do |format|
-      format.html
       format.js { render 'polled_index.js.erb' }
     end
   end

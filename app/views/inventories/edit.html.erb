@@ -1,11 +1,17 @@
 <div id="inventory_edit" data-id='<%= @inventory.id %>'>
-  <div class="col-xs-8">
-    <h2>Edit <%= @inventory.name %></h2>
+  <div class="row">
+    <div class="col-xs-8">
+      <h2>Edit <%= @inventory.name %></h2>
+    </div>
+    <div class="col-xs-4 match-h2">
+      <%= link_to "Back", inventories_path, class: "btn yellow" %>
+      <a id="show_finalize_form" class="btn blue" href="#">Finalize</a>
+      <p class="right-align"><%= pluralize(@uncounted, "item") %> uncounted.</p>
+    </div>
   </div>
-  <div class="col-xs-4 match-h2">
-    <%= link_to "Back", inventories_path, class: "btn yellow" %>
-    <a id="show_finalize_form" class="btn blue" href="#">Finalize</a>
-    <p class="right-align"><%= pluralize(@uncounted, "item") %> uncounted.</p>
+
+  <div class="row spacer-bottom">
+
   </div>
 
   <div class="col-xs-12" id="finalize_form">
@@ -27,25 +33,38 @@
   </div>
 
   <div id="filter_div" class="col-xs-12 center">
-    <p>Filters:</p>
-    <button type="button" class="btn yellow count-btn" id="clear">Show All</button>
-    <div class="btn-group btn-group-sm" role="group">
-      <button type="button" class="btn yellow count-btn" id="uncounted">Uncounted</button>
-      <button type="button" class="btn yellow count-btn" id="partial">Partial</button>
-      <button type="button" class="btn blue count-btn" id="counted">Counted</button>
-    </div>
+    <div class="row">
+      <p>Filters:</p>
+      <button type="button" class="btn yellow count-btn" id="clear">Show All</button>
+      <div class="btn-group btn-group-sm" role="group">
+        <button type="button" class="btn yellow count-btn" id="uncounted">Uncounted</button>
+        <button type="button" class="btn yellow count-btn" id="partial">Partial</button>
+        <button type="button" class="btn blue count-btn" id="counted">Counted</button>
+      </div>
 
-    <div class="btn-group btn-group-sm" role="group">
-      <% @techs.each do |t| %>
-        <button type="button" class="btn empty tech-btn" id="<%= 'tech_' + t.id.to_s %>"><%= t.short_name %></button>
-      <% end %>
-    </div>
+      <div class="btn-group btn-group-sm" role="group">
+        <% @techs.each do |t| %>
+          <button type="button" class="btn empty tech-btn" id="<%= 'tech_' + t.id.to_s %>"><%= t.short_name %></button>
+        <% end %>
+      </div>
 
-    <div class="btn-group btn-group-sm">
-      <input type="text" name="search" id="search" placeholder="Search...">
+      <div class="btn-group btn-group-sm">
+        <input type="text" name="search" id="search" placeholder="Search...">
+      </div>
+      <div class="btn-group btn-group-sm">
+        <button type="button" class="btn blue count-btn" id="calculator" data-toggle='modal' data-target="#calculator_modal">Calculator</button>
+      </div>
     </div>
-    <div class="btn-group btn-group-sm">
-      <button type="button" class="btn blue count-btn" id="calculator" data-toggle='modal' data-target="#calculator_modal">Calculator</button>
+    <div class="row">
+      <div class="col-xs-12 center">
+        <div class="col-xs-6 text-right">
+          <p id="count_refresh_message">Live refresh is running...</p>
+        </div>
+        <div class="col-xs-6 text-left">
+          <button type="button" class="btn yellow btn-sm" id="cancel_polling">Cancel</button>
+          <button type="button" class="btn yellow btn-sm" id="start_polling" style="display: none;">Start</button>
+        </div>
+      </div>
     </div>
   </div>
 
