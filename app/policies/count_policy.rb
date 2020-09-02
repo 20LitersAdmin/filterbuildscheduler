@@ -8,7 +8,7 @@ class CountPolicy
     @count = count
   end
 
-  def index?
+  def polled_index?
     user&.can_do_inventory?
   end
 

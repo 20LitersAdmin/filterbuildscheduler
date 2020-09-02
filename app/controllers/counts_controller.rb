@@ -1,10 +1,20 @@
 # frozen_string_literal: true
 
 class CountsController < ApplicationController
-  def edit
-    authorize @count = Count.find(params[:id])
-    @inventory = @count.inventory
+  before_action :set_count, only: %i[edit show update label destroy]
+  before_action :set_inventory, only: %i[polled_index edit show update destroy]
 
+  def polled_index
+    # If the inventory is less than 1 minute old, return an empty ActiveRecord object
+    # otherwise, it would return all Counts until 1 minute had passed
+    authorize @counts = @inventory.updated_at > Time.now - 1.minute ? Count.none : Count.updated_since(Time.now - 1.minute)
+
+    respond_to do |format|
+      format.js { render 'polled_index.js.erb' }
+    end
+  end
+
+  def edit
     # Set form values
     if @inventory.manual?
       if @count.user_id.present? || @count.partial_box? || @count.partial_loose?
@@ -15,17 +25,18 @@ class CountsController < ApplicationController
       @loose_val = @count.diff_from_previous('loose') unless @count.diff_from_previous('loose').zero?
       @box_val = @count.diff_from_previous('box') unless @count.diff_from_previous('box').zero?
     end
+
+    respond_to do |format|
+      format.html
+      format.js { render 'edit.js.erb' }
+    end
   end
 
   def show
-    authorize @count = Count.find(params[:id])
-    redirect_to edit_inventory_count_path(@count.inventory, @count)
+    redirect_to edit_inventory_count_path(@inventory, @count)
   end
 
   def update
-    authorize @count = Count.find(params[:id])
-    @inventory = @count.inventory
-
     # VALIDATIONS
     if @inventory.manual? || @inventory.receiving?
       # receiving and manual inventories must have positive numbers
@@ -83,8 +94,14 @@ class CountsController < ApplicationController
       end
 
       @count.save
-      flash[:success] = 'Count submitted'
-      redirect_to edit_inventory_path(@inventory)
+      respond_to do |format|
+        format.html do
+          flash[:success] = 'Count submitted'
+          redirect_to edit_inventory_path(@inventory)
+        end
+
+        format.js { render 'update.js.erb' }
+      end
     end
   end
 
@@ -96,18 +113,22 @@ class CountsController < ApplicationController
 
   def label
     # print full sheet of lables for this one item
-    authorize @count = Count.find(params[:id])
   end
 
-  def destroy
-    authorize @count = Count.find(params[:id])
-    @inventory = @count.inventory
-  end
+  def destroy; end
 
   private
 
   def count_params
     params.require(:count).permit :components_id, :parts_id, :materials_id,
                                   :loose_count, :unopened_boxes_count, :deleted_at
+  end
+
+  def set_count
+    authorize @count = Count.find(params[:id])
+  end
+
+  def set_inventory
+    @inventory = Inventory.find(params[:inventory_id])
   end
 end

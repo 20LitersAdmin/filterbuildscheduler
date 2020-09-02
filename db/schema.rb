@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_07_22_175007) do
+ActiveRecord::Schema.define(version: 2020_09_01_194040) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -43,6 +43,8 @@ ActiveRecord::Schema.define(version: 2020_07_22_175007) do
     t.integer "extrapolated_count", default: 0, null: false
     t.boolean "partial_box", default: false
     t.boolean "partial_loose", default: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["component_id"], name: "index_counts_on_component_id"
     t.index ["deleted_at"], name: "index_counts_on_deleted_at"
     t.index ["inventory_id"], name: "index_counts_on_inventory_id"

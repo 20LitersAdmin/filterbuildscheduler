@@ -6,7 +6,7 @@
   </div>
   <div class="row">
     <div class="col-xs-12">
-      <%= simple_form_for([@inventory, @count])  do |f| %>
+      <%= simple_form_for [@inventory, @count], remote: true  do |f| %>
         <%= f.error_notification %>
 
         <%= f.input :loose_count, input_html: { value: @loose_val } %>
@@ -38,29 +38,26 @@
             </div>
           </div>
         <% end %>
-        <%= f.submit "Submit", class: "btn yellow fullwidth use-load-screen" %>
+        <%= f.submit "Submit", class: "btn yellow fullwidth" %>
 
         <% if @inventory.manual? && !@count.item.only_loose? %>
           <div class="col-xs-12 col-sm-6">
             <% if @count.partial_loose? %>
               <h4 class="center">Ready to Submit</h4>
             <% else %>
-              <%= f.button :submit, name: "partial_loose", value: "Partial Count: Loose", class: "btn blue fullwidth use-load-screen" %>
+              <%= f.button :submit, name: "partial_loose", value: "Partial Count: Loose", class: "btn blue fullwidth" %>
             <% end %>
           </div>
           <div class="col-xs-12 col-sm-6">
             <% if @count.partial_box? %>
               <h4 class="center">Ready to Submit</h4>
             <% else %>
-              <%= f.button :submit, name: "partial_box", value: "Partial Count: Boxes", class: "btn blue fullwidth use-load-screen" %>
+              <%= f.button :submit, name: "partial_box", value: "Partial Count: Boxes", class: "btn blue fullwidth" %>
             <% end %>
           </div>
         <% end %>
       <% end %>
-
-      <%= link_to "Back", edit_inventory_path(@inventory), class: "btn yellow empty fullwidth use-load-screen" %>
+      <button type="button" class="btn empty fullwidth" data-dismiss="modal" aria-label="Close">Back</button>
     </div>
   </div>
 </div>
-
-<%= render partial: 'shared/calculator'  %>

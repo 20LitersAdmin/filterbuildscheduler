@@ -70,6 +70,7 @@ Rails.application.routes.draw do
     end
     resources :counts do
       get 'label', on: :member
+      get 'polled_index', on: :collection
     end
   end
 
