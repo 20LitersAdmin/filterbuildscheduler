@@ -141,11 +141,6 @@ function countFetcher() {
 // this seems to start automatically
 poller = setInterval(countFetcher, 2000);
 
-function countPoller() {
-  // not needed?
-  // setInterval(countFetcher, 10000);
-};
-
 (function() {
   // Inventory#edit finalize buttons
   $(document).on("click", "#show_finalize_form", function() {
@@ -202,7 +197,6 @@ function countPoller() {
   });
 
   $(document).on("turbolinks:load", function(){
-    // Inventory#edit auto-updating poller
     // Inventory#order filter buttons
     $("#item_btn").hide();
     $('#order_supplier_div').hide();
