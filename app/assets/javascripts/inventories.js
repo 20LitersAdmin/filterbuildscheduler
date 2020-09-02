@@ -1,5 +1,6 @@
 function filterView(type, button) {
   // type == "count" or "tech"
+  // button ids: [clear, uncounted, partial, counted]
   var btnId = $(button).attr("id");
   var target = "." + btnId;
 
@@ -131,6 +132,15 @@ function reformat(source) {
   $(source).val(formatted);
 };
 
+function countFetcher() {
+  var invId = window.location.pathname.match(/\d+/)[0];
+  var url = '/inventories/' + invId + '/counts/polled_index.js';
+  $.get(url, function(){});
+};
+
+// this seems to start automatically
+poller = setInterval(countFetcher, 2000);
+
 (function() {
   // Inventory#edit finalize buttons
   $(document).on("click", "#show_finalize_form", function() {
@@ -186,13 +196,33 @@ function reformat(source) {
     }
   });
 
-  // Inventory#order filter buttons
   $(document).on("turbolinks:load", function(){
+    // Inventory#order filter buttons
     $("#item_btn").hide();
     $('#order_supplier_div').hide();
     $('[data-toggle="popover"]').popover();
   });
 
+  // Inventory#edit auto-updating poller
+  $(document).on('click', '#cancel_polling', function() {
+    clearInterval(poller);
+    console.log('Stopped polling');
+    $('#count_refresh_message').html('Live refresh is stopped.');
+    $(this).toggle();
+    $('#start_polling').toggle();
+  });
+
+  $(document).on('click', '#start_polling', function() {
+    // make sure poller is not running
+    clearInterval(poller);
+    poller = setInterval(countFetcher, 10000);
+    console.log('Started polling');
+    $('#count_refresh_message').html('Live refresh is running.');
+    $(this).toggle();
+    $('#cancel_polling').toggle();
+  });
+
+  // Inventory#order filter buttons
   $(document).on("click", "#supplier_btn", function() {
     $("#order_item_div").hide();
     $("#item_ttl").hide();
@@ -202,6 +232,7 @@ function reformat(source) {
     $("#item_btn").show();
     event.preventDefault();
   });
+
   $(document).on("click", "#item_btn", function() {
     $("#order_supplier_div").hide();
     $("#supplier_ttl").hide();
