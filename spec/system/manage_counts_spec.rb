@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe "Managing counts:", type: :system, js: true do
+RSpec.describe 'Managing counts:', type: :system, js: true do
   before :each do
     @inventory = FactoryBot.create(:inventory)
     @tech = FactoryBot.create(:technology)
@@ -15,95 +15,92 @@ RSpec.describe "Managing counts:", type: :system, js: true do
     clean_up!
   end
 
-  context "the page" do
-    it "can't be visited by anon users" do
+  context 'the page' do
+    it 'can\'t be visited by anon users' do
       visit edit_inventory_count_path @inventory, @count
 
-      expect(page).to have_content "You need to sign in first"
-      expect(page).to have_content "Sign in"
+      expect(page).to have_content 'You need to sign in first'
+      expect(page).to have_content 'Sign in'
     end
 
-    it "can't be visited by builders" do
+    it 'can\'t be visited by builders' do
       sign_in FactoryBot.create(:user)
       visit edit_inventory_count_path @inventory, @count
 
-      expect(page).to have_content "You don't have permission"
-      expect(page).to have_content "Upcoming Builds"
+      expect(page).to have_content 'You don\'t have permission'
+      expect(page).to have_content 'Upcoming Builds'
     end
 
-    it "can't be visited by leaders" do
+    it 'can\'t be visited by leaders' do
       sign_in FactoryBot.create(:leader)
       visit edit_inventory_count_path @inventory, @count
 
-      expect(page).to have_content "You don't have permission"
-      expect(page).to have_content "Upcoming Builds"
+      expect(page).to have_content 'You don\'t have permission'
+      expect(page).to have_content 'Upcoming Builds'
     end
 
-    it "can be visited by inventory users" do
+    it 'can be visited by inventory users' do
       sign_in FactoryBot.create(:user, does_inventory: true)
       visit edit_inventory_count_path @inventory, @count
 
       expect(page).to have_content @count.name
-      expect(page).to have_content "Manual inventory"
     end
 
-    it "can be visited by users who receive inventory" do
+    it 'can be visited by users who receive inventory' do
       sign_in FactoryBot.create(:user, send_inventory_emails: true)
       visit edit_inventory_count_path @inventory, @count
 
       expect(page).to have_content @count.name
-      expect(page).to have_content "Manual inventory"
     end
 
-    it "can be visited by admins" do
+    it 'can be visited by admins' do
       sign_in FactoryBot.create(:admin)
       visit edit_inventory_count_path @inventory, @count
 
       expect(page).to have_content @count.name
-      expect(page).to have_content "Manual inventory"
     end
   end
 
-  context "the form" do
+  context 'the form' do
     before :each do
       sign_in FactoryBot.create(:admin)
       @part2 = FactoryBot.create(:part, only_loose: true)
       FactoryBot.create(:tech_part, part: @part2, technology: @tech)
     end
 
-    it "only shows the loose field when the item is marked only_loose" do
+    it 'only shows the loose field when the item is marked only_loose' do
       @count2 = FactoryBot.create(:count_part, part: @part2, inventory: @inventory )
       visit edit_inventory_count_path @inventory, @count2
 
-      expect(page).to have_css("#count_loose_count")
-      expect(page).not_to have_css("#count_unopened_boxes_count")
+      expect(page).to have_css('#count_loose_count')
+      expect(page).not_to have_css('#count_unopened_boxes_count')
     end
 
-    it "show loose and box field when the item isn't marked only loose" do
+    it 'show loose and box field when the item isn\'t marked only loose' do
       visit edit_inventory_count_path @inventory, @count
 
-      expect(page).to have_css("#count_loose_count")
-      expect(page).to have_css("#count_unopened_boxes_count")
-    end   
+      expect(page).to have_css('#count_loose_count')
+      expect(page).to have_css('#count_unopened_boxes_count')
+    end
   end
 
-  context "the form can be" do
+  context 'the form can be' do
     before :each do
       @admin = FactoryBot.create(:admin)
       sign_in @admin
       visit edit_inventory_count_path @inventory, @count
     end
 
-    it "fully submitted" do
+    it 'fully submitted' do
       expect(@count.loose_count).to eq 18
       expect(@count.unopened_boxes_count).to eq 3
 
-      fill_in "count_loose_count", with: 20
-      fill_in "count_unopened_boxes_count", with: 2
+      fill_in 'count_loose_count', with: 20
+      fill_in 'count_unopened_boxes_count', with: 2
 
-      click_button "Submit"
+      click_button 'Submit'
 
-      expect(page).to have_content "Count submitted"
+      expect(page).to have_content 'Count submitted'
       expect(page).to have_content @inventory.name
 
       @count.reload
@@ -114,15 +111,15 @@ RSpec.describe "Managing counts:", type: :system, js: true do
       expect(@count.partial_loose).to eq false
     end
 
-    it "partially submitted: loose" do
+    it 'partially submitted: loose' do
       expect(@count.loose_count).to eq 18
       expect(@count.unopened_boxes_count).to eq 3
 
-      fill_in "count_loose_count", with: 34
+      fill_in 'count_loose_count', with: 34
 
-      click_button "Partial Count: Loose"
+      click_button 'Partial Count: Loose'
 
-      expect(page).to have_content "Count submitted"
+      expect(page).to have_content 'Count submitted'
       expect(page).to have_content @inventory.name
 
       @count.reload
@@ -133,15 +130,15 @@ RSpec.describe "Managing counts:", type: :system, js: true do
       expect(@count.partial_loose).to eq true
     end
 
-    it "partially submitted: box" do
+    it 'partially submitted: box' do
       expect(@count.loose_count).to eq 18
       expect(@count.unopened_boxes_count).to eq 3
 
-      fill_in "count_unopened_boxes_count", with: 8
+      fill_in 'count_unopened_boxes_count', with: 8
 
-      click_button "Partial Count: Boxes"
+      click_button 'Partial Count: Boxes'
 
-      expect(page).to have_content "Count submitted"
+      expect(page).to have_content 'Count submitted'
       expect(page).to have_content @inventory.name
 
       @count.reload
@@ -153,23 +150,22 @@ RSpec.describe "Managing counts:", type: :system, js: true do
     end
   end
 
-  it "the calculator can be used" do
+  it 'the calculator can be used' do
     sign_in FactoryBot.create(:admin)
     visit edit_inventory_count_path @inventory, @count
 
-    expect(page).to have_css("div#calculator")
+    expect(page).to have_css('div#calculator')
 
-    expect(find(:css, "#display").value).to eq ""
+    expect(find(:css, '#display').value).to eq ''
 
-    click_button "3"
-    click_button "+"
-    click_button "5"
+    click_button '3'
+    click_button '+'
+    click_button '5'
 
-    expect(find(:css, "#display").value).to eq "3+5"
+    expect(find(:css, '#display').value).to eq '3+5'
 
-    click_button "="
+    click_button '='
 
-    expect(find(:css, "#display").value).to eq "8"
+    expect(find(:css, '#display').value).to eq '8'
   end
-
 end
