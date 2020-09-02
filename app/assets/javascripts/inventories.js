@@ -132,6 +132,16 @@ function reformat(source) {
   $(source).val(formatted);
 };
 
+function countFetcher() {
+  var invId = window.location.pathname.match(/\d+/)[0];
+  var url = '/inventories/' + invId + '/counts/polled_index.js';
+  $.get(url, function(){});
+};
+
+function countPoller() {
+  setInterval(countFetcher, 30000);
+};
+
 (function() {
   // Inventory#edit finalize buttons
   $(document).on("click", "#show_finalize_form", function() {
@@ -189,6 +199,7 @@ function reformat(source) {
 
   // Inventory#order filter buttons
   $(document).on("turbolinks:load", function(){
+    countPoller();
     $("#item_btn").hide();
     $('#order_supplier_div').hide();
     $('[data-toggle="popover"]').popover();

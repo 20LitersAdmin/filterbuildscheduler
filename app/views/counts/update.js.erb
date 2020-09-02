@@ -1,10 +1,7 @@
 // clear out the modal body
 $('#count_modal_body').html('');
 // close the modal
-$('#edit_count_modal').modal('show')
+$('#edit_count_modal').modal('hide')
 
 // update the partial
-// 'views/inventory/_count_container' --> views/count/_count'
-$("div#count_<%= @count.id %>").html("<%= j render 'count' %>");
-
-// trigger the count_poller
+$("div#count_<%= @count.id %>").html("<%= j render @count %>");

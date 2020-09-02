@@ -1,19 +1,20 @@
 # frozen_string_literal: true
 
 class CountsController < ApplicationController
+  before_action :set_count, only: %i[edit show update label destroy]
+  before_action :set_inventory, only: %i[polled_index edit show update destroy]
+
   def polled_index
-    authorize @counts = Count.updated_since(Time.now.utc - 30.seconds)
+    # returns an array of Count IDs that have been updated in the last 30 seconds
+    authorize @counts = Count.updated_since(Time.now - 1.minute)
 
     respond_to do |format|
       format.html
-      format.json { render 'polled_index.json' }
+      format.js { render 'polled_index.js.erb' }
     end
   end
 
   def edit
-    authorize @count = Count.find(params[:id])
-    @inventory = @count.inventory
-
     # Set form values
     if @inventory.manual?
       if @count.user_id.present? || @count.partial_box? || @count.partial_loose?
@@ -32,14 +33,10 @@ class CountsController < ApplicationController
   end
 
   def show
-    authorize @count = Count.find(params[:id])
-    redirect_to edit_inventory_count_path(@count.inventory, @count)
+    redirect_to edit_inventory_count_path(@inventory, @count)
   end
 
   def update
-    authorize @count = Count.find(params[:id])
-    @inventory = @count.inventory
-
     # VALIDATIONS
     if @inventory.manual? || @inventory.receiving?
       # receiving and manual inventories must have positive numbers
@@ -116,18 +113,22 @@ class CountsController < ApplicationController
 
   def label
     # print full sheet of lables for this one item
-    authorize @count = Count.find(params[:id])
   end
 
-  def destroy
-    authorize @count = Count.find(params[:id])
-    @inventory = @count.inventory
-  end
+  def destroy; end
 
   private
 
   def count_params
     params.require(:count).permit :components_id, :parts_id, :materials_id,
                                   :loose_count, :unopened_boxes_count, :deleted_at
+  end
+
+  def set_count
+    authorize @count = Count.find(params[:id])
+  end
+
+  def set_inventory
+    @inventory = Inventory.find(params[:inventory_id])
   end
 end
