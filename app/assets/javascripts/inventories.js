@@ -138,8 +138,12 @@ function countFetcher() {
   $.get(url, function(){});
 };
 
+// this seems to start automatically
+poller = setInterval(countFetcher, 2000);
+
 function countPoller() {
-  setInterval(countFetcher, 30000);
+  // not needed?
+  // setInterval(countFetcher, 10000);
 };
 
 (function() {
@@ -197,14 +201,34 @@ function countPoller() {
     }
   });
 
-  // Inventory#order filter buttons
   $(document).on("turbolinks:load", function(){
-    countPoller();
+    // Inventory#edit auto-updating poller
+    // Inventory#order filter buttons
     $("#item_btn").hide();
     $('#order_supplier_div').hide();
     $('[data-toggle="popover"]').popover();
   });
 
+  // Inventory#edit auto-updating poller
+  $(document).on('click', '#cancel_polling', function() {
+    clearInterval(poller);
+    console.log('Stopped polling');
+    $('#count_refresh_message').html('Live refresh is stopped.');
+    $(this).toggle();
+    $('#start_polling').toggle();
+  });
+
+  $(document).on('click', '#start_polling', function() {
+    // make sure poller is not running
+    clearInterval(poller);
+    poller = setInterval(countFetcher, 10000);
+    console.log('Started polling');
+    $('#count_refresh_message').html('Live refresh is running.');
+    $(this).toggle();
+    $('#cancel_polling').toggle();
+  });
+
+  // Inventory#order filter buttons
   $(document).on("click", "#supplier_btn", function() {
     $("#order_item_div").hide();
     $("#item_ttl").hide();
@@ -214,6 +238,7 @@ function countPoller() {
     $("#item_btn").show();
     event.preventDefault();
   });
+
   $(document).on("click", "#item_btn", function() {
     $("#order_supplier_div").hide();
     $("#supplier_ttl").hide();
