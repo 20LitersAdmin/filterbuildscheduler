@@ -6,56 +6,54 @@ RSpec.describe KindfulClient do
   let(:user1) { build :user }
   let(:client) { KindfulClient.new }
 
-  describe "import_user" do
+  describe 'post' do
+    context 'when Rails.env.test? is true' do
+      pending
+    end
+
+    context 'when Rails.env.test? is false' do
+      pending
+    end
+  end
+
+  describe 'import_user' do
     it 'takes user data and sends it to kindful' do
       http_spy = spy
-      body_args = {
-        id: user1.id,
-        fname: user1.fname,
-        lname: user1.lname,
-        email: user1.email,
-        phone: user1.phone,
-        email_opt_in: true
-      }
 
       arguments = {
         headers: client.headers,
-        body: client.contact(**body_args).to_json
+        body: client.contact(user1)
       }
       expect(KindfulClient).to receive(:post).with('/imports', arguments).and_return(http_spy)
       client.import_user(user1)
     end
   end
 
-  describe "contact_with_transaction" do
-    it 'takes data and sends it to kindful' do
-      http_spy = spy
-      opts= {
-        "id": "ch_1BM3X3Df2Ej1M9QFB2Qmnhwq",
-        "metadata": {
-          "first_name": "FNAME",
-          "last_name": "LName",
-          "email": "foo@bar.com",
-          "line1": "111 West Washington st",
-          "line2": "Unit 2",
-          "city": "City",
-          "state": "State",
-          "zipcode": "Postal",
-          "country": "USA",
-          "campaign_name": "CauseVox Transactions"
-        },
-        "amount": "50000",
-        "source": {
-          "brand": "Visa"
-        },
-      }
+  describe 'import_user_w_note' do
+    pending
+  end
 
-      arguments = {
-        headers: client.headers,
-        body: client.contact_w_transaction(opts).to_json
-      }
-      expect(KindfulClient).to receive(:post).with('/imports', arguments).and_return(http_spy)
-      client.import_transaction(opts)
-    end
+  describe 'import_transaction' do
+    pending
+  end
+
+  describe 'token' do
+    pending
+  end
+
+  describe 'headers' do
+    pending
+  end
+
+  describe 'contact' do
+    pending
+  end
+
+  describe 'contact_w_note' do
+    pending
+  end
+
+  describe 'contact_with_transaction' do
+    pending
   end
 end
