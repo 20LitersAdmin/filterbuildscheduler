@@ -1,10 +1,5 @@
 # README
 ## Things to do
-1. .env, secrets.yml, credentials.yml.enc <--- combine
-- .env: look for ENV.fetch
-- secrets.yml: check .gitignore; search for use of secret_key_base
-- should be using master.key && credentials.yml.enc EXCLUSIVELY, even in Heroku (by seeting )
-
 2. I created EventsController::SubtractSubsets and should write tests for it
   * Test the class (as a model)
   * Write a system test for event-based inventories
