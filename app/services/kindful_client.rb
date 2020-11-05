@@ -26,7 +26,7 @@ class KindfulClient
   end
 
   def token
-    ENV.fetch('KF_FILTERBUILD_TOKEN')
+    kf_filterbuild_token_sandbox.kf_filterbuild_token
   end
 
   def headers
