@@ -60,9 +60,10 @@ class RegistrationsController < ApplicationController
     if @registration.errors.blank? && @user.save && @registration.save
       sign_in(@user) unless current_user
 
-      RegistrationMailer.delay.created(@registration) if @event.start_time > Time.now # don't send emails for past events.
+      # don't send emails for past events.
+      RegistrationMailer.delay.created(@registration) if @event.start_time > Time.now
 
-      @user.update_attributes!(signed_waiver_on: Time.now) unless @registration.waiver_accepted?
+      @user.update!(signed_waiver_on: Time.now) unless @registration.waiver_accepted?
       flash[:success] = 'Registration successful!'
 
       if params[:registration][:form_source] == 'admin'
