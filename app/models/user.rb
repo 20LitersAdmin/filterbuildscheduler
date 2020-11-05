@@ -99,6 +99,11 @@ class User < ApplicationRecord
     # this allows for a form field that handles page redirects based on values: 'admin', 'self'
   end
 
+  def email_opt_in
+    # KindfulClient wants email_opt_in, not email_opt_out
+    email_opt_out? ? false : true
+  end
+
   def has_no_password
     !encrypted_password.present?
   end
