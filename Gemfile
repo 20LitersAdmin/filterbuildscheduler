@@ -8,8 +8,8 @@ git_source(:github) do |repo_name|
   "https://github.com/#{repo_name}.git"
 end
 
-gem 'bootstrap-sass'
 gem 'bootstrap3-datetimepicker-rails'
+gem 'bootstrap-sass'
 gem 'delayed_cron_job', '~> 0.7.2'
 gem 'delayed_job', '~> 4.1'
 gem 'delayed_job_active_record', '~> 4.1'
@@ -28,13 +28,13 @@ gem 'pg', '~> 0.21'
 gem 'pry-byebug'
 gem 'puma'
 gem 'pundit'
-gem 'rails', '~> 5.2'
-gem 'rails_admin', '~> 1.3.0'
+gem 'rails', '~> 6'
+gem 'rails_admin', '~> 2.0.2'
 gem 'rest-client'
-gem 'sass-rails', '~> 5.0'
+gem 'sass-rails'
 gem 'simple_form'
 gem 'therubyracer', platforms: :ruby
-gem 'turbolinks', '~> 5'
+gem 'turbolinks'
 gem 'uglifier', '>= 1.3.0'
 
 group :production do
@@ -55,9 +55,9 @@ group :test do
   gem 'database_cleaner'
   gem 'rails-controller-testing'
   gem 'rspec'
+  gem 'rspec_junit_formatter'
   gem 'rspec-rails', '~> 3.7.2'
   gem 'rspec-retry'
-  gem 'rspec_junit_formatter'
   gem 'selenium-webdriver'
   gem 'shoulda-matchers'
 end
