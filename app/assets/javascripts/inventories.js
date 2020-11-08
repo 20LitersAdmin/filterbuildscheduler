@@ -138,8 +138,6 @@ function countFetcher() {
   $.get(url, function(){});
 };
 
-// this seems to start automatically
-// TODO: this shouldn't run on EVERY page
 let poller;
 
 (function() {
