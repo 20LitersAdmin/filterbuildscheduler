@@ -8,7 +8,7 @@ RSpec.describe 'Managing counts:', type: :system, js: true do
     @tech = FactoryBot.create(:technology)
     part = FactoryBot.create(:part)
     FactoryBot.create(:tech_part, part: part, technology: @tech)
-    @count = FactoryBot.create(:count_part, part: part, inventory: @inventory, loose_count: 18, unopened_boxes_count: 3 )
+    @count = FactoryBot.create(:count_part, part: part, inventory: @inventory, loose_count: 18, unopened_boxes_count: 3)
   end
 
   after :all do

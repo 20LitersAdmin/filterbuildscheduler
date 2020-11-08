@@ -36,9 +36,7 @@ class User < ApplicationRecord
 
   # https://github.com/plataformatec/devise/issues/5033
   before_save do |user|
-    if user.will_save_change_to_encrypted_password?
-      user.restore_encrypted_password! unless user.encrypted_password.present?
-    end
+    user.restore_encrypted_password! if user.will_save_change_to_encrypted_password? && user.encrypted_password.blank?
   end
 
   after_save :update_kindful, if: ->(user) { user.saved_change_to_fname? || user.saved_change_to_lname? || user.saved_change_to_email? || user.saved_change_to_email_opt_out? || user.saved_change_to_phone? }
