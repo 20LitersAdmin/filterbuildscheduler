@@ -1,9 +1,14 @@
 # README
 ## Things to do
-1. .env, secrets.yml, credentials.yml.enc <--- combine
-- .env: look for ENV.fetch
-- secrets.yml: check .gitignore; search for use of secret_key_base
-- should be using master.key && credentials.yml.enc EXCLUSIVELY, even in Heroku (by seeting )
+0. Rails 6 and rails_admin:
+  - `DEPRECATION WARNING: Initialization autoloaded the constants ApplicationRecord, User, Event, Registration, Location, Technology, Supplier, Component, Part, Material, Count, Inventory, ExtrapolateComponentPart, ExtrapolateMaterialPart, ExtrapolateTechnologyComponent, ExtrapolateTechnologyPart, and ExtrapolateTechnologyMaterial.`
+  - Something about wrapping this, or moving it to lib/ or something
+  - Then remove `config.autoloader = :classic` from `application.rb`
+
+1. Editing a Count is now done from Inventory#edit via a modal form which is AJAXed
+  - Tests still reference `edit_inventory_count_path`
+  - Modal does not include the calculator
+  - `inventories/:id/counts/:count_id/edit` still exists
 
 2. I created EventsController::SubtractSubsets and should write tests for it
   * Test the class (as a model)

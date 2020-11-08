@@ -1,21 +1,21 @@
 # frozen_string_literal: true
 
 source 'https://rubygems.org'
-ruby '2.5.8'
+ruby '2.7.0'
 
 git_source(:github) do |repo_name|
   repo_name = "#{repo_name}/#{repo_name}" unless repo_name.include?('/')
   "https://github.com/#{repo_name}.git"
 end
 
-gem 'bootstrap-sass'
+gem 'bootsnap', '>= 1.4.2', require: false
 gem 'bootstrap3-datetimepicker-rails'
+gem 'bootstrap-sass'
 gem 'delayed_cron_job', '~> 0.7.2'
 gem 'delayed_job', '~> 4.1'
 gem 'delayed_job_active_record', '~> 4.1'
 gem 'delayed_job_web'
 gem 'devise'
-gem 'dotenv-rails'
 gem 'font-awesome-rails'
 gem 'httparty'
 gem 'icalendar'
@@ -28,10 +28,10 @@ gem 'pg', '~> 0.21'
 gem 'pry-byebug'
 gem 'puma'
 gem 'pundit'
-gem 'rails', '~> 5.2'
-gem 'rails_admin', '~> 1.3.0'
+gem 'rails', '~> 6'
+gem 'rails_admin', '~> 2.0'
 gem 'rest-client'
-gem 'sass-rails', '~> 5.0'
+gem 'sass-rails', '>= 6'
 gem 'simple_form'
 gem 'therubyracer', platforms: :ruby
 gem 'turbolinks', '~> 5'
@@ -43,10 +43,12 @@ end
 
 group :development, :test do
   gem 'airborne'
+  gem 'better_errors'
+  gem 'binding_of_caller'
+  gem 'byebug', platforms: %i[mri mingw x64_mingw]
   gem 'factory_bot_rails'
   gem 'faker'
   gem 'foreman'
-  gem 'rubocop'
   gem 'timecop'
 end
 
@@ -55,17 +57,20 @@ group :test do
   gem 'database_cleaner'
   gem 'rails-controller-testing'
   gem 'rspec'
+  gem 'rspec_junit_formatter'
   gem 'rspec-rails', '~> 3.7.2'
   gem 'rspec-retry'
-  gem 'rspec_junit_formatter'
   gem 'selenium-webdriver'
   gem 'shoulda-matchers'
 end
 
 group :development do
   gem 'letter_opener_web'
-  gem 'listen', '>= 3.0.5', '< 3.2'
-  gem 'thin'
+  gem 'listen', '~> 3.2'
+  gem 'rubocop', require: false
+  # gem 'spring'
+  # gem 'spring-watcher-listen', '~> 2.0.0'
+  gem 'webdrivers'
   gem 'web-console', '>= 3.3.0'
 end
 

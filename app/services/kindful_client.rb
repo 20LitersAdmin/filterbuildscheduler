@@ -26,7 +26,11 @@ class KindfulClient
   end
 
   def token
-    ENV.fetch('KF_FILTERBUILD_TOKEN')
+    if Rails.env.production?
+      Rails.application.credentials.kf_filterbuild_token
+    else
+      Rails.application.credentials.kf_filterbuild_token_sandbox
+    end
   end
 
   def headers

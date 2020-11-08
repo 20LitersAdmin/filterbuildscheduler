@@ -7,7 +7,7 @@ class ImportClient
   # Recommendation: Test in sandbox first, always. Set DUMMY. This is a dummy check, Dummy.
   # Add data to import_data.txt, can include: { fname, lname, email, optional: [groups, note_subject, note_type, message_body, note_sender_name, note_sender_email, campaign, fund] }
   # Adjust the string and time values in this file, if fields are coming from import_data.txt, be sure to change strings to variables and add variable calls to methods and line 16
-  # Change line 16 below if necessary. Options are: [.import_user(), .import_user_w_note(), .import_user_w_note_and_group()] 
+  # Change line 16 below if necessary. Options are: [.import_user(), .import_user_w_note(), .import_user_w_note_and_group()]
 
   ###### Import_data.txt helper:
   # EXCEL Formula ="{ fname: '" & A2 & "', lname: '" & B2 & "', email: '" & C2 & "' },"
@@ -164,9 +164,9 @@ class ImportClient
 
   def token
     if DUMMY == 'live'
-      ENV.fetch('KF_LIVE_TOKEN')
+      Rails.application.credentials.kf_filterbuild_token
     else
-      ENV.fetch('KF_TEST_TOKEN')
+      Rails.application.credentials.kf_filterbuild_token_sandbox
     end
   end
 
