@@ -139,7 +139,8 @@ function countFetcher() {
 };
 
 // this seems to start automatically
-poller = setInterval(countFetcher, 2000);
+// TODO: this shouldn't run on EVERY page
+let poller;
 
 (function() {
   // Inventory#edit finalize buttons
@@ -197,6 +198,9 @@ poller = setInterval(countFetcher, 2000);
   });
 
   $(document).on("turbolinks:load", function(){
+    if ($('body[data-controller=inventories][data-action=edit]').length > 0) {
+      poller = setInterval(countFetcher, 2000);
+    };
     // Inventory#order filter buttons
     $("#item_btn").hide();
     $('#order_supplier_div').hide();
@@ -215,7 +219,7 @@ poller = setInterval(countFetcher, 2000);
   $(document).on('click', '#start_polling', function() {
     // make sure poller is not running
     clearInterval(poller);
-    poller = setInterval(countFetcher, 10000);
+    poller = setInterval(countFetcher, 2000);
     console.log('Started polling');
     $('#count_refresh_message').html('Live refresh is running.');
     $(this).toggle();

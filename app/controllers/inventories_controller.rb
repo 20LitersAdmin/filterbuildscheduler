@@ -47,15 +47,16 @@ class InventoriesController < ApplicationController
 
     @matching = Inventory.where(date: Date.parse(@date)).latest
 
-    if inventory_params[:receiving] == 'true'
-      @type = 'receiving'
-    elsif inventory_params[:shipping] == 'true'
-      @type = 'shipping'
-    elsif inventory_params[:manual] == 'true'
-      @type = 'manual'
-    else
-      @type = 'unknown'
-    end
+    @type =
+      if inventory_params[:receiving] == 'true'
+        'receiving'
+      elsif inventory_params[:shipping] == 'true'
+        'shipping'
+      elsif inventory_params[:manual] == 'true'
+        'manual'
+      else
+        'unknown'
+      end
 
     if @matching.present? && @matching.type_for_params == @type
       # No two inventories of the same type on the same day

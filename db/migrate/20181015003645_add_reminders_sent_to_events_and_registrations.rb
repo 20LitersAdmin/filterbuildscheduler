@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AddRemindersSentToEventsAndRegistrations < ActiveRecord::Migration[5.2]
   def change
     add_column :events, :reminder_sent_at, :datetime

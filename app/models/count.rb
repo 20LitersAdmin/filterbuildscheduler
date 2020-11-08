@@ -49,7 +49,7 @@ class Count < ApplicationRecord
 
     return 'Box Count' if partial_loose
 
-    Constants::Inventory::COUNT_BTN_TEXT[inventory.type_for_params]
+    Constants::Inventory::COUNT_BTN_TEXT[inventory.type_for_params.to_sym]
   end
 
   def link_class
