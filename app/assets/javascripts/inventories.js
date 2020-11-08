@@ -138,7 +138,7 @@ function countFetcher() {
   $.get(url, function(){});
 };
 
-let poller;
+var poller;
 
 (function() {
   // Inventory#edit finalize buttons
