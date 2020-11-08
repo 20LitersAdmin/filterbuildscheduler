@@ -8,6 +8,7 @@ git_source(:github) do |repo_name|
   "https://github.com/#{repo_name}.git"
 end
 
+gem 'bootsnap', '>= 1.4.2', require: false
 gem 'bootstrap3-datetimepicker-rails'
 gem 'bootstrap-sass'
 gem 'delayed_cron_job', '~> 0.7.2'
@@ -15,7 +16,6 @@ gem 'delayed_job', '~> 4.1'
 gem 'delayed_job_active_record', '~> 4.1'
 gem 'delayed_job_web'
 gem 'devise'
-gem 'dotenv-rails'
 gem 'font-awesome-rails'
 gem 'httparty'
 gem 'icalendar'
@@ -29,12 +29,12 @@ gem 'pry-byebug'
 gem 'puma'
 gem 'pundit'
 gem 'rails', '~> 6'
-gem 'rails_admin', '~> 2.0.2'
+gem 'rails_admin', '~> 2.0'
 gem 'rest-client'
-gem 'sass-rails'
+gem 'sass-rails', '>= 6'
 gem 'simple_form'
 gem 'therubyracer', platforms: :ruby
-gem 'turbolinks'
+gem 'turbolinks', '~> 5'
 gem 'uglifier', '>= 1.3.0'
 
 group :production do
@@ -43,10 +43,12 @@ end
 
 group :development, :test do
   gem 'airborne'
+  gem 'better_errors'
+  gem 'binding_of_caller'
+  gem 'byebug', platforms: %i[mri mingw x64_mingw]
   gem 'factory_bot_rails'
   gem 'faker'
   gem 'foreman'
-  gem 'rubocop'
   gem 'timecop'
 end
 
@@ -64,8 +66,11 @@ end
 
 group :development do
   gem 'letter_opener_web'
-  gem 'listen', '>= 3.0.5', '< 3.2'
-  gem 'thin'
+  gem 'listen', '~> 3.2'
+  gem 'rubocop', require: false
+  # gem 'spring'
+  # gem 'spring-watcher-listen', '~> 2.0.0'
+  gem 'webdrivers'
   gem 'web-console', '>= 3.3.0'
 end
 
