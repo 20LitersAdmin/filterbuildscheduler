@@ -74,14 +74,17 @@ Rails.application.routes.draw do
     end
   end
 
+  get '/auth/:provider/callback', to: 'oauth_users#callback'
+  get '/auth/in',                 to: 'oauth_users#in', as: :auth_in
+  get '/auth/out',                to: 'oauth_users#out', as: :auth_out
+  get '/auth/failure',            to: 'oauth_users#failure'
+  get '/auth/:id/status',         to: 'oauth_users#status', as: :auth_status
+
   post 'stripe-webhook', to: 'webhooks#receive', as: 'stripe_webhook'
 
   mount LetterOpenerWeb::Engine, at: '/letter_opener' if Rails.env.development?
 
-  authenticated :user, -> user { user.is_admin? } do
+  authenticated :user, ->(user) { user.is_admin? } do
     mount DelayedJobWeb, at: '/delayed_job'
   end
-
-  # catch-all for bad urls
-  # get '*path', to: 'pages#route_error'
 end

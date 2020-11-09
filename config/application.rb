@@ -11,12 +11,15 @@ require 'active_record/railtie'
 # require "active_storage/engine"
 require 'action_controller/railtie'
 require 'action_mailer/railtie'
-require 'action_mailbox/engine'
+# require 'action_mailbox/engine'
 # require 'action_text/engine'
 require 'action_view/railtie'
 # require 'action_cable/engine'
 require 'sprockets/railtie'
 # require 'rails/test_unit/railtie'
+
+require 'google/apis/gmail_v1'
+require 'google/api_client/client_secrets'
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
@@ -51,4 +54,16 @@ end
 
 Rails.application.config.assets.configure do |env|
   env.export_concurrent = false
+end
+
+OmniAuth.config.logger = Rails.logger
+OmniAuth.config.full_host = Rails.env.production? ? 'https://make.20liters.org' : 'http://localhost:3000'
+OmniAuth.config.allowed_request_methods = %i[post get]
+
+Rails.application.config.middleware.use OmniAuth::Builder do
+  provider :google_oauth2,
+           Rails.application.credentials.google_client_id,
+           Rails.application.credentials.google_client_secret,
+           scope: 'email,profile,openid,gmail.readonly',
+           name: 'google'
 end
