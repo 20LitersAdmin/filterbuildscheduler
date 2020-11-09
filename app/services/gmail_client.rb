@@ -2,12 +2,14 @@
 
 class GmailClient
 =begin
+https://developers.google.com/gmail/api/guides/sync
+
   1. after:YYYY/MM/DD strategy:
   --> https://developers.google.com/gmail/api/reference/rest/v1/users.messages/list
   * save the 'last-run date' to the OauthUser's recod
   * list all messages after a given date: users.messages.list(q: 'after:YYYY/MM/DD')
   * collect all message IDs
-  * call `get` on all message IDs
+  * call `get` on all message IDs (or batch: )
   * parse message for: sender, receiver, subject, body
 
   ### sample messages.list payload:
@@ -2430,5 +2432,8 @@ class GmailClient
 
   3. Google's Pub/Sub API can notify via webhook whenever a message is received, this no job to run
   --> https://developers.google.com/gmail/api/guides/push
+  * user still Oauths into the service
+  * then add a watch call via `watch_user()`: https://github.com/googleapis/google-api-ruby-client/blob/d652f7ae9b1fcd07395c3aa72306188c4b4bbd1a/generated/google/apis/gmail_v1/service.rb#L133
+  * still need a cron job to call `watch_user()` once per day
 =end
 end
