@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class CreateOauthUser < ActiveRecord::Migration[6.0]
+class CreateOauthUsers < ActiveRecord::Migration[6.0]
   def change
     create_table :oauth_users do |t|
       t.string :name

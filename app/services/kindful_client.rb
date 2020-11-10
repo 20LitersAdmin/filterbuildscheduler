@@ -17,6 +17,10 @@ class KindfulClient
     self.class.post('/imports', { headers: headers, body: contact(user) })
   end
 
+  def import_user_w_email_note(message)
+    # self.class.post('/imports', { headers: headers, body: contact_w_email_note(message) })
+  end
+
   def import_user_w_note(registration)
     self.class.post('/imports', { headers: headers, body: contact_w_note(registration) })
   end
@@ -99,6 +103,35 @@ class KindfulClient
         }
       ]
     }.to_json
+  end
+
+  def contact_w_email_note(message)
+    # note_type: 'Received Email' || 'Sent Email'
+    {
+      'data_format': 'contact_with_note',
+      'action_type': 'update',
+      'data_type': 'json',
+      'match_by': {
+        'contact': 'first_name_last_name_email'
+      },
+        'data': [
+          {
+            'id':
+            'first_name':
+            'last_name':
+            'email':
+            'primary_phone':
+            'email_opt_in':
+            'country': 'US',
+            'note_id':
+            'note_time':
+            'note_subject':
+            'note_type':
+            'campaign': 'Contributions',
+            'fund': 'Contributions 40100'
+          }
+        ]
+      }.to_json
   end
 
   def contact_w_transaction(opts)
