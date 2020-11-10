@@ -1,16 +1,35 @@
 # frozen_string_literal: true
 
 class GmailClient
+  def initialize(oauth_user_service)
+    @service = oauth_user_service
+    @kindful_client = kindfulClient.new
+  end
+
+  def list_latest_messages
+    # https://github.com/googleapis/google-api-ruby-client/blob/master/generated/google/apis/gmail_v1/service.rb#L944
+    # @service.list_user_messages(user_id, include_spam_trash: nil, label_ids: nil, max_results: nil, page_token: nil, q: nil, fields: nil, quota_user: nil, options: nil, &block)
+  end
+
+  def get_message(message_id:)
+    # https://github.com/googleapis/google-api-ruby-client/blob/master/generated/google/apis/gmail_v1/service.rb#L783
+    # response = @service.get_user_message(user_id, id, format: nil, metadata_headers: nil, fields: nil, quota_user: nil, options: nil, &block)
+    # message = response.parsed_somehow
+    # @kindful_client.import_user_w_email_note(message)
+  end
+
 =begin
 https://developers.google.com/gmail/api/guides/sync
 
   1. after:YYYY/MM/DD strategy:
   --> https://developers.google.com/gmail/api/reference/rest/v1/users.messages/list
-  * save the 'last-run date' to the OauthUser's recod
+  * save the 'last-run date' to the OauthUser's record
   * list all messages after a given date: users.messages.list(q: 'after:YYYY/MM/DD')
-  * collect all message IDs
+  * collect all message IDs <-- save them as an array (t.string 'tags', array: true) to check for repeats?
   * call `get` on all message IDs (or batch: )
   * parse message for: sender, receiver, subject, body
+  * send each message to Kindful
+  * update the last-run date on the OauthUser's record
 
   ### sample messages.list payload:
   {
@@ -174,7 +193,6 @@ https://developers.google.com/gmail/api/guides/sync
     ],
     "resultSizeEstimate": 39
   }
-
 
   2. History based-strategy:
   --> https://developers.google.com/gmail/api/reference/rest/v1/users.history
@@ -2430,7 +2448,7 @@ https://developers.google.com/gmail/api/guides/sync
     "internalDate": "1604501856000"
   }
 
-  3. Google's Pub/Sub API can notify via webhook whenever a message is received, this no job to run
+  3. Google's Pub/Sub API can notify via webhook whenever a message is received
   --> https://developers.google.com/gmail/api/guides/push
   * user still Oauths into the service
   * then add a watch call via `watch_user()`: https://github.com/googleapis/google-api-ruby-client/blob/d652f7ae9b1fcd07395c3aa72306188c4b4bbd1a/generated/google/apis/gmail_v1/service.rb#L133

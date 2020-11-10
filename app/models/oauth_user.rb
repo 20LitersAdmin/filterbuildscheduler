@@ -6,9 +6,8 @@ class OauthUser < ApplicationRecord
   def self.from_omniauth(auth)
     @oauth_user = where(email: auth.info.email).first_or_initialize.tap do |user|
       user.name = auth.info.name
-      user.oauth_provider = auth.provider
       user.oauth_id = auth.uid
-      user.oauth_image_link = auth.info.image
+      user.oauth_provider = auth.provider
       user.oauth_token = auth.credentials.token
       user.oauth_refresh_token ||= auth.credentials.refresh_token
       user.oauth_expires_at = Time.at(auth.credentials.expires_at)
@@ -34,6 +33,10 @@ class OauthUser < ApplicationRecord
 
   def oauth_expired?
     oauth_expires_at < Time.now
+  end
+
+  def oauth_remaining
+    ((oauth_expires_at - Time.now) / 1.minutes).to_i
   end
 
   def email_service

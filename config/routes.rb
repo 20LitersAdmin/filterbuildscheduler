@@ -80,7 +80,9 @@ Rails.application.routes.draw do
   get '/auth/failure',            to: 'oauth_users#failure'
   get '/auth/:id/status',         to: 'oauth_users#status', as: :auth_status
 
-  post 'stripe-webhook', to: 'webhooks#receive', as: 'stripe_webhook'
+  post 'stripe-webhook', to: 'webhooks#stripe', as: 'stripe_webhook'
+  # decided not to try pub/sub for first attempt
+  # post 'gmail-webhook', to: 'webhooks#gmail', as: 'gmail_webhook'
 
   mount LetterOpenerWeb::Engine, at: '/letter_opener' if Rails.env.development?
 

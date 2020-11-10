@@ -20,6 +20,9 @@ class OauthUsersController < ApplicationController
 
   def out
     session[:oauth_user_id] = nil
+
+    flash[:notice] = 'Signed out of Oauth connection'
+    redirect_to auth_in_path
   end
 
   def failure
