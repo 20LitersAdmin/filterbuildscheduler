@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_11_09_003547) do
+ActiveRecord::Schema.define(version: 2020_11_11_034732) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -67,6 +67,24 @@ ActiveRecord::Schema.define(version: 2020_11_09_003547) do
     t.datetime "updated_at"
     t.string "cron"
     t.index ["priority", "run_at"], name: "delayed_jobs_priority"
+  end
+
+  create_table "emails", force: :cascade do |t|
+    t.bigint "oauth_user_id", null: false
+    t.string "from"
+    t.string "to"
+    t.string "subject"
+    t.datetime "date"
+    t.text "body"
+    t.string "gmail_id"
+    t.string "message_id"
+    t.string "reference_ids"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["gmail_id"], name: "index_emails_on_gmail_id"
+    t.index ["message_id"], name: "index_emails_on_message_id"
+    t.index ["oauth_user_id"], name: "index_emails_on_oauth_user_id"
+    t.index ["reference_ids"], name: "index_emails_on_reference_ids"
   end
 
   create_table "events", force: :cascade do |t|
@@ -347,6 +365,7 @@ ActiveRecord::Schema.define(version: 2020_11_09_003547) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  add_foreign_key "emails", "oauth_users"
   add_foreign_key "events", "locations"
   add_foreign_key "events", "technologies"
   add_foreign_key "extrapolate_component_parts", "components"
