@@ -126,7 +126,10 @@ class KindfulClient
             'note_id':
             'note_time':
             'note_subject':
+            'message_body':
             'note_type':
+            'note_sender_name':
+            'note_sender_email':
             'campaign': 'Contributions',
             'fund': 'Contributions 40100'
           }
