@@ -7,6 +7,8 @@ class OauthUser < ApplicationRecord
 
   scope :to_sync, -> { where(sync_emails: true) }
 
+  attr_accessor :source
+
   def self.from_omniauth(auth)
     oauth_user =
       where(email: auth.info.email).first_or_initialize.tap do |user|
@@ -58,5 +60,9 @@ class OauthUser < ApplicationRecord
     response = @service.authorization.refresh!
     new_expiry = Time.now + response['expires_in']
     update_column(:oauth_expires_at, new_expiry)
+  end
+
+  def details
+    as_json(only: %w[id sync_emails oauth_id oauth_expires_at last_email_sync manual_query]).symbolize_keys!
   end
 end

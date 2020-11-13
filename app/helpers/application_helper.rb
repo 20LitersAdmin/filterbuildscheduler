@@ -51,10 +51,10 @@ module ApplicationHelper
     date_or_datetime.strftime('%-m/%-d/%y')
   end
 
-  def human_datetime(datetime)
+  def human_datetime(date_or_datetime)
     return '-' if date_or_datetime.nil?
 
-    datetime.strftime('%-m/%-d/%y %l:%M')
+    date_or_datetime.strftime('%-m/%-d/%y %l:%M %P')
   end
 
   def human_month_year(date_or_datetime)
