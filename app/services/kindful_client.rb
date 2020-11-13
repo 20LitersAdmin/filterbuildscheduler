@@ -17,8 +17,8 @@ class KindfulClient
     self.class.post('/imports', { headers: headers, body: contact(user) })
   end
 
-  def import_user_w_email_note(message)
-    # self.class.post('/imports', { headers: headers, body: contact_w_email_note(message) })
+  def import_user_w_email_note(email_address, email, direction)
+    self.class.post('/imports', { headers: headers, body: contact_w_email_note(email_address, email, direction) })
   end
 
   def import_user_w_note(registration)
@@ -28,6 +28,15 @@ class KindfulClient
   def import_transaction(transaction)
     self.class.post('/imports', { headers: headers, body: contact_w_transaction(transaction) })
   end
+
+  def email_exists_in_kindful?(email)
+    # This methid is always hitting the Production site with Production credentials
+    response = self.class.get("https://app.kindful.com/api/v1/contacts/email_exist?email=#{email}", { headers: live_headers })
+
+    response.parsed_response['exist']
+  end
+
+  private
 
   def token
     if Rails.env.production?
@@ -41,6 +50,13 @@ class KindfulClient
     {
       'Content-Type': 'application/json',
       'Authorization': 'Token token="' + token + '"'
+    }
+  end
+
+  def live_headers
+    {
+      'Content-Type': 'application/json',
+      'Authorization': 'Token token="' + Rails.application.credentials.kf_filterbuild_token + '"'
     }
   end
 
@@ -105,31 +121,28 @@ class KindfulClient
     }.to_json
   end
 
-  def contact_w_email_note(message)
-    # note_type: 'Received Email' || 'Sent Email'
+  def contact_w_email_note(email_address, email, direction)
+    # direction: 'Received Email' || 'Sent Email'
     {
       'data_format': 'contact_with_note',
       'action_type': 'update',
       'data_type': 'json',
       'match_by': {
-        'contact': 'first_name_last_name_email'
+        'contact': 'email'
       },
         'data': [
           {
-            'id':
-            'first_name':
-            'last_name':
-            'email':
-            'primary_phone':
-            'email_opt_in':
+            'id': email.id.to_s,
+            'email': email_address,
             'country': 'US',
-            'note_id':
-            'note_time':
-            'note_subject':
-            'message_body':
-            'note_type':
-            'note_sender_name':
-            'note_sender_email':
+            'note_id': email.message_id.to_s,
+            'note_time': email.datetime,
+            'note_subject': email.subject,
+            'note_body': email.body,
+            'message_body': email.snippet,
+            'note_type': direction,
+            'note_sender_name': email.oauth_user.name,
+            'note_sender_email': email.oauth_user.email,
             'campaign': 'Contributions',
             'fund': 'Contributions 40100'
           }

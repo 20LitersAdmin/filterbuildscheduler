@@ -32,5 +32,7 @@ class OauthUsersController < ApplicationController
 
   def status
     @oauth_user = OauthUser.find(params[:id])
+
+    @emails = @oauth_user.emails
   end
 end

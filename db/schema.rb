@@ -71,20 +71,20 @@ ActiveRecord::Schema.define(version: 2020_11_11_034732) do
 
   create_table "emails", force: :cascade do |t|
     t.bigint "oauth_user_id", null: false
-    t.string "from"
-    t.string "to"
+    t.string "from", array: true
+    t.string "to", array: true
     t.string "subject"
-    t.datetime "date"
+    t.datetime "datetime"
     t.text "body"
+    t.text "snippet"
     t.string "gmail_id"
     t.string "message_id"
-    t.string "reference_ids"
+    t.datetime "sent_to_kindful_on"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["gmail_id"], name: "index_emails_on_gmail_id"
     t.index ["message_id"], name: "index_emails_on_message_id"
     t.index ["oauth_user_id"], name: "index_emails_on_oauth_user_id"
-    t.index ["reference_ids"], name: "index_emails_on_reference_ids"
   end
 
   create_table "events", force: :cascade do |t|

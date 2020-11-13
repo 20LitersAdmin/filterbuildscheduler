@@ -3,49 +3,111 @@
 class Email < ApplicationRecord
   belongs_to :oauth_user
 
-  validates :message_id, :google_id, uniqueness: true
+  validates :message_id, :gmail_id, presence: true, uniqueness: true
+  validates :from, :to, presence: true
+  validate :deny_internal_messages
 
-  def self.from_gmail(response, oauth_user)
-    message_id = response.headers.select { |header| header.name == 'Message-ID' }.first.value
-    email =
-      where(google_id: response.id, message_id: message_id, oauth_user: oauth_user).first_or_initialize.tap do |e|
-        e.oauth_user = oauth_user
-        e.from       = response.headers.select { |header| header.name == 'From' }.first.value
-        e.to         = response.headers.select { |header| header.name == 'To' }.first.value
-        e.subject    = response.headers.select { |header| header.name == 'Subject' }.first.value
-        e.date       = DateTime.parse(response.headers.select { |header| header.name == 'Date' }.first.value)
-        e.body       = response.payload.parts[0].parts[0].parts.first.body.data
-      end
+  after_create :send_to_kindful
+
+  scope :stale, -> { where('datetime < ?', Time.now - 14.days) }
+  scope :synced, -> { where.not(sent_to_kindful_on: nil) }
+
+  def self.from_gmail(response, body_data, oauth_user)
+    message_id = cleanup_text response.payload.headers.select { |header| header.name.downcase == 'message-id' }.first&.value
+
+    return if message_id.nil?
+
+    email = where(message_id: message_id).first_or_initialize
+
+    return email unless email.new_record?
+
+    email.tap do |e|
+      e.oauth_user = oauth_user
+      e.gmail_id   = response.id
+      e.snippet    = response.snippet.squish
+      e.from       = email_address_from_text response.payload.headers.select { |header| header.name.downcase == 'from' }.first&.value
+      e.to         = email_address_from_text response.payload.headers.select { |header| header.name.downcase == 'to' }.first&.value
+      e.subject    = cleanup_text response.payload.headers.select { |header| header.name.downcase == 'subject' }.first&.value
+      e.datetime   = Time.parse(response.payload.headers.select { |header| header.name.downcase == 'date' }.first&.value)
+      e.body       = body_data
+    end
 
     email.save
-    email.reload
+    email.reload unless email.errors.any?
+  end
+
+  def send_to_kindful
+    kf = KindfulClient.new
+
+    target_emails.each do |email_address, direction|
+      next unless kf.email_exists_in_kindful?(email_address)
+
+      response = kf.import_user_w_email_note(email_address, self, direction)
+
+      update_column(:sent_to_kindful_on, Time.now) unless response['status'] == 'error'
+    end
+
+    reload
+  end
+
+  def self.cleanup_text(text)
+    return if text.nil?
+
+    text.gsub(/[<>\\"]/, '')
+  end
+
+  def self.email_address_from_text(text)
+    return if text.nil?
+
+    text.scan(/[a-zA-Z0-9.!\#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*/)
+  end
+
+  def deny_internal_messages
+    errors.add(:from, 'blank!') if from.blank?
+    errors.add(:to, 'blank!') if to.blank?
+
+    return if from.blank? || to.blank?
+
+    domains = Constants::Email::INTERNAL_DOMAINS
+
+    address_domains = []
+    (from + to).uniq.each do |address|
+      address_domains << address.scan(/@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])/)
+    end
+
+    external_domains = address_domains.flatten.reject { |addr| domains.include? addr }
+
+    return if external_domains.any?
+
+    errors.add(:from, 'Internal Emails only!')
+  end
+
+  def target_emails
+    # If I sent the email, include everyone I sent it to
+    # If I received the email, include the person who sent it to me
+
+    # [{ email: "", direction: ""}, { email: "", direction: ""}]
+
+    if from.include? oauth_user.email
+      email_addresses = to
+      direction = 'Received Email'
+    else
+      email_addresses = from
+      direction = 'Sent Email'
+    end
+
+    ary = []
+
+    email_addresses.each do |email_address|
+      ary << [email_address, direction]
+    end
+
+    ary
   end
 end
 
 =begin
-#<Google::Apis::GmailV1::Message:0x00007f8ae838f778
-  @id="175aee26de8209d2",
-  @payload=#<Google::Apis::GmailV1::MessagePart:0x00007f8ae838cc80
-    @headers=
-      [
-        #<Google::Apis::GmailV1::MessagePartHeader:0x00007f8ae83bbcb0 @name="From", @value="\"James H. Quist CPA\" <jquist@quist-cpa.com>">,
-        #<Google::Apis::GmailV1::MessagePartHeader:0x00007f8ae83bb620 @name="To", @value="\"'Brianna Eiermann'\" <briannae@nfgllc.com>, \"'Chip Kragt'\" <chip@20liters.org>, \"'Ben Lyzenga'\" <BenL@nfgllc.com>">,
-        #<Google::Apis::GmailV1::MessagePartHeader:0x00007f8ae83baf90 @name="References", @value="<007501d6ae1e$b52549a0$1f6fdce0$@quist-cpa.com> <c72935b6ff2347e0ad492682a8effaaf@nfgllc.com>">,
-        #<Google::Apis::GmailV1::MessagePartHeader:0x00007f8ae83ba900 @name="In-Reply-To", @value="<c72935b6ff2347e0ad492682a8effaaf@nfgllc.com>">,
-        #<Google::Apis::GmailV1::MessagePartHeader:0x00007f8ae83ba270 @name="Subject", @value="RE: 20L Financial Statements Draft">,
-        #<Google::Apis::GmailV1::MessagePartHeader:0x00007f8ae83b9be0 @name="Date", @value="Mon, 9 Nov 2020 16:20:40 -0500">,
-        #<Google::Apis::GmailV1::MessagePartHeader:0x00007f8ae83b9550 @name="Message-ID", @value="<015601d6b6de$2d16eb40$8744c1c0$@quist-cpa.com>">
-      ],
-    @parts=
-      [
-        #<Google::Apis::GmailV1::MessagePart:0x00007f8ae83c3b18 @parts=
-          [
-            #<Google::Apis::GmailV1::MessagePart:0x00007f8ae83c2d08 @parts=
-              [
-                #<Google::Apis::GmailV1::MessagePart:0x00007f8ae83c1ef8 @body=
-                  #<Google::Apis::GmailV1::MessagePartBody:0x00007f8ae83c1a98
-                    @data="Good afternoon, Brianna!\r\n\r\n \r\n\r\nThanks for catching those allocation variances. I'm not sure why, but the\r\ncalculations weren't done consistently with how they've been done in the\r\npast. I fixed all those formulas so what you find in the attached should be\r\nmuch more comparative to the prior year. Let me know if there are any other\r\nquestions or concerns.\r\n\r\n \r\n\r\nJim\r\n\r\n \r\n\r\nJames H. Quist CPA, PLC\r\n\r\n2425 Avon Ave SW\r\n\r\nWyoming, MI 49519\r\n\r\n <tel:616-443-5344> 616-443-5344\r\n\r\n <http://www.quist-cpa.com/> www.QUIST-CPA.com\r\n\r\n\r\n\r\n \r\n\r\nNOTICE: The information in this e-mail is confidential and may be legally\r\nprivileged. It is intended solely for the addressee. Access to this e-mail\r\nby anyone else is unauthorized. If you are not the intended recipient, any\r\ndisclosure, copying, distribution or any action taken or omitted to be taken\r\nin reliance on it is prohibited and may be unlawful.\r\n\r\n \r\n\r\nFrom: Brianna Eiermann <briannae@nfgllc.com> \r\nSent: Monday, November 9, 2020 2:17 PM\r\nTo: James H. Quist CPA <jquist@quist-cpa.com>; 'Chip Kragt'\r\n<chip@20liters.org>; Ben Lyzenga <BenL@nfgllc.com>\r\nSubject: RE: 20L Financial Statements Draft\r\n\r\n \r\n\r\nHi Jim, \r\n\r\n \r\n\r\nI reviewed the financials with Chip and Ben and we have a question on\r\ndepartment allocations.  On the statement of functional expenses, we noticed\r\nthat Information Technology and Occupancy were allocated differently than\r\nlast fiscal year. Can you explain where this came from or why we are\r\nallocating them that way? If possible, Chip and I discussed keeping it\r\nconsistent with the prior fiscal year. \r\n\r\n \r\n\r\nBrianna Eiermann\r\n\r\nNienhuis Financial Group\r\n\r\n \r\n\r\nFrom: James H. Quist CPA <jquist@quist-cpa.com <mailto:jquist@quist-cpa.com>\r\n> \r\nSent: Thursday, October 29, 2020 2:10 PM\r\nTo: 'Chip Kragt' <chip@20liters.org <mailto:chip@20liters.org> >; Ben\r\nLyzenga <BenL@nfgllc.com <mailto:BenL@nfgllc.com> >; Brianna Eiermann\r\n<briannae@nfgllc.com <mailto:briannae@nfgllc.com> >\r\nSubject: 20L Financial Statements Draft\r\n\r\n \r\n\r\nGood afternoon, 20Literers!\r\n\r\n \r\n\r\nAttached is a draft of the financial statements for the 2020 fiscal year.\r\nPlease review and let me know if you have any questions or find something\r\nthat needs to be corrected.\r\n\r\n \r\n\r\nThanks!\r\n\r\n \r\n\r\nJim\r\n\r\n \r\n\r\nJames H. Quist CPA, PLC\r\n\r\n2425 Avon Ave SW\r\n\r\nWyoming, MI 49519\r\n\r\n <tel:616-443-5344> 616-443-5344\r\n\r\n <http://www.quist-cpa.com/> www.QUIST-CPA.com\r\n\r\n\r\n\r\n \r\n\r\nNOTICE: The information in this e-mail is confidential and may be legally\r\nprivileged. It is intended solely for the addressee. Access to this e-mail\r\nby anyone else is unauthorized. If you are not the intended recipient, any\r\ndisclosure, copying, distribution or any action taken or omitted to be taken\r\nin reliance on it is prohibited and may be unlawful.\r\n\r\n \r\n\r\n">,
-                    @mime_type="text/plain">
-      ]>,
-  @snippet="Good afternoon, Brianna! Thanks for catching those allocation variances. I&#39;m not sure why, but the calculations weren&#39;t done consistently with how they&#39;ve been done in the past. I fixed all">
+(after: '2020/10/22', before: '2020/11/11')
+
+17551f2329580604
 =end
