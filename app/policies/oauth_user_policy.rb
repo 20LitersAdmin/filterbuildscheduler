@@ -20,4 +20,12 @@ class OauthUserPolicy < ApplicationPolicy
   def status?
     in?
   end
+
+  def manual?
+    in?
+  end
+
+  def update?
+    in?
+  end
 end

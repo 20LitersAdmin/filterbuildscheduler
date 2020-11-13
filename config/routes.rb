@@ -79,6 +79,8 @@ Rails.application.routes.draw do
   get '/auth/out',                to: 'oauth_users#out', as: :auth_out
   get '/auth/failure',            to: 'oauth_users#failure'
   get '/auth/:id/status',         to: 'oauth_users#status', as: :auth_status
+  get '/auth/:id/manual',         to: 'oauth_users#manual', as: :auth_manual
+  patch '/auth/:id',              to: 'oauth_users#update', as: :auth_update
 
   post 'stripe-webhook', to: 'webhooks#stripe', as: 'stripe_webhook'
   # decided not to try pub/sub for first attempt
