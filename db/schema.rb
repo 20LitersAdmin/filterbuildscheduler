@@ -226,9 +226,10 @@ ActiveRecord::Schema.define(version: 2020_11_11_034732) do
     t.string "oauth_provider"
     t.string "oauth_token"
     t.string "oauth_refresh_token"
-    t.string "last_history_id"
-    t.date "after_date"
     t.datetime "oauth_expires_at"
+    t.boolean "sync_emails"
+    t.date "last_email_sync"
+    t.string "manual_query"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["email"], name: "index_oauth_users_on_email", unique: true

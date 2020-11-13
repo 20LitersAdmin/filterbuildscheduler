@@ -36,27 +36,10 @@ class KindfulClient
     response.parsed_response['exist']
   end
 
-  private
-
-  def token
-    if Rails.env.production?
-      Rails.application.credentials.kf_filterbuild_token
-    else
-      Rails.application.credentials.kf_filterbuild_token_sandbox
-    end
-  end
-
   def headers
     {
       'Content-Type': 'application/json',
       'Authorization': 'Token token="' + token + '"'
-    }
-  end
-
-  def live_headers
-    {
-      'Content-Type': 'application/json',
-      'Authorization': 'Token token="' + Rails.application.credentials.kf_filterbuild_token + '"'
     }
   end
 
@@ -183,5 +166,22 @@ class KindfulClient
          }
       ]
     }.to_json
+  end
+
+  private
+
+  def token
+    if Rails.env.production?
+      Rails.application.credentials.kf_filterbuild_token
+    else
+      Rails.application.credentials.kf_filterbuild_token_sandbox
+    end
+  end
+
+  def live_headers
+    {
+      'Content-Type': 'application/json',
+      'Authorization': 'Token token="' + Rails.application.credentials.kf_filterbuild_token + '"'
+    }
   end
 end
