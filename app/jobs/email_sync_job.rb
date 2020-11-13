@@ -14,7 +14,7 @@ class EmailSyncJob < ApplicationJob
 
     puts "-+ Syncing emails after:#{after} before:#{before}"
 
-    OauthUsers.all.each do |o|
+    OauthUsers.to_sync.each do |o|
       a_size = Email.all.size
       a_sent = Email.synced.size
       puts "-+-+ Syncing for #{o.name}"
@@ -29,5 +29,8 @@ class EmailSyncJob < ApplicationJob
       puts "-+-+-+ Created #{b_size} emails"
       puts "-+-+-+ Synced #{b_sent} notes to Kindful"
     end
+
+    puts '-+ Removing stale emails'
+    Email.stale.destroy_all
   end
 end

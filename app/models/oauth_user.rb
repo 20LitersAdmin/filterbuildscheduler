@@ -5,6 +5,8 @@ class OauthUser < ApplicationRecord
 
   validates :oauth_id, :oauth_token, uniqueness: true, allow_blank: true
 
+  scope :to_sync, -> { where(sync_emails: true) }
+
   def self.from_omniauth(auth)
     oauth_user =
       where(email: auth.info.email).first_or_initialize.tap do |user|
