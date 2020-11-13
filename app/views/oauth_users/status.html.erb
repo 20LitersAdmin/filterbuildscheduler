@@ -9,3 +9,35 @@
 <div class="col-xs-12">
   <%= @oauth_user.as_json %>
 </div>
+<div class="col-xs-12">
+  <hr />
+</div>
+<div class="col-xs-12">
+  <ul>
+    <% @emails.each do |email|  %>
+      <li>
+        <ul>
+          <li>
+            ID: <%= email.id %>
+          </li>
+          <li>
+            Date: <%= email.datetime.strftime('%Y/%m/%d @ %H:%m') %>
+          </li>
+          <li>
+            Message ID: <%= email.message_id %>
+          </li>
+          <li>
+            From: <%= email.from %>
+          </li>
+          <li>
+            To: <%= email.to %>
+          </li>
+          <li>
+            Subject: <%= email.subject %>
+          </li>
+          <br>
+        </ul>
+      </li>
+    <% end %>
+  </ul>
+</div>

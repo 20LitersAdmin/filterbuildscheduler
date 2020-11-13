@@ -47,9 +47,7 @@ class OauthUser < ApplicationRecord
     @service = Google::Apis::GmailV1::GmailService.new
     @service.authorization = authorization
 
-    if oauth_expired?
-      refresh_authorization!
-    end
+    refresh_authorization! if oauth_expired?
 
     @service
   end
