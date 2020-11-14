@@ -80,6 +80,7 @@ ActiveRecord::Schema.define(version: 2020_11_11_034732) do
     t.string "gmail_id"
     t.string "message_id"
     t.datetime "sent_to_kindful_on"
+    t.string "matched_emails", array: true
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["gmail_id"], name: "index_emails_on_gmail_id"

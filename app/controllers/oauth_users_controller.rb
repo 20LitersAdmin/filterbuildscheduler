@@ -44,12 +44,22 @@ class OauthUsersController < ApplicationController
     @oauth_user.update(oauth_user_params)
 
     if oauth_user_params[:manual_query].present?
-      byebug
+      begin
+        GmailClient.new(@oauth_user).delay.batch_get_queried_messages(query: oauth_user_params[:manual_query])
+
+      rescue Signet::AuthorizationError => e
+        byebug
+      end
+
+      respond_to do |format|
+        format.js { render 'querying' }
+      end
+    else
+      respond_to do |format|
+        format.js {}
+      end
     end
 
-    respond_to do |format|
-      format.js {}
-    end
   end
 
   private

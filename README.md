@@ -1,11 +1,13 @@
 # README
 ## Kindful Mail Client
 1. Test that cron job is working
-2. Manual interface `/auth/1/status` allows for:
+2. Status interface `/auth/1/status` allows for:
   - Viewing synced emails
   - Showing which emails were `sent_to_kindful_on`
-  - Toggle daily sync
+  - Toggle daily sync: NEEDS TEXT TO EXPLAIN THIS SETTING
+3. Manual interface `/auth/1/manual` allows for:
   - Run manual query
+  - SPLIT update.js.erb to be conditional based upon STATUS vs MANUAL
 
 ## HMMM
 1. `weeks_to_out` and `per_technology` rely on lots of `.first`s which is an issue for items that `have_many` technologies

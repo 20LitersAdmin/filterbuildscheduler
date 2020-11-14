@@ -39,13 +39,16 @@ class Email < ApplicationRecord
   def send_to_kindful
     kf = KindfulClient.new
 
+    temp_matched_emails = []
+
     target_emails.each do |email_address, direction|
       next unless kf.email_exists_in_kindful?(email_address)
 
       response = kf.import_user_w_email_note(email_address, self, direction)
 
-      update_column(:sent_to_kindful_on, Time.now) unless response['status'] == 'error'
+      temp_matched_emails << email_address unless response['status'] == 'error'
     end
+    update_columns(sent_to_kindful_on: Time.now, matched_emails: temp_matched_emails) if temp_matched_emails.any?
 
     reload
   end
@@ -60,6 +63,18 @@ class Email < ApplicationRecord
     return if text.nil?
 
     text.scan(/[a-zA-Z0-9.!\#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*/)
+  end
+
+  def sync_msg
+    return 'Not synced. No contact match.' if sent_to_kindful_on.nil?
+
+    "Synced with #{matched_emails.join(', ')} at #{sent_to_kindful_on.strftime('%-m/%-d/%y %l:%M %P')}"
+  end
+
+  def sync_banner_color
+    return 'success' if sent_to_kindful_on.present?
+
+    'warning'
   end
 
   def deny_internal_messages
@@ -85,9 +100,6 @@ class Email < ApplicationRecord
   def target_emails
     # If I sent the email, include everyone I sent it to
     # If I received the email, include the person who sent it to me
-
-    # [{ email: "", direction: ""}, { email: "", direction: ""}]
-
     if from.include? oauth_user.email
       email_addresses = to
       direction = 'Received Email'
@@ -102,12 +114,7 @@ class Email < ApplicationRecord
       ary << [email_address, direction]
     end
 
+    # [[email, direction], [email, direction]]
     ary
   end
 end
-
-=begin
-(after: '2020/10/22', before: '2020/11/11')
-
-17551f2329580604
-=end
