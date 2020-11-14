@@ -7,55 +7,44 @@
 </div>
 
 <div class="col-xs-12 col-sm-6">
-  <% if @oauth_user.oauth_expired? %>
-    <h5>Token expired <%= human_datetime @oauth_user.oauth_expires_at %></h5>
-  <% else %>
-    <h5>Token expires in <%= @oauth_user.oauth_remaining %> minutes</h5>
-  <% end %>
+  <div class="row">
+   <div class="col-xs-12">
+     <% if @oauth_user.oauth_expired? %>
+       <h5>Token expired <%= human_datetime @oauth_user.oauth_expires_at %></h5>
+     <% else %>
+       <h5>Token expires in <%= @oauth_user.oauth_remaining %> minutes</h5>
+     <% end %>
+   </div>
+  </div>
+  <div class="row">
+    <div class="col-xs-12 user-details">
+      <%= @oauth_user.details %>
+    </div>
+  </div>
 </div>
 <div class="col-xs-12 col-sm-6">
-  <%= simple_form_for @oauth_user, url: auth_update_path(@oauth_user), remote: true do |f| %>
-    <%= f.input :sync_emails, inline_label: true, label: false %>
-    <%= f.button :submit, 'Update', class: 'btn blue' %>
-  <% end %>
-</div>
-
-
-<div class="col-xs-12 user-details">
-  <%= @oauth_user.details %>
+  <div class="row">
+    <div class="col-xs-12">
+      <%= simple_form_for @oauth_user, url: auth_update_path(@oauth_user), remote: true do |f| %>
+        <%= f.input :sync_emails, inline_label: true, label: false %>
+        <%= f.button :submit, 'Update', class: 'btn blue' %>
+      <% end %>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-xs-12">
+      <p><strong>Emails from the previous day are synced around 3am every morning.</strong></p>
+      <p>To turn off daily syncing, please ensure the box above is un-checked.</p>
+    </div>
+  </div>
 </div>
 <div class="col-xs-12">
   <hr />
 </div>
 <div class="col-xs-12">
   <% if @emails.any? %>
-    <ul>
-      <% @emails.each do |email|  %>
-        <li>
-          <ul>
-            <li>
-              ID: <%= email.id %>
-            </li>
-            <li>
-              Date: <%= email.datetime.strftime('%Y/%m/%d @ %H:%m') %>
-            </li>
-            <li>
-              Message ID: <%= email.message_id %>
-            </li>
-            <li>
-              From: <%= email.from %>
-            </li>
-            <li>
-              To: <%= email.to %>
-            </li>
-            <li>
-              Subject: <%= email.subject %>
-            </li>
-            <br>
-          </ul>
-        </li>
-      <% end %>
-    </ul>
+    <p><strong>Emails synced within the last 14 days:</strong></p>
+    <%= render partial: 'email', collection: @emails %>
   <% else %>
     <p>No emails were synced within the last 14 days.</p>
   <% end %>

@@ -13,6 +13,7 @@ class CreateEmails < ActiveRecord::Migration[6.0]
       t.string :gmail_id, index: true
       t.string :message_id, index: true
       t.datetime :sent_to_kindful_on
+      t.string :matched_emails, array: true
       t.timestamps
     end
   end

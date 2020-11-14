@@ -31,6 +31,8 @@ class EmailSyncJob < ApplicationJob
     end
 
     puts '-+ Removing stale emails'
+    e_size = Email.stale.size
     Email.stale.destroy_all
+    puts "-+ Removed #{e_size} stale emails."
   end
 end
