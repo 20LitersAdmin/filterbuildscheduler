@@ -3,7 +3,7 @@
 class WebhooksController < ApplicationController
   skip_before_action :verify_authenticity_token
 
-  def receive
+  def stripe
     # Stripe's test webhook doesn't have application or metadata.
     # To test to Kindful's sandbox, we need to send the charge_succeeded_spec file.
     # So, when in Development and the webhook is received from Stripe, ignore it and use my test file
@@ -20,5 +20,9 @@ class WebhooksController < ApplicationController
     KindfulClient.new.import_transaction(@json) if @json[:application] == 'ca_14yEk8gp5dbBbYDnndXU9yTNM3Z3gyWS'
 
     head :ok
+  end
+
+  def gmail
+    # decided to try a cron job first
   end
 end

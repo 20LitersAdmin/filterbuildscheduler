@@ -11,12 +11,15 @@ require 'active_record/railtie'
 # require "active_storage/engine"
 require 'action_controller/railtie'
 require 'action_mailer/railtie'
-require 'action_mailbox/engine'
+# require 'action_mailbox/engine'
 # require 'action_text/engine'
 require 'action_view/railtie'
 # require 'action_cable/engine'
 require 'sprockets/railtie'
 # require 'rails/test_unit/railtie'
+
+require 'google/apis/gmail_v1'
+require 'google/api_client/client_secrets'
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.

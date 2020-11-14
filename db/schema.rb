@@ -1,18 +1,16 @@
-# frozen_string_literal: true
-
 # This file is auto-generated from the current state of the database. Instead
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
 #
-# Note that this schema.rb definition is the authoritative source for your
-# database schema. If you need to create the application database on another
-# system, you should be using db:schema:load, not running all the migrations
-# from scratch. The latter is a flawed and unsustainable approach (the more migrations
-# you'll amass, the slower it'll run and the greater likelihood for issues).
+# This file is the source Rails uses to define your schema when running `rails
+# db:schema:load`. When creating a new database, `rails db:schema:load` tends to
+# be faster and is potentially less error prone than running all of your
+# migrations from scratch. Old migrations may fail to apply correctly if those
+# migrations use external dependencies or application code.
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_09_01_194040) do
+ActiveRecord::Schema.define(version: 2020_11_11_034732) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -69,6 +67,25 @@ ActiveRecord::Schema.define(version: 2020_09_01_194040) do
     t.datetime "updated_at"
     t.string "cron"
     t.index ["priority", "run_at"], name: "delayed_jobs_priority"
+  end
+
+  create_table "emails", force: :cascade do |t|
+    t.bigint "oauth_user_id", null: false
+    t.string "from", array: true
+    t.string "to", array: true
+    t.string "subject"
+    t.datetime "datetime"
+    t.text "body"
+    t.text "snippet"
+    t.string "gmail_id"
+    t.string "message_id"
+    t.datetime "sent_to_kindful_on"
+    t.string "matched_emails", array: true
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["gmail_id"], name: "index_emails_on_gmail_id"
+    t.index ["message_id"], name: "index_emails_on_message_id"
+    t.index ["oauth_user_id"], name: "index_emails_on_oauth_user_id"
   end
 
   create_table "events", force: :cascade do |t|
@@ -203,6 +220,24 @@ ActiveRecord::Schema.define(version: 2020_09_01_194040) do
     t.index ["supplier_id"], name: "index_materials_on_supplier_id"
   end
 
+  create_table "oauth_users", force: :cascade do |t|
+    t.string "name"
+    t.string "email"
+    t.string "oauth_id"
+    t.string "oauth_provider"
+    t.string "oauth_token"
+    t.string "oauth_refresh_token"
+    t.datetime "oauth_expires_at"
+    t.boolean "sync_emails"
+    t.date "last_email_sync"
+    t.string "manual_query"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["email"], name: "index_oauth_users_on_email", unique: true
+    t.index ["oauth_id"], name: "index_oauth_users_on_oauth_id", unique: true
+    t.index ["oauth_token"], name: "index_oauth_users_on_oauth_token", unique: true
+  end
+
   create_table "parts", force: :cascade do |t|
     t.string "name", null: false
     t.string "order_url"
@@ -332,6 +367,7 @@ ActiveRecord::Schema.define(version: 2020_09_01_194040) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  add_foreign_key "emails", "oauth_users"
   add_foreign_key "events", "locations"
   add_foreign_key "events", "technologies"
   add_foreign_key "extrapolate_component_parts", "components"

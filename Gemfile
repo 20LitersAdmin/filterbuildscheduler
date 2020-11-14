@@ -17,12 +17,15 @@ gem 'delayed_job_active_record', '~> 4.1'
 gem 'delayed_job_web'
 gem 'devise'
 gem 'font-awesome-rails'
+gem 'google-api-client'
 gem 'httparty'
 gem 'icalendar'
 gem 'jquery-datatables-rails'
 gem 'jquery-rails'
 gem 'momentjs-rails'
 gem 'money-rails'
+gem 'omniauth-google-oauth2'
+gem 'omniauth-rails_csrf_protection', '~> 0.1'
 gem 'paranoia', '~> 2.4'
 gem 'pg', '~> 0.21'
 gem 'pry-byebug'
@@ -70,8 +73,8 @@ group :development do
   gem 'rubocop', require: false
   # gem 'spring'
   # gem 'spring-watcher-listen', '~> 2.0.0'
-  gem 'webdrivers'
   gem 'web-console', '>= 3.3.0'
+  gem 'webdrivers'
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem

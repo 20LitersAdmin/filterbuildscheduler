@@ -2,6 +2,23 @@
 
 require 'money-rails/rails_admin'
 require 'rails_admin/adapters/active_record'
+require 'application_record'
+require 'user'
+require 'event'
+require 'registration'
+require 'location'
+require 'technology'
+require 'supplier'
+require 'component'
+require 'part'
+require 'material'
+require 'count'
+require 'inventory'
+require 'extrapolate_component_part'
+require 'extrapolate_material_part'
+require 'extrapolate_technology_component'
+require 'extrapolate_technology_part'
+require 'extrapolate_technology_material'
 
 require Rails.root.join('lib', 'rails_admin', 'restore.rb')
 require Rails.root.join('lib', 'rails_admin', 'paranoid_delete.rb')

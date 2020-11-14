@@ -74,14 +74,21 @@ Rails.application.routes.draw do
     end
   end
 
-  post 'stripe-webhook', to: 'webhooks#receive', as: 'stripe_webhook'
+  get '/auth/:provider/callback', to: 'oauth_users#callback'
+  get '/auth/in',                 to: 'oauth_users#in', as: :auth_in
+  get '/auth/out',                to: 'oauth_users#out', as: :auth_out
+  get '/auth/failure',            to: 'oauth_users#failure'
+  get '/auth/:id/status',         to: 'oauth_users#status', as: :auth_status
+  get '/auth/:id/manual',         to: 'oauth_users#manual', as: :auth_manual
+  patch '/auth/:id',              to: 'oauth_users#update', as: :auth_update
+
+  post 'stripe-webhook', to: 'webhooks#stripe', as: 'stripe_webhook'
+  # decided not to try pub/sub for first attempt
+  # post 'gmail-webhook', to: 'webhooks#gmail', as: 'gmail_webhook'
 
   mount LetterOpenerWeb::Engine, at: '/letter_opener' if Rails.env.development?
 
-  authenticated :user, -> user { user.is_admin? } do
+  authenticated :user, ->(user) { user.is_admin? } do
     mount DelayedJobWeb, at: '/delayed_job'
   end
-
-  # catch-all for bad urls
-  # get '*path', to: 'pages#route_error'
 end

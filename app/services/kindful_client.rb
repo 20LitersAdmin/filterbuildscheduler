@@ -17,6 +17,10 @@ class KindfulClient
     self.class.post('/imports', { headers: headers, body: contact(user) })
   end
 
+  def import_user_w_email_note(email_address, email, direction)
+    self.class.post('/imports', { headers: headers, body: contact_w_email_note(email_address, email, direction) })
+  end
+
   def import_user_w_note(registration)
     self.class.post('/imports', { headers: headers, body: contact_w_note(registration) })
   end
@@ -25,12 +29,11 @@ class KindfulClient
     self.class.post('/imports', { headers: headers, body: contact_w_transaction(transaction) })
   end
 
-  def token
-    if Rails.env.production?
-      Rails.application.credentials.kf_filterbuild_token
-    else
-      Rails.application.credentials.kf_filterbuild_token_sandbox
-    end
+  def email_exists_in_kindful?(email)
+    # This methid is always hitting the Production site with Production credentials
+    response = self.class.get("https://app.kindful.com/api/v1/contacts/email_exist?email=#{email}", { headers: live_headers })
+
+    response.parsed_response['exist']
   end
 
   def headers
@@ -101,6 +104,35 @@ class KindfulClient
     }.to_json
   end
 
+  def contact_w_email_note(email_address, email, direction)
+    # direction: 'Received Email' || 'Sent Email'
+    {
+      'data_format': 'contact_with_note',
+      'action_type': 'update',
+      'data_type': 'json',
+      'match_by': {
+        'contact': 'email'
+      },
+        'data': [
+          {
+            'id': email.id.to_s,
+            'email': email_address,
+            'country': 'US',
+            'note_id': email.message_id.to_s,
+            'note_time': email.datetime,
+            'note_subject': email.subject,
+            'note_body': email.body,
+            'message_body': email.snippet,
+            'note_type': direction,
+            'note_sender_name': email.oauth_user.name,
+            'note_sender_email': email.oauth_user.email,
+            'campaign': 'Contributions',
+            'fund': 'Contributions 40100'
+          }
+        ]
+      }.to_json
+  end
+
   def contact_w_transaction(opts)
     {
       'data_format': 'contact_with_transaction',
@@ -134,5 +166,22 @@ class KindfulClient
          }
       ]
     }.to_json
+  end
+
+  private
+
+  def token
+    if Rails.env.production?
+      Rails.application.credentials.kf_filterbuild_token
+    else
+      Rails.application.credentials.kf_filterbuild_token_sandbox
+    end
+  end
+
+  def live_headers
+    {
+      'Content-Type': 'application/json',
+      'Authorization': 'Token token="' + Rails.application.credentials.kf_filterbuild_token + '"'
+    }
   end
 end
