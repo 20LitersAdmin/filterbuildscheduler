@@ -1,0 +1,64 @@
+<div class="col-xs-12 col-sm-8">
+  <h3>Manual Sync for <%= @oauth_user.name %></h2>
+</div>
+
+<div class="col-xs-12 col-sm-2 right-align">
+  <%= link_to 'Status', auth_status_path(@oauth_user), class: 'btn yellow'  %>
+</div>
+
+<div class="col-xs-12">
+  <div class="row">
+    <div class="col-xs-12">
+      <h2>Performing a manual sync:</h2>
+      <p>You can use this form to manually fetch emails from Gmail and send them to Kindful.</p>
+      <p>Any search query that works in your Gmail searchbar will work here.</p>
+      <p>This only works if:</p>
+      <ul>
+        <li>The sender or one of the receivers is a Kindful contact</li>
+        <li>At least one email address is not from '@20liters.org'</li>
+        <li>The email has not already been previously synced in the last 14 days</li>
+      </ul>
+
+      <h3>Warnings:</h3>
+      <p>This system only keeps track of emails synced in the last 14 days. <strong>A manual sync can easily create duplicate notes for any email older than 14 days ago.</strong></p>
+      <h4>Please test the manual query in Gmail FIRST.</h4>
+      <p>If your query is not pulling in exactly what you want and nothing else, mistakes can happen.</p>
+      <p>There is no way to undo syncing emails to Kindful. Mistakes will have to be corrected by hand in Kindful.</p>
+
+    </div>
+  </div>
+  <div class="row query-form">
+    <%= simple_form_for @oauth_user, url: auth_update_path(@oauth_user), remote: true do |f| %>
+      <div class="col-xs-10">
+        <%= f.input :manual_query, input_html: { placeholder: 'Enter any query that works in your Gmail searchbar' } %>
+      </div>
+      <div class="col-xs-2 spacer-top-1">
+        <%= f.button :submit, 'Sync!', class: 'btn blue fullwidth' %>
+      </div>
+    <% end %>
+
+  </div>
+</div>
+<div class="col-xs-12">
+  <% if @oauth_user.oauth_expired? %>
+    <h5>Token expired <%= human_datetime @oauth_user.oauth_expires_at %></h5>
+  <% else %>
+    <h5>Token expires in <%= @oauth_user.oauth_remaining %> minutes</h5>
+  <% end %>
+</div>
+
+
+<div class="col-xs-12 user-details">
+  <%= @oauth_user.details %>
+</div>
+<div class="col-xs-12">
+  <hr />
+</div>
+<div class="col-xs-12 email-details">
+  <% if @emails.any? %>
+    <p><strong>Emails synced within the last 14 days:</strong></p>
+    <%= render partial: 'email', collection: @emails %>
+  <% else %>
+    <p>No emails were synced within the last 14 days.</p>
+  <% end %>
+</div>

@@ -1,0 +1,30 @@
+// Place all the styles related to the oauth_users controller here.
+// They will automatically be included in application.css.
+// You can use Sass (SCSS) here: https://sass-lang.com/
+.g-btn {
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  color: #4a4a4a !important;
+  font-weight: bold;
+
+  display: inline-block;
+  margin-bottom: 0;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: middle;
+  touch-action: manipulation;
+  cursor: pointer;
+  background-image: none;
+  padding: 6px 12px;
+  font-size: 14px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  height: 54px;
+
+  .g-logo {
+    margin-bottom: -12px;
+    margin-right: 12px;
+  }
+}
