@@ -3,6 +3,8 @@
 class OauthUsersController < ApplicationController
   before_action :find_and_authorize_user, only: %i[status manual update]
 
+  layout 'blank', only: [:update]
+
   def in
     if session[:oauth_user_id].present?
       flash[:notice] = 'Already authenticated.'
@@ -46,20 +48,24 @@ class OauthUsersController < ApplicationController
     if oauth_user_params[:manual_query].present?
       begin
         GmailClient.new(@oauth_user).delay.batch_get_queried_messages(query: oauth_user_params[:manual_query])
-
       rescue Signet::AuthorizationError => e
-        byebug
+        @error = e
       end
 
-      respond_to do |format|
-        format.js { render 'querying' }
+      if @error
+        respond_to do |format|
+          format.js { render 'error' }
+        end
+      else
+        respond_to do |format|
+          format.js { render 'querying' }
+        end
       end
     else
       respond_to do |format|
-        format.js {}
+        format.js { render 'update' }
       end
     end
-
   end
 
   private
