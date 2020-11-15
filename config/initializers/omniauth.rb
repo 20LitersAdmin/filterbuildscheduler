@@ -9,7 +9,6 @@ Rails.application.config.middleware.use OmniAuth::Builder do
     {
       scope: 'email, profile, openid, gmail.readonly',
       name: 'google',
-      access_type: 'offline',
-      include_granted_scopes: 'true'
+      access_type: 'offline'
     }
 end

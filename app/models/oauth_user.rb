@@ -16,7 +16,7 @@ class OauthUser < ApplicationRecord
         user.oauth_id = auth.uid
         user.oauth_provider = auth.provider
         user.oauth_token = auth.credentials.token
-        user.oauth_refresh_token ||= auth.credentials.refresh_token
+        user.oauth_refresh_token = auth.credentials.refresh_token if auth.credentials.refresh_token.present?
         user.oauth_expires_at = Time.at(auth.credentials.expires_at)
       end
 
@@ -27,12 +27,12 @@ class OauthUser < ApplicationRecord
   def authorization
     Google::APIClient::ClientSecrets.new(
       {
-        'web' =>
+        web:
           {
-            'access_token' => oauth_token,
-            'refresh_token' => oauth_refresh_token,
-            'client_id' => Rails.application.credentials.google_client_id,
-            'client_secret' => Rails.application.credentials.google_client_secret
+            access_token: oauth_token,
+            refresh_token: oauth_refresh_token,
+            client_id: Rails.application.credentials.google_client_id,
+            client_secret: Rails.application.credentials.google_client_secret
           }
       }
     ).to_authorization
@@ -57,9 +57,11 @@ class OauthUser < ApplicationRecord
   end
 
   def refresh_authorization!
+    email_service if @service.nil?
+
     response = @service.authorization.refresh!
     new_expiry = Time.now + response['expires_in']
-    update_column(:oauth_expires_at, new_expiry)
+    update_columns(oauth_expires_at: new_expiry, oauth_token: response['access_token'])
   end
 
   def details
