@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_11_11_034732) do
+ActiveRecord::Schema.define(version: 2020_11_16_040358) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -229,7 +229,7 @@ ActiveRecord::Schema.define(version: 2020_11_11_034732) do
     t.string "oauth_refresh_token"
     t.datetime "oauth_expires_at"
     t.boolean "sync_emails"
-    t.date "last_email_sync"
+    t.datetime "last_email_sync"
     t.string "manual_query"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
