@@ -35,11 +35,11 @@ class OauthUsersController < ApplicationController
   end
 
   def status
-    @emails = @oauth_user.emails
+    @emails = @oauth_user.emails.ordered
   end
 
   def manual
-    @emails = @oauth_user.emails
+    @emails = @oauth_user.emails.synced.ordered
   end
 
   def update

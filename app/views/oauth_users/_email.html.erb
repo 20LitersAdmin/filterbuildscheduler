@@ -10,6 +10,7 @@
   </div>
   <div class="col-xs-4">
     <p><strong>Subject: <%= email.subject %></strong></p>
+    <p>Date: <%= human_datetime email.datetime %></p>
   </div>
   <div class="col-xs-12">
     <p><%= email.snippet.html_safe %>...</p>
