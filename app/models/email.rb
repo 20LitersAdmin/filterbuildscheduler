@@ -9,6 +9,7 @@ class Email < ApplicationRecord
 
   after_create :send_to_kindful
 
+  scope :ordered, -> { order(datetime: :desc) }
   scope :stale, -> { where('datetime < ?', Time.now - 14.days) }
   scope :synced, -> { where.not(sent_to_kindful_on: nil) }
 
