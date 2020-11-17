@@ -1,14 +1,9 @@
 # frozen_string_literal: true
 
 class RegistrationReminderJob < ApplicationJob
-  queue_as :default
+  queue_as :registration_reminder
 
   def perform(*_args)
-    puts '-+ Cleaning up the RegistrationReminderJob list'
-    Delayed::Job.all.each do |job|
-      job.destroy if job.queue == 'registration_reminder'
-    end
-
     puts '-+ Creating registration reminders'
     events = Event.pre_reminders.future.within_days(2)
 
