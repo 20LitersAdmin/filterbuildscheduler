@@ -15,6 +15,13 @@ class EmailSyncJob < ApplicationJob
       puts "-+-+ Syncing for #{o.name}"
 
       gc = GmailClient.new(o)
+
+      # bail if Oauth failure
+      if gc.oauth_fail.present?
+        puts "-+-+ FAIL: #{gc.oauth_fail}"
+        next
+      end
+
       gc.batch_get_latest_messages(after: after, before: before)
 
       b_size = Email.all.size - a_size

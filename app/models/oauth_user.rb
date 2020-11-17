@@ -47,6 +47,7 @@ class OauthUser < ApplicationRecord
   end
 
   def email_service
+    update_columns(oauth_error_message: nil) if oauth_error_message.present?
     # https://github.com/googleapis/google-api-ruby-client/blob/master/generated/google/apis/gmail_v1/service.rb
     @service = Google::Apis::GmailV1::GmailService.new
     @service.authorization = authorization
@@ -59,12 +60,16 @@ class OauthUser < ApplicationRecord
   def refresh_authorization!
     email_service if @service.nil?
 
-    response = @service.authorization.refresh!
-    new_expiry = Time.now + response['expires_in']
-    update_columns(oauth_expires_at: new_expiry, oauth_token: response['access_token'])
+    begin
+      response = @service.authorization.refresh!
+      new_expiry = Time.now + response['expires_in']
+      update_columns(oauth_expires_at: new_expiry, oauth_token: response['access_token'])
+    rescue Signet::AuthorizationError => e
+      update_columns(oauth_error_message: e.message)
+    end
   end
 
   def details
-    as_json(only: %w[id sync_emails oauth_id oauth_expires_at last_email_sync manual_query]).symbolize_keys!
+    as_json(only: %w[id sync_emails oauth_id oauth_expires_at last_email_sync manual_query oauth_error_message]).symbolize_keys!
   end
 end
