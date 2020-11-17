@@ -1,25 +1,27 @@
 # frozen_string_literal: true
 
 class EmailSyncJob < ApplicationJob
-  queue_as :default
+  queue_as :email_sync
 
   def perform(*_args)
-    puts '-+ Cleaning up the EmailSyncJob list'
-    Delayed::Job.all.each do |job|
-      job.destroy if job.queue == 'email_sync'
-    end
-
-    before = Date.yesterday.strftime('%Y/%m/%d')
-    after = (Date.yesterday - 1.day).strftime('%Y/%m/%d')
+    before = Date.today.strftime('%Y/%m/%d')
+    after = Date.yesterday.strftime('%Y/%m/%d')
 
     puts "-+ Syncing emails after:#{after} before:#{before}"
 
-    OauthUsers.to_sync.each do |o|
+    OauthUser.to_sync.each do |o|
       a_size = Email.all.size
       a_sent = Email.synced.size
       puts "-+-+ Syncing for #{o.name}"
 
       gc = GmailClient.new(o)
+
+      # bail if Oauth failure
+      if gc.oauth_fail.present?
+        puts "-+-+ FAIL: #{gc.oauth_fail}"
+        next
+      end
+
       gc.batch_get_latest_messages(after: after, before: before)
 
       b_size = Email.all.size - a_size

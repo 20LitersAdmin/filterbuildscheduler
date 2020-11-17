@@ -233,6 +233,7 @@ ActiveRecord::Schema.define(version: 2020_11_16_040358) do
     t.string "manual_query"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.string "oauth_error_message"
     t.index ["email"], name: "index_oauth_users_on_email", unique: true
     t.index ["oauth_id"], name: "index_oauth_users_on_oauth_id", unique: true
     t.index ["oauth_token"], name: "index_oauth_users_on_oauth_token", unique: true
