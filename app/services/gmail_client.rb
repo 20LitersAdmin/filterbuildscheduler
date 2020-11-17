@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class GmailClient
-  attr_reader :standard_fields, :service, :user, :body_data, :skipped_ids, :fails
+  attr_reader :standard_fields, :service, :user, :body_data, :skipped_ids, :fails, :oauth_fail
 
   def initialize(oauth_user)
     @user = oauth_user
@@ -13,6 +13,9 @@ class GmailClient
 
     @skipped_ids = []
     @fails = []
+    @oauth_fail = oauth_user.oauth_error_message
+
+    return if oauth_user.oauth_error_message.present?
 
     refresh_authorization!
   end
@@ -54,7 +57,6 @@ class GmailClient
 
   def list_queried_messages(query:)
     # https://github.com/googleapis/google-api-ruby-client/blob/master/generated/google/apis/gmail_v1/service.rb#L944
-    # query: 'from:chip@20liters.org -label:INBOX'
     @service.fetch_all(items: :messages) do |token|
       @service.list_user_messages(@user_id, include_spam_trash: false, q: query, page_token: token)
     end
