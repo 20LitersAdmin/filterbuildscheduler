@@ -3,12 +3,12 @@
 desc 'Email Scheduling Daemon'
 task send_reminders: :environment do
   puts 'Scheduling Registration Reminders'
-  RegistrationReminderJob.delay
+  RegistrationReminderJob.perform_now
   puts 'Done.'
 end
 
 task sync_emails: :environment do
   puts 'Scheduling Email Syncs'
-  EmailSyncJob.delay
+  EmailSyncJob.perform_now
   puts 'Done.'
 end
