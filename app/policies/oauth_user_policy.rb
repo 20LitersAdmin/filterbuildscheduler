@@ -5,6 +5,10 @@ class OauthUserPolicy < ApplicationPolicy
     user&.is_admin?
   end
 
+  def index?
+    user&.is_admin?
+  end
+
   def callback?
     in?
   end

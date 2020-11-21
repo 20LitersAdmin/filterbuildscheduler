@@ -6,6 +6,7 @@ class OauthUser < ApplicationRecord
   validates :oauth_id, :oauth_token, uniqueness: true, allow_blank: true
 
   scope :to_sync, -> { where(sync_emails: true) }
+  scope :ordered_by_id, -> { order(:id) }
 
   attr_accessor :source
 
