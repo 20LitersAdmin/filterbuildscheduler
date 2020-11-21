@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_11_16_040358) do
+ActiveRecord::Schema.define(version: 2020_11_21_024212) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -83,6 +83,7 @@ ActiveRecord::Schema.define(version: 2020_11_16_040358) do
     t.string "matched_emails", array: true
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.string "kindful_job_id", array: true
     t.index ["gmail_id"], name: "index_emails_on_gmail_id"
     t.index ["message_id"], name: "index_emails_on_message_id"
     t.index ["oauth_user_id"], name: "index_emails_on_oauth_user_id"
