@@ -15,6 +15,13 @@
   <div class="col-xs-12">
     <p><%= email.snippet.html_safe %>...</p>
   </div>
+  <% if email.synced? %>
+    <div class="col-xs-12">
+      <p>
+        <%= email.synced_data %>
+      </p>
+    </div>
+  <% end %>
 </div>
 <div class="row">
   <hr>
