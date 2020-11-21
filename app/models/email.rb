@@ -41,15 +41,19 @@ class Email < ApplicationRecord
     kf = KindfulClient.new
 
     temp_matched_emails = []
+    temp_job_ids = []
 
     target_emails.each do |email_address, direction|
       next unless kf.email_exists_in_kindful?(email_address)
 
       response = kf.import_user_w_email_note(email_address, self, direction)
 
-      temp_matched_emails << email_address unless response['status'] == 'error'
+      next if response['status'] == 'error'
+
+      temp_matched_emails << email_address
+      temp_job_ids << response['id']
     end
-    update_columns(sent_to_kindful_on: Time.now, matched_emails: temp_matched_emails) if temp_matched_emails.any?
+    update_columns(sent_to_kindful_on: Time.now, matched_emails: temp_matched_emails, kindful_job_id: temp_job_ids) if temp_matched_emails.any?
 
     reload
   end
@@ -76,6 +80,14 @@ class Email < ApplicationRecord
     return 'success' if sent_to_kindful_on.present?
 
     'warning'
+  end
+
+  def synced?
+    sent_to_kindful_on.present?
+  end
+
+  def synced_data
+    attributes.slice('id', 'oauth_user_id', 'sent_to_kindful_on', 'matched_emails', 'kindful_job_id', 'gmail_id', 'message_id')
   end
 
   def deny_internal_messages
