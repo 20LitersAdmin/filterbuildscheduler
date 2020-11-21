@@ -6,10 +6,14 @@ class OauthUsersController < ApplicationController
   layout 'blank', only: [:update]
 
   def in
-    if session[:oauth_user_id].present?
-      flash[:notice] = 'Already authenticated.'
-      redirect_to auth_status_path(session[:oauth_user_id])
-    end
+    return unless session[:oauth_user_id].present?
+
+    flash[:notice] = 'Already authenticated.'
+    redirect_to auth_status_path(session[:oauth_user_id])
+  end
+
+  def index
+    authorize @oauth_users = OauthUser.ordered_by_id
   end
 
   def callback

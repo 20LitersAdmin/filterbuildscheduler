@@ -74,6 +74,7 @@ Rails.application.routes.draw do
     end
   end
 
+  get '/auth',                    to: 'oauth_users#index', as: :auth_index
   get '/auth/:provider/callback', to: 'oauth_users#callback'
   get '/auth/in',                 to: 'oauth_users#in', as: :auth_in
   get '/auth/out',                to: 'oauth_users#out', as: :auth_out
