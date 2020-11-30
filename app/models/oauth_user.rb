@@ -73,4 +73,8 @@ class OauthUser < ApplicationRecord
   def details
     as_json(only: %w[id sync_emails oauth_id oauth_expires_at last_email_sync manual_query oauth_error_message]).symbolize_keys!
   end
+
+  def quick_details
+    as_json(only: %w[sync_emails last_email_sync oauth_error_message]).symbolize_keys!
+  end
 end
