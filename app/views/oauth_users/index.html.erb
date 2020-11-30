@@ -4,6 +4,7 @@
       <tr>
         <th>Oauth User</th>
         <th>Email</th>
+        <th>Details</th>
         <th></th>
         <th></th>
       </tr>
@@ -13,6 +14,7 @@
         <tr>
           <td><%= o.name %></td>
           <td><%= o.email %></td>
+          <td><%= o.quick_details %></td>
           <td><%= link_to 'Status', auth_status_path(o), class: 'btn yellow' %></td>
           <td><%= link_to 'Manual', auth_manual_path(o), class: 'btn blue' %></td>
         </tr>
