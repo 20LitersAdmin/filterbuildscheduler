@@ -6,13 +6,15 @@ class InventoriesController
       @inventory = inventory
       return unless @inventory.receiving?
 
-      @counts = @inventory.counts.changed.not_components
+      counts = @inventory.counts.changed.not_components
 
-      @counts.each do |c|
+      counts.each do |c|
         prev = c.previous_count
         c.item.tap do |i|
+          prev_available = prev.nil? ? 0 : prev.available
+
           i.last_received_at = Time.now.localtime
-          i.last_received_quantity = c.available - prev.available
+          i.last_received_quantity = c.available - prev_available
           i.save
         end
       end
