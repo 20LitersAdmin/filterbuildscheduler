@@ -10,10 +10,8 @@ Layout/FirstHashElementIndentation:
   Enabled: false
 Lint/AmbiguousBlockAssociation:
   Enabled: false
-  rubocop: warning
 Lint/NumberConversion:
   Enabled: false
-  rubocop: warning
 Lint/ConstantResolution:
   Enabled: false
 Metrics/MethodLength:
