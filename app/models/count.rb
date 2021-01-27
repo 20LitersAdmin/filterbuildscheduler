@@ -135,7 +135,7 @@ class Count < ApplicationRecord
   def previous_count
     prev_inv = previous_inventory
 
-    return nil unless prev_inv.present?
+    return unless prev_inv.present?
 
     case type
     when 'part'
