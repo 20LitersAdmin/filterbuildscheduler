@@ -44,6 +44,9 @@
       </span>
     <% end %>
   </td>
+  <td>
+    <%= part.supplier&.name %>
+  </td>
   <td style="text-align: right">
     <%= human_number parts_per %>
   </td>
@@ -63,6 +66,4 @@
   <td style="text-align: right">
     <%= human_number need_loose %>
   </td>
-  <td></td>
-  <td></td>
 </tr>
