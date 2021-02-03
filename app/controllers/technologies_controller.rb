@@ -2,7 +2,6 @@
 
 class TechnologiesController < ApplicationController
   def index
-    # select technology for /materials
     authorize @techs = Technology.list_worthy
   end
 
@@ -10,7 +9,9 @@ class TechnologiesController < ApplicationController
     authorize @technology = Technology.find(params[:id])
 
     @quantity = params[:q].present? ? params[:q].to_i : 1
+
     @quantity_val = params[:q].to_i if params[:q].present?
+
     @ignore_component_counts = params[:i] == '1'
 
     @components = @technology.components.required

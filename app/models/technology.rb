@@ -19,7 +19,7 @@ class Technology < ApplicationRecord
 
   scope :active, -> { where(deleted_at: nil) }
   scope :status_worthy, -> { where('monthly_production_rate > ?', 0).order(monthly_production_rate: 'desc') }
-  scope :list_worthy, -> { where.not(liters_per_day: 0).order(:name) }
+  scope :list_worthy, -> { where(list_worthy: true).order(:name) }
 
   # fake scope
   def self.finance_worthy
