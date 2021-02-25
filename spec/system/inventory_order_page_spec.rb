@@ -12,6 +12,7 @@ RSpec.describe 'Order supplies page', type: :system, js: true do
 
     3.times { FactoryBot.create(:part, supplier: @supplier1, minimum_on_hand: 20, weeks_to_deliver: 4) }
     7.times { FactoryBot.create(:part, supplier: @supplier2, minimum_on_hand: 20, weeks_to_deliver: 4) }
+    3.times { FactoryBot.create(:part, supplier: nil, minimum_on_hand: 20, weeks_to_deliver: 4) }
     Part.all.each do |part|
       FactoryBot.create(:tech_part, part: part, technology: tech)
     end
@@ -24,6 +25,7 @@ RSpec.describe 'Order supplies page', type: :system, js: true do
 
     5.times { FactoryBot.create(:material, supplier: @supplier1, minimum_on_hand: 20, weeks_to_deliver: 4) }
     2.times { FactoryBot.create(:material, supplier: @supplier2, minimum_on_hand: 20, weeks_to_deliver: 4) }
+    2.times { FactoryBot.create(:material, supplier: nil, minimum_on_hand: 20, weeks_to_deliver: 4) }
     Material.all.each do |m|
       FactoryBot.create(:material_part, material: m, part: Part.find(Random.rand(Part.first.id..Part.last.id)))
       # every material needs an extrapolate_material_parts && an extrapolate_component_parts through the part.
@@ -100,29 +102,29 @@ RSpec.describe 'Order supplies page', type: :system, js: true do
 
     it 'in a single table' do
       expect(page).to have_css('table#order_item_tbl')
-      expect(page).to have_css('table#order_item_tbl tbody tr', count: 17)
+      expect(page).to have_css('table#order_item_tbl tbody tr', count: (Part.orderable.size + Material.all.size))
     end
 
     it 'by supplier' do
       click_link 'By Supplier'
 
-      expect(page).to have_css('table.datatable-order-supplier', count: 3)
+      expect(page).to have_css('table.datatable-order-supplier', count: Supplier.all.size + 1)
       expect(page).to have_content @supplier1.name
       expect(page).to have_content @supplier2.name
       expect(page).to have_content 'Items without a supplier:'
     end
   end
 
-  context 'has js that' do
-    before :each do
-      sign_in FactoryBot.create(:admin)
+  # context 'has js that' do
+  #   before :each do
+  #     sign_in FactoryBot.create(:admin)
 
-      low_counts = @inventory.counts.select(&:reorder?)
-      total_cost = low_counts.map { |c| c.item.reorder_total_cost }.sum
-      @cost_check = total_cost.to_s.reverse.gsub(/(\d{3})(?=\d)/, '\\1,').reverse
+  #     low_counts = @inventory.counts.select(&:reorder?)
+  #     total_cost = low_counts.map { |c| c.item.reorder_total_cost }.sum
+  #     @cost_check = total_cost.to_s.reverse.gsub(/(\d{3})(?=\d)/, '\\1,').reverse
 
-      visit order_inventories_path
-    end
+  #     visit order_inventories_path
+  #   end
 
     # context 'displays a price based upon checkboxes' do
       # it 'on the item view' do
@@ -200,5 +202,5 @@ RSpec.describe 'Order supplies page', type: :system, js: true do
       # expect(twin_a).to_not be_checked
       # expect(twin_b).to_not be_checked
     # end
-  end
+  # end
 end

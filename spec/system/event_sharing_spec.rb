@@ -24,9 +24,9 @@ RSpec.describe 'An event can be shared', type: :system, js: true do
     within_frame(find('div.fb_iframe_widget span iframe')) do
       @fb_window = window_opened_by do
         sleep 1
-        click_link 'u_0_1'
+        find('#facebook a').click
       end
-      expect(page).to have_link 'u_0_1' # The FB button
+      expect(page).to have_css('#facebook') # HTML within the FB iFrame
     end
     expect(@fb_window).to exist
   end
