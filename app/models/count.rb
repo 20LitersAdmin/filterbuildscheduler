@@ -60,11 +60,12 @@ class Count < ApplicationRecord
     'yellow'
   end
 
-  def owner
-    return 'N/A' unless item.technologies.present?
+  # TODO: Should not be used by Inventories#order and Inventories#order_all
+  # def owner
+  #   return 'N/A' unless item.technologies.present?
 
-    item.technologies.map(&:owner_acronym).uniq.join(',')
-  end
+  #   item.technologies.map(&:owner_acronym).uniq.join(',')
+  # end
 
   def type
     if part_id.present?
@@ -84,13 +85,14 @@ class Count < ApplicationRecord
     end
   end
 
-  def tech_names_short
-    if item.technologies.map(&:name).empty?
-      'n/a'
-    else
-      item.technologies.map { |t| t.name.gsub(' Filter', '').gsub(' for Bucket', '') }.join(', ')
-    end
-  end
+  # TODO: Should not be used by Inventories#order and Inventories#order_all
+  # def tech_names_short
+  #   if item.technologies.map(&:name).empty?
+  #     'n/a'
+  #   else
+  #     item.technologies.map { |t| t.name.gsub(' Filter', '').gsub(' for Bucket', '') }.join(', ')
+  #   end
+  # end
 
   def tech_ids
     ids = item.technologies.pluck(:id)
@@ -102,9 +104,10 @@ class Count < ApplicationRecord
     end
   end
 
-  def supplier
-    item.supplier
-  end
+  # TODO: Should not be used by Inventories#order and Inventories#order_all
+  # def supplier
+  #   item.supplier
+  # end
 
   def box_count
     item.quantity_per_box * unopened_boxes_count
@@ -115,9 +118,10 @@ class Count < ApplicationRecord
   end
 
   def diff_from_previous(field)
-    if field == 'loose'
+    case field
+    when 'loose'
       loose_count - previous_loose
-    elsif field == 'box'
+    when 'box'
       unopened_boxes_count - previous_box
     else
       0
@@ -166,7 +170,7 @@ class Count < ApplicationRecord
   end
 
   def avail_value
-    return available * item.price unless item.class == Part
+    return available * item.price unless item.instance_of?(Part)
 
     if part.made_from_materials? && part.price_cents.zero?
       emp = part.extrapolate_material_parts.first
