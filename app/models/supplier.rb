@@ -39,8 +39,8 @@ class Supplier < ApplicationRecord
 
   def related_items(items)
     ary = []
-    items.each do |c|
-      ary << c if c.supplier == self
+    items.each do |i|
+      ary << i if i.supplier == self
     end
     ary
   end
