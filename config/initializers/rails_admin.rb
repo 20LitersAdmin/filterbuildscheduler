@@ -24,6 +24,7 @@ require Rails.root.join('lib', 'rails_admin', 'restore.rb')
 require Rails.root.join('lib', 'rails_admin', 'paranoid_delete.rb')
 
 RailsAdmin.config do |config|
+  config.parent_controller = ApplicationController.to_s
   config.main_app_name = ['20 Liters', 'Admin']
   config.excluded_models = ['ActiveStorage::Blob', 'ActiveStorage::Attachment']
 
@@ -44,9 +45,7 @@ RailsAdmin.config do |config|
     end
   end
 
-  ### Popular gems integration
-
-  ## == Devise ==
+  ## == Devise integration ==
   config.authenticate_with do
     warden.authenticate! scope: :user
   end
@@ -132,22 +131,12 @@ RailsAdmin.config do |config|
       field :ideal_leaders
     end
 
-    exclude_fields :extrapolate_technology_parts, :extrapolate_technology_components
-  end
-
-  config.model Supplier do
-    weight 3
-    list do
-      scopes %i[active only_deleted]
-      field :name
-      field :url
-      field :poc_name
-      field :poc_email
-    end
+    exclude_fields :components, :parts, :materials
   end
 
   config.model Component do
-    weight 4
+    parent Technology
+    weight 0
     list do
       scopes %i[active only_deleted]
       field :uid do
@@ -160,15 +149,23 @@ RailsAdmin.config do |config|
       end
       field :completed_tech
     end
+    # TODO: Extrapolate tables arent' searching by Part name??
+    # edit do
+    #   field :extrapolate_component_parts do
+    #     queryable true
+    #     searchable ['parts.name']
+    #   end
+    # end
     configure :description do
       label 'Label Description'
     end
 
-    exclude_fields :extrapolate_technology_components, :extrapolate_component_parts, :counts
+    exclude_fields :parts, :counts, :technologies
   end
 
   config.model Part do
-    weight 5
+    parent Technology
+    weight 1
     list do
       scopes %i[active only_deleted]
       field :uid do
@@ -190,11 +187,12 @@ RailsAdmin.config do |config|
       label 'Label Description'
     end
 
-    exclude_fields :extrapolate_technology_parts, :extrapolate_component_parts, :extrapolate_material_parts, :counts
+    exclude_fields :components, :materials, :counts, :technologies
   end
 
   config.model Material do
-    weight 6
+    parent Technology
+    weight 2
     list do
       scopes %i[active only_deleted]
       field :uid do
@@ -213,7 +211,18 @@ RailsAdmin.config do |config|
       label 'Label Description'
     end
 
-    exclude_fields :extrapolate_material_parts, :counts
+    exclude_fields :parts, :counts, :technologies
+  end
+
+  config.model Supplier do
+    weight 3
+    list do
+      scopes %i[active only_deleted]
+      field :name
+      field :url
+      field :poc_name
+      field :poc_email
+    end
   end
 
   config.model Count do
@@ -225,101 +234,23 @@ RailsAdmin.config do |config|
   end
 
   config.model ExtrapolateComponentPart do
-    parent Component
-    label 'Component <-> Part'
-    label_plural 'Components <-> Parts'
-
-    list do
-      scopes %i[active only_deleted]
-      field :component
-      field :part
-      field :parts_per_component
-      field :part_price, :money do
-        formatted_value { bindings[:object].part_price }
-      end
-      field :price_per_component, :money do
-        formatted_value { bindings[:object].price_per_component }
-      end
-    end
+    visible false
   end
 
   config.model ExtrapolateMaterialPart do
-    parent Material
-    label 'Material <-> Part'
-    label_plural 'Materials <-> Parts'
-
-    list do
-      scopes %i[active only_deleted]
-      field :material
-      field :part
-      field :parts_per_material
-      field :material_price, :money do
-        formatted_value { bindings[:object].material_price }
-      end
-      field :part_price, :money do
-        formatted_value { bindings[:object].part_price }
-      end
-    end
+    visible false
   end
 
   config.model ExtrapolateTechnologyComponent do
-    parent Component
-    label 'Technology <-> Component'
-    label_plural 'Technologies <-> Components'
-
-    list do
-      scopes %i[active only_deleted]
-      field :component
-      field :technology
-      field :components_per_technology
-      field :component_price, :money do
-        formatted_value { bindings[:object].component_price }
-      end
-      field :price_per_technology, :money do
-        formatted_value { bindings[:object].price_per_technology }
-      end
-      field :required
-    end
+    visible false
   end
 
   config.model ExtrapolateTechnologyPart do
-    parent Part
-    label 'Technology <-> Part'
-    label_plural 'Technologies <-> Parts'
-
-    list do
-      scopes %i[active only_deleted]
-      field :part
-      field :technology
-      field :parts_per_technology
-      field :part_price, :money do
-        formatted_value { bindings[:object].part_price }
-      end
-      field :price_per_technology, :money do
-        formatted_value { bindings[:object].price_per_technology }
-      end
-      field :required
-    end
+    visible false
   end
 
   config.model ExtrapolateTechnologyMaterial do
-    parent Material
-    label 'Technology <-> Material'
-    label_plural 'Technologies <-> Materials'
-
-    list do
-      scopes %i[active only_deleted]
-      field :material
-      field :technology
-      field :materials_per_technology
-      field :material_price, :money do
-        formatted_value { bindings[:object].material_price }
-      end
-      field :price_per_technology, :money do
-        formatted_value { bindings[:object].price_per_technology }
-      end
-      field :required
-    end
+    visible false
   end
 
   config.actions do

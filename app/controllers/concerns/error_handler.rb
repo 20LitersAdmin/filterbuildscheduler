@@ -19,6 +19,8 @@ module ErrorHandler
   end
 
   def record_not_found
+    return if params[:controller] == 'rails_admin/main'
+
     flash[:danger] = 'Nothing was found.'
     redirect_to root_path
   end

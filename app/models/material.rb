@@ -13,7 +13,7 @@ class Material < ApplicationRecord
 
   has_many :counts, dependent: :destroy
 
-  belongs_to :supplier
+  belongs_to :supplier, optional: true
 
   monetize :price_cents, allow_nil: true, numericality: { greater_than_or_equal_to: 0 }
 
@@ -40,10 +40,16 @@ class Material < ApplicationRecord
     last_ordered_at.present? && (last_received_at.nil? || last_ordered_at > last_received_at)
   end
 
+  def owner
+    return 'N/A' unless technologies.present?
+
+    technologies.map(&:owner_acronym).uniq.join(',')
+  end
+
   def picture
     begin
-      ActionController::Base.helpers.asset_path('uids/' + uid + '.jpg')
-    rescue => error
+      ActionController::Base.helpers.asset_path("uids/#{uid}.jpg")
+    rescue => e
       'http://placekitten.com/140/140'
     end
   end
@@ -65,6 +71,10 @@ class Material < ApplicationRecord
     end
 
     per_tech
+  end
+
+  def reorder?
+    available < minimum_on_hand
   end
 
   def reorder_total_cost
@@ -98,7 +108,19 @@ class Material < ApplicationRecord
     end
   end
 
+  def tech_names_short
+    if technologies.map(&:name).empty?
+      'n/a'
+    else
+      technologies.map { |t| t.name.gsub(' Filter', '').gsub(' for Bucket', '') }.join(', ')
+    end
+  end
+
   def uid
-    'M' + id.to_s.rjust(3, '0')
+    "M#{id.to_s.rjust(3, 0.to_s)}"
+  end
+
+  def weeks_to_out
+    latest_count.present? ? latest_count.weeks_to_out : 0
   end
 end

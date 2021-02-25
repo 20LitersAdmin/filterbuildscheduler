@@ -27,6 +27,9 @@
       </span>
     <% end %>
   </td>
+  <td>
+    <%= material.supplier&.name %>
+  </td>
   <td style="text-align: right;">
     <%= human_float(per_tech, 4) %>
   </td>
@@ -42,6 +45,4 @@
   <td style="text-align: right">
     <%= human_number need_loose %>
   </td>
-  <td></td>
-  <td></td>
 </tr>

@@ -10,12 +10,11 @@ class InventoriesController
 
       counts.each do |c|
         prev = c.previous_count
-        c.item.tap do |i|
+        c.item.tap do |item|
           prev_available = prev.nil? ? 0 : prev.available
 
-          i.last_received_at = Time.now.localtime
-          i.last_received_quantity = c.available - prev_available
-          i.save
+          item.last_received_at = Time.now.localtime
+          item.last_received_quantity = c.available - prev_available
         end
       end
     end

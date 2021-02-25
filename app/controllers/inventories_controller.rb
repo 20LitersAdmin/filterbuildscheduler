@@ -104,7 +104,7 @@ class InventoriesController < ApplicationController
   end
 
   def order
-    authorize @inventory = Inventory.latest_completed
+    authorize Inventory
 
     @selected_owner_acronym = params[:owner] if params[:owner].present?
     @selected_owner = @selected_owner_acronym ? find_owner_from_acronym(@selected_owner_acronym) : nil
@@ -117,23 +117,26 @@ class InventoriesController < ApplicationController
     @selected_tech = @technologies.find(@selected_tech_id) if @selected_tech_id
 
     if @selected_tech_id
-      @low_counts = @inventory.counts.select { |c| c.reorder? && c.technologies.map(&:id).include?(@selected_tech_id) }
+      parts = Part.orderable.select { |part| part.reorder? && part.technologies.map(&:id).include?(@selected_tech_id) }
+      materials = Material.all.select { |m| m.reorder? && m.technologies.map(&:id).include?(@selected_tech_id) }
     elsif @selected_owner_acronym
-      @low_counts = @inventory.counts.select { |c| c.reorder? && c.owner.include?(@selected_owner_acronym) }
+      parts = Part.orderable.select { |part| part.reorder? && part.owner.include?(@selected_owner_acronym) }
+      materials = Material.all.select { |m| m.reorder? && m.owner.include?(@selected_owner_acronym) }
     else
-      @low_counts = @inventory.counts.select(&:reorder?)
+      parts = Part.orderable.select(&:reorder?)
+      materials = Material.all.select(&:reorder?)
     end
 
-    # @low_counts.is_a?(ActiveRecord::Relation) == false
-    @order_counts = Count.where(id: @low_counts.map(&:id))
-    @suppliers = @order_counts.map(&:supplier).uniq
+    @items = [parts, materials].flatten
 
-    # Counts without a supplier
-    @no_supplier = @order_counts.select { |c| c.supplier.nil? }
+    @order_counts = @items.count
+    @suppliers = [parts.map(&:supplier).uniq, materials.map(&:supplier).uniq].flatten.uniq.compact
+
+    @items_w_no_supplier = @items.select { |item| item.supplier.nil? }
   end
 
   def order_all
-    authorize @inventory = Inventory.latest_completed
+    authorize Inventory
 
     @selected_owner_acronym = params[:owner] if params[:owner].present?
     @selected_owner = @selected_owner_acronym ? find_owner_from_acronym(@selected_owner_acronym) : nil
@@ -146,17 +149,20 @@ class InventoriesController < ApplicationController
     @selected_tech = @technologies.find(@selected_tech_id) if @selected_tech_id
 
     if @selected_tech_id
-      @counts = @inventory.counts.not_components.select { |c| c.technologies.map(&:id).include?(@selected_tech_id) }
+      parts = Part.orderable.select { |part| part.technologies.map(&:id).include?(@selected_tech_id) }
+      materials = Material.all.select { |m| m.technologies.map(&:id).include?(@selected_tech_id) }
     elsif @selected_owner_acronym
-      @counts = @inventory.counts.not_components.select { |c| c.owner.include?(@selected_owner_acronym) }
+      parts = Part.orderable.select { |part| part.owner.include?(@selected_owner_acronym) }
+      materials = Material.all.select { |m| m.owner.include?(@selected_owner_acronym) }
     else
-      @counts = @inventory.counts.not_components
+      parts = Part.orderable
+      materials = Material.all
     end
 
-    @suppliers = @counts.map(&:supplier).uniq
+    @items = [parts, materials].flatten
+    @suppliers = [parts.map(&:supplier).uniq, materials.map(&:supplier).uniq].flatten.uniq.compact
 
-    # Counts without a supplier
-    @no_supplier = @counts.select { |c| c.supplier.nil? }
+    @items_w_no_supplier = @items.select { |item| item.supplier.nil? }
   end
 
   def status
@@ -208,15 +214,17 @@ class InventoriesController < ApplicationController
                                       :event_id,
                                       :completed_at,
                                       counts_attributes:
-                                        %i[id
-                                           user_id
-                                           inventory_id
-                                           component_id
-                                           part_id
-                                           material_id
-                                           loose_count
-                                           unopened_boxes_count
-                                           deleted_at]
+                                        %i[
+                                          id
+                                          user_id
+                                          inventory_id
+                                          component_id
+                                          part_id
+                                          material_id
+                                          loose_count
+                                          unopened_boxes_count
+                                          deleted_at
+                                        ]
   end
 
   def technologies_params
