@@ -13,7 +13,7 @@ class Material < ApplicationRecord
 
   has_many :counts, dependent: :destroy
 
-  belongs_to :supplier
+  belongs_to :supplier, optional: true
 
   monetize :price_cents, allow_nil: true, numericality: { greater_than_or_equal_to: 0 }
 
@@ -71,6 +71,10 @@ class Material < ApplicationRecord
     end
 
     per_tech
+  end
+
+  def reorder?
+    available < minimum_on_hand
   end
 
   def reorder_total_cost

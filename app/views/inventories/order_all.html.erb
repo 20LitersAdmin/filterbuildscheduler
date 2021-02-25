@@ -42,7 +42,7 @@
     <div class="col-xs-12" id="order_supplier_div">
       <% @locator = "supplier" %>
       <%= render partial: "order_supplier", collection: @suppliers, locals: { items: @items } %>
-      <%= render partial: "order_supplier", object: @no_supplier %>
+      <%= render partial: "order_supplier", object: Supplier.new, locals: { items: @items_w_no_supplier } if @items_w_no_supplier.any? %>
     </div>
   </div>
 </div>

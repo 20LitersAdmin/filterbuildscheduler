@@ -19,6 +19,58 @@ class Count < ApplicationRecord
 
   scope :updated_since, ->(time) { where('updated_at > ?', time) }
 
+  def available
+    loose_count + box_count
+  end
+
+  def avail_value
+    return available * item.price unless item.instance_of?(Part)
+
+    if part.made_from_materials? && part.price_cents.zero?
+      emp = part.extrapolate_material_parts.first
+      available * emp.part_price
+    else
+      available * item.price
+    end
+  end
+
+  def box_count
+    item.quantity_per_box * unopened_boxes_count
+  end
+
+  def can_produce_x_parent
+    return 0 if available.zero?
+
+    case type
+    when 'material'
+      # Materials are larger than parts (1 material makes many parts)
+      material.extrapolate_material_parts.any? ? available * material.extrapolate_material_parts.first.parts_per_material.to_i : available
+    when 'part'
+      part.extrapolate_component_parts.any? ? available / part.extrapolate_component_parts.first.parts_per_component.to_i : available
+    when 'component'
+      available / item.per_technology
+    end
+  end
+
+  def can_produce_x_tech
+    available.zero? ? 0 : available / item.per_technology
+  end
+
+  def diff_from_previous(field)
+    case field
+    when 'loose'
+      loose_count - previous_loose
+    when 'box'
+      unopened_boxes_count - previous_box
+    else
+      0
+    end
+  end
+
+  def group_by_tech
+    item.technologies.map(&:id).min || 999
+  end
+
   def item
     if part_id.present?
       Part.with_deleted.find(part_id)
@@ -29,16 +81,12 @@ class Count < ApplicationRecord
     end
   end
 
-  def technology
-    item.technology
+  def last_ordered_at
+    item.last_ordered_at
   end
 
-  def technologies
-    item.technologies
-  end
-
-  def name
-    item.name
+  def last_ordered_quantity
+    item.last_ordered_quantity
   end
 
   def link_text
@@ -60,80 +108,30 @@ class Count < ApplicationRecord
     'yellow'
   end
 
-  # TODO: Should not be used by Inventories#order and Inventories#order_all
-  # def owner
-  #   return 'N/A' unless item.technologies.present?
-
-  #   item.technologies.map(&:owner_acronym).uniq.join(',')
-  # end
-
-  def type
-    if part_id.present?
-      'part'
-    elsif material_id.present?
-      'material'
-    else
-      'component'
-    end
+  def minimum_on_hand
+    item.minimum_on_hand
   end
 
-  def tech_names
-    if item.technologies.map(&:name).empty?
-      'not associated'
-    else
-      item.technologies.map(&:name).join(', ')
-    end
+  def min_order
+    item.min_order
   end
 
-  # TODO: Should not be used by Inventories#order and Inventories#order_all
-  # def tech_names_short
-  #   if item.technologies.map(&:name).empty?
-  #     'n/a'
-  #   else
-  #     item.technologies.map { |t| t.name.gsub(' Filter', '').gsub(' for Bucket', '') }.join(', ')
-  #   end
-  # end
-
-  def tech_ids
-    ids = item.technologies.pluck(:id)
-
-    if ids.empty?
-      'n/a'
-    else
-      ids.join(',')
-    end
+  def name
+    item.name
   end
 
-  # TODO: Should not be used by Inventories#order and Inventories#order_all
-  # def supplier
-  #   item.supplier
-  # end
+  def owner
+    return 'N/A' unless item.technologies.present?
 
-  def box_count
-    item.quantity_per_box * unopened_boxes_count
-  end
-
-  def available
-    loose_count + box_count
-  end
-
-  def diff_from_previous(field)
-    case field
-    when 'loose'
-      loose_count - previous_loose
-    when 'box'
-      unopened_boxes_count - previous_box
-    else
-      0
-    end
+    item.technologies.map(&:owner_acronym).uniq.join(',')
   end
 
   def per_technology
     item.per_technology
   end
 
-  def previous_inventory
-    Inventory.latest_since(inventory.created_at)
+  def previous_box
+    previous_count.present? ? previous_count.unopened_boxes_count : 0
   end
 
   def previous_count
@@ -151,12 +149,70 @@ class Count < ApplicationRecord
     end
   end
 
+  def previous_inventory
+    Inventory.latest_since(inventory.created_at)
+  end
+
   def previous_loose
     previous_count.present? ? previous_count.loose_count : 0
   end
 
-  def previous_box
-    previous_count.present? ? previous_count.unopened_boxes_count : 0
+  def price
+    item.price
+  end
+
+  def reorder?
+    type != 'component' && available < item.minimum_on_hand
+  end
+
+  def reorder_total_cost
+    item.reorder_total_cost
+  end
+
+  def sort_by_user
+    if user_id.present?
+      1
+    else
+      0
+    end
+  end
+
+  def supplier
+    item.supplier
+  end
+
+  def tech_ids
+    ids = item.technologies.pluck(:id)
+
+    if ids.empty?
+      'n/a'
+    else
+      ids.join(',')
+    end
+  end
+
+  def tech_names
+    if item.technologies.map(&:name).empty?
+      'not associated'
+    else
+      item.technologies.map(&:name).join(', ')
+    end
+  end
+
+  def tech_names_short
+    if item.technologies.map(&:name).empty?
+      'n/a'
+    else
+      item.technologies.map { |t| t.name.gsub(' Filter', '').gsub(' for Bucket', '') }.join(', ')
+    end
+  end
+
+  def technology
+    item.technology
+  end
+
+  def technologies
+    item.technologies
   end
 
   def total
@@ -169,49 +225,18 @@ class Count < ApplicationRecord
     total * item.price
   end
 
-  def avail_value
-    return available * item.price unless item.instance_of?(Part)
-
-    if part.made_from_materials? && part.price_cents.zero?
-      emp = part.extrapolate_material_parts.first
-      available * emp.part_price
+  def type
+    if part_id.present?
+      'part'
+    elsif material_id.present?
+      'material'
     else
-      available * item.price
+      'component'
     end
   end
 
-  def sort_by_user
-    if user_id.present?
-      1
-    else
-      0
-    end
-  end
-
-  def group_by_tech
-    item.technologies.map(&:id).min || 999
-  end
-
-  def reorder?
-    type != 'component' && available < item.minimum_on_hand
-  end
-
-  def can_produce_x_tech
-    available.zero? ? 0 : available / item.per_technology
-  end
-
-  def can_produce_x_parent
-    return 0 if available.zero?
-
-    case type
-    when 'material'
-      # Materials are larger than parts (1 material makes many parts)
-      material.extrapolate_material_parts.any? ? available * material.extrapolate_material_parts.first.parts_per_material.to_i : available
-    when 'part'
-      part.extrapolate_component_parts.any? ? available / part.extrapolate_component_parts.first.parts_per_component.to_i : available
-    when 'component'
-      available / item.per_technology
-    end
+  def weeks_to_deliver
+    item.weeks_to_deliver
   end
 
   def weeks_to_out

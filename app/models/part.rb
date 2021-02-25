@@ -22,6 +22,7 @@ class Part < ApplicationRecord
   monetize :price_cents, allow_nil: true, numericality: { greater_than_or_equal_to: 0 }
 
   scope :active, -> { where(deleted_at: nil) }
+  scope :orderable, -> { where(made_from_materials: false) }
 
   def available
     if latest_count.present?
@@ -76,6 +77,10 @@ class Part < ApplicationRecord
     end
 
     per_tech
+  end
+
+  def reorder?
+    available < minimum_on_hand
   end
 
   def reorder_total_cost
