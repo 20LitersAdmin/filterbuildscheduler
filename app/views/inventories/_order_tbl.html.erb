@@ -1,8 +1,8 @@
-<% too_late = order_tbl.item.weeks_to_deliver > order_tbl.weeks_to_out %>
+<% too_late = order_tbl.weeks_to_deliver > order_tbl.weeks_to_out %>
 <tr id="<%= order_tbl.id %>">
   <td>
     <% if current_user.is_admin? %>
-      <%= link_to order_tbl.name, rails_admin.edit_path(model_name: order_tbl.item.model_name.name, id: order_tbl.item.id), target: "_blank" %>
+      <%= link_to order_tbl.name, rails_admin.edit_path(model_name: order_tbl.model_name.name, id: order_tbl.id), target: "_blank" %>
     <% else %>
       <%= order_tbl.name %>
     <% end %>
@@ -11,17 +11,17 @@
     <%= order_tbl.tech_names_short %>
   </td>
   <td>
-    <%= human_float(order_tbl.item.per_technology) %>
+    <%= human_float(order_tbl.per_technology) %>
   </td>
   <td>
     <%= order_tbl.owner %>
   </td>
   <% if @locator == 'item' %>
     <td class="item-supplier small-text">
-      <% if supplier = order_tbl.item.supplier %>
+      <% if supplier = order_tbl.supplier %>
         <%= link_to supplier.name, rails_admin.edit_path(model_name: supplier.model_name.name, id: supplier.id) %>
-      <% elsif order_tbl.item.made_from_materials? %>
-        <i>material</i> <%= fa_icon "question-circle", class: 'light-blue', data: { toggle: 'tooltip', placement: 'right'}, title: "Made from #{order_tbl.item.materials.first.name}: #{order_tbl.item.materials.first.supplier&.name}" %>
+      <% elsif order_tbl.made_from_materials? %>
+        <i>material</i> <%= fa_icon "question-circle", class: 'light-blue', data: { toggle: 'tooltip', placement: 'right'}, title: "Made from #{order_tbl.materials.first.name}: #{order_tbl.materials.first.supplier&.name}" %>
       <% end %>
     </td>
   <% end %>
@@ -29,39 +29,39 @@
     <%= human_number(order_tbl.available) %>
   </td>
   <td class="center-align <%= 'too-late' if too_late %>">
-    <%= human_number(order_tbl.item.minimum_on_hand) %>
+    <%= human_number(order_tbl.minimum_on_hand) %>
   </td>
   <td class="center-align <%= 'too-late' if too_late %>">
     <%= human_float(order_tbl.weeks_to_out) %>
   </td>
   <td class="center-align <%= 'too-late' if too_late %>">
-    <%= human_float(order_tbl.item.weeks_to_deliver) %>
+    <%= human_float(order_tbl.weeks_to_deliver) %>
   </td>
   <td class="item-cost right-align">
-    $<span class="item-cost-value"><%= order_tbl.item.price %></span>
+    $<span class="item-cost-value"><%= order_tbl.price %></span>
   </td>
   <td class="ordered-last">
-    <% if order_tbl.item.last_ordered_at.present?  %>
-      <%= human_date(order_tbl.item.last_ordered_at) + ": " + human_number(order_tbl.item.last_ordered_quantity) %>
+    <% if order_tbl.last_ordered_at.present?  %>
+      <%= human_date(order_tbl.last_ordered_at) + ": " + human_number(order_tbl.last_ordered_quantity) %>
     <% else %>
       n/a
     <% end %>
   </td>
   <td class="min-order">
-    <%= text_field_tag @locator + '_min_order_' + order_tbl.id.to_s, human_number(order_tbl.item.min_order), class: "min-order-field right-align", min: 0 %>
+    <%= text_field_tag @locator + '_min_order_' + order_tbl.id.to_s, human_number(order_tbl.min_order), class: "min-order-field right-align", min: 0 %>
   </td>
 
   <td class="order-total right-align">
-    $<span class="order-total-amt"><%= number_with_delimiter(order_tbl.item.reorder_total_cost, delimiter: ',')%></span>
+    $<span class="order-total-amt"><%= number_with_delimiter(order_tbl.reorder_total_cost, delimiter: ',')%></span>
   </td>
   <td class="order-check center-align small-text">
-    <% if order_tbl.item.on_order? %>
+    <%= check_box_tag 'checkbox_' + @locator + "_" +  order_tbl.id.to_s, 1, false, class: "order_checkbox" %>
+    <% if order_tbl.on_order? %>
+      <br>
       <i>
-        Ordered <%= human_number(order_tbl.item.last_ordered_quantity) %>
-        <br>on <%= human_date(order_tbl.item.last_ordered_at) %>
+        Ordered <%= human_number(order_tbl.last_ordered_quantity) %>
+        <br>on <%= human_date(order_tbl.last_ordered_at) %>
       </i>
-    <% else %>
-      <%= check_box_tag 'checkbox_' + @locator + "_" +  order_tbl.id.to_s, 1, false, class: "order_checkbox" %>
     <% end %>
   </td>
 </tr>

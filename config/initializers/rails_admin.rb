@@ -149,6 +149,13 @@ RailsAdmin.config do |config|
       end
       field :completed_tech
     end
+    # TODO: Extrapolate tables arent' searching by Part name??
+    # edit do
+    #   field :extrapolate_component_parts do
+    #     queryable true
+    #     searchable ['parts.name']
+    #   end
+    # end
     configure :description do
       label 'Label Description'
     end

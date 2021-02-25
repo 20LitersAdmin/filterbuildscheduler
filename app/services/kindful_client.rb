@@ -3,6 +3,10 @@
 class KindfulClient
   include HTTParty
 
+  def initialize
+    @results = []
+  end
+
   if Rails.env.production?
     base_uri 'https://app.kindful.com/api/v1'
   else
@@ -30,10 +34,29 @@ class KindfulClient
   end
 
   def email_exists_in_kindful?(email)
-    # This methid is always hitting the Production site with Production credentials
+    # This method is always hitting the Production site with Production credentials
     response = self.class.get("https://app.kindful.com/api/v1/contacts/email_exist?email=#{email}", { headers: live_headers })
 
     response.parsed_response['exist']
+  end
+
+  def query_organizations
+    response = self.class.post('/contacts/query', { headers: headers, body: organizations_query })
+
+    @results << response.parsed_response['results'] if response.parsed_response['results'].any?
+
+    # TODO: strange loop method activation:
+    query_organizations_next(parsed_response.parsed_response['query_token']) if response.parsed_response['has_more']
+  end
+
+  def query_organizations_next(query_token)
+    # TODO: does this work??
+    while response.parsed_response['has_more']
+      response = self.class.post('/contacts/query', { headers: headers, body: organizations_next_page(query_token) })
+      @results << response.parsed_response['results'] if response.parsed_response['results'].any?
+    end
+
+    @results
   end
 
   def headers
@@ -42,6 +65,8 @@ class KindfulClient
       'Authorization': 'Token token="' + token + '"'
     }
   end
+
+  # body methods
 
   def contact(user)
     {
@@ -166,6 +191,29 @@ class KindfulClient
          }
       ]
     }.to_json
+  end
+
+  def organizations_query
+    {
+      'query':
+        [
+          { 'or':
+            [
+              { 'by_group_id': '22330' },
+              { 'by_group_id': '28657' },
+              { 'by_group_id': '28658' },
+              { 'by_group_id': '17846' }
+            ] },
+          { 'has_email': 'Yes' }
+        ],
+      'columns': { 'contact': %w[first_name last_name company_name email donor_type] }
+    }
+  end
+
+  def organizations_next_page(query_token)
+    {
+      "query_token": query_token
+    }
   end
 
   private

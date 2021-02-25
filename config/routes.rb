@@ -84,8 +84,6 @@ Rails.application.routes.draw do
   patch '/auth/:id',              to: 'oauth_users#update', as: :auth_update
 
   post 'stripe-webhook', to: 'webhooks#stripe', as: 'stripe_webhook'
-  # decided not to try pub/sub for first attempt
-  # post 'gmail-webhook', to: 'webhooks#gmail', as: 'gmail_webhook'
 
   mount LetterOpenerWeb::Engine, at: '/letter_opener' if Rails.env.development?
 
