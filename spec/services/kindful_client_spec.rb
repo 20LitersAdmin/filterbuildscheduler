@@ -19,13 +19,13 @@ RSpec.describe KindfulClient do
     end
   end
 
-  fdescribe 'headers' do
+  describe 'headers' do
     it 'returns a hash' do
       expect(client.headers.class).to eq Hash
     end
 
-    it 'includes a token' do
-      byebug
+    pending 'includes a token' do
+      # byebug
     end
   end
 
