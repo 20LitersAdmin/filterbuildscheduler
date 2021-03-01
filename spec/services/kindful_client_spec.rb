@@ -6,16 +6,6 @@ RSpec.describe KindfulClient do
   let(:user1) { build :user }
   let(:client) { KindfulClient.new }
 
-  describe 'post' do
-    context 'when Rails.env.test? is true' do
-      pending
-    end
-
-    context 'when Rails.env.test? is false' do
-      pending
-    end
-  end
-
   describe 'import_user' do
     it 'takes user data and sends it to kindful' do
       http_spy = spy
@@ -26,6 +16,16 @@ RSpec.describe KindfulClient do
       }
       expect(KindfulClient).to receive(:post).with('/imports', arguments).and_return(http_spy)
       client.import_user(user1)
+    end
+  end
+
+  fdescribe 'headers' do
+    it 'returns a hash' do
+      expect(client.headers.class).to eq Hash
+    end
+
+    it 'includes a token' do
+      byebug
     end
   end
 

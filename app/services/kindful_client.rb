@@ -14,7 +14,19 @@ class KindfulClient
   end
 
   def self.post(url, opts)
-    super(url, opts) unless Rails.env.test?
+    # superceeds to HTTParty.post
+    super(url, opts)
+  end
+
+  def headers
+    {
+      'Content-Type': 'application/json',
+      'Authorization': 'Token token="' + token + '"'
+    }
+  end
+
+  def import_transaction(transaction)
+    self.class.post('/imports', { headers: headers, body: contact_w_transaction(transaction) })
   end
 
   def import_user(user)
@@ -27,10 +39,6 @@ class KindfulClient
 
   def import_user_w_note(registration)
     self.class.post('/imports', { headers: headers, body: contact_w_note(registration) })
-  end
-
-  def import_transaction(transaction)
-    self.class.post('/imports', { headers: headers, body: contact_w_transaction(transaction) })
   end
 
   def email_exists_in_kindful?(email)
@@ -59,13 +67,6 @@ class KindfulClient
     @results
   end
 
-  def headers
-    {
-      'Content-Type': 'application/json',
-      'Authorization': 'Token token="' + token + '"'
-    }
-  end
-
   # body methods
 
   def contact(user)
@@ -91,6 +92,35 @@ class KindfulClient
         }
       ]
     }.to_json
+  end
+
+  def contact_w_email_note(email_address, email, direction)
+    # direction: 'Received Email' || 'Sent Email'
+    {
+      'data_format': 'contact_with_note',
+      'action_type': 'update',
+      'data_type': 'json',
+      'match_by': {
+        'contact': 'email'
+      },
+        'data': [
+          {
+            'id': email.id.to_s,
+            'email': email_address,
+            'country': 'US',
+            'note_id': email.message_id.to_s,
+            'note_time': email.datetime,
+            'note_subject': email.subject,
+            'note_body': email.body,
+            'message_body': email.snippet,
+            'note_type': direction,
+            'note_sender_name': email.oauth_user.name,
+            'note_sender_email': email.oauth_user.email,
+            'campaign': 'Contributions',
+            'fund': 'Contributions 40100'
+          }
+        ]
+      }.to_json
   end
 
   def contact_w_note(registration)
@@ -127,35 +157,6 @@ class KindfulClient
         }
       ]
     }.to_json
-  end
-
-  def contact_w_email_note(email_address, email, direction)
-    # direction: 'Received Email' || 'Sent Email'
-    {
-      'data_format': 'contact_with_note',
-      'action_type': 'update',
-      'data_type': 'json',
-      'match_by': {
-        'contact': 'email'
-      },
-        'data': [
-          {
-            'id': email.id.to_s,
-            'email': email_address,
-            'country': 'US',
-            'note_id': email.message_id.to_s,
-            'note_time': email.datetime,
-            'note_subject': email.subject,
-            'note_body': email.body,
-            'message_body': email.snippet,
-            'note_type': direction,
-            'note_sender_name': email.oauth_user.name,
-            'note_sender_email': email.oauth_user.email,
-            'campaign': 'Contributions',
-            'fund': 'Contributions 40100'
-          }
-        ]
-      }.to_json
   end
 
   def contact_w_transaction(opts)
