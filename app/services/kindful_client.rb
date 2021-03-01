@@ -4,12 +4,17 @@ class KindfulClient
   include HTTParty
 
   def initialize
+    @query_token = ''
+    @pages = []
     @results = []
-    @page_token = ''
   end
 
   def org_results
     @results
+  end
+
+  def org_query_token
+    @query_token
   end
 
   if Rails.env.production? || Rails.env.development?
@@ -58,20 +63,23 @@ class KindfulClient
     response = self.class.post('/contacts/query', { headers: headers, body: organizations_query })
 
     @results << response.parsed_response['results'] if response.parsed_response['results'].any?
+    @pages << response.parsed_response['page']
 
-    # TODO: strange loop method activation:
-    @query_token = response.parsed_response['query_token']) if response.parsed_response['has_more']
-    # query_organizations_next(response.parsed_response['query_token']) if response.parsed_response['has_more']
+    return unless response.parsed_response['has_more']
+
+    @query_token = response.parsed_response['query_token']
+    query_organizations_next
   end
 
-  def query_organizations_next(query_token)
-    # TODO: does this work??
+  def query_organizations_next
     while response.parsed_response['has_more']
-      response = self.class.post('/contacts/query', { headers: headers, body: organizations_next_page(query_token) })
+      response = self.class.post("/contacts/query?query_token=#{@query_token}", { headers: headers })
+      @pages << response.parsed_response['page']
       @results << response.parsed_response['results'] if response.parsed_response['results'].any?
     end
 
     @results
+    # find_or_create_organizations
   end
 
   # body methods
@@ -218,14 +226,15 @@ class KindfulClient
     }.to_json
   end
 
-  def organizations_next_page(query_token)
-    # even sending the query_token appears unnecessary
-    {
-      "query_token": query_token
-    }
-  end
-
   private
+
+  def find_or_create_organizations
+    return unless @results.any?
+
+    @results.each do |result|
+      byebug
+    end
+  end
 
   def token
     if Rails.env.production? || Rails.env.development?

@@ -7,6 +7,8 @@ class Email < ApplicationRecord
   validates :from, :to, presence: true
   validate :deny_internal_messages
 
+  before_create :check_for_organization
+
   after_create :send_to_kindful
 
   scope :ordered, -> { order(datetime: :desc) }
@@ -35,6 +37,11 @@ class Email < ApplicationRecord
 
     email.save
     email.reload unless email.errors.any?
+  end
+
+  def check_for_organization
+    # TODO
+    organization == true if Organization.where(email: target_emails).any?
   end
 
   def send_to_kindful
