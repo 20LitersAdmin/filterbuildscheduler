@@ -20,6 +20,12 @@ require 'extrapolate_technology_component'
 require 'extrapolate_technology_part'
 require 'extrapolate_technology_material'
 
+require 'application_helper'
+require 'events_helper'
+require 'devise_helper'
+require 'error_handler'
+require 'application_controller'
+
 require Rails.root.join('lib', 'rails_admin', 'restore.rb')
 require Rails.root.join('lib', 'rails_admin', 'paranoid_delete.rb')
 
@@ -30,7 +36,7 @@ RailsAdmin.config do |config|
 
   # Monkey patch to remove default_scope
   #
-  require 'rails_admin/adapters/active_record'
+  # require 'rails_admin/adapters/active_record'
 
   module RailsAdmin::Adapters::ActiveRecord
     def get(id)

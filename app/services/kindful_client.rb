@@ -5,9 +5,14 @@ class KindfulClient
 
   def initialize
     @results = []
+    @page_token = ''
   end
 
-  if Rails.env.production?
+  def org_results
+    @results
+  end
+
+  if Rails.env.production? || Rails.env.development?
     base_uri 'https://app.kindful.com/api/v1'
   else
     base_uri 'https://app-sandbox.kindful.com/api/v1'
@@ -15,7 +20,8 @@ class KindfulClient
 
   def self.post(url, opts)
     # superceeds to HTTParty.post
-    super(url, opts)
+    # don't actually send test data
+    super(url, opts) unless Rails.env.test?
   end
 
   def headers
@@ -54,7 +60,7 @@ class KindfulClient
     @results << response.parsed_response['results'] if response.parsed_response['results'].any?
 
     # TODO: strange loop method activation:
-    query_organizations_next(parsed_response.parsed_response['query_token']) if response.parsed_response['has_more']
+    # query_organizations_next(parsed_response.parsed_response['query_token']) if response.parsed_response['has_more']
   end
 
   def query_organizations_next(query_token)
@@ -207,11 +213,12 @@ class KindfulClient
             ] },
           { 'has_email': 'Yes' }
         ],
-      'columns': { 'contact': %w[first_name last_name company_name email donor_type] }
-    }
+      'columns': { 'contact': %w[company_name email donor_type] }
+    }.to_json
   end
 
   def organizations_next_page(query_token)
+    # even sending the query_token appears unnecessary
     {
       "query_token": query_token
     }
@@ -220,7 +227,7 @@ class KindfulClient
   private
 
   def token
-    if Rails.env.production?
+    if Rails.env.production? || Rails.env.development?
       Rails.application.credentials.kf_filterbuild_token
     else
       Rails.application.credentials.kf_filterbuild_token_sandbox
