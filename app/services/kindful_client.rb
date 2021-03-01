@@ -60,7 +60,8 @@ class KindfulClient
     @results << response.parsed_response['results'] if response.parsed_response['results'].any?
 
     # TODO: strange loop method activation:
-    # query_organizations_next(parsed_response.parsed_response['query_token']) if response.parsed_response['has_more']
+    @query_token = response.parsed_response['query_token']) if response.parsed_response['has_more']
+    # query_organizations_next(response.parsed_response['query_token']) if response.parsed_response['has_more']
   end
 
   def query_organizations_next(query_token)
