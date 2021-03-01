@@ -84,6 +84,7 @@ ActiveRecord::Schema.define(version: 2021_03_01_194751) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.string "kindful_job_id", array: true
+    t.boolean "organization", default: false, null: false
     t.index ["gmail_id"], name: "index_emails_on_gmail_id"
     t.index ["message_id"], name: "index_emails_on_message_id"
     t.index ["oauth_user_id"], name: "index_emails_on_oauth_user_id"

@@ -107,10 +107,6 @@ RSpec.describe KindfulClient do
     pending 'returns a Kindful query json string'
   end
 
-  describe 'organizations_next_page' do
-    pending 'returns a Kindful next page query string'
-  end
-
   private
 
   describe 'token' do
