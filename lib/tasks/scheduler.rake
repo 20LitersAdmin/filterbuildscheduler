@@ -12,3 +12,14 @@ task sync_emails: :environment do
   EmailSyncJob.perform_now
   puts 'Done.'
 end
+
+task sync_organizations: :environment do
+  puts 'Checking to see if Organizations need to be synced'
+  if Date.today.day == 1
+    puts 'Syncing Organizations'
+    KindfulClient.new.query_organizations
+    puts 'Done.'
+  else
+    puts 'Nope. Not the 1st of the month.'
+  end
+end
