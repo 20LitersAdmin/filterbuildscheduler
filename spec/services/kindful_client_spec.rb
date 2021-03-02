@@ -42,8 +42,37 @@ RSpec.describe KindfulClient do
     end
   end
 
+  describe 'import_company_w_email_note' do
+    it 'takes email data from a company and sends it to Kindful' do
+      company = FactoryBot.create(:organization)
+      oauth_user = FactoryBot.create(:oauth_user)
+      email = FactoryBot.build(:email, oauth_user_id: oauth_user.id, to: [company.email])
+      allow(email).to receive(:send_to_kindful).and_return(email)
+      email.save
+      direction = 'Received Email'
+      arguments = {
+        headers: client.headers,
+        body: client.company_w_email_note(company.email, email, direction, company.company_name)
+      }
+      expect(KindfulClient).to receive(:post).with('/imports', arguments).and_return(http_spy)
+      client.import_company_w_email_note(company.email, email, direction, company.company_name)
+    end
+  end
+
   describe 'import_user_w_email_note' do
-    pending 'takes email data and sends it to Kindful'
+    it 'takes email data and sends it to Kindful' do
+      oauth_user = FactoryBot.create(:oauth_user)
+      email = FactoryBot.build(:email, oauth_user_id: oauth_user.id, to: [oauth_user.email])
+      allow(email).to receive(:send_to_kindful).and_return(email)
+      email.save
+      direction = 'Received Email'
+      arguments = {
+        headers: client.headers,
+        body: client.contact_w_email_note(oauth_user.email, email, direction)
+      }
+      expect(KindfulClient).to receive(:post).with('/imports', arguments).and_return(http_spy)
+      client.import_user_w_email_note(oauth_user.email, email, direction)
+    end
   end
 
   describe 'import_user_w_note' do
@@ -67,19 +96,58 @@ RSpec.describe KindfulClient do
   end
 
   describe 'query_organizations' do
-    pending 'queries Kindful for several group IDs to retrieve all organizations form Kindful'
+    it 'queries Kindful for several group IDs to retrieve all organizations form Kindful' do
+      allow(client).to receive(:recreate_organizations).and_return(true)
+      file = JSON.parse(File.read("#{Rails.root}/spec/fixtures/files/kindful_org_response.json"))
+      response = double(HTTParty::Response)
+      allow(response).to receive(:parsed_response).and_return(file)
+      arguments = {
+        headers: client.headers,
+        body: client.organizations_query
+      }
+      expect(KindfulClient).to receive(:post).with('/contacts/query', arguments).and_return(response)
+      client.query_organizations
+    end
   end
 
-  describe 'query_organizations_next' do
-    pending 'retrieves the next set of responses from Kindful and adds them to the results'
-  end
+  # body methods
 
   describe 'contact' do
-    it 'returns a json object from a user object' do
+    it 'returns a json object from an email and user object' do
       user1.save
       contact_json = JSON.parse client.contact(user1)
       expect(contact_json['data'][0]['id']).to eq user1.id.to_s
       expect(contact_json['data'][0]['email']).to eq user1.email
+    end
+  end
+
+  describe 'company_w_email_note' do
+    it 'returns a json object from an email and company' do
+      company = FactoryBot.create(:organization)
+      oauth_user = FactoryBot.create(:oauth_user)
+      email = FactoryBot.build(:email, oauth_user_id: oauth_user.id, to: [company.email])
+      allow(email).to receive(:send_to_kindful).and_return(email)
+      email.save
+      direction = 'Received Email'
+      company_w_email_note_json = JSON.parse client.company_w_email_note(company.email, email, direction, company.company_name)
+      expect(company_w_email_note_json['match_by']['contact']).to eq 'company_name_email'
+      expect(company_w_email_note_json['data'][0]['company_name']).to eq company.company_name
+      expect(company_w_email_note_json['data'][0]['email']).to eq company.email
+      expect(company_w_email_note_json['data'][0]['note_sender_email']).to eq oauth_user.email
+    end
+  end
+
+  describe 'contact_w_email_note' do
+    it 'returns a json object from an email and contact' do
+      oauth_user = FactoryBot.create(:oauth_user)
+      email = FactoryBot.build(:email, oauth_user_id: oauth_user.id)
+      allow(email).to receive(:send_to_kindful).and_return(email)
+      email.save
+      direction = 'Received Email'
+      contact_w_note_json = JSON.parse client.contact_w_email_note(email.to.first, email, direction)
+      expect(contact_w_note_json['match_by']['contact']).to eq 'email'
+      expect(contact_w_note_json['data'][0]['email']).to eq email.to.first
+      expect(contact_w_note_json['data'][0]['note_sender_email']).to eq oauth_user.email
     end
   end
 
@@ -104,10 +172,29 @@ RSpec.describe KindfulClient do
   end
 
   describe 'organizations_query' do
-    pending 'returns a Kindful query json string'
+    it 'returns a Kindful query json string' do
+      org_query = JSON.parse client.organizations_query
+      expect(org_query['columns']['contact']).to include('company_name', 'email', 'donor_type')
+      expect(org_query['query'][0]['or'].size).to eq 4
+    end
   end
 
   private
+
+  describe 'recreate_organizations' do
+    before :each do
+      @file = JSON.parse(File.read("#{Rails.root}/spec/fixtures/files/kindful_org_response.json"))
+      client.results = @file['results']
+    end
+
+    it 'deletes existing organizations before creating organizations' do
+      expect(Organization).to receive(:destroy_all)
+      client.send(:recreate_organizations)
+    end
+    it 'creates organizations from an array of hashes' do
+      expect { client.send(:recreate_organizations) }.to change { Organization.all.size }.from(0).to(@file['results'].size)
+    end
+  end
 
   describe 'token' do
     it 'retrieves a token from the credentials' do
