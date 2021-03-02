@@ -29,7 +29,6 @@ module BuildPlanner
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 6.0
-    config.autoloader = :classic
 
     config.time_zone = 'Eastern Time (US & Canada)'
 

@@ -46,7 +46,13 @@ class Email < ApplicationRecord
     target_emails.each do |email_address, direction|
       next unless kf.email_exists_in_kindful?(email_address)
 
-      response = kf.import_user_w_email_note(email_address, self, direction)
+      org = Organization.find_by(email: email_address)
+      response =
+        if org.present?
+          kf.import_company_w_email_note(email_address, self, direction, org.company_name)
+        else
+          kf.import_user_w_email_note(email_address, self, direction)
+        end
 
       next if response['status'] == 'error'
 
