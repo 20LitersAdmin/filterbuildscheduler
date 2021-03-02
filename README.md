@@ -1,8 +1,10 @@
 # README
 ## Kindful Mail Client
-2. Check if email is from Org
-3. Email#organization? on before_create
-4. Need a cron job for checking Organizations 1x week
+1. Write tests for Contact emails
+2. Write tests for Org emails
+3. Deploy w/ rails db:migrate
+4. Manually perform KindfulClient.new.query_organizations
+5. Set Scheduler to run daily (`sync_organizations` only runs on the 1st of the month)
 
 ## HMMM
 1. `weeks_to_out` and `per_technology` rely on lots of `.first`s which is an issue for items that `have_many` technologies
