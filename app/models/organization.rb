@@ -1,5 +1,5 @@
 # frozen_string_literal: true
 
 class Organization < ApplicationRecord
-  validates :name, :email, presence: true
+  validates :company_name, :email, presence: true
 end

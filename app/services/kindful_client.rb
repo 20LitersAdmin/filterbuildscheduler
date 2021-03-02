@@ -5,16 +5,7 @@ class KindfulClient
 
   def initialize
     @query_token = ''
-    @pages = []
     @results = []
-  end
-
-  def org_results
-    @results
-  end
-
-  def org_query_token
-    @query_token
   end
 
   if Rails.env.production? || Rails.env.development?
@@ -44,6 +35,11 @@ class KindfulClient
     self.class.post('/imports', { headers: headers, body: contact(user) })
   end
 
+  def import_company_w_email_note(email_address, email, direction, company_name)
+    # TODO
+    self.class.post('/imports', { headers: headers, body: company_w_email_note(email_address, email, direction, company_name) })
+  end
+
   def import_user_w_email_note(email_address, email, direction)
     self.class.post('/imports', { headers: headers, body: contact_w_email_note(email_address, email, direction) })
   end
@@ -63,23 +59,17 @@ class KindfulClient
     response = self.class.post('/contacts/query', { headers: headers, body: organizations_query })
 
     @results << response.parsed_response['results'] if response.parsed_response['results'].any?
-    @pages << response.parsed_response['page']
 
     return unless response.parsed_response['has_more']
 
     @query_token = response.parsed_response['query_token']
-    query_organizations_next
-  end
 
-  def query_organizations_next
     while response.parsed_response['has_more']
       response = self.class.post("/contacts/query?query_token=#{@query_token}", { headers: headers })
-      @pages << response.parsed_response['page']
       @results << response.parsed_response['results'] if response.parsed_response['results'].any?
     end
 
-    @results
-    # find_or_create_organizations
+    create_organizations
   end
 
   # body methods
@@ -107,6 +97,36 @@ class KindfulClient
         }
       ]
     }.to_json
+  end
+
+  def company_w_email_note(email_address, email, direction, company_name)
+    # direction: 'Received Email' || 'Sent Email'
+    {
+      'data_format': 'contact_with_note',
+      'action_type': 'update',
+      'data_type': 'json',
+      'match_by': {
+        'contact': 'company_name_email'
+      },
+        'data': [
+          {
+            'id': email.id.to_s,
+            'company_name': company_name,
+            'email': email_address,
+            'country': 'US',
+            'note_id': email.message_id.to_s,
+            'note_time': email.datetime,
+            'note_subject': email.subject,
+            'note_body': email.body,
+            'message_body': email.snippet,
+            'note_type': direction,
+            'note_sender_name': email.oauth_user.name,
+            'note_sender_email': email.oauth_user.email,
+            'campaign': 'Contributions',
+            'fund': 'Contributions 40100'
+          }
+        ]
+      }.to_json
   end
 
   def contact_w_email_note(email_address, email, direction)
@@ -228,11 +248,17 @@ class KindfulClient
 
   private
 
-  def find_or_create_organizations
+  def create_organizations
     return unless @results.any?
 
-    @results.each do |result|
-      byebug
+    @results.flatten.each do |result|
+      next if result['donor_type'] != 'Organization' && (result['email'].blank? || result['company_name'].blank?)
+
+      org = Organization.find_or_initialize_by(email: result['email'])
+      next unless org.new_record?
+
+      org.company_name = result['company_name']
+      org.save
     end
   end
 

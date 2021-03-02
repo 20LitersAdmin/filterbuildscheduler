@@ -84,7 +84,6 @@ ActiveRecord::Schema.define(version: 2021_03_01_194751) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.string "kindful_job_id", array: true
-    t.boolean "organization", default: false, null: false
     t.index ["gmail_id"], name: "index_emails_on_gmail_id"
     t.index ["message_id"], name: "index_emails_on_message_id"
     t.index ["oauth_user_id"], name: "index_emails_on_oauth_user_id"
@@ -242,12 +241,12 @@ ActiveRecord::Schema.define(version: 2021_03_01_194751) do
   end
 
   create_table "organizations", force: :cascade do |t|
-    t.string "name"
+    t.string "company_name"
     t.string "email"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.index ["company_name"], name: "index_organizations_on_company_name"
     t.index ["email"], name: "index_organizations_on_email"
-    t.index ["name"], name: "index_organizations_on_name"
   end
 
   create_table "parts", force: :cascade do |t|

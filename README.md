@@ -1,6 +1,8 @@
 # README
 ## Kindful Mail Client
-1. Test that cron job is working
+2. Check if email is from Org
+3. Email#organization? on before_create
+4. Need a cron job for checking Organizations 1x week
 
 ## HMMM
 1. `weeks_to_out` and `per_technology` rely on lots of `.first`s which is an issue for items that `have_many` technologies
