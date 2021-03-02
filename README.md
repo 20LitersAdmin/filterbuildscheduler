@@ -1,7 +1,5 @@
 # README
 ## Kindful Mail Client
-1. Write tests for Contact emails
-2. Write tests for Org emails
 3. Deploy w/ rails db:migrate
 4. Manually perform KindfulClient.new.query_organizations
 5. Set Scheduler to run daily (`sync_organizations` only runs on the 1st of the month)
