@@ -2,6 +2,7 @@
 
 class KindfulClient
   include HTTParty
+  attr_accessor :results
 
   def initialize
     @query_token = ''
@@ -36,7 +37,6 @@ class KindfulClient
   end
 
   def import_company_w_email_note(email_address, email, direction, company_name)
-    # TODO
     self.class.post('/imports', { headers: headers, body: company_w_email_note(email_address, email, direction, company_name) })
   end
 
@@ -69,7 +69,7 @@ class KindfulClient
       @results << response.parsed_response['results'] if response.parsed_response['results'].any?
     end
 
-    create_organizations
+    recreate_organizations
   end
 
   # body methods
@@ -108,25 +108,25 @@ class KindfulClient
       'match_by': {
         'contact': 'company_name_email'
       },
-        'data': [
-          {
-            'id': email.id.to_s,
-            'company_name': company_name,
-            'email': email_address,
-            'country': 'US',
-            'note_id': email.message_id.to_s,
-            'note_time': email.datetime,
-            'note_subject': email.subject,
-            'note_body': email.body,
-            'message_body': email.snippet,
-            'note_type': direction,
-            'note_sender_name': email.oauth_user.name,
-            'note_sender_email': email.oauth_user.email,
-            'campaign': 'Contributions',
-            'fund': 'Contributions 40100'
-          }
-        ]
-      }.to_json
+      'data': [
+        {
+          'id': email.id.to_s,
+          'company_name': company_name,
+          'email': email_address,
+          'country': 'US',
+          'note_id': email.message_id.to_s,
+          'note_time': email.datetime,
+          'note_subject': email.subject,
+          'note_body': email.body,
+          'message_body': email.snippet,
+          'note_type': direction,
+          'note_sender_name': email.oauth_user.name,
+          'note_sender_email': email.oauth_user.email,
+          'campaign': 'Contributions',
+          'fund': 'Contributions 40100'
+        }
+      ]
+    }.to_json
   end
 
   def contact_w_email_note(email_address, email, direction)
@@ -138,24 +138,24 @@ class KindfulClient
       'match_by': {
         'contact': 'email'
       },
-        'data': [
-          {
-            'id': email.id.to_s,
-            'email': email_address,
-            'country': 'US',
-            'note_id': email.message_id.to_s,
-            'note_time': email.datetime,
-            'note_subject': email.subject,
-            'note_body': email.body,
-            'message_body': email.snippet,
-            'note_type': direction,
-            'note_sender_name': email.oauth_user.name,
-            'note_sender_email': email.oauth_user.email,
-            'campaign': 'Contributions',
-            'fund': 'Contributions 40100'
-          }
-        ]
-      }.to_json
+      'data': [
+        {
+          'id': email.id.to_s,
+          'email': email_address,
+          'country': 'US',
+          'note_id': email.message_id.to_s,
+          'note_time': email.datetime,
+          'note_subject': email.subject,
+          'note_body': email.body,
+          'message_body': email.snippet,
+          'note_type': direction,
+          'note_sender_name': email.oauth_user.name,
+          'note_sender_email': email.oauth_user.email,
+          'campaign': 'Contributions',
+          'fund': 'Contributions 40100'
+        }
+      ]
+    }.to_json
   end
 
   def contact_w_note(registration)
@@ -248,8 +248,10 @@ class KindfulClient
 
   private
 
-  def create_organizations
+  def recreate_organizations
     return unless @results.any?
+
+    Organization.destroy_all
 
     @results.flatten.each do |result|
       next if result['donor_type'] != 'Organization' && (result['email'].blank? || result['company_name'].blank?)
