@@ -1,8 +1,6 @@
 # README
 ## Kindful Mail Client
-3. Deploy w/ rails db:migrate
-4. Manually perform KindfulClient.new.query_organizations
-5. Set Scheduler to run daily (`sync_organizations` only runs on the 1st of the month)
+1. Write tests for Email model
 
 ## HMMM
 1. `weeks_to_out` and `per_technology` rely on lots of `.first`s which is an issue for items that `have_many` technologies
