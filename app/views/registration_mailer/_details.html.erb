@@ -24,7 +24,17 @@
       <strong>Instructions:</strong> <br>
       <%= @location.instructions %> <br>
     <% end %>
+    <br>
+    <strong>
+      PLEASE WEAR A MASK. A mask must be worn to participate in this event.
+    </strong>
+    <br>
+    Masks that cover the nose and mouth must be worn the whole time. A mask will be provided if you don't bring one.
+    <br>
+    You must wear a mask even if you have been vaccinated.
+    <br>
     <% if @event.description.present? %>
+      <br>
       <strong>Additional Event Details:</strong> <br>
       <%= @event.description %> <br>
     <% end %>
@@ -42,6 +52,7 @@
   </ul>
   <p style="margin-bottom: 6px;"><strong>What to bring:</strong></p>
   <ul style="margin-top: 6px;">
+    <li>A facemask that covers your nose and mouth</li>
     <li>A water bottle is a good idea</li>
     <li>Comfortable, close-toed shoes</li>
     <li>A desire to help the 383 million people without access to clean water</li>

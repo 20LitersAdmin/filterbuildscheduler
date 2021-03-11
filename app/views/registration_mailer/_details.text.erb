@@ -4,6 +4,7 @@
 We'll be building <%= @technology.name.pluralize %>
 
 Location:
+---------
 <%= @location.name %>
 <%= @location.address1 %>
 <% if @location.map_url %>
@@ -21,6 +22,7 @@ Photo: <%= @location.photo_url %>
 
 <% if @location.instructions.present? %>
 Instructions:
+-------------
 <%= @location.instructions %>
 <% end %>
 
@@ -30,6 +32,7 @@ Additional Event Details:
 <% end %>
 
 What to expect:
+---------------
 * You'll receive a quick overview of the global water crisis and what we're doing about it as well as a demonstration of how to build filters.
 * Come late or leave early as you need to
 * Gloves and tools will be provided
@@ -41,6 +44,5 @@ What to bring:
 * A desire to help the 383 million people without access to clean water
 
 <% if @event.leaders_names.present? %>
-<%= @leader_count_text %>
-<%= @event.leaders_names %>
+<%= @leader_count_text %> <%= @event.leaders_names %>
 <% end %>
