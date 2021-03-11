@@ -1,0 +1,12 @@
+Hello <%= @recipient.fname %>,
+
+This is a reminder that you're registered for a filter build coming up soon.
+
+** Need to change or cancel your registration? ** No worries, just use this link:
+-------------------------------------------------
+<%= edit_event_registration_url(@event, @registration, user_token: @recipient.authentication_token, user_email: @recipient.email ) %>
+
+<%= render partial: 'details' %>
+
+** Have a Question? ** Just reply to this email.
+------------------------------------------------
