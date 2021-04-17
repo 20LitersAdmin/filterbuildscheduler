@@ -26,7 +26,7 @@ class Count < ApplicationRecord
   def avail_value
     return available * item.price unless item.instance_of?(Part)
 
-    if part.made_from_materials? && part.price_cents.zero?
+    if part.made_from_materials? && part.price_cents.zero? && part.extrapolate_material_parts.any?
       emp = part.extrapolate_material_parts.first
       available * emp.part_price
     else

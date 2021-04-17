@@ -28,7 +28,7 @@ class ExtrapolateMaterialPart < ApplicationRecord
   end
 
   def part_price
-    if part.made_from_materials? && part.price_cents.zero?
+    if part.made_from_materials? && part.price_cents.zero? && part.extrapolate_material_parts.any?
       material.price / parts_per_material.to_f
     else
       part.price
