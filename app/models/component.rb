@@ -48,8 +48,9 @@ class Component < ApplicationRecord
     extrapolate_component_parts.each do |ecp|
       next if ecp&.part.nil?
 
-      if ecp.part.made_from_materials? && ecp.part.price_cents.zero?
+      if ecp.part.made_from_materials? && ecp.part.price_cents.zero? && ecp.part.extrapolate_material_parts.any?
         emp = ecp.part.extrapolate_material_parts.first
+
         ary << emp.part_price * ecp.parts_per_component.to_i
       else
         ary << ecp.part_price * ecp.parts_per_component.to_i
