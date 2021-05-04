@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class OauthUser < ApplicationRecord
-  has_many :emails
+  has_many :emails, dependent: :destroy
 
   validates :oauth_id, :oauth_token, uniqueness: true, allow_blank: true
 
