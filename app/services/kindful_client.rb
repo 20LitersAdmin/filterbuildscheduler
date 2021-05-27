@@ -122,8 +122,8 @@ class KindfulClient
           'note_type': direction,
           'note_sender_name': email.oauth_user.name,
           'note_sender_email': email.oauth_user.email,
-          'campaign': 'Contributions',
-          'fund': 'Contributions 40100'
+          'campaign_id': '247247',
+          'fund_id': '25946'
         }
       ]
     }.to_json
@@ -151,8 +151,8 @@ class KindfulClient
           'note_type': direction,
           'note_sender_name': email.oauth_user.name,
           'note_sender_email': email.oauth_user.email,
-          'campaign': 'Contributions',
-          'fund': 'Contributions 40100'
+          'campaign_id': '247247',
+          'fund_id': '25946'
         }
       ]
     }.to_json
@@ -187,8 +187,8 @@ class KindfulClient
           'note_time': registration.event.end_time.to_s,
           'note_subject': subject,
           'note_type': 'Event',
-          'campaign': 'Filter Builds',
-          'fund': 'Contributions 40100'
+          'campaign_id': '338482',
+          'fund_id': '25946'
         }
       ]
     }.to_json
@@ -217,8 +217,8 @@ class KindfulClient
           'country': opts[:metadata][:country],
           'amount_in_cents': opts[:amount],
           'currency': 'usd',
-          'campaign': 'CauseVox Transactions',
-          'fund': 'Special Events 40400',
+          'campaign_id': '270572',
+          'fund_id': '27452',
           'acknowledged': 'false',
           'transaction_note': opts[:metadata][:campaign_name],
           'stripe_charge_id': opts[:id],
