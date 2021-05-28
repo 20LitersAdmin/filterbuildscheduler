@@ -1,23 +1,34 @@
-<div class="hero-img collapse in" id="collapseHero">
+<div class="hero-img">
   <div class="row">
     <div class="col-xs-12">
-      <% if @stats.any? %>
-        <div class="row stats-row">
+      <div class="row stats-row">
+        <% if @stats.any? %>
           <h2>Our Progress through <%= human_month_year(@progress_date) %></h2>
           <%= render partial: 'shared/basic_stat_block', collection: @stats %>
-        </div>
-      <% end %>
+        <% else  %>
+          <h1>Build with us!</h1>
+          <h4>
+            We roll up our sleeves to make solutions to the global water crisis
+            <br>
+            When you join us, you make clean water a reality for families in Rwanda.
+          </h4>
+          <p>Want to see our hard work in action?</p>
+          <a href="https://track.20liters.org" class='btn hero'>See our Progress</a>
+        <% end %>
+      </div>
     </div>
     <% unless current_user&.admin_or_leader? %>
-      <div class="col-xs-12 custom-event-row">
-        <h3>Want a custom build event for your group?</h3>
-        <p>If you have a group of 6+ people we can schedule a build at your convenience.</p>
-      </div>
-      <div class="col-xs-6">
-        <%= mail_to 'filterbuild@20liters.org', 'Email Us!', class: 'btn hero float-right', target: "_blank", subject: 'Request for custom build event' %>
-      </div>
-      <div class="col-xs-6">
-        <a  class='btn hero float-left' role="button" data-toggle="collapse" href="#collapseHero" aria-expanded="true" aria-controls="collapseHero">No Thanks</a>
+      <div class="row collapse in" id="collapseHero">
+        <div class="col-xs-12">
+          <h3>Want a custom build event for your group?</h3>
+          <p>If you have a group of 6+ people we can schedule a build at your convenience.</p>
+        </div>
+        <div class="col-xs-6">
+          <%= mail_to 'filterbuild@20liters.org', 'Email Us!', class: 'btn hero float-right', target: "_blank", subject: 'Request for custom build event' %>
+        </div>
+        <div class="col-xs-6">
+          <a  class='btn hero float-left' role="button" data-toggle="collapse" href="#collapseHero" aria-expanded="true" aria-controls="collapseHero">No Thanks</a>
+        </div>
       </div>
     <% end %>
   </div>
