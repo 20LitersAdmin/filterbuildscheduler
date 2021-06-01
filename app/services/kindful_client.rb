@@ -2,20 +2,18 @@
 
 class KindfulClient
   include HTTParty
-  attr_accessor :results
+  attr_accessor :results, :env
 
-  def initialize
+  def initialize(*)
     @query_token = ''
     @results = []
-  end
-
-  if Rails.env.production? || Rails.env.development?
-    base_uri 'https://app.kindful.com/api/v1'
-  else
-    base_uri 'https://app-sandbox.kindful.com/api/v1'
+    # you can test in the sandbox by setting @env to anything other than 'production'
+    @env = env unless env.blank?
+    @env ||= Rails.env.production? ? 'production' : 'sandbox'
   end
 
   def self.post(url, opts)
+    set_base_uri!
     # superceeds to HTTParty.post
     # don't actually send test data
     super(url, opts) unless Rails.env.test?
@@ -250,6 +248,14 @@ class KindfulClient
     }.to_json
   end
 
+  def self.set_base_uri!
+    if @env == 'production'
+      base_uri 'https://app.kindful.com/api/v1'
+    else
+      base_uri 'https://app-sandbox.kindful.com/api/v1'
+    end
+  end
+
   private
 
   def recreate_organizations
@@ -269,7 +275,7 @@ class KindfulClient
   end
 
   def token
-    if Rails.env.production? || Rails.env.development?
+    if @env == 'production'
       Rails.application.credentials.kf_filterbuild_token
     else
       Rails.application.credentials.kf_filterbuild_token_sandbox
