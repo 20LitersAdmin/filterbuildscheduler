@@ -106,7 +106,9 @@ class KindfulClient
       'action_type': 'update',
       'data_type': 'json',
       'match_by': {
-        'contact': 'company_name_email'
+        'contact': 'company_name_email',
+        'campaign': 'id',
+        'fund': 'id'
       },
       'data': [
         {
@@ -136,7 +138,9 @@ class KindfulClient
       'action_type': 'update',
       'data_type': 'json',
       'match_by': {
-        'contact': 'email'
+        'contact': 'email',
+        'campaign': 'id',
+        'fund': 'id'
       },
       'data': [
         {
@@ -171,8 +175,8 @@ class KindfulClient
       'data_type': 'json',
       'match_by': {
         'contact': 'first_name_last_name_email',
-        'campaign': 'name',
-        'fund': 'name'
+        'campaign': 'id',
+        'fund': 'id'
       },
       'data': [
         {
@@ -201,8 +205,8 @@ class KindfulClient
       'data_type': 'json',
       'match_by': {
         'contact': 'first_name_last_name_email',
-        'campaign': 'name',
-        'fund': 'name'
+        'campaign': 'id',
+        'fund': 'id'
       },
       'data': [
         {
