@@ -224,12 +224,13 @@ class KindfulClient
           'country': opts[:metadata][:country],
           'amount_in_cents': opts[:amount],
           'currency': 'usd',
+          'transaction_time': opts[:created],
           'campaign_id': '270572',
           'fund_id': '27452',
           'acknowledged': 'false',
           'transaction_note': opts[:metadata][:campaign_name],
           'stripe_charge_id': opts[:id],
-          'transaction_type': 'Credit',
+          'transaction_type': opts[:source][:funding],
           'card_type': opts[:source][:brand]
          }
       ]
