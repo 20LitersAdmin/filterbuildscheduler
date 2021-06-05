@@ -7,13 +7,28 @@ RSpec.describe KindfulClient do
   let(:client) { KindfulClient.new }
   let(:http_spy) { spy }
 
-  describe 'headers' do
-    it 'returns a hash' do
-      expect(client.headers.class).to eq Hash
+  it 'stores accessible variables' do
+    expect(client.results.class).to eq Array
+    expect(client.env).to eq 'sandbox'
+  end
+
+  describe 'set_host' do
+    context 'when @env == production' do
+      before :each do
+        client.env = 'production'
+      end
+
+      it 'sets @host to the production URL' do
+        client.set_host
+        expect(client.instance_variable_get(:@host)).to eq 'https://app.kindful.com/api/v1/'
+      end
     end
 
-    it 'includes a token' do
-      client.headers[:Authorization].include?(client.send(:token))
+    context 'when @env != production' do
+      it 'sets @host to the sandbox URL' do
+        client.set_host
+        expect(client.instance_variable_get(:@host)).to eq 'https://app-sandbox.kindful.com/api/v1'
+      end
     end
   end
 
@@ -23,10 +38,10 @@ RSpec.describe KindfulClient do
       json = file['data']['object'].deep_symbolize_keys
 
       arguments = {
-        headers: client.headers,
+        headers: client.send(:headers),
         body: client.contact_w_transaction(json)
       }
-      expect(KindfulClient).to receive(:post).with('/imports', arguments).and_return(http_spy)
+      expect(KindfulClient).to receive(:post).with(client.import_host, arguments).and_return(http_spy)
       client.import_transaction(json)
     end
   end
@@ -34,10 +49,10 @@ RSpec.describe KindfulClient do
   describe 'import_user' do
     it 'takes user data and sends it to kindful' do
       arguments = {
-        headers: client.headers,
+        headers: client.send(:headers),
         body: client.contact(user1)
       }
-      expect(KindfulClient).to receive(:post).with('/imports', arguments).and_return(http_spy)
+      expect(KindfulClient).to receive(:post).with(client.import_host, arguments).and_return(http_spy)
       client.import_user(user1)
     end
   end
@@ -51,10 +66,10 @@ RSpec.describe KindfulClient do
       email.save
       direction = 'Received Email'
       arguments = {
-        headers: client.headers,
+        headers: client.send(:headers),
         body: client.company_w_email_note(company.email, email, direction, company.company_name)
       }
-      expect(KindfulClient).to receive(:post).with('/imports', arguments).and_return(http_spy)
+      expect(KindfulClient).to receive(:post).with(client.import_host, arguments).and_return(http_spy)
       client.import_company_w_email_note(company.email, email, direction, company.company_name)
     end
   end
@@ -67,10 +82,10 @@ RSpec.describe KindfulClient do
       email.save
       direction = 'Received Email'
       arguments = {
-        headers: client.headers,
+        headers: client.send(:headers),
         body: client.contact_w_email_note(oauth_user.email, email, direction)
       }
-      expect(KindfulClient).to receive(:post).with('/imports', arguments).and_return(http_spy)
+      expect(KindfulClient).to receive(:post).with(client.import_host, arguments).and_return(http_spy)
       client.import_user_w_email_note(oauth_user.email, email, direction)
     end
   end
@@ -79,10 +94,10 @@ RSpec.describe KindfulClient do
     it 'takes registration data and sends it to Kindful' do
       registration = FactoryBot.create(:registration_attended, user: user1)
       arguments = {
-        headers: client.headers,
+        headers: client.send(:headers),
         body: client.contact_w_note(registration)
       }
-      expect(KindfulClient).to receive(:post).with('/imports', arguments).and_return(http_spy)
+      expect(KindfulClient).to receive(:post).with(client.import_host, arguments).and_return(http_spy)
       client.import_user_w_note(registration)
     end
   end
@@ -90,7 +105,7 @@ RSpec.describe KindfulClient do
   describe 'email_exists_in_kindful?' do
     it 'asks Kindful production site to check if an email exists' do
       email = 'jondoe@email.com'
-      expect(KindfulClient).to receive(:get).with("https://app.kindful.com/api/v1/contacts/email_exist?email=#{email}", { headers: client.send(:live_headers) }).and_return(http_spy)
+      expect(KindfulClient).to receive(:get).with(client.email_host(email), { headers: client.send(:live_headers) }).and_return(http_spy)
       client.email_exists_in_kindful?(email)
     end
   end
@@ -102,10 +117,10 @@ RSpec.describe KindfulClient do
       response = double(HTTParty::Response)
       allow(response).to receive(:parsed_response).and_return(file)
       arguments = {
-        headers: client.headers,
+        headers: client.send(:headers),
         body: client.organizations_query
       }
-      expect(KindfulClient).to receive(:post).with('/contacts/query', arguments).and_return(response)
+      expect(KindfulClient).to receive(:post).with(client.query_host, arguments).and_return(response)
       client.query_organizations
     end
   end
@@ -179,6 +194,18 @@ RSpec.describe KindfulClient do
     end
   end
 
+  describe 'import_host' do
+    # not worth testing
+  end
+
+  describe 'email_host' do
+    # not worth testing
+  end
+
+  describe 'query_host' do
+    # not worth testing
+  end
+
   private
 
   describe 'recreate_organizations' do
@@ -200,6 +227,18 @@ RSpec.describe KindfulClient do
     it 'retrieves a token from the credentials' do
       expect(Rails.application).to receive(:credentials).and_return(spy)
       client.send(:token)
+    end
+  end
+
+  describe 'headers' do
+    it 'returns a hash' do
+      headers = client.send(:headers)
+      expect(headers.class).to eq Hash
+    end
+
+    it 'includes a token' do
+      headers = client.send(:headers)
+      expect(headers[:Authorization]).to include client.send(:token)
     end
   end
 

@@ -4,57 +4,62 @@ class KindfulClient
   include HTTParty
   attr_accessor :results, :env
 
-  def initialize(*)
+  def initialize(env: Rails.env.production? ? 'production' : 'sandbox')
     @query_token = ''
     @results = []
-    # you can test in the sandbox by setting @env to anything other than 'production'
-    @env = env unless env.blank?
-    @env ||= Rails.env.production? ? 'production' : 'sandbox'
+    # you can test in the sandbox by first setting @env to anything other than 'production'
+    @env = env
+
+    set_host
+  end
+
+  def set_host
+    @host = @env == 'production' ? 'https://app.kindful.com/api/v1/' : 'https://app-sandbox.kindful.com/api/v1'
   end
 
   def self.post(url, opts)
-    set_base_uri!
     # superceeds to HTTParty.post
     # don't actually send test data
     super(url, opts) unless Rails.env.test?
   end
 
-  def headers
-    {
-      'Content-Type': 'application/json',
-      'Authorization': 'Token token="' + token + '"'
-    }
-  end
+  # action methods:
 
   def import_transaction(transaction)
-    self.class.post('/imports', { headers: headers, body: contact_w_transaction(transaction) })
+    set_host
+    self.class.post(import_host, { headers: headers, body: contact_w_transaction(transaction) })
   end
 
   def import_user(user)
-    self.class.post('/imports', { headers: headers, body: contact(user) })
+    set_host
+    self.class.post(import_host, { headers: headers, body: contact(user) })
   end
 
   def import_company_w_email_note(email_address, email, direction, company_name)
-    self.class.post('/imports', { headers: headers, body: company_w_email_note(email_address, email, direction, company_name) })
+    set_host
+    self.class.post(import_host, { headers: headers, body: company_w_email_note(email_address, email, direction, company_name) })
   end
 
   def import_user_w_email_note(email_address, email, direction)
-    self.class.post('/imports', { headers: headers, body: contact_w_email_note(email_address, email, direction) })
+    set_host
+    self.class.post(import_host, { headers: headers, body: contact_w_email_note(email_address, email, direction) })
   end
 
   def import_user_w_note(registration)
-    self.class.post('/imports', { headers: headers, body: contact_w_note(registration) })
+    set_host
+    self.class.post(import_host, { headers: headers, body: contact_w_note(registration) })
   end
 
   def email_exists_in_kindful?(email)
     # This method is always hitting the Production site with Production credentials
-    response = self.class.get("https://app.kindful.com/api/v1/contacts/email_exist?email=#{email}", { headers: live_headers })
+    response = self.class.get(email_host(email), { headers: live_headers })
 
     response.parsed_response['exist']
   end
 
   def query_organizations
-    response = self.class.post('/contacts/query', { headers: headers, body: organizations_query })
+    set_host
+    response = self.class.post(query_host, { headers: headers, body: organizations_query })
 
     @results << response.parsed_response['results'] if response.parsed_response['results'].any?
 
@@ -63,7 +68,7 @@ class KindfulClient
     @query_token = response.parsed_response['query_token']
 
     while response.parsed_response['has_more']
-      response = self.class.post("/contacts/query?query_token=#{@query_token}", { headers: headers })
+      response = self.class.post("#{query_host}?query_token=#{@query_token}", { headers: headers })
       @results << response.parsed_response['results'] if response.parsed_response['results'].any?
     end
 
@@ -235,25 +240,31 @@ class KindfulClient
     {
       'query':
         [
-          { 'or':
-            [
-              { 'by_group_id': '22330' },
-              { 'by_group_id': '28657' },
-              { 'by_group_id': '28658' },
-              { 'by_group_id': '17846' }
-            ] },
+          {
+            'or':
+              [
+                { 'by_group_id': '22330' },
+                { 'by_group_id': '28657' },
+                { 'by_group_id': '28658' },
+                { 'by_group_id': '17846' }
+              ]
+          },
           { 'has_email': 'Yes' }
         ],
       'columns': { 'contact': %w[company_name email donor_type] }
     }.to_json
   end
 
-  def self.set_base_uri!
-    if @env == 'production'
-      base_uri 'https://app.kindful.com/api/v1'
-    else
-      base_uri 'https://app-sandbox.kindful.com/api/v1'
-    end
+  def import_host
+    "#{@host}/imports"
+  end
+
+  def email_host(email)
+    "https://app.kindful.com/api/v1/contacts/email_exist?email=#{email}"
+  end
+
+  def query_host
+    "#{@host}/contacts/query"
   end
 
   private
@@ -280,6 +291,13 @@ class KindfulClient
     else
       Rails.application.credentials.kf_filterbuild_token_sandbox
     end
+  end
+
+  def headers
+    {
+      'Content-Type': 'application/json',
+      'Authorization': 'Token token="' + token + '"'
+    }
   end
 
   def live_headers
