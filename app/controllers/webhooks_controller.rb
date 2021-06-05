@@ -9,7 +9,7 @@ class WebhooksController < ApplicationController
     # So, when in Development and the webhook is received from Stripe, ignore it and use my test file
     if Rails.env.development?
       file = JSON.parse(File.read("#{Rails.root}/spec/fixtures/files/charge_succeeded_spec.json"))
-      @json = file["data"]["object"]
+      @json = file['data']['object']
     else # test and production envs
       @json = params[:data][:object].as_json
     end
@@ -20,9 +20,5 @@ class WebhooksController < ApplicationController
     KindfulClient.new.import_transaction(@json) if @json[:application] == 'ca_14yEk8gp5dbBbYDnndXU9yTNM3Z3gyWS'
 
     head :ok
-  end
-
-  def gmail
-    # decided to try a cron job first
   end
 end
