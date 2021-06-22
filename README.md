@@ -6,9 +6,12 @@
 2. `Component.where(completed_tech: true)` represents a duplication of Technology
   1. Was necessary because counts don't link to Technology
   2. Counts are statically connected to Components, Parts, Materials via optional id attributes
+
 3. Join tables between `Component <=> Part` && `Part <=> Material` are duplicative of join tables between `Technology <=> Part` && `Technology <=> Material`
     1. Was necessary for faster, easier calculation of "parts per technology" and "materials per technology"
+
 4. Images are soft-coded to Components, Parts and Materials based on UID, which is static, not dynamic
+
 5. `part.made_from_materials?` and any join table record with `part_id` is duplicative (currently not fixed)
 
 ### Solutions:
@@ -32,6 +35,7 @@
   - A job handles transferring count-related fields to it's related item, then deletes the Count record.
     - The job runs `count.update_item_and_destroy!`
     - run as a Heroku Scheduler function
+
 2. Un-duplicate Components:
   - Allow Technologies to be Counted
   - Add Assemblies as an intermediary layer
@@ -41,6 +45,7 @@
     - temporary `component.make_into_assembly_and_destroy!` method to make migration easier
   - Components `has_many :through` Parts
   - Materials `has_many :through` Parts
+
 3. Item join tables are simplified
   - dropping 'extrapolate' from all table names
   - following the [naming convention](https://guides.rubyonrails.org/association_basics.html#creating-join-tables-for-has-and-belongs-to-many-associations)
@@ -57,6 +62,7 @@
       - "materials per technology" (will be fractional) (through Assembly && Component && Part)
       - "parts per assembly" (through Component)
       - "materials per assembly" (through Component && Part)
+
 4. Images use an S3 bucket for storage
   - Technologies have 2 images: one for displays, one for inventory
   - Images can be managed through the admin view
