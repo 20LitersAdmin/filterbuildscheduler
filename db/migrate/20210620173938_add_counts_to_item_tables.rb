@@ -68,7 +68,7 @@ class AddCountsToItemTables < ActiveRecord::Migration[6.1]
     # end
 
     # # Count: switch from booleans to polymorphic
-    # # count.item_type && count.item_id
+    # #   count.item_type && count.item_id
     # add_reference :counts, :item, polymorphic: true, index: true
   end
 end
