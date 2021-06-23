@@ -96,7 +96,8 @@ class InventoriesController < ApplicationController
     Extrapolate.new(@inventory)
 
     # set :last_received_at and :last_received_quantity on active counts
-    Receive.new(@inventory)
+    # early return: if @inventory.receiving?
+    Receive.new(@inventory) if @inventory.receiving?
 
     InventoryMailer.delay.notify(@inventory, current_user) if @inventory.type_for_params == 'manual' || @inventory.has_items_below_minimum?
 

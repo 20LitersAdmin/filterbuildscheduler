@@ -2,10 +2,20 @@
 ## Slim Down Inventory project
 ### Problems:
 1. The Count table grows linearly with every Inventory at a factor of (Component.size + Part.size + Material.size), this takes up a lot of database space unless regularly pruned.
+  1. Counts are statically connected to Components, Parts, Materials via optional id attributes
+  2. All Counts were created via `InventoriesController::CountCreate` when an inventory is created
+    - which copies the values from a previous count
+    - Path:
+      - `InventoriesController#new` only sets inventory fields
+      - then `Inventories#create` triggers `CountCreate.new()` to create all counts
+      - then `Inventories#edit` shows all counts
+  3. `InventoriesController::update` calls `Receive.new()` to update an item's `last_received_at` and `last_received_quantity`
+  4. `InventoriesController::update` calls `Extrapolate.new()` to calculate `count.extrapolated_count`
+    - but only on parts?
+    - is saved on `Count`, not on the parent item
 
 2. `Component.where(completed_tech: true)` represents a duplication of Technology
   1. Was necessary because counts don't link to Technology
-  2. Counts are statically connected to Components, Parts, Materials via optional id attributes
 
 3. Join tables between `Component <=> Part` && `Part <=> Material` are duplicative of join tables between `Technology <=> Part` && `Technology <=> Material`
     1. Was necessary for faster, easier calculation of "parts per technology" and "materials per technology"
@@ -16,28 +26,34 @@
 
 ### Solutions:
 1. Count records are temporary records, created when an inventory is created and destroyed after their meaningful values are transferred to their corresponding Materials, Parts, Components, Assemblies and Technologies
-  - Count records can still track partial counts (loose items vs. boxed items), and record which User submitted the Count
-    - but the 'partial' interface should have better UX
+  1. Counts are polymorphically joined to an item, including Technology
+    - forms, params, and controllers will need to be adjusted
+  2. Counts are created based on items, not dynamically created when an inventory is created.
+    - Path:
+      - `InventoriesController#new` only sets inventory fields
+      - then `Inventories#create` fires
+      - then `Inventories#edit` shows all items in an ActiveRecord collection
+      - clicking a button on an item displays a count form, which AJAXes a count into existence
+  3. `Receive.new()` function is handled by a job that runs after inventory is finalized
+  4. Calculating `count.extrapolated_count` is depreciated
+
+  5. Count records can still track partial counts (loose items vs. boxed items), and record which User submitted the Count
+    - but the 'partial' interface has a better UX
     - remove all Count methods, scopes, and item relationships except:
       - `count.link_text`
       - `count.link_class`
       - `count.sort_by_user`
-  - Count-related fields are added to Material, Part, Component, Assembly and Technology:
-    - **DECIDE ON THIS: Four `integer` attributes for current counts:**
-      - `[ loose | box | total | available ]`
-      - availabe == loose + (box x quantity_per_box)
-      - total == available + "sum of items in parents"
-    - **DECIDE ON THIS: One `jsonb` for history:**
-      - `{ inventory_id: #, counts: { loose: #, box: #, total: # } }`
-  - Counts are polymorphically joined to an item, including Technology
-    - forms, params, and controllers will need to be adjusted
-    - **solves # 2.1 & 2.2**
-  - A job handles transferring count-related fields to it's related item, then deletes the Count record.
+  6. IN PROGRESS: Count-related fields are added to Material, Part, Component, Assembly and Technology:
+    - Three `integer` attributes for current counts:
+      - `[ loose | box | available ]`
+        - availabe == loose + (box * quantity_per_box)
+    - One `jsonb` for history:
+      - `{ inventory_id: { loose: #, box: #, total: # } }`
+  7. A job handles transferring count-related fields to it's related item, then deletes the Count record.
     - The job runs `count.update_item_and_destroy!`
     - run as a Heroku Scheduler function
-
-2. Un-duplicate Components:
-  - Allow Technologies to be Counted
+2. `Component.where(completed_tech: true)` are not duplicates of Technology
+  - Allow Technologies to be counted
   - Add Assemblies as an intermediary layer
     - Technologies `has_many :through` Assemblies
     - Assemblies `has_many :through` Components and Parts
@@ -53,7 +69,6 @@
     - `extrapolate_technology_parts`
     - `extrapolate_technology_materials`
   - Calculations of distant relations are handled via the existing join tables
-    - **solves 3.1**
     - e.g. "parts per technology": `technology.parts.per_technology`
       - must reach down through technology > assemblies > components and sum matching parts as discovered
     - distant relations to calculate:
@@ -63,14 +78,20 @@
       - "parts per assembly" (through Component)
       - "materials per assembly" (through Component && Part)
 
-4. Images use an S3 bucket for storage
+4. Images use an online cloud for storage
+  - An S3 bucket exists for storing item images
   - Technologies have 2 images: one for displays, one for inventory
   - Images can be managed through the admin view
     * rails_admin interface for CRUDing photos on items
 
-
-
-
+5. `paranoia` is not a best practice
+  - Inventory and Counts do not need to soft-delete
+  - Implement [discard](https://github.com/jhawthorn/discard)
+  - Figure out if `app/models/concerns/not_deleted.rb` is actually used / useful
+  - Remove paranoia from:
+    - models
+    - database tables
+    - rails_admin
 
 ## Remind myself:
 1. production backup / development restore-from production
