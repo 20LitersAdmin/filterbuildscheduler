@@ -71,6 +71,15 @@ class Count < ApplicationRecord
     item.technologies.map(&:id).min || 999
   end
 
+  # TODO: used by a job to update item's history when inventory is marked complete,
+  # before record is destroyed
+  def history_json
+    {
+      loose: loose_count,
+      box: unopened_boxes_count
+    }
+  end
+
   def item
     if part_id.present?
       Part.with_deleted.find(part_id)
