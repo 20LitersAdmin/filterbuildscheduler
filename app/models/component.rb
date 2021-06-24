@@ -3,17 +3,23 @@
 class Component < ApplicationRecord
   acts_as_paranoid
 
-  has_many :extrapolate_technology_components, dependent: :destroy, inverse_of: :component
-  has_many :technologies, through: :extrapolate_technology_components
-  accepts_nested_attributes_for :extrapolate_technology_components, allow_destroy: true
+  # has_many :extrapolate_technology_components, dependent: :destroy, inverse_of: :component
+  # has_many :technologies, through: :extrapolate_technology_components
+  # accepts_nested_attributes_for :extrapolate_technology_components, allow_destroy: true
 
-  has_many :extrapolate_component_parts, dependent: :destroy, inverse_of: :component
-  has_many :parts, through: :extrapolate_component_parts
-  accepts_nested_attributes_for :extrapolate_component_parts, allow_destroy: true
+  # has_many :extrapolate_component_parts, dependent: :destroy, inverse_of: :component
+  # has_many :parts, through: :extrapolate_component_parts
+  # accepts_nested_attributes_for :extrapolate_component_parts, allow_destroy: true
 
-  has_many :counts, dependent: :destroy
-  scope :active, -> { where(deleted_at: nil) }
-  scope :required, -> { joins(:extrapolate_technology_components).where.not(completed_tech: true).where(extrapolate_technology_components: { required: true }) }
+  # has_many :counts, dependent: :destroy
+
+  has_many :technologies,    through: :assemblies, source: :combinations, source_type: 'Technology'
+  has_many :supercomponents, through: :assemblies, source: :combinations, source_type: 'Component'
+  has_many :subcomponents,   through: :assemblies, source: :items,        source_type: 'Component'
+  has_many :parts,           through: :assemblies, source: :items,        source_type: 'Part'
+
+  # scope :active, -> { where(deleted_at: nil) }
+  # scope :required, -> { joins(:extrapolate_technology_components).where.not(completed_tech: true).where(extrapolate_technology_components: { required: true }) }
 
   def available
     if latest_count.present?
