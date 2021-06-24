@@ -25,7 +25,7 @@
 5. `part.made_from_materials?` and any join table record with `part_id` is duplicative (currently not fixed)
 
 ### Solutions:
-1. Count records are temporary records, created when an inventory is created and destroyed after their meaningful values are transferred to their corresponding Materials, Parts, Components, Assemblies and Technologies
+1. Count records are temporary records, created when an inventory is created and destroyed after their meaningful values are transferred to their corresponding Materials, Parts, Components, and Technologies
   1. Counts are polymorphically joined to an item, including Technology
     - forms, params, and controllers will need to be adjusted
   2. Counts are created based on items, not dynamically created when an inventory is created.
@@ -43,7 +43,7 @@
       - `count.link_text`
       - `count.link_class`
       - `count.sort_by_user`
-  6. IN PROGRESS: Count-related fields are added to Material, Part, Component, Assembly and Technology:
+  6. **IN PROGRESS**: Count-related fields are added to Material, Part, Component, and Technology:
     - Three `integer` attributes for current counts:
       - `[ loose | box | available ]`
         - availabe == loose + (box * quantity_per_box)
@@ -54,13 +54,10 @@
     - run as a Heroku Scheduler function
 2. `Component.where(completed_tech: true)` are not duplicates of Technology
   - Allow Technologies to be counted
-  - Add Assemblies as an intermediary layer
-    - Technologies `has_many :through` Assemblies
-    - Assemblies `has_many :through` Components and Parts
-      - polymorphic join table: [ assembly_id | item_type | item_id ] where item type is limited to 'Component' || 'Part'
-    - temporary `component.make_into_assembly_and_destroy!` method to make migration easier
-  - Components `has_many :through` Parts
-  - Materials `has_many :through` Parts
+  - Technologies and Components share a master `assemblies` polymorphic join table
+    - Make Technologies polymorphically joinable to Assemblies
+    - Make Components polymorphically joinable to Assemblies
+  - Materials `has_many` Parts
 
 3. Item join tables are simplified
   - dropping 'extrapolate' from all table names
@@ -70,13 +67,7 @@
     - `extrapolate_technology_materials`
   - Calculations of distant relations are handled via the existing join tables
     - e.g. "parts per technology": `technology.parts.per_technology`
-      - must reach down through technology > assemblies > components and sum matching parts as discovered
-    - distant relations to calculate:
-      - "components per technology" (through Assembly)
-      - "parts per technology" (through Assembly && Component)
-      - "materials per technology" (will be fractional) (through Assembly && Component && Part)
-      - "parts per assembly" (through Component)
-      - "materials per assembly" (through Component && Part)
+      - must reach down through technology > components and sum matching parts as discovered, plus any parts directly "assembled" onto that technology
 
 4. Images use an online cloud for storage
   - An S3 bucket exists for storing item images
@@ -92,6 +83,23 @@
     - models
     - database tables
     - rails_admin
+
+6. Items are modified to fit new schema:
+  1. Created assemblies:
+    - SAM2 is all components
+    - RWHS is all parts
+    - Handpump is all parts
+    - SAM3:
+      - C023: [C033, P008, P007, P112] - micro-filter
+      - C022: [C029, C031, P067]
+      - (C031 has C030 contained within it) - sand prefilter red && threaded assbly)
+      - (C029 has C049 contained within it) - sand prefilter blue && end cap drilled w/ screen)
+  2. un-delete parts for these components:
+    - C033 - 3-inch core w/ O-rings
+  3. change these:
+    - delete P111
+    - anything with '**VWF**'
+    - rename anything with '**20l**'
 
 ## Remind myself:
 1. production backup / development restore-from production
