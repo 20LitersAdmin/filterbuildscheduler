@@ -22,9 +22,6 @@ class AddCountsToItemTables < ActiveRecord::Migration[6.1]
     add_column :technologies, :available_count,      :integer, default: 0
     add_column :technologies, :history,              :jsonb, null: false, default: {}
 
-    # Allows for filtering out of technologies that shouldn't be inventoried
-    add_column :technologies, :inventoryable,        :boolean, default: true, index: true
-
     # add counts from latest inventory
     Inventory.latest.counts.each do |c|
       next if c.item.available_count.positive?
