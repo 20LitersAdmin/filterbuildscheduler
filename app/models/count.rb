@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Count < ApplicationRecord
-  acts_as_paranoid
+  # acts_as_paranoid
 
   attr_accessor :reorder
 
@@ -82,11 +82,11 @@ class Count < ApplicationRecord
 
   def item
     if part_id.present?
-      Part.with_deleted.find(part_id)
+      Part.find(part_id)
     elsif material_id.present?
-      Material.with_deleted.find(material_id)
+      Material.find(material_id)
     else
-      Component.with_deleted.find(component_id)
+      Component.find(component_id)
     end
   end
 

@@ -366,7 +366,6 @@ ActiveRecord::Schema.define(version: 2021_06_24_020258) do
     t.integer "box_count", default: 0
     t.integer "available_count", default: 0
     t.jsonb "history", default: {}, null: false
-    t.boolean "inventoryable", default: true
     t.index ["discarded_at"], name: "index_technologies_on_discarded_at"
   end
 

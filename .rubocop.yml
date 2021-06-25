@@ -8,6 +8,8 @@ Layout/LineLength:
   Enabled: false
 Layout/FirstHashElementIndentation:
   Enabled: false
+Layout/RedundantLineBreak:
+  Enabled: false
 Lint/AmbiguousBlockAssociation:
   Enabled: false
 Lint/NumberConversion:

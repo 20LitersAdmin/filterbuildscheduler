@@ -17,7 +17,9 @@ class TechnologiesController < ApplicationController
     @components = @technology.components.required
 
     # Parts in technology that are not part of a component
-    @component_parts_ids = @components.includes(:parts).map { |c| c.parts.map(&:id) }.flatten!
+    @component_parts_ids = @components.includes(:parts)
+                                      .map { |c| c.parts.map(&:id) }
+                                      .flatten!
     @loose_parts = @technology.parts.where.not(id: @component_parts_ids)
   end
 end
