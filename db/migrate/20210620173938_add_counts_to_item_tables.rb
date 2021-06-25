@@ -5,38 +5,42 @@ class AddCountsToItemTables < ActiveRecord::Migration[6.1]
     add_column :materials,    :loose_count,          :integer, default: 0
     add_column :materials,    :box_count,            :integer, default: 0
     add_column :materials,    :available_count,      :integer, default: 0
-    add_column :materials,    :history,              :jsonb, null: false, default: '{}'
+    add_column :materials,    :history,              :jsonb, null: false, default: {}
 
     add_column :parts,        :loose_count,          :integer, default: 0
     add_column :parts,        :box_count,            :integer, default: 0
     add_column :parts,        :available_count,      :integer, default: 0
-    add_column :parts,        :history,              :jsonb, null: false, default: '{}'
+    add_column :parts,        :history,              :jsonb, null: false, default: {}
 
     add_column :components,   :loose_count,          :integer, default: 0
     add_column :components,   :box_count,            :integer, default: 0
     add_column :components,   :available_count,      :integer, default: 0
-    add_column :components,   :history,              :jsonb, null: false, default: '{}'
+    add_column :components,   :history,              :jsonb, null: false, default: {}
 
     add_column :technologies, :loose_count,          :integer, default: 0
     add_column :technologies, :box_count,            :integer, default: 0
     add_column :technologies, :available_count,      :integer, default: 0
-    add_column :technologies, :history,              :jsonb, null: false, default: '{}'
+    add_column :technologies, :history,              :jsonb, null: false, default: {}
 
     # Allows for filtering out of technologies that shouldn't be inventoried
     add_column :technologies, :inventoryable,        :boolean, default: true, index: true
 
     # add counts from latest inventory
     Inventory.latest.counts.each do |c|
+      next if c.item.available_count.positive?
+
       c.item.update_columns(
         loose_count: c.loose_count,
         box_count: c.unopened_boxes_count,
-        available_count: c.loose_count + (c.unopened_boxes_count * item.quantity_per_box)
+        available_count: c.loose_count + (c.unopened_boxes_count * c.item.quantity_per_box)
       )
     end
 
     # add history to every item
     Inventory.order(date: :desc, created_at: :desc).each do |i|
       i.counts.each do |c|
+        next unless c.item.history.empty?
+
         item = c.item
         item.history[c.inventory_id] = c.history_json
         item.save!

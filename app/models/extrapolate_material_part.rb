@@ -3,8 +3,8 @@
 class ExtrapolateMaterialPart < ApplicationRecord
   acts_as_paranoid
 
-  belongs_to :material, inverse_of: :extrapolate_material_parts
-  belongs_to :part, inverse_of: :extrapolate_material_parts
+  # belongs_to :material, inverse_of: :extrapolate_material_parts
+  # belongs_to :part, inverse_of: :extrapolate_material_parts
 
   validates :material_id, :part_id, :parts_per_material, presence: true
   validates :parts_per_material, numericality: { greater_than: 0 }

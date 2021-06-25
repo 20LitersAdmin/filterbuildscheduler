@@ -15,6 +15,8 @@ class CreateAssembliesJoinTable < ActiveRecord::Migration[6.1]
 
     # migrate extrapolate_component_parts into assemblies
     ExtrapolateComponentPart.all.each do |e|
+      next if Assembly.where(combination_id: e.component_id, item_id: e.part_id).any?
+
       asbly = Assembly.new(
         combination_id: e.component_id,
         combination_type: 'Component',
@@ -27,7 +29,9 @@ class CreateAssembliesJoinTable < ActiveRecord::Migration[6.1]
     end
 
     # migrate extrapolate_technology_components into assemblies
-    ExtrapolateTechnolgyComponent.all.each do |e|
+    ExtrapolateTechnologyComponent.all.each do |e|
+      next if Assembly.where(combination_id: e.technology_id, item_id: e.component_id).any?
+
       asbly = Assembly.new(
         combination_id: e.technology_id,
         combination_type: 'Technology',
@@ -57,5 +61,7 @@ class CreateAssembliesJoinTable < ActiveRecord::Migration[6.1]
       mp.save
       # e.really_destroy if mp.save
     end
+
+    # destroy ExtrapolateMaterialPart
   end
 end

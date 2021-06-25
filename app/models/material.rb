@@ -3,15 +3,15 @@
 class Material < ApplicationRecord
   acts_as_paranoid
 
-  has_many :extrapolate_material_parts, dependent: :destroy, inverse_of: :material
-  has_many :parts, through: :extrapolate_material_parts
-  accepts_nested_attributes_for :extrapolate_material_parts, allow_destroy: true
+  # has_many :extrapolate_material_parts, dependent: :destroy, inverse_of: :material
+  has_many :parts, through: :materials_parts
+  # accepts_nested_attributes_for :extrapolate_material_parts, allow_destroy: true
 
-  has_many :extrapolate_technology_materials, dependent: :destroy, inverse_of: :material
-  has_many :technologies, through: :extrapolate_technology_materials
-  accepts_nested_attributes_for :extrapolate_technology_materials, allow_destroy: true
+  # has_many :extrapolate_technology_materials, dependent: :destroy, inverse_of: :material
+  # has_many :technologies, through: :extrapolate_technology_materials
+  # accepts_nested_attributes_for :extrapolate_technology_materials, allow_destroy: true
 
-  has_many :counts, dependent: :destroy
+  # has_many :counts, dependent: :destroy
 
   belongs_to :supplier, optional: true
 
