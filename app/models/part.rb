@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Part < ApplicationRecord
-  acts_as_paranoid
+  # acts_as_paranoid
 
   # has_many :extrapolate_technology_parts, dependent: :destroy, inverse_of: :part
   # has_many :technologies, through: :extrapolate_technology_parts
@@ -28,7 +28,7 @@ class Part < ApplicationRecord
 
   monetize :price_cents, allow_nil: true, numericality: { greater_than_or_equal_to: 0 }
 
-  scope :active, -> { where(deleted_at: nil) }
+  # scope :active, -> { where(deleted_at: nil) }
   scope :orderable, -> { where(made_from_materials: false) }
 
   def available

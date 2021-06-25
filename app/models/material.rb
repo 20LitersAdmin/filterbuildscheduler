@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Material < ApplicationRecord
-  acts_as_paranoid
+  # acts_as_paranoid
 
   # has_many :extrapolate_material_parts, dependent: :destroy, inverse_of: :material
   has_many :parts, through: :materials_parts
@@ -17,7 +17,7 @@ class Material < ApplicationRecord
 
   monetize :price_cents, allow_nil: true, numericality: { greater_than_or_equal_to: 0 }
 
-  scope :active, -> { where(deleted_at: nil) }
+  # scope :active, -> { where(deleted_at: nil) }
   scope :required, -> { joins(:extrapolate_technology_materials).where(extrapolate_technology_materials: { required: true }) }
 
   def available
