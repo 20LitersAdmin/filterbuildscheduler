@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Component < ApplicationRecord
-  acts_as_paranoid
+  # acts_as_paranoid
 
   has_many :extrapolate_technology_components, dependent: :destroy, inverse_of: :component
   has_many :technologies, through: :extrapolate_technology_components
