@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ChangeFromParanoiaToDiscard < ActiveRecord::Migration[6.1]
   def change
     rename_column :components, :deleted_at, :discarded_at

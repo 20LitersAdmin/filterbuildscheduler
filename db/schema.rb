@@ -10,17 +10,27 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_03_01_194751) do
+ActiveRecord::Schema.define(version: 2021_06_24_020258) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "assemblies", id: false, force: :cascade do |t|
+    t.bigint "combination_id", null: false
+    t.string "combination_type", null: false
+    t.bigint "item_id", null: false
+    t.string "item_type", null: false
+    t.integer "quantity", default: 1, null: false
+    t.index ["combination_id", "combination_type"], name: "index_assemblies_on_combination_id_and_combination_type"
+    t.index ["item_id", "item_type"], name: "index_assemblies_on_item_id_and_item_type"
+  end
 
   create_table "components", force: :cascade do |t|
     t.string "name", null: false
     t.integer "sample_size"
     t.float "sample_weight"
     t.boolean "completed_tech", default: false
-    t.datetime "deleted_at"
+    t.datetime "discarded_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "quantity_per_box", default: 1
@@ -28,7 +38,11 @@ ActiveRecord::Schema.define(version: 2021_03_01_194751) do
     t.text "comments"
     t.boolean "only_loose", default: false
     t.text "description"
-    t.index ["deleted_at"], name: "index_components_on_deleted_at"
+    t.integer "loose_count", default: 0
+    t.integer "box_count", default: 0
+    t.integer "available_count", default: 0
+    t.jsonb "history", default: {}, null: false
+    t.index ["discarded_at"], name: "index_components_on_discarded_at"
   end
 
   create_table "counts", force: :cascade do |t|
@@ -39,14 +53,12 @@ ActiveRecord::Schema.define(version: 2021_03_01_194751) do
     t.bigint "material_id"
     t.integer "loose_count", default: 0, null: false
     t.integer "unopened_boxes_count", default: 0, null: false
-    t.datetime "deleted_at"
     t.integer "extrapolated_count", default: 0, null: false
     t.boolean "partial_box", default: false
     t.boolean "partial_loose", default: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["component_id"], name: "index_counts_on_component_id"
-    t.index ["deleted_at"], name: "index_counts_on_deleted_at"
     t.index ["inventory_id"], name: "index_counts_on_inventory_id"
     t.index ["material_id"], name: "index_counts_on_material_id"
     t.index ["part_id"], name: "index_counts_on_part_id"
@@ -105,14 +117,14 @@ ActiveRecord::Schema.define(version: 2021_03_01_194751) do
     t.boolean "is_private", default: false, null: false
     t.integer "item_goal", default: 0, null: false
     t.integer "technologies_built", default: 0, null: false
-    t.datetime "deleted_at"
+    t.datetime "discarded_at"
     t.integer "attendance", default: 0
     t.integer "boxes_packed", default: 0, null: false
     t.string "contact_name"
     t.string "contact_email"
     t.boolean "emails_sent", default: false
     t.datetime "reminder_sent_at"
-    t.index ["deleted_at"], name: "index_events_on_deleted_at"
+    t.index ["discarded_at"], name: "index_events_on_discarded_at"
   end
 
   create_table "extrapolate_component_parts", force: :cascade do |t|
@@ -167,7 +179,6 @@ ActiveRecord::Schema.define(version: 2021_03_01_194751) do
 
   create_table "inventories", force: :cascade do |t|
     t.boolean "receiving", default: false, null: false
-    t.datetime "deleted_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "event_id"
@@ -176,7 +187,6 @@ ActiveRecord::Schema.define(version: 2021_03_01_194751) do
     t.date "date", null: false
     t.datetime "completed_at"
     t.datetime "report_sent_at"
-    t.index ["deleted_at"], name: "index_inventories_on_deleted_at"
     t.index ["event_id"], name: "index_inventories_on_event_id"
   end
 
@@ -192,8 +202,8 @@ ActiveRecord::Schema.define(version: 2021_03_01_194751) do
     t.text "instructions"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.datetime "deleted_at"
-    t.index ["deleted_at"], name: "index_locations_on_deleted_at"
+    t.datetime "discarded_at"
+    t.index ["discarded_at"], name: "index_locations_on_discarded_at"
   end
 
   create_table "materials", force: :cascade do |t|
@@ -202,7 +212,7 @@ ActiveRecord::Schema.define(version: 2021_03_01_194751) do
     t.integer "min_order", default: 1
     t.string "sku"
     t.float "weeks_to_deliver", default: 1.0
-    t.datetime "deleted_at"
+    t.datetime "discarded_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "quantity_per_box", default: 1
@@ -217,8 +227,21 @@ ActiveRecord::Schema.define(version: 2021_03_01_194751) do
     t.integer "last_ordered_quantity"
     t.datetime "last_received_at"
     t.integer "last_received_quantity"
-    t.index ["deleted_at"], name: "index_materials_on_deleted_at"
+    t.integer "loose_count", default: 0
+    t.integer "box_count", default: 0
+    t.integer "available_count", default: 0
+    t.jsonb "history", default: {}, null: false
+    t.index ["discarded_at"], name: "index_materials_on_discarded_at"
     t.index ["supplier_id"], name: "index_materials_on_supplier_id"
+  end
+
+  create_table "materials_parts", id: false, force: :cascade do |t|
+    t.bigint "part_id"
+    t.bigint "material_id"
+    t.decimal "quantity", precision: 8, scale: 4, default: "1.0", null: false
+    t.index ["material_id"], name: "index_materials_parts_on_material_id"
+    t.index ["part_id", "material_id"], name: "index_materials_parts_on_part_id_and_material_id"
+    t.index ["part_id"], name: "index_materials_parts_on_part_id"
   end
 
   create_table "oauth_users", force: :cascade do |t|
@@ -258,7 +281,7 @@ ActiveRecord::Schema.define(version: 2021_03_01_194751) do
     t.integer "sample_size"
     t.float "sample_weight"
     t.boolean "made_from_materials", default: false
-    t.datetime "deleted_at"
+    t.datetime "discarded_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "quantity_per_box", default: 1
@@ -273,7 +296,11 @@ ActiveRecord::Schema.define(version: 2021_03_01_194751) do
     t.integer "last_ordered_quantity"
     t.datetime "last_received_at"
     t.integer "last_received_quantity"
-    t.index ["deleted_at"], name: "index_parts_on_deleted_at"
+    t.integer "loose_count", default: 0
+    t.integer "box_count", default: 0
+    t.integer "available_count", default: 0
+    t.jsonb "history", default: {}, null: false
+    t.index ["discarded_at"], name: "index_parts_on_discarded_at"
     t.index ["supplier_id"], name: "index_parts_on_supplier_id"
   end
 
@@ -287,9 +314,9 @@ ActiveRecord::Schema.define(version: 2021_03_01_194751) do
     t.text "accommodations", default: ""
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.datetime "deleted_at"
+    t.datetime "discarded_at"
     t.datetime "reminder_sent_at"
-    t.index ["deleted_at"], name: "index_registrations_on_deleted_at"
+    t.index ["discarded_at"], name: "index_registrations_on_discarded_at"
     t.index ["user_id", "event_id"], name: "index_registrations_on_user_id_and_event_id", unique: true
   end
 
@@ -310,7 +337,7 @@ ActiveRecord::Schema.define(version: 2021_03_01_194751) do
     t.string "poc_phone"
     t.string "poc_address"
     t.text "comments"
-    t.datetime "deleted_at"
+    t.datetime "discarded_at"
     t.index ["name"], name: "index_suppliers_on_name"
   end
 
@@ -324,7 +351,7 @@ ActiveRecord::Schema.define(version: 2021_03_01_194751) do
     t.float "unit_rate"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.datetime "deleted_at"
+    t.datetime "discarded_at"
     t.string "img_url"
     t.string "info_url"
     t.string "owner"
@@ -335,7 +362,12 @@ ActiveRecord::Schema.define(version: 2021_03_01_194751) do
     t.integer "monthly_production_rate", default: 1, null: false
     t.string "short_name"
     t.boolean "list_worthy", default: true, null: false
-    t.index ["deleted_at"], name: "index_technologies_on_deleted_at"
+    t.integer "loose_count", default: 0
+    t.integer "box_count", default: 0
+    t.integer "available_count", default: 0
+    t.jsonb "history", default: {}, null: false
+    t.boolean "inventoryable", default: true
+    t.index ["discarded_at"], name: "index_technologies_on_discarded_at"
   end
 
   create_table "technologies_users", id: false, force: :cascade do |t|
@@ -365,7 +397,7 @@ ActiveRecord::Schema.define(version: 2021_03_01_194751) do
     t.integer "primary_location_id"
     t.string "fname"
     t.string "lname"
-    t.datetime "deleted_at"
+    t.datetime "discarded_at"
     t.string "authentication_token", limit: 30
     t.boolean "does_inventory", default: false
     t.boolean "send_notification_emails", default: false
@@ -374,7 +406,7 @@ ActiveRecord::Schema.define(version: 2021_03_01_194751) do
     t.boolean "available_business_hours", default: false, null: false
     t.boolean "available_after_hours", default: false, null: false
     t.index ["authentication_token"], name: "index_users_on_authentication_token", unique: true
-    t.index ["deleted_at"], name: "index_users_on_deleted_at"
+    t.index ["discarded_at"], name: "index_users_on_discarded_at"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end

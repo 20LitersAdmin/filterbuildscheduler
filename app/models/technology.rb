@@ -5,9 +5,9 @@ class Technology < ApplicationRecord
 
   has_and_belongs_to_many :users
 
-  # has_many :extrapolate_technology_components, dependent: :destroy, inverse_of: :technology
-  # has_many :components, through: :extrapolate_technology_components
-  # accepts_nested_attributes_for :extrapolate_technology_components, allow_destroy: true
+  has_many :extrapolate_technology_components, dependent: :destroy, inverse_of: :technology
+  has_many :components, through: :extrapolate_technology_components
+  accepts_nested_attributes_for :extrapolate_technology_components, allow_destroy: true
 
   # has_many :extrapolate_technology_parts, dependent: :destroy, inverse_of: :technology
   # has_many :parts, through: :extrapolate_technology_parts
