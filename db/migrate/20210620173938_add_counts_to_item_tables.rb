@@ -23,43 +23,49 @@ class AddCountsToItemTables < ActiveRecord::Migration[6.1]
     add_column :technologies, :history,              :jsonb, null: false, default: {}
 
     # add counts from latest inventory
-    Inventory.latest.counts.each do |c|
-      next if c.item.available_count.positive?
 
+    Inventory.latest.counts.each do |c|
       c.item.update_columns(
         loose_count: c.loose_count,
         box_count: c.unopened_boxes_count,
         available_count: c.loose_count + (c.unopened_boxes_count * c.item.quantity_per_box)
       )
+      c.destroy
     end
 
     # add history to every item
     Inventory.order(date: :desc, created_at: :desc).each do |i|
       i.counts.each do |c|
-        next unless c.item.history.empty?
-
         item = c.item
         item.history[c.inventory_id] = c.history_json
         item.save!
+        c.destroy
       end
     end
 
     # transfer counts from Components.where(completed_tech: true) to Technology
     Component.where(completed_tech: true).each do |comp|
-      tech = comp.technology
+      tech = ExtrapolateTechnologyComponent.where(component_id: comp.id).first.technology
+
       tech.update_columns(
         loose_count: comp.loose_count,
         box_count: comp.box_count,
         available_count: comp.available_count,
         history: comp.history
       )
+
+      comp.update_columns(deleted_at: Time.now)
     end
 
-    # Data has been migrated, delete counts
-    # Count.all.delete_all
+    # Data has been migrated, delete any remaining counts
+    Count.all.delete_all unless Count.all.size.zero?
+    ActiveRecord::Base.connection.reset_pk_sequence!('counts')
 
     # Count: switch from booleans to polymorphic
     # count.item_type && count.item_id
-    # add_reference :counts, :item, polymorphic: true, index: true
+    add_reference :counts, :item, polymorphic: true, index: true
+    remove_column :counts, :component_id
+    remove_column :counts, :material_id
+    remove_column :counts, :part_id
   end
 end

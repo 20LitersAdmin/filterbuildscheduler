@@ -7,6 +7,7 @@ class Count < ApplicationRecord
 
   belongs_to :inventory
   belongs_to :user, optional: true
+  # belongs_to :item, polymorphic: true
   belongs_to :component, optional: true
   belongs_to :part, optional: true
   belongs_to :material, optional: true

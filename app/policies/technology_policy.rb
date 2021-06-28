@@ -13,6 +13,10 @@ class TechnologyPolicy
   end
 
   def items?
-    user&.can_do_inventory?
+    index?
+  end
+
+  def tree?
+    index?
   end
 end

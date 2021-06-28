@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class ExtrapolateTechnologyMaterial < ApplicationRecord
-  acts_as_paranoid
+  # acts_as_paranoid
 
   # belongs_to :material, inverse_of: :extrapolate_technology_materials
   # belongs_to :technology, inverse_of: :extrapolate_technology_materials
@@ -15,13 +15,13 @@ class ExtrapolateTechnologyMaterial < ApplicationRecord
   def technology
     return unless technology_id.present?
 
-    Technology.with_deleted.find(technology_id)
+    Technology.find(technology_id)
   end
 
   def material
     return unless material_id.present?
 
-    Material.with_deleted.find(material_id)
+    Material.find(material_id)
   end
 
   def material_price

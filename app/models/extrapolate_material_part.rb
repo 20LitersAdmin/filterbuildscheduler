@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class ExtrapolateMaterialPart < ApplicationRecord
-  acts_as_paranoid
+  # acts_as_paranoid
 
   # belongs_to :material, inverse_of: :extrapolate_material_parts
   # belongs_to :part, inverse_of: :extrapolate_material_parts
@@ -14,13 +14,13 @@ class ExtrapolateMaterialPart < ApplicationRecord
   def part
     return unless part_id.present?
 
-    Part.with_deleted.find(part_id)
+    Part.find(part_id)
   end
 
   def material
     return unless material_id.present?
 
-    Material.with_deleted.find(material_id)
+    Material.find(material_id)
   end
 
   def material_price

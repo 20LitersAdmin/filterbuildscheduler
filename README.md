@@ -43,7 +43,7 @@
       - `count.link_text`
       - `count.link_class`
       - `count.sort_by_user`
-  6. **IN PROGRESS**: Count-related fields are added to Material, Part, Component, and Technology:
+  6. **DONE** Count-related fields are added to Material, Part, Component, and Technology:
     - Three `integer` attributes for current counts:
       - `[ loose | box | available ]`
         - availabe == loose + (box * quantity_per_box)
@@ -52,7 +52,7 @@
   7. A job handles transferring count-related fields to it's related item, then deletes the Count record.
     - The job runs `count.update_item_and_destroy!`
     - run as a Heroku Scheduler function
-2. `Component.where(completed_tech: true)` are not duplicates of Technology
+2. **DONE** `Component.where(completed_tech: true)` are not duplicates of Technology
   - Allow Technologies to be counted
   - Technologies and Components share a master `assemblies` polymorphic join table
     - Make Technologies polymorphically joinable to Assemblies
@@ -101,8 +101,14 @@
     - anything with '**VWF**'
     - rename anything with '**20l**'
 
+**Current:**
+- `technologies/:id/tree` as a visual of the Assembly tree, with pics!
+- Have checked ids: 3, 7, need to check others
+- `Count#belongs_to :item` is commented out, but shouldn't be?
+
+#### After deployment:
+* Migrate the db
+* `rails_admin` has conflicting requires commented out, fix those
+
 ## Remind myself:
-1. production backup / development restore-from production
-  - `User.first.reset_password("password", "password")`
-2. `Record.only_deleted.each do |record| record.really_destroy! end`
 3. `orphans = User.builders.left_outer_joins(:registrations).where(registrations: { id: nil })`

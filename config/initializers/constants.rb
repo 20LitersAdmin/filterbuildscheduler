@@ -1,11 +1,25 @@
 # frozen_string_literal: true
 
 module Constants
-  class Inventory
+  module Inventory
     COUNT_BTN_TEXT = { receiving: 'Receive', shipping: 'Ship', manual: 'Count', event: 'Adjust', unknown: 'Adjust' }.freeze
+    public_constant :COUNT_BTN_TEXT
   end
 
-  class Email
+  module Email
     INTERNAL_DOMAINS = %w[@20liters @twentyliters @20litres @twentylitres].freeze
+    public_constant :INTERNAL_DOMAINS
+  end
+
+  module Assembly
+    # rubocop:disable Style/StringHashKeys
+    PRIORITY = {
+      'Technology' => 0,
+      'Component' => 1,
+      'Part' => 2
+    }.freeze
+    # rubocop:enable Style/StringHashKeys
+
+    public_constant :PRIORITY
   end
 end

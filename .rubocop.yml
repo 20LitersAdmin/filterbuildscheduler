@@ -40,6 +40,8 @@ Style/InlineComment:
   Enabled: false
 Style/Documentation:
   Enabled: false
+Style/DisableCopsWithinSourceCodeDirective:
+  Enabled: false
 Style/SymbolArray:
   Enabled: true
   Exclude:
