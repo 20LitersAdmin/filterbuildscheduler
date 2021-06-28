@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class ExtrapolateComponentPart < ApplicationRecord
-  acts_as_paranoid
+  # acts_as_paranoid
 
   # belongs_to :component, inverse_of: :extrapolate_component_parts
   # belongs_to :part, inverse_of: :extrapolate_component_parts
@@ -14,13 +14,13 @@ class ExtrapolateComponentPart < ApplicationRecord
   def component
     return unless component_id.present?
 
-    Component.with_deleted.find(component_id)
+    Component.find(component_id)
   end
 
   def part
     return unless part_id.present?
 
-    Part.with_deleted.find(part_id)
+    Part.find(part_id)
   end
 
   def part_price

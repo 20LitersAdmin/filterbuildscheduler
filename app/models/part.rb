@@ -20,9 +20,9 @@ class Part < ApplicationRecord
   # has_many :counts, dependent: :destroy
 
   # New double-polymorphic table
-  has_many :assemblies, as: :combinations
-  has_many :components, through: :assemblies, source: :combinations, source_type: 'Component'
-  has_many :technologies, through: :assemblies, source: :combinations, source_type: 'Technology'
+  has_many :assemblies, as: :item
+  has_many :components,   through: :assemblies, source: :combination, source_type: 'Component'
+  has_many :technologies, through: :assemblies, source: :combination, source_type: 'Technology'
 
   belongs_to :supplier, optional: true
 

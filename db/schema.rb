@@ -15,12 +15,13 @@ ActiveRecord::Schema.define(version: 2021_06_24_020258) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
-  create_table "assemblies", id: false, force: :cascade do |t|
+  create_table "assemblies", force: :cascade do |t|
     t.bigint "combination_id", null: false
     t.string "combination_type", null: false
     t.bigint "item_id", null: false
     t.string "item_type", null: false
     t.integer "quantity", default: 1, null: false
+    t.integer "priority"
     t.index ["combination_id", "combination_type"], name: "index_assemblies_on_combination_id_and_combination_type"
     t.index ["item_id", "item_type"], name: "index_assemblies_on_item_id_and_item_type"
   end
@@ -48,9 +49,6 @@ ActiveRecord::Schema.define(version: 2021_06_24_020258) do
   create_table "counts", force: :cascade do |t|
     t.bigint "user_id"
     t.bigint "inventory_id", null: false
-    t.bigint "component_id"
-    t.bigint "part_id"
-    t.bigint "material_id"
     t.integer "loose_count", default: 0, null: false
     t.integer "unopened_boxes_count", default: 0, null: false
     t.integer "extrapolated_count", default: 0, null: false
@@ -58,10 +56,10 @@ ActiveRecord::Schema.define(version: 2021_06_24_020258) do
     t.boolean "partial_loose", default: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["component_id"], name: "index_counts_on_component_id"
+    t.string "item_type"
+    t.bigint "item_id"
     t.index ["inventory_id"], name: "index_counts_on_inventory_id"
-    t.index ["material_id"], name: "index_counts_on_material_id"
-    t.index ["part_id"], name: "index_counts_on_part_id"
+    t.index ["item_type", "item_id"], name: "index_counts_on_item"
     t.index ["user_id"], name: "index_counts_on_user_id"
   end
 

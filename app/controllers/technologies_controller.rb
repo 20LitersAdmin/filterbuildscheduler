@@ -22,4 +22,10 @@ class TechnologiesController < ApplicationController
                                       .flatten!
     @loose_parts = @technology.parts.where.not(id: @component_parts_ids)
   end
+
+  def tree
+    authorize @technology = Technology.find(params[:id])
+
+    @assemblies = @technology.assemblies.prioritized
+  end
 end
