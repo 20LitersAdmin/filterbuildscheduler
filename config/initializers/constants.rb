@@ -14,9 +14,8 @@ module Constants
   module Assembly
     # rubocop:disable Style/StringHashKeys
     PRIORITY = {
-      'Technology' => 0,
-      'Component' => 1,
-      'Part' => 2
+      'Component' => 0,
+      'Part' => 1
     }.freeze
     # rubocop:enable Style/StringHashKeys
 

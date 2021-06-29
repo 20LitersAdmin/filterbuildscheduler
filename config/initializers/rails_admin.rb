@@ -14,11 +14,9 @@ require 'part'
 require 'material'
 require 'count'
 require 'inventory'
-# -require 'extrapolate_component_part'
+# TODO: uncomment on second deploy
 # require 'materials_part'
-# -require 'extrapolate_technology_component'
-# -require 'extrapolate_technology_part'
-# -require 'extrapolate_technology_material'
+# require 'assembly'
 
 require 'application_helper'
 require 'events_helper'

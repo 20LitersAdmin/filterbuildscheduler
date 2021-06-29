@@ -85,30 +85,21 @@
     - rails_admin
 
 6. Items are modified to fit new schema:
-  1. Created assemblies:
-    - SAM2 is all components
-    - RWHS is all parts
-    - Handpump is all parts
-    - SAM3:
-      - C023: [C033, P008, P007, P112] - micro-filter
-      - C022: [C029, C031, P067]
-      - (C031 has C030 contained within it) - sand prefilter red && threaded assbly)
-      - (C029 has C049 contained within it) - sand prefilter blue && end cap drilled w/ screen)
-  2. un-delete parts for these components:
-    - C033 - 3-inch core w/ O-rings
   3. change these:
     - delete P111
-    - anything with '**VWF**'
+    - delete anything with '**VWF**'?
     - rename anything with '**20l**'
 
 **Current:**
 - `technologies/:id/tree` as a visual of the Assembly tree, with pics!
-- Have checked ids: 3, 7, need to check others
-- `Count#belongs_to :item` is commented out, but shouldn't be?
+- NOW: Technology ----> Material: Materials used in a Technology
+- I believe migrations are ready for production.
+- NEXT: Implement discard
 
 #### After deployment:
 * Migrate the db
-* `rails_admin` has conflicting requires commented out, fix those
+* `rails_admin` has conflicting `require`s that can't be uncommented until second deploy
+* Part's `before_save :set_made_from_materials` can't be uncommented until second deploy
 
 ## Remind myself:
 3. `orphans = User.builders.left_outer_joins(:registrations).where(registrations: { id: nil })`

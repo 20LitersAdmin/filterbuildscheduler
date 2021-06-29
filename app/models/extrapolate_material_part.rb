@@ -9,7 +9,7 @@ class ExtrapolateMaterialPart < ApplicationRecord
   validates :material_id, :part_id, :parts_per_material, presence: true
   validates :parts_per_material, numericality: { greater_than: 0 }
 
-  scope :active, -> { where(deleted_at: nil) }
+  # scope :active, -> { where(deleted_at: nil) }
 
   def part
     return unless part_id.present?

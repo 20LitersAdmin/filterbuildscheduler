@@ -9,7 +9,7 @@ class ExtrapolateTechnologyPart < ApplicationRecord
   validates :technology_id, :part_id, :parts_per_technology, presence: true
   validates :parts_per_technology, numericality: { greater_than: 0 }
 
-  scope :active, -> { where(deleted_at: nil) }
+  # scope :active, -> { where(deleted_at: nil) }
 
   def part
     return unless part_id.present?

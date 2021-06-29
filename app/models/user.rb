@@ -99,7 +99,7 @@ class User < ApplicationRecord
 
   def email_opt_in
     # KindfulClient wants email_opt_in, not email_opt_out
-    email_opt_out? ? false : true
+    email_opt_out?
   end
 
   def has_no_password

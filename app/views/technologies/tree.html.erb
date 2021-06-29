@@ -1,3 +1,16 @@
+<h2>
+  <img src="<%= @technology.img_url %>" width="120">
+  <%= @technology.name %>
+</h2>
 <ul>
   <%= render partial: 'assembly', collection: @assemblies %>
+</ul>
+<hr />
+<h3>Materials:</h3>
+<ul>
+  <% @materials_parts_ary&.uniq.each do |mp| %>
+    <li>
+      <%= mp.material.name %>
+    </li>
+  <% end -%>
 </ul>
