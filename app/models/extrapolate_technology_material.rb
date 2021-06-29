@@ -10,7 +10,7 @@ class ExtrapolateTechnologyMaterial < ApplicationRecord
   validates_numericality_of :materials_per_technology
   validates :materials_per_technology, numericality: { greater_than: 0 }
 
-  scope :active, -> { where(deleted_at: nil) }
+  # scope :active, -> { where(deleted_at: nil) }
 
   def technology
     return unless technology_id.present?

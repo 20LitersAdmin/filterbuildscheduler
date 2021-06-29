@@ -9,7 +9,7 @@ class ExtrapolateComponentPart < ApplicationRecord
   validates :component_id, :part_id, :parts_per_component, presence: true
   validates :parts_per_component, numericality: { greater_than: 0 }
 
-  scope :active, -> { where(deleted_at: nil) }
+  # scope :active, -> { where(deleted_at: nil) }
 
   def component
     return unless component_id.present?

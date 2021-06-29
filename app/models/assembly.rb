@@ -9,7 +9,7 @@ class Assembly < ApplicationRecord
   scope :prioritized, -> { order(:priority, :item_id) }
 
   def has_sub_items?
-    return false if item_type == 'Part'
+    return item.made_from_materials? if item_type == 'Part'
 
     Assembly.where(combination: item).any?
   end
@@ -54,19 +54,8 @@ class Assembly < ApplicationRecord
     # combination_delete_uids = combination_delete.map(&:item_uid)
 
     item_delete = Assembly.where(combination: item, item: item_ids.flatten)
-    # item_delete_uids = item_delete.map(&:item_uid)
-
-    # puts 'Confirmation required.'
-    # puts "Remove these items from #{combination_uid}: #{combination_delete_uids}"
-    # puts "Remove these items from #{item_uid}: #{item_delete_uids}"
-    # puts 'Y to proceed, any other key to cancel'
-    # input = gets.strip
-
-    # return 'Bailed out!' unless %w[Y y].include?(input)
-
     combination_delete.destroy_all
     item_delete.destroy_all
-    # puts 'Done!'
   end
 
   private

@@ -14,12 +14,12 @@ class Part < ApplicationRecord
   # has_many :extrapolate_material_parts, dependent: :destroy, inverse_of: :part
 
   # simplified join table
+  has_many :materials_parts
   has_many :materials, through: :materials_parts
   # accepts_nested_attributes_for :extrapolate_material_parts, allow_destroy: true
 
   # has_many :counts, dependent: :destroy
 
-  # New double-polymorphic table
   has_many :assemblies, as: :item
   has_many :components,   through: :assemblies, source: :combination, source_type: 'Component'
   has_many :technologies, through: :assemblies, source: :combination, source_type: 'Technology'
@@ -30,6 +30,10 @@ class Part < ApplicationRecord
 
   # scope :active, -> { where(deleted_at: nil) }
   scope :orderable, -> { where(made_from_materials: false) }
+  scope :made_from_materials, -> { where(made_from_materials: true) }
+
+  # TODO: Second deployment
+  # before_save :set_made_from_materials
 
   def available
     if latest_count.present?
@@ -51,6 +55,18 @@ class Part < ApplicationRecord
 
   def latest_count
     Count.where(inventory: Inventory.latest_completed, part: self).first
+  end
+
+  def material
+    return Material.none unless made_from_materials?
+
+    materials.first
+  end
+
+  def quantity_from_material
+    return 0 unless materials.any?
+
+    materials_parts.first.quantity.to_f
   end
 
   def on_order?
@@ -130,5 +146,11 @@ class Part < ApplicationRecord
 
   def weeks_to_out
     latest_count.present? ? latest_count.weeks_to_out : 0
+  end
+
+  private
+
+  def set_made_from_materials
+    self.made_from_materials = materials.any?
   end
 end

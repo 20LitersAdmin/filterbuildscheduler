@@ -14,18 +14,15 @@ class TechnologiesController < ApplicationController
 
     @ignore_component_counts = params[:i] == '1'
 
-    @components = @technology.components.required
-
-    # Parts in technology that are not part of a component
-    @component_parts_ids = @components.includes(:parts)
-                                      .map { |c| c.parts.map(&:id) }
-                                      .flatten!
-    @loose_parts = @technology.parts.where.not(id: @component_parts_ids)
+    @components = @technology.components
+    @parts = @technology.parts
   end
 
   def tree
     authorize @technology = Technology.find(params[:id])
 
     @assemblies = @technology.assemblies.prioritized
+
+    @materials_parts_ary = []
   end
 end

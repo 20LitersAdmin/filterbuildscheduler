@@ -1,9 +1,13 @@
 <% if assembly.item_type == 'Component' %>
-  <img src="<%= assembly.item.picture %>" width="120" style="margin-right: 12px;">
+  <img src="<%= assembly.item.picture %>" width="120">
 <% end %>
+
+<% @materials_parts_ary << assembly.item.material if assembly.item_type == 'Part' && assembly.item&.made_from_materials? %>
+
 <li>
-  (<%= assembly.id %>) <%= assembly.item_uid %>: <%= assembly.item.name %> x <%= assembly.quantity %>
+  <%= assembly.item_uid %>: <%= assembly.item.name %> x <%= assembly.quantity %>
 </li>
+
 
 <% if assembly.has_sub_items? %>
   <ul>

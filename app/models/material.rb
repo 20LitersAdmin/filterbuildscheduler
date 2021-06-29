@@ -4,6 +4,7 @@ class Material < ApplicationRecord
   # acts_as_paranoid
 
   # has_many :extrapolate_material_parts, dependent: :destroy, inverse_of: :material
+  has_many :materials_parts
   has_many :parts, through: :materials_parts
   # accepts_nested_attributes_for :extrapolate_material_parts, allow_destroy: true
 

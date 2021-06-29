@@ -32,14 +32,14 @@ class Component < ApplicationRecord
   end
 
   def supercomponents
-    Component.find_by_sql("
-      SELECT * FROM components
+    Component.find_by_sql(
+      "SELECT * FROM components
       INNER JOIN assemblies
       ON assemblies.combination_id = components.id
       AND assemblies.combination_type = 'Component'
       WHERE assemblies.item_type = 'Component'
-      AND assemblies.item_id = #{id}
-    ")
+      AND assemblies.item_id = #{id}"
+    )
   end
 
   def subassemblies
@@ -47,14 +47,14 @@ class Component < ApplicationRecord
   end
 
   def subcomponents
-    Component.find_by_sql("
-      SELECT * FROM components
+    Component.find_by_sql(
+      "SELECT * FROM components
       INNER JOIN assemblies
       ON assemblies.item_id = components.id
       AND assemblies.item_type = 'Component'
       WHERE assemblies.combination_type = 'Component'
-      AND assemblies.combination_id = #{id}
-    ")
+      AND assemblies.combination_id = #{id}"
+    )
   end
 
   # end associations
@@ -84,11 +84,7 @@ class Component < ApplicationRecord
   end
 
   def per_technology
-    if extrapolate_technology_components.any?
-      extrapolate_technology_components.first.components_per_technology.to_i
-    else
-      1
-    end
+
   end
 
   def price

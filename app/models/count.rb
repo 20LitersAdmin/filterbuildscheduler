@@ -7,10 +7,10 @@ class Count < ApplicationRecord
 
   belongs_to :inventory
   belongs_to :user, optional: true
-  # belongs_to :item, polymorphic: true
-  belongs_to :component, optional: true
-  belongs_to :part, optional: true
-  belongs_to :material, optional: true
+  belongs_to :item, polymorphic: true
+  # belongs_to :component, optional: true
+  # belongs_to :part, optional: true
+  # belongs_to :material, optional: true
 
   validates :inventory_id, :loose_count, :unopened_boxes_count, presence: true
   validates :loose_count, :unopened_boxes_count, :extrapolated_count, numericality: { only_integer: true }
