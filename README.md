@@ -26,7 +26,7 @@
 
 ### Solutions:
 1. Count records are temporary records, created when an inventory is created and destroyed after their meaningful values are transferred to their corresponding Materials, Parts, Components, and Technologies
-  1. Counts are polymorphically joined to an item, including Technology
+  1. **DONE** Counts are polymorphically joined to an item, including Technology
     - forms, params, and controllers will need to be adjusted
   2. Counts are created based on items, not dynamically created when an inventory is created.
     - Path:
@@ -53,48 +53,60 @@
     - The job runs `count.update_item_and_destroy!`
     - run as a Heroku Scheduler function
 2. **DONE** `Component.where(completed_tech: true)` are not duplicates of Technology
-  - Allow Technologies to be counted
-  - Technologies and Components share a master `assemblies` polymorphic join table
-    - Make Technologies polymorphically joinable to Assemblies
-    - Make Components polymorphically joinable to Assemblies
-  - Materials `has_many` Parts
+  - **DONE** Allow Technologies to be counted
+  - **DONE** Technologies, Components, and Parts share a master `assemblies` polymorphic join table
+  - **DONE** Materials `has_many` Parts
 
 3. Item join tables are simplified
-  - dropping 'extrapolate' from all table names
-  - following the [naming convention](https://guides.rubyonrails.org/association_basics.html#creating-join-tables-for-has-and-belongs-to-many-associations)
-  - removing the following join tables:
+  - **DONE** dropping 'extrapolate' from all table names
+  - **DONE** following the [naming convention](https://guides.rubyonrails.org/association_basics.html#creating-join-tables-for-has-and-belongs-to-many-associations)
+  - **DONE** removing the following join tables:
     - `extrapolate_technology_parts`
     - `extrapolate_technology_materials`
   - Calculations of distant relations are handled via the existing join tables
     - e.g. "parts per technology": `technology.parts.per_technology`
       - must reach down through technology > components and sum matching parts as discovered, plus any parts directly "assembled" onto that technology
+    - best idea so far: traverse down and up to find common parents & children
+      - `technology.components_per_technology(part)`
+      - `technology.parts_per_technology(part)`
+      - `technology.materials_per_technology(part)`
+    - YAGNI validation:
+      - Bill of Materials / pick sheet
+      - Price calculation might be faster via BoM than via total tree traversal
 
 4. Images use an online cloud for storage
   - An S3 bucket exists for storing item images
   - Technologies have 2 images: one for displays, one for inventory
   - Images can be managed through the admin view
-    * rails_admin interface for CRUDing photos on items
+    * rails_admin [interface for management](https://github.com/sferik/rails_admin/wiki/ActiveStorage)
 
 5. `paranoia` is not a best practice
-  - Inventory and Counts do not need to soft-delete
+  - **DONE** Inventory and Counts do not need to soft-delete
   - Implement [discard](https://github.com/jhawthorn/discard)
   - Figure out if `app/models/concerns/not_deleted.rb` is actually used / useful
   - Remove paranoia from:
-    - models
-    - database tables
+    - **DONE** models
+    - **DONE** database tables
     - rails_admin
 
 6. Items are modified to fit new schema:
-  3. change these:
-    - delete P111
-    - delete anything with '**VWF**'?
-    - rename anything with '**20l**'
+  1. unify anything with '**VWF**' and '**20l**'
+
+### Stretch goals:
+
+7. HAML > .html.erb
+  - install HAML and use for all new/updated views
+  - slowly migrate away from .html.erb via file replacement over time
+
+8. Inventory#edit uses Websockets for real-time page changes when multiple users are performing an inventory at once.
 
 **Current:**
 - `technologies/:id/tree` as a visual of the Assembly tree, with pics!
-- NOW: Technology ----> Material: Materials used in a Technology
-- I believe migrations are ready for production.
-- NEXT: Implement discard
+- NEXT: Migrations handle unifying VWF and 20L parts
+- NEXT: Re-build `TechnologyController#items`
+- NEXT: Implement discard (also in rails_admin)
+- NEXT: Images in an S3 bucket
+- NEXT: Counts
 
 #### After deployment:
 * Migrate the db
