@@ -33,9 +33,6 @@ class CreateAssembliesJoinTable < ActiveRecord::Migration[6.1]
     # create assemblies for Parts in Technologies (NOT parts in Components, which are in Technologies)
     # THIS IS DONE FIRST because it relies upon existing join table records
     # If it's run later, those records are already deleted and duplicates are created around the tree
-    etp_start_count = ExtrapolateTechnologyPart.all.size
-    etp_delete_counter = 0
-
     Technology.list_worthy.each do |t|
       req_comps = ExtrapolateTechnologyComponent.where(technology_id: t.id, required: true).pluck(:component_id)
       used_part_ids = ExtrapolateComponentPart.where(component_id: req_comps).pluck(:part_id)
@@ -51,17 +48,11 @@ class CreateAssembliesJoinTable < ActiveRecord::Migration[6.1]
         next unless asbly.new_record?
 
         asbly.quantity = etp.parts_per_technology
-
-        if asbly.save
-          etp_delete_counter += 1 if etp.destroy
-        end
+        etp.destroy if asbly.save
       end
     end
 
     # migrate extrapolate_component_parts into assemblies
-    ecp_start_count = ExtrapolateComponentPart.all.size
-    ecp_delete_counter = 0
-
     ExtrapolateComponentPart.all.each do |e|
       asbly = Assembly.find_or_initialize_by(
         combination_id: e.component_id,
@@ -73,15 +64,10 @@ class CreateAssembliesJoinTable < ActiveRecord::Migration[6.1]
       next unless asbly.new_record?
 
       asbly.quantity = e.parts_per_component
-      if asbly.save
-        ecp_delete_counter += 1 if e.destroy
-      end
+      e.destroy if asbly.save
     end
 
     # migrate extrapolate_technology_components into assemblies
-    etc_start_count = ExtrapolateTechnologyComponent.all.size
-    etc_delete_counter = 0
-
     # Start by making assemblies for required components,
     # they are the "primary" components
     # the remaining ETCs are all for "subcomponents"
@@ -102,9 +88,7 @@ class CreateAssembliesJoinTable < ActiveRecord::Migration[6.1]
       next unless asbly.new_record?
 
       asbly.quantity = e.components_per_technology
-      if asbly.save
-        etc_delete_counter += 1 if e.destroy
-      end
+      e.destroy if asbly.save
     end
 
     # deal with the single case of a Material being used directly in a Technology:
@@ -131,9 +115,6 @@ class CreateAssembliesJoinTable < ActiveRecord::Migration[6.1]
 
     add_index :materials_parts, [:part_id, :material_id]
 
-    emp_start_count = ExtrapolateMaterialPart.all.size
-    emp_delete_counter = 0
-
     ExtrapolateMaterialPart.all.each do |e|
       mp = MaterialsPart.find_or_initialize_by(
         part_id: e.part_id,
@@ -143,39 +124,9 @@ class CreateAssembliesJoinTable < ActiveRecord::Migration[6.1]
       next unless mp.new_record?
 
       mp.quantity = e.parts_per_material
-      if mp.save
-        emp_delete_counter += 1 if e.destroy
-      end
+      e.destroy if mp.save
     end
 
-    etp_end_count = ExtrapolateTechnologyPart.all.size
-    ecp_end_count = ExtrapolateComponentPart.all.size
-    etc_end_count = ExtrapolateTechnologyComponent.all.size
-    emp_end_count = ExtrapolateMaterialPart.all.size
-
-    puts 'Results:'
-    puts '-------------------------------------------------------'
-    puts 'ExtrapolateTechnologyPart:'
-    puts "Start count: #{etp_start_count}"
-    puts "Deletion counter: #{etp_delete_counter}"
-    puts "Remaining count (duplicative): #{etp_end_count}"
-    puts '-------------------------------------------------------'
-    puts 'ExtrapolateComponentPart:'
-    puts "Start count: #{ecp_start_count}"
-    puts "Deletion counter: #{ecp_delete_counter}"
-    puts "Remaining count: #{ecp_end_count}"
-    puts '-------------------------------------------------------'
-    puts 'ExtrapolateTechnologyComponent:'
-    puts "Start count: #{etc_start_count}"
-    puts "Deletion counter: #{etc_delete_counter}"
-    puts "Remaining count (subcomponents): #{etc_end_count}"
-    puts '-------------------------------------------------------'
-    puts 'ExtrapolateMaterialPart:'
-    puts "Start count: #{emp_start_count}"
-    puts "Deletion counter: #{emp_delete_counter}"
-    puts "Remaining count: #{emp_end_count}"
-    puts '-------------------------------------------------------'
-    puts 'Manually creating known subcomponents:'
     # SAM3 Sand pre-filter, all quantities are 1
     Assembly.create!(
       [
@@ -189,7 +140,7 @@ class CreateAssembliesJoinTable < ActiveRecord::Migration[6.1]
     Assembly.create!(combination: Component.find(23), item_type: 'Component', item_id: 2)
     # C001 VF100 3-inch core w/ O-rings, all quantites are 1
     # Instead of creating, find and edit, since the relationships are all shallow in production data
-    part_ids = [5, 35, 56]
+    part_ids = [5, 35, 36]
     Assembly.where(combination: Technology.first, item_type: 'Part', item_id: part_ids).update_all(combination_type: 'Component', combination_id: 1)
     # C002 VF100 cartridge unwelded, all quantities are 1
     Assembly.create!(
@@ -214,8 +165,6 @@ class CreateAssembliesJoinTable < ActiveRecord::Migration[6.1]
     # Modified SAM3
     Assembly.create!(combination_type: 'Technology', combination_id: 10, item_type: 'Component', item_id: 2)
 
-    puts '-------------------------------------------------------'
-    puts 'Clean up duplicate assembly items:'
     Assembly.where(item_type: 'Component').each(&:remove_duplicates!)
 
     # destroy ExtrapolateComponentPart table
@@ -228,6 +177,54 @@ class CreateAssembliesJoinTable < ActiveRecord::Migration[6.1]
     drop_table 'extrapolate_technology_parts'
 
     # destroy ExtrapolateMaterialPart table
-    # drop_table 'extrapolate_material_parts' if ExtrapolateMaterialPart.all.size.zero?
+    drop_table 'extrapolate_material_parts'
+
+    # merge *20L* and *VWF* component
+    # Components: [{1=>"3-inch core with O-rings *VWF*"}, {33=>"3-inch core with O-rings *20L*"}]
+    Component.first.replace_with(33).destroy
+    Component.find(33).update(name: '3-inch core with O-rings')
+
+    # merge *20L* and *VWF* parts (5 match by name)
+    tl_parts = Part.where('name LIKE ?', '%*20L*')
+    vwf_parts = Part.where('name LIKE ?', '%*VWF*')
+
+    tl_parts.each do |tl|
+      # find a match by name
+      matching_part = vwf_parts.where(name: tl.name.gsub('*20L*', '*VWF*')).first
+
+      next unless matching_part.present?
+
+      matching_part.replace_with(tl.id)
+      tl.update(name: tl.name.gsub(' *20L*', ''))
+      matching_part.destroy
+    end
+
+    # search for 20L parts that match VWF parts when ' *VWF*' is removed
+    vwf_parts.each do |vwf|
+      matching_part = Part.where(name: vwf.name.gsub(' *VWF*', '')).first
+
+      next unless matching_part.present?
+
+      matching_part.update(name: matching_part.name.gsub(' *20L*', ''))
+
+      vwf.replace_with(matching_part.id)
+      vwf.destroy
+    end
+
+    # drop "*VWF*" from remaining parts
+    Part.where('name LIKE ?', '%*VWF*%').each do |part|
+      part.update(name: part.name.gsub(' *VWF*', ''))
+    end
+
+    # merge *20L* and *VWF* materials
+    Material.first.replace_with(12).destroy
+    Material.find(2).replace_with(11).destroy
+
+    mat = Material.find(12)
+    mat.update(name: mat.name.gsub(' *20L*', ''))
+
+    mat = Material.find(11)
+    mat.update(name: mat.name.gsub(' *20L*', ''))
+
   end
 end

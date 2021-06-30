@@ -102,7 +102,6 @@
 
 **Current:**
 - `technologies/:id/tree` as a visual of the Assembly tree, with pics!
-- NEXT: Migrations handle unifying VWF and 20L parts
 - NEXT: Re-build `TechnologyController#items`
 - NEXT: Implement discard (also in rails_admin)
 - NEXT: Images in an S3 bucket

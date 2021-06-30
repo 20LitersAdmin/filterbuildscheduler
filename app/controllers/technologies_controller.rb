@@ -23,6 +23,6 @@ class TechnologiesController < ApplicationController
 
     @assemblies = @technology.assemblies.prioritized
 
-    @materials_parts_ary = []
+    @materials_ary = []
   end
 end

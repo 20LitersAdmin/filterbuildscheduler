@@ -13,14 +13,17 @@ class Component < ApplicationRecord
 
   # has_many :counts, dependent: :destroy
 
-  # These don't work because Components can be either :items or :combinations
-  # has_many :technologies,    through: :assemblies, source: :combination, source_type: 'Technology'
-  # has_many :supercomponents, through: :assemblies, source: :combination, source_type: 'Component'
-  # has_many :subcomponents,   through: :assemblies, source: :item,        source_type: 'Component'
-  # has_many :parts,           through: :assemblies, source: :item,        source_type: 'Part'
-
   # scope :active, -> { where(deleted_at: nil) }
   # scope :required, -> { joins(:extrapolate_technology_components).where.not(completed_tech: true).where(extrapolate_technology_components: { required: true }) }
+
+  # TODO: TEMP merge function
+  def replace_with(component_id)
+    Assembly.where(combination: self).update_all(combination_id: component_id)
+
+    Assembly.where(item: self).update_all(item_id: component_id)
+
+    self
+  end
 
   # associations through Assembly
   def technologies
@@ -81,10 +84,6 @@ class Component < ApplicationRecord
     rescue => error
       'http://placekitten.com/140/140'
     end
-  end
-
-  def per_technology
-
   end
 
   def price

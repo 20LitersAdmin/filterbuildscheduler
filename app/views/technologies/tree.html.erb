@@ -8,9 +8,9 @@
 <hr />
 <h3>Materials:</h3>
 <ul>
-  <% @materials_parts_ary&.uniq.each do |mp| %>
+  <% @materials_ary&.uniq.each do |material| %>
     <li>
-      <%= mp.material.name %>
+      <%= material.name %>
     </li>
   <% end -%>
 </ul>
