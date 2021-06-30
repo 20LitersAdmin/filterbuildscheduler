@@ -35,6 +35,15 @@ class Part < ApplicationRecord
   # TODO: Second deployment
   # before_save :set_made_from_materials
 
+  # TODO: TEMP merge function
+  def replace_with(part_id)
+    assemblies.update_all(item_id: part_id)
+
+    materials_parts.update_all(part_id: part_id) if made_from_materials?
+
+    self
+  end
+
   def available
     if latest_count.present?
       latest_count.available

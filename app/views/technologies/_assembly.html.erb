@@ -2,7 +2,7 @@
   <img src="<%= assembly.item.picture %>" width="120">
 <% end %>
 
-<% @materials_parts_ary << assembly.item.material if assembly.item_type == 'Part' && assembly.item&.made_from_materials? %>
+<% @materials_ary << assembly.item.material if assembly.item_type == 'Part' && assembly.item&.made_from_materials? %>
 
 <li>
   <%= assembly.item_uid %>: <%= assembly.item.name %> x <%= assembly.quantity %>

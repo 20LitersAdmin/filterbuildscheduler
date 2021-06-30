@@ -21,6 +21,13 @@ class Material < ApplicationRecord
   # scope :active, -> { where(deleted_at: nil) }
   scope :required, -> { joins(:extrapolate_technology_materials).where(extrapolate_technology_materials: { required: true }) }
 
+  # TODO: TEMP merge function
+  def replace_with(material_id)
+    materials_parts.update_all(material_id: material_id)
+
+    self
+  end
+
   def available
     if latest_count.present?
       latest_count.available
