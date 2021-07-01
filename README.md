@@ -51,7 +51,7 @@
       - `{ inventory_id: { loose: #, box: #, total: # } }`
   7. A job handles transferring count-related fields to it's related item, then deletes the Count record.
     - The job runs `count.update_item_and_destroy!`
-    - run as a Heroku Scheduler function
+    - The job runs after Inventory is marked completed via DelayedJob `perform_later`
 2. **DONE** `Component.where(completed_tech: true)` are not duplicates of Technology
   - **DONE** Allow Technologies to be counted
   - **DONE** Technologies, Components, and Parts share a master `assemblies` polymorphic join table
@@ -75,8 +75,9 @@
       - Price calculation might be faster via BoM than via total tree traversal
 
 4. Images use an online cloud for storage
-  - An S3 bucket exists for storing item images
-  - Technologies have 2 images: one for displays, one for inventory
+  - **DONE** An S3 bucket exists for storing item images
+  - **DONE** Technologies have 2 images: one for displays, one for inventory
+  - **DONE** Locations have an image
   - Images can be managed through the admin view
     * rails_admin [interface for management](https://github.com/sferik/rails_admin/wiki/ActiveStorage)
 
@@ -89,7 +90,7 @@
     - **DONE** database tables
     - **DONE** rails_admin
 
-6. Items are modified to fit new schema:
+6. **DONE** Items are modified to fit new schema:
   1. unify anything with '**VWF**' and '**20l**'
 
 ### Stretch goals:
@@ -101,9 +102,8 @@
 
 **Current:**
 - `technologies/:id/tree` as a visual of the Assembly tree, with pics!
-- NEXT: Images in an S3 bucket
 - NEXT: Re-build `TechnologyController#items`
-- NEXT: Counts
+- NEXT: Inventory flow && Count creation
 
 #### After 1st deployment:
 * Migrate the db
@@ -114,10 +114,15 @@
 * Delete Extrap models
 * Un-comment-out `has_one_attached` on Items
 * Un-comment-out `include Discard::Model` && `scoe :active` on Models
+* Remove `paranoia` gem
 * Delete all commented relations on Models
+* Un-do Paranoia -> Discard patching
+  -  `EventsController#398`
+  -
+
 
 #### 3rd deployment work to be done:
-* Run ImageSyncJob (now that Items `has_one_attached`)
+* Run `ImageSyncJob.perform_now` in production (now that Items `has_one_attached`)
 * Fix RailsAdmin, which will be pretty nerfed from 1st deploy
 * Remove assets.rb#12
 
@@ -125,6 +130,7 @@
 ### 4th deployment work to be done:
 * Drop `Technology.img_url`
 * Drop `Location.photo_url`
+* Remove UIDS folder
 
 
 ## Remind myself:

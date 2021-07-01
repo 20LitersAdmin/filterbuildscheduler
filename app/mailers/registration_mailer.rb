@@ -110,10 +110,10 @@ class RegistrationMailer < ApplicationMailer
   end
 
   def event_cancelled(registration_id)
-    @registration = Registration.with_deleted.find(registration_id)
+    @registration = Registration.find(registration_id)
     @recipient = @registration.user
-    @event = Event.with_deleted.find(@registration.event_id)
-    @location = Location.with_deleted.find(@event.location_id)
+    @event = Event.find(@registration.event_id)
+    @location = Location.find(@event.location_id)
 
     mail(to: @recipient.email, subject: '[20 Liters] NOTICE: Build Event Cancelled')
   end

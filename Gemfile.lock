@@ -147,6 +147,8 @@ GEM
       responders
       warden (~> 1.2.3)
     diff-lcs (1.4.4)
+    discard (1.2.0)
+      activerecord (>= 4.2, < 7)
     domain_name (0.5.20190701)
       unf (>= 0.0.5, < 1.0.0)
     erubi (1.10.0)
@@ -551,6 +553,7 @@ DEPENDENCIES
   delayed_job_active_record (~> 4.1)
   delayed_job_web
   devise
+  discard
   factory_bot_rails
   faker
   font-awesome-rails

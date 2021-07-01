@@ -52,10 +52,10 @@ class EventMailer < ApplicationMailer
     @user = user
 
     @event.changes.each_pair { |k, v| instance_variable_set("@#{k}", v) }
-    @technology = Technology.with_deleted.find(@event.technology_id)
-    @technology_was = Technology.with_deleted.find(@event.technology_id_was)
-    @location = Location.with_deleted.find(@event.location_id)
-    @location_was = Location.with_deleted.find(@event.location_id_was)
+    @technology = Technology.find(@event.technology_id)
+    @technology_was = Technology.find(@event.technology_id_was)
+    @location = Location.find(@event.location_id)
+    @location_was = Location.find(@event.location_id_was)
 
     @recipients = User.notify.map(&:email)
     @summary = '[20 Liters] ' + @event.title + ': ' + @technology.name
@@ -81,11 +81,11 @@ class EventMailer < ApplicationMailer
   end
 
   def cancelled(event_id, current_user)
-    @event = Event.with_deleted.find(event_id)
+    @event = Event.find(event_id)
     @user = current_user
     @recipients = User.notify.map(&:email)
-    @location = Location.with_deleted.find(@event.location_id)
-    @registrations = @event.registrations.with_deleted
+    @location = Location.find(@event.location_id)
+    @registrations = @event.registrations
 
     if @event.leaders_registered.count == 1
       @leader_count_text = 'The leader was:'

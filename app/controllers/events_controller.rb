@@ -265,7 +265,7 @@ class EventsController < ApplicationController
 
   def leader_register
     authorize @event = Event.find(params[:id])
-    @registration = @event.registrations.with_deleted.where(user_id: params[:user_id]).first_or_initialize
+    @registration = @event.registrations.where(user_id: params[:user_id]).first_or_initialize
 
     @registration.leader = true
     @registration.restore if @registration.deleted?
@@ -395,7 +395,7 @@ class EventsController < ApplicationController
   end
 
   def find_stale
-    @cancelled_events = Event.only_deleted
+    @cancelled_events = Event.where.not(discarded_at: nil)
     @closed_events = Event.closed
   end
 end
