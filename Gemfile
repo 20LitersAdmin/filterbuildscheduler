@@ -8,6 +8,7 @@ git_source(:github) do |repo_name|
   "https://github.com/#{repo_name}.git"
 end
 
+gem 'aws-sdk-s3'
 gem 'bootsnap', '>= 1.4.2', require: false
 gem 'bootstrap3-datetimepicker-rails'
 gem 'bootstrap-sass'
@@ -22,6 +23,7 @@ gem 'httparty'
 gem 'icalendar'
 gem 'jquery-datatables-rails'
 gem 'jquery-rails'
+gem 'mini_magick'
 gem 'momentjs-rails'
 gem 'money-rails'
 gem 'omniauth-google-oauth2'

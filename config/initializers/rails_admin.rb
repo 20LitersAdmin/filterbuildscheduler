@@ -3,17 +3,17 @@
 require 'money-rails/rails_admin'
 require 'rails_admin/adapters/active_record'
 require 'application_record'
-require 'user'
-require 'event'
-require 'registration'
-require 'location'
-require 'technology'
-require 'supplier'
-require 'component'
-require 'part'
-require 'material'
-require 'count'
-require 'inventory'
+# require 'user'
+# require 'event'
+# require 'registration'
+# require 'location'
+# require 'technology'
+# require 'supplier'
+# require 'component'
+# require 'part'
+# require 'material'
+# require 'count'
+# require 'inventory'
 # TODO: uncomment on second deploy
 # require 'materials_part'
 # require 'assembly'
@@ -25,7 +25,7 @@ require 'error_handler'
 require 'application_controller'
 
 require Rails.root.join('lib', 'rails_admin', 'restore.rb')
-require Rails.root.join('lib', 'rails_admin', 'paranoid_delete.rb')
+require Rails.root.join('lib', 'rails_admin', 'discard.rb')
 
 RailsAdmin.config do |config|
   config.parent_controller = ApplicationController.to_s
@@ -59,10 +59,10 @@ RailsAdmin.config do |config|
     redirect_to main_app.root_path unless current_user&.is_admin?
   end
 
-  config.model User do
+  config.model 'User' do
     weight 0
     list do
-      scopes %i[active leaders admins only_deleted]
+      scopes %i[active leaders admins discarded]
       field :email
       field :fname
       field :lname
@@ -78,11 +78,11 @@ RailsAdmin.config do |config|
     exclude_fields :registrations, :counts
   end
 
-  config.model Event do
+  config.model 'Event' do
     weight 1
     object_label_method :format_time_range
     list do
-      scopes %i[active future past needs_report closed only_deleted]
+      scopes %i[active future past needs_report closed discarded]
       field :start_time
       field :end_time
       field :title
@@ -94,11 +94,11 @@ RailsAdmin.config do |config|
     exclude_fields :registrations, :users, :inventory
   end
 
-  config.model Registration do
+  config.model 'Registration' do
     weight 0
     parent Event
     list do
-      scopes %i[active only_deleted]
+      scopes %i[active discarded]
       field :event
       field :user
       field :attended
@@ -108,11 +108,11 @@ RailsAdmin.config do |config|
     end
   end
 
-  config.model Location do
+  config.model 'Location' do
     weight 1
     parent Event
     list do
-      scopes %i[active only_deleted]
+      scopes %i[active discarded]
       field :name
       field :address1
       field :address2
@@ -120,10 +120,10 @@ RailsAdmin.config do |config|
     end
   end
 
-  config.model Technology do
+  config.model 'Technology' do
     weight 2
     list do
-      scopes %i[active only_deleted]
+      scopes %i[active discarded]
       field :name
       field :owner
       field :price, :money do
@@ -138,11 +138,11 @@ RailsAdmin.config do |config|
     exclude_fields :components, :parts, :materials
   end
 
-  config.model Component do
-    parent Technology
+  config.model 'Component' do
+    parent 'Technology'
     weight 0
     list do
-      scopes %i[active only_deleted]
+      scopes %i[active discarded]
       field :uid do
         sortable :id
       end
@@ -167,11 +167,11 @@ RailsAdmin.config do |config|
     exclude_fields :parts, :counts, :technologies
   end
 
-  config.model Part do
-    parent Technology
+  config.model 'Part' do
+    parent 'Technology'
     weight 1
     list do
-      scopes %i[active only_deleted]
+      scopes %i[active discarded]
       field :uid do
         sortable :id
       end
@@ -194,11 +194,11 @@ RailsAdmin.config do |config|
     exclude_fields :components, :materials, :counts, :technologies
   end
 
-  config.model Material do
-    parent Technology
+  config.model 'Material' do
+    parent 'Technology'
     weight 2
     list do
-      scopes %i[active only_deleted]
+      scopes %i[active discarded]
       field :uid do
         sortable :id
       end
@@ -218,10 +218,10 @@ RailsAdmin.config do |config|
     exclude_fields :parts, :counts, :technologies
   end
 
-  config.model Supplier do
+  config.model 'Supplier' do
     weight 3
     list do
-      scopes %i[active only_deleted]
+      scopes %i[active discarded]
       field :name
       field :url
       field :poc_name
@@ -229,31 +229,31 @@ RailsAdmin.config do |config|
     end
   end
 
-  config.model Count do
+  config.model 'Count' do
     visible false
   end
 
-  config.model Inventory do
+  config.model 'Inventory' do
     visible false
   end
 
-  config.model ExtrapolateComponentPart do
+  config.model 'ExtrapolateComponentPart' do
     visible false
   end
 
-  config.model ExtrapolateMaterialPart do
+  config.model 'ExtrapolateMaterialPart' do
     visible false
   end
 
-  config.model ExtrapolateTechnologyComponent do
+  config.model 'ExtrapolateTechnologyComponent' do
     visible false
   end
 
-  config.model ExtrapolateTechnologyPart do
+  config.model 'ExtrapolateTechnologyPart' do
     visible false
   end
 
-  config.model ExtrapolateTechnologyMaterial do
+  config.model 'ExtrapolateTechnologyMaterial' do
     visible false
   end
 
@@ -266,7 +266,7 @@ RailsAdmin.config do |config|
     show
     edit
     show_in_app
-    paranoid_delete # lib/rails_admin/paranoid_delete.rb
-    restore         # lib/rails_admin/restore.rb
+    discard     # lib/rails_admin/discard.rb
+    restore     # lib/rails_admin/restore.rb
   end
 end

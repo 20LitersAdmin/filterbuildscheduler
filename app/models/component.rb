@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Component < ApplicationRecord
-  # acts_as_paranoid
+  # include Discard::Model
 
   # has_many :extrapolate_technology_components, dependent: :destroy, inverse_of: :component
   # has_many :technologies, through: :extrapolate_technology_components
@@ -12,8 +12,9 @@ class Component < ApplicationRecord
   # accepts_nested_attributes_for :extrapolate_component_parts, allow_destroy: true
 
   # has_many :counts, dependent: :destroy
+  # has_one_attached :image, dependent: :purge
 
-  # scope :active, -> { where(deleted_at: nil) }
+  # scope :active, -> { kept }
   # scope :required, -> { joins(:extrapolate_technology_components).where.not(completed_tech: true).where(extrapolate_technology_components: { required: true }) }
 
   # TODO: TEMP merge function

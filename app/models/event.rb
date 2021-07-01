@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Event < ApplicationRecord
-  # acts_as_paranoid
+  # include Discard::Model
 
   belongs_to :location
   belongs_to :technology
@@ -18,14 +18,14 @@ class Event < ApplicationRecord
   validate :registrations_are_valid?
   validate :leaders_are_valid?
 
-  # scope :active,       -> { where(deleted_at: nil) }
-  scope :non_private,  -> { where(is_private: false) }
+  # scope :active,        -> { kept }
+  scope :non_private,   -> { where(is_private: false) }
   scope :pre_reminders, -> { where(reminder_sent_at: nil) }
-  scope :future,       -> { where('end_time > ?', Time.now).order(start_time: :asc) }
-  scope :within_days,  ->(num) { where('start_time <= ?', Time.now + num.days) }
-  scope :past,         -> { where('end_time <= ?', Time.now).order(start_time: :desc) }
-  scope :needs_report, -> { where('start_time <= ?', Time.now).where(attendance: 0).order(start_time: :desc) }
-  scope :closed,       -> { where('start_time <= ?', Time.now).order(start_time: :desc) }
+  scope :future,        -> { where('end_time > ?', Time.now).order(start_time: :asc) }
+  scope :within_days,   ->(num) { where('start_time <= ?', Time.now + num.days) }
+  scope :past,          -> { where('end_time <= ?', Time.now).order(start_time: :desc) }
+  scope :needs_report,  -> { where('start_time <= ?', Time.now).where(attendance: 0).order(start_time: :desc) }
+  scope :closed,        -> { where('start_time <= ?', Time.now).order(start_time: :desc) }
 
   def builders_attended
     attendance - leaders_attended

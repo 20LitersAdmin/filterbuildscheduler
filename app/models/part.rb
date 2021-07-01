@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Part < ApplicationRecord
-  # acts_as_paranoid
+  # include Discard::Model
 
   # has_many :extrapolate_technology_parts, dependent: :destroy, inverse_of: :part
   # has_many :technologies, through: :extrapolate_technology_parts
@@ -12,6 +12,7 @@ class Part < ApplicationRecord
   # accepts_nested_attributes_for :extrapolate_component_parts, allow_destroy: true
 
   # has_many :extrapolate_material_parts, dependent: :destroy, inverse_of: :part
+  # has_one_attached :image, dependent: :purge
 
   # simplified join table
   has_many :materials_parts
@@ -28,7 +29,7 @@ class Part < ApplicationRecord
 
   monetize :price_cents, allow_nil: true, numericality: { greater_than_or_equal_to: 0 }
 
-  # scope :active, -> { where(deleted_at: nil) }
+  # scope :active, -> { kept }
   scope :orderable, -> { where(made_from_materials: false) }
   scope :made_from_materials, -> { where(made_from_materials: true) }
 

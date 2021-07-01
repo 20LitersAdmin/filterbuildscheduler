@@ -30,8 +30,8 @@ Rails.application.configure do
     config.cache_store = :null_store
   end
 
-  # Store uploaded files on the local file system (see config/storage.yml for options).
-  # config.active_storage.service = :local
+  # Store uploaded files on S3 (see config/storage.yml for options)
+  config.active_storage.service = :amazon
 
   config.action_mailer.delivery_method = :letter_opener_web
   # Don't care if the mailer can't send.
@@ -68,4 +68,7 @@ Rails.application.configure do
   # routes, locales, etc. This feature depends on the listen gem.
   config.file_watcher = ActiveSupport::EventedFileUpdateChecker
   config.web_console.whiny_requests = false
+
+  # Store uploaded files on the local file system (see config/storage.yml for options)
+  config.active_storage.service = :local
 end

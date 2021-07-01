@@ -1,9 +1,11 @@
 # frozen_string_literal: true
 
 class Technology < ApplicationRecord
-  # acts_as_paranoid
+  # include Discard::Model
 
   has_and_belongs_to_many :users
+  # has_one_attached :image, dependent: :purge
+  # has_one_attached :display_image, dependent: :purge
 
   # has_many :extrapolate_technology_components, dependent: :destroy, inverse_of: :technology
   # has_many :components, through: :extrapolate_technology_components
@@ -21,7 +23,7 @@ class Technology < ApplicationRecord
   has_many :components, through: :assemblies, source: :item, source_type: 'Component'
   has_many :parts, through: :assemblies, source: :item, source_type: 'Part'
 
-  # scope :active, -> { where(deleted_at: nil) }
+  # scope :active, -> { kept }
   scope :status_worthy, -> { where('monthly_production_rate > ?', 0).order(monthly_production_rate: 'desc') }
   scope :list_worthy, -> { where(list_worthy: true).order(:name) }
 

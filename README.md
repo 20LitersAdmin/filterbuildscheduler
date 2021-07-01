@@ -80,20 +80,19 @@
   - Images can be managed through the admin view
     * rails_admin [interface for management](https://github.com/sferik/rails_admin/wiki/ActiveStorage)
 
-5. `paranoia` is not a best practice
+5. **DONE** `paranoia` is not a best practice
   - **DONE** Inventory and Counts do not need to soft-delete
-  - Implement [discard](https://github.com/jhawthorn/discard)
-  - Figure out if `app/models/concerns/not_deleted.rb` is actually used / useful
+  - **DONE** Implement [discard](https://github.com/jhawthorn/discard)
+  - **DONE** Figure out if `app/models/concerns/not_deleted.rb` is actually used / useful
   - Remove paranoia from:
     - **DONE** models
     - **DONE** database tables
-    - rails_admin
+    - **DONE** rails_admin
 
 6. Items are modified to fit new schema:
   1. unify anything with '**VWF**' and '**20l**'
 
 ### Stretch goals:
-
 7. HAML > .html.erb
   - install HAML and use for all new/updated views
   - slowly migrate away from .html.erb via file replacement over time
@@ -102,15 +101,40 @@
 
 **Current:**
 - `technologies/:id/tree` as a visual of the Assembly tree, with pics!
-- NEXT: Re-build `TechnologyController#items`
-- NEXT: Implement discard (also in rails_admin)
 - NEXT: Images in an S3 bucket
+- NEXT: Re-build `TechnologyController#items`
 - NEXT: Counts
 
-#### After deployment:
+#### After 1st deployment:
 * Migrate the db
-* `rails_admin` has conflicting `require`s that can't be uncommented until second deploy
-* Part's `before_save :set_made_from_materials` can't be uncommented until second deploy
+
+#### 2nd deployment work to be done
+* Un-comment-out `Part#before_save :set_made_from_materials`
+* Remove TEMP methods from Part, Component, Material
+* Delete Extrap models
+* Un-comment-out `has_one_attached` on Items
+* Un-comment-out `include Discard::Model` && `scoe :active` on Models
+* Delete all commented relations on Models
+
+#### 3rd deployment work to be done:
+* Run ImageSyncJob (now that Items `has_one_attached`)
+* Fix RailsAdmin, which will be pretty nerfed from 1st deploy
+* Remove assets.rb#12
+
+
+### 4th deployment work to be done:
+* Drop `Technology.img_url`
+* Drop `Location.photo_url`
+
 
 ## Remind myself:
 3. `orphans = User.builders.left_outer_joins(:registrations).where(registrations: { id: nil })`
+
+# Never trigger an analyzer when calling methods on ActiveStorage
+# ActiveStorage::Blob::Analyzable.module_eval do
+#   def analyze_later; end
+
+#   def analyzed?
+#     true
+#   end
+# end
