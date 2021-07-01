@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class User < ApplicationRecord
-  # acts_as_paranoid
+  # include Discard::Model
 
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable
@@ -18,6 +18,11 @@ class User < ApplicationRecord
   has_many :counts
   belongs_to :primary_location, class_name: 'Location', primary_key: 'id', foreign_key: 'primary_location_id', optional: true
 
+  validates :fname, :lname, :email, presence: true
+  validates_confirmation_of :password
+  before_save :ensure_authentication_token, :check_phone_format
+
+  # scope :active,                -> { kept }
   scope :leaders,               -> { where(is_leader: true) }
   scope :admins,                -> { where(is_admin: true) }
   scope :notify,                -> { where(send_notification_emails: true) }
@@ -28,20 +33,12 @@ class User < ApplicationRecord
   scope :with_registrations,    -> { joins(:registrations).uniq }
   scope :without_registrations, -> { left_outer_joins(:registrations).where(registrations: { id: nil }) }
 
-  validates :fname, :lname, :email, presence: true
-
-  validates_confirmation_of :password
-
-  before_save :ensure_authentication_token, :check_phone_format
-
   # https://github.com/plataformatec/devise/issues/5033
   before_save do |user|
     user.restore_encrypted_password! if user.will_save_change_to_encrypted_password? && user.encrypted_password.blank?
   end
 
   after_save :update_kindful, if: ->(user) { user.saved_change_to_fname? || user.saved_change_to_lname? || user.saved_change_to_email? || user.saved_change_to_email_opt_out? || user.saved_change_to_phone? }
-
-  scope :active, -> { where(deleted_at: nil) }
 
   def admin_or_leader?
     is_admin? || is_leader?

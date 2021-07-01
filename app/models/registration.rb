@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Registration < ApplicationRecord
-  acts_as_paranoid
+  # include Discard::Model
 
   belongs_to :user
   belongs_to :event
@@ -12,7 +12,7 @@ class Registration < ApplicationRecord
 
   validates :guests_registered, :guests_attended, numericality: { only_integer: true, greater_than_or_equal_to: 0 }, presence: true
 
-  scope :active, -> { where(deleted_at: nil) }
+  # scope :active, -> { where(deleted_at: nil) }
   scope :attended, -> { where(attended: true) }
   scope :leaders, -> { where(leader: true) }
   scope :builders, -> { where.not(leader: true) }

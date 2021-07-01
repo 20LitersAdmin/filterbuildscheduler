@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Material < ApplicationRecord
-  # acts_as_paranoid
+  # include Discard::Model
 
   # has_many :extrapolate_material_parts, dependent: :destroy, inverse_of: :material
   has_many :materials_parts
@@ -13,13 +13,14 @@ class Material < ApplicationRecord
   # accepts_nested_attributes_for :extrapolate_technology_materials, allow_destroy: true
 
   # has_many :counts, dependent: :destroy
+  # has_one_attached :image, dependent: :purge
 
   belongs_to :supplier, optional: true
 
   monetize :price_cents, allow_nil: true, numericality: { greater_than_or_equal_to: 0 }
 
-  # scope :active, -> { where(deleted_at: nil) }
-  scope :required, -> { joins(:extrapolate_technology_materials).where(extrapolate_technology_materials: { required: true }) }
+  # scope :active, -> { kept }
+  # scope :required, -> { joins(:extrapolate_technology_materials).where(extrapolate_technology_materials: { required: true }) }
 
   # TODO: TEMP merge function
   def replace_with(material_id)

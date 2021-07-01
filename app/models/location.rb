@@ -1,11 +1,12 @@
 # frozen_string_literal: true
 
 class Location < ApplicationRecord
-  acts_as_paranoid
+  # include Discard::Model
+  # has_one_attached :image, dependent: :purge
 
   validates :name, :address1, :city, :state, :zip, presence: true
 
-  scope :active, -> { where(deleted_at: nil) }
+  # scope :active, -> { kept }
 
   def one_liner
     "#{city}, #{state} #{zip}"

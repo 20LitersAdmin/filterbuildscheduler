@@ -6,12 +6,12 @@ require 'rails_admin/config/actions/base'
 module RailsAdmin
   module Config
     module Actions
-      class ParanoidDelete < RailsAdmin::Config::Actions::Base
+      class Discard < RailsAdmin::Config::Actions::Base
         RailsAdmin::Config::Actions.register(self)
 
         register_instance_option :visible? do
-          if %w[Component Count Event Inventory Location Material Part Registration Supplier Technology User].include? bindings[:object].class.to_s
-            !bindings[:object].deleted?
+          if %w[Component Event Location Material Part Registration Supplier Technology User].include? bindings[:object].class.to_s
+            !bindings[:object].discarded?
           else
             true
           end
@@ -26,7 +26,7 @@ module RailsAdmin
         end
 
         register_instance_option :http_methods do
-          [:get, :delete]
+          %i[get delete]
         end
 
         register_instance_option :authorization_key do
@@ -35,7 +35,7 @@ module RailsAdmin
 
         register_instance_option :controller do
           proc do
-            @object.destroy
+            @object.discard
             flash[:success] = t('admin.flash.successful', name: @model_config.label, action: t('admin.actions.delete.done'))
             redirect_to back_or_index
           end
