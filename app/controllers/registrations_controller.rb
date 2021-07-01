@@ -227,7 +227,7 @@ class RegistrationsController < ApplicationController
 
   def find_or_initialize_registration(user, event)
     # check for a deleted record before creating a new one.
-    registration_check = Registration.with_deleted.where(user: user, event: event)
+    registration_check = Registration.where(user: user, event: event)
     if registration_check.exists?
       registration = registration_check.first
       registration.restore

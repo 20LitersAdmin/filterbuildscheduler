@@ -224,7 +224,7 @@ class Event < ApplicationRecord
   def technology
     return unless technology_id.present?
 
-    Technology.with_deleted.find(technology_id)
+    Technology.find(technology_id)
   end
 
   def technology_results
