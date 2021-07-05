@@ -103,6 +103,7 @@
 **Current:**
 - `technologies/:id/tree` as a visual of the Assembly tree, with pics!
 - NEXT: Re-build `TechnologyController#items`
+- NEXT: MaterialsPart allows for duplicates. Prevent this.
 - NEXT: Inventory flow && Count creation
 
 #### After 1st deployment:
