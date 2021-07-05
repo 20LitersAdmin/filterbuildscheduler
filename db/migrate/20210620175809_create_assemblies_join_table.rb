@@ -113,15 +113,13 @@ class CreateAssembliesJoinTable < ActiveRecord::Migration[6.1]
       t.decimal :quantity, precision: 8, scale: 4, default: 1, null: false
     end
 
-    add_index :materials_parts, [:part_id, :material_id]
+    add_index :materials_parts, [:part_id, :material_id], unique: true
 
     ExtrapolateMaterialPart.all.each do |e|
       mp = MaterialsPart.find_or_initialize_by(
         part_id: e.part_id,
         material_id: e.material_id
       )
-
-      next unless mp.new_record?
 
       mp.quantity = e.parts_per_material
       e.destroy if mp.save
@@ -226,5 +224,6 @@ class CreateAssembliesJoinTable < ActiveRecord::Migration[6.1]
     mat = Material.find(11)
     mat.update(name: mat.name.gsub(' *20L*', ''))
 
+    QuantityCalculationJob.perform_now
   end
 end

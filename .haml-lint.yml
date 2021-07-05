@@ -1,0 +1,17 @@
+linters:
+  LineLength:
+    max: 900
+  IdNames:
+    style: 'snake_case'
+  ClassesBeforeIds:
+    EnforcedStyle: 'id'
+  InlineStyles:
+    enabled: false
+
+  RuboCop:
+    ignored_cops:
+      - Layout/EmptyLineAfterMagicComment
+      - Layout/LineLength
+      - Layout/TrailingEmptyLines
+      - Lint/Void
+      - Metrics/BlockLength

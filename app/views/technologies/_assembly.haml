@@ -1,0 +1,33 @@
+-# frozen_string_literal: true
+
+:ruby
+  item = assembly.item
+  item_type = assembly.item_type
+  available = item.available_count
+  need = assembly.quantity * @quantity
+  highlight = 'color: red; font-weight: bolder; border: solid 2px red' if (available < need) && item_type != 'Component'
+
+%tr
+  - if nesting.positive?
+    %td{ colspan: nesting }
+  %td.right-align
+    = item.uid
+  %td{ colspan: 4 - nesting }
+    = item.name
+
+  %td
+    = item.supplier&.name unless item_type == 'Component'
+    - if item_type == 'Part' && item.made_from_materials?
+      %span
+        %em
+          (from #{item.material.name})
+  %td.right-align
+    = human_number assembly.quantity
+  %td.right-align{ style: highlight }
+    = item.available_count
+  %td.right-align
+    = assembly.quantity * @quantity
+
+- if item_type == 'Component' && item.subassemblies.any?
+  = render partial: 'assembly', collection: item.subassemblies.prioritized, locals: { nesting: nesting += 1 }
+

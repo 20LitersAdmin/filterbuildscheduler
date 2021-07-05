@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Inventory < ApplicationRecord
-  acts_as_paranoid
+  # acts_as_paranoid
 
   has_many :counts, dependent: :destroy
   accepts_nested_attributes_for :counts
@@ -11,7 +11,7 @@ class Inventory < ApplicationRecord
   scope :latest_since, ->(datetime) { where('created_at < ?', datetime).latest }
   scope :latest_completed, -> { where.not(completed_at: nil).order(date: :desc, created_at: :desc).first }
   scope :former, -> { order(date: :desc, created_at: :desc).drop(1) }
-  scope :active, -> { where(deleted_at: nil) }
+  # scope :active, -> { where(deleted_at: nil) }
 
   validates :date, presence: true
 

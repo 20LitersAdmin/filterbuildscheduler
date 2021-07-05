@@ -21,9 +21,9 @@ class AddCountsToItemTables < ActiveRecord::Migration[6.1]
     add_column :technologies, :box_count,            :integer, default: 0
     add_column :technologies, :available_count,      :integer, default: 0
     add_column :technologies, :history,              :jsonb, null: false, default: {}
+    add_column :technologies, :quantities,           :jsonb, null: false, default: {}
 
     # add counts from latest inventory
-
     Inventory.latest.counts.each do |c|
       c.item.update_columns(
         loose_count: c.loose_count,

@@ -14,15 +14,14 @@ class TechnologiesController < ApplicationController
 
     @ignore_component_counts = params[:i] == '1'
 
-    @components = @technology.components
-    @parts = @technology.parts
-  end
+    # Used for _material.haml#3
+    @part_uids = @technology.quantities.keys.grep(/\AP/)
 
-  def tree
-    authorize @technology = Technology.find(params[:id])
+    material_uids = @technology.quantities.keys.grep(/\AM/)
+    material_ids = []
+    material_uids.each { |uid| material_ids << uid.tr('M', '').to_i }
+    @materials = Material.where(id: material_ids)
 
     @assemblies = @technology.assemblies.prioritized
-
-    @materials_ary = []
   end
 end
