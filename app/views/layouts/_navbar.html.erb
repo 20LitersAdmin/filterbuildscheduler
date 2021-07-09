@@ -28,7 +28,7 @@
               <%= link_to 'Builds', root_path %>
             </li>
           <% end %>
-          <% if !current_page?('/info') %>
+          <% if !current_page?('/info') && !current_user.is_admin? %>
             <li>
               <%= link_to 'Info', info_path %>
             </li>
@@ -38,6 +38,7 @@
               <li><%= link_to 'Inventory', inventories_path, class: "use-load-screen" %></li>
             <% end %>
             <% if current_user.is_admin?   %>
+              <li><%= link_to 'Technologies', '/technologies', class: "use-load-screen" %></li>
               <li><%= link_to 'Admin', '/admin', class: "use-load-screen" %></li>
               <li><%= link_to 'Reports', '/report', class: "use-load-screen" %></li>
             <% end %>

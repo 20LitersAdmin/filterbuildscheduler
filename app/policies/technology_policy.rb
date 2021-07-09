@@ -16,7 +16,7 @@ class TechnologyPolicy
     index?
   end
 
-  def tree?
+  def prices?
     index?
   end
 end
