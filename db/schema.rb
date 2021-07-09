@@ -49,7 +49,9 @@ ActiveRecord::Schema.define(version: 2021_07_01_012526) do
     t.bigint "item_id", null: false
     t.string "item_type", null: false
     t.integer "quantity", default: 1, null: false
-    t.integer "priority"
+    t.integer "price_cents", default: 0, null: false
+    t.string "price_currency", default: "USD", null: false
+    t.integer "depth"
     t.index ["combination_id", "combination_type"], name: "index_assemblies_on_combination_id_and_combination_type"
     t.index ["item_id", "item_type"], name: "index_assemblies_on_item_id_and_item_type"
   end
@@ -71,6 +73,8 @@ ActiveRecord::Schema.define(version: 2021_07_01_012526) do
     t.integer "box_count", default: 0
     t.integer "available_count", default: 0
     t.jsonb "history", default: {}, null: false
+    t.integer "price_cents", default: 0, null: false
+    t.string "price_currency", default: "USD", null: false
     t.index ["discarded_at"], name: "index_components_on_discarded_at"
   end
 
@@ -153,18 +157,6 @@ ActiveRecord::Schema.define(version: 2021_07_01_012526) do
     t.index ["discarded_at"], name: "index_events_on_discarded_at"
   end
 
-  create_table "extrapolate_technology_materials", force: :cascade do |t|
-    t.bigint "technology_id"
-    t.bigint "material_id"
-    t.decimal "materials_per_technology", precision: 8, scale: 4, default: "1.0", null: false
-    t.boolean "required", default: false, null: false
-    t.datetime "deleted_at"
-    t.index ["material_id", "technology_id"], name: "index_materials_technologies_on_material"
-    t.index ["material_id"], name: "index_extrapolate_technology_materials_on_material_id"
-    t.index ["technology_id", "material_id"], name: "index_materials_technologies_on_technology"
-    t.index ["technology_id"], name: "index_extrapolate_technology_materials_on_technology_id"
-  end
-
   create_table "inventories", force: :cascade do |t|
     t.boolean "receiving", default: false, null: false
     t.datetime "created_at", null: false
@@ -223,12 +215,12 @@ ActiveRecord::Schema.define(version: 2021_07_01_012526) do
     t.index ["supplier_id"], name: "index_materials_on_supplier_id"
   end
 
-  create_table "materials_parts", id: false, force: :cascade do |t|
+  create_table "materials_parts", force: :cascade do |t|
     t.bigint "part_id"
     t.bigint "material_id"
     t.decimal "quantity", precision: 8, scale: 4, default: "1.0", null: false
     t.index ["material_id"], name: "index_materials_parts_on_material_id"
-    t.index ["part_id", "material_id"], name: "index_materials_parts_on_part_id_and_material_id"
+    t.index ["part_id", "material_id"], name: "index_materials_parts_on_part_id_and_material_id", unique: true
     t.index ["part_id"], name: "index_materials_parts_on_part_id"
   end
 
@@ -355,6 +347,8 @@ ActiveRecord::Schema.define(version: 2021_07_01_012526) do
     t.integer "available_count", default: 0
     t.jsonb "history", default: {}, null: false
     t.jsonb "quantities", default: {}, null: false
+    t.integer "price_cents", default: 0, null: false
+    t.string "price_currency", default: "USD", null: false
     t.index ["discarded_at"], name: "index_technologies_on_discarded_at"
   end
 

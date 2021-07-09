@@ -142,16 +142,17 @@ hr.bar {
 
   .float-right {
     display: block;
-    // width: 50%;
     float: right;
   }
 
   .float-left {
     display: block;
-    // width: 50%;
     float: left;
   }
 
+  .bold-text {
+    font-weight: 700;
+  }
 
   .form-control {
     border-radius: 0;

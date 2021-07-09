@@ -11,7 +11,7 @@
   - if nesting.positive?
     %td{ colspan: nesting }
   %td.right-align
-    = item.uid
+    #{assembly.depth} / #{item.uid}
   %td{ colspan: 4 - nesting }
     = item.name
 
@@ -27,7 +27,9 @@
     = item.available_count
   %td.right-align
     = assembly.quantity * @quantity
+  %td{ class: ['right-align', ('bold-text' if item_type == 'Component')] }
+    = humanized_money_with_symbol item.price
 
 - if item_type == 'Component' && item.subassemblies.any?
-  = render partial: 'assembly', collection: item.subassemblies.prioritized, locals: { nesting: nesting += 1 }
+  = render partial: 'assembly', collection: item.subassemblies.ascending, locals: { nesting: nesting += 1 }
 

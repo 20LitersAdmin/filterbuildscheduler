@@ -1,20 +1,28 @@
 # frozen_string_literal: true
 
-class QuantityCalculationJob < ApplicationJob
+class QuantityAndDepthCalculationJob < ApplicationJob
   queue_as :quantity_calc
 
   def perform(*_args)
+    set_all_assembly_depths_to_zero
+
     Technology.list_worthy.each do |technology|
+      puts "Starting #{technology.name}"
       loop_technology(technology)
+      puts "========================= FINISHED #{@technology.name} ========================="
     end
   end
 
   def loop_technology(technology)
     @technology = technology
+    # clear out any past quantity history
     @technology.quantities = {}
-
+    # this counter is used to set the Assembly#depth needed for accurate PriceCalculationJob results
+    @counter = 0
+    puts "Counter is initially set to #{@counter}"
     @component_ids = []
     @part_ids_made_from_materials = []
+
     assemblies_loop(@technology.assemblies)
 
     loop_parts_for_materials(@part_ids_made_from_materials.uniq)
@@ -23,7 +31,12 @@ class QuantityCalculationJob < ApplicationJob
   end
 
   def assemblies_loop(assemblies)
+    puts '(starting an assembly loop)'
     assemblies.each do |a|
+      puts "Counter is at #{@counter} for #{a.types} => #{a.combination.name}:#{a.item.name}"
+      # for re-used assemblies, just increase the counter
+      puts "Depth being set to #{a.depth + @counter}"
+      a.update_columns(depth: a.depth + @counter)
       insert_into_quantity(a)
       @component_ids << a.item_id if a.item_type == 'Component'
       @part_ids_made_from_materials << a.item_id if a.item_type == 'Part' && a.item&.made_from_materials?
@@ -44,6 +57,10 @@ class QuantityCalculationJob < ApplicationJob
     components = Component.where(id: component_ids)
     # reset the array to avoid infinite looping
     @component_ids = []
+    @counter += 1
+    puts "Counter is incremented to #{@counter}"
+
+    puts '(starting a component loop)'
     components.each do |c|
       assemblies_loop(c.subassemblies) if c.subassemblies.any?
     end
@@ -52,6 +69,9 @@ class QuantityCalculationJob < ApplicationJob
   def loop_parts_for_materials(part_ids)
     Part.where(id: part_ids).each do |part|
       parts_per_technology = @technology.quantities[part.uid]
+
+      next if part.quantity_from_material.zero?
+
       materials_per_technology = parts_per_technology / part.quantity_from_material
 
       if @technology.quantities[part.material.uid].present?
@@ -60,5 +80,9 @@ class QuantityCalculationJob < ApplicationJob
         @technology.quantities[part.material.uid] = materials_per_technology
       end
     end
+  end
+
+  def set_all_assembly_depths_to_zero
+    Assembly.update_all(depth: 0)
   end
 end
