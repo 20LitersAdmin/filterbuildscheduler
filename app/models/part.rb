@@ -1,29 +1,20 @@
 # frozen_string_literal: true
 
 class Part < ApplicationRecord
+  # TODO: Second deployment
   # include Discard::Model
 
-  # has_many :extrapolate_technology_parts, dependent: :destroy, inverse_of: :part
-  # has_many :technologies, through: :extrapolate_technology_parts
-  # accepts_nested_attributes_for :extrapolate_technology_parts, allow_destroy: true
-
-  # has_many :extrapolate_component_parts, dependent: :destroy, inverse_of: :part
-  # has_many :components, through: :extrapolate_component_parts
-  # accepts_nested_attributes_for :extrapolate_component_parts, allow_destroy: true
-
-  # has_many :extrapolate_material_parts, dependent: :destroy, inverse_of: :part
+  # TODO: Second deployment
   # has_one_attached :image, dependent: :purge
 
-  # simplified join table
-  has_many :materials_parts
+  has_many :materials_parts, dependent: :destroy
   has_many :materials, through: :materials_parts
-  # accepts_nested_attributes_for :extrapolate_material_parts, allow_destroy: true
+  accepts_nested_attributes_for :materials_parts, allow_destroy: true
 
-  # has_many :counts, dependent: :destroy
-
-  has_many :assemblies, as: :item
+  has_many :assemblies, as: :item, dependent: :destroy
   has_many :components,   through: :assemblies, source: :combination, source_type: 'Component'
   has_many :technologies, through: :assemblies, source: :combination, source_type: 'Technology'
+  accepts_nested_attributes_for :assemblies, allow_destroy: true
 
   belongs_to :supplier, optional: true
 
@@ -39,20 +30,12 @@ class Part < ApplicationRecord
   # TODO: TEMP merge function
   def replace_with(part_id)
     assemblies.update_all(item_id: part_id)
-
     materials_parts.update_all(part_id: part_id) if made_from_materials?
 
     self
   end
 
-  def available
-    if latest_count.present?
-      latest_count.available
-    else
-      0
-    end
-  end
-
+  # TODO: fix this or un-use it
   def cprice
     return price unless (price.nil? || price.zero?) && made_from_materials?
 
@@ -63,6 +46,7 @@ class Part < ApplicationRecord
     emp.material.price / emp.parts_per_material
   end
 
+  # TODO: fix this or un-use it
   def latest_count
     Count.where(inventory: Inventory.latest_completed, part: self).first
   end
@@ -83,12 +67,14 @@ class Part < ApplicationRecord
     last_ordered_at.present? && (last_received_at.nil? || last_ordered_at > last_received_at)
   end
 
+  # TODO: fix this or un-use it
   def owner
     return 'N/A' unless technologies.present?
 
     technologies.map(&:owner_acronym).uniq.join(',')
   end
 
+  # TODO: replace this with image
   def picture
     begin
       ActionController::Base.helpers.asset_path("uids/#{uid}.jpg")
@@ -97,63 +83,40 @@ class Part < ApplicationRecord
     end
   end
 
-  def per_technology
-    if extrapolate_technology_parts.first.present?
-      per_tech = extrapolate_technology_parts.first.parts_per_technology.to_f
-    elsif extrapolate_component_parts.first.present?
-      ppc = extrapolate_component_parts.first.parts_per_component.to_f
-      component = extrapolate_component_parts.first.component
-      cpt = component.extrapolate_technology_components.first.components_per_technology.to_f
-      per_tech = ppc.to_f * cpt
-    else
-      per_tech = 0.0
-    end
-
-    per_tech
+  def per_technology(technology)
+    technology.quantities[uid]
   end
 
   def reorder?
-    available < minimum_on_hand
+    available_count < minimum_on_hand
   end
 
   def reorder_total_cost
     min_order * price
   end
 
-  def required?
-    if extrapolate_technology_parts.any?
-      extrapolate_technology_parts.first.required?
-    else
-      false
-    end
+  def superassemblies
+    # alias of assemblies, for tree traversal up
+    assemblies
   end
 
-  def technology
-    # The path from parts to technologies can vary:
-    # Part ->(extrap_technology_parts)-> Technology
-    # Part ->(extrap_component_parts)-> Component ->(extrap_component_parts)-> Technology
+  def subassemblies
+    Assembly.none
+  end
 
-    # FLAWED: when one part belongs to two technologies, then .first is a bad idea
-
-    if technologies.first.present?
-      technologies.first
-    elsif extrapolate_component_parts.first.present?
-      components.first.technologies.first
-    end
+  def technologies
+    Technology.where('quantities ? :key', key: uid)
   end
 
   def tech_names_short
-    if technologies.map(&:name).empty?
-      'n/a'
-    else
-      technologies.map { |t| t.name.gsub(' Filter', '').gsub(' for Bucket', '') }.join(', ')
-    end
+    technologies.pluck(:short_name)
   end
 
   def uid
     "P#{id.to_s.rjust(3, 0.to_s)}"
   end
 
+  # TODO: fix this or un-use it
   def weeks_to_out
     latest_count.present? ? latest_count.weeks_to_out : 0
   end

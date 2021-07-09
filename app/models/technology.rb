@@ -1,58 +1,45 @@
 # frozen_string_literal: true
 
 class Technology < ApplicationRecord
+  # TODO: Second deployment
   # include Discard::Model
 
   has_and_belongs_to_many :users
+
+  # TODO: Second deployment
   # has_one_attached :image, dependent: :purge
   # has_one_attached :display_image, dependent: :purge
 
-  # has_many :extrapolate_technology_components, dependent: :destroy, inverse_of: :technology
-  # has_many :components, through: :extrapolate_technology_components
-  # accepts_nested_attributes_for :extrapolate_technology_components, allow_destroy: true
-
-  # has_many :extrapolate_technology_parts, dependent: :destroy, inverse_of: :technology
-  # has_many :parts, through: :extrapolate_technology_parts
-  # accepts_nested_attributes_for :extrapolate_technology_parts, allow_destroy: true
-
-  # has_many :extrapolate_technology_materials, dependent: :destroy, inverse_of: :technology
-  # has_many :materials, through: :extrapolate_technology_materials
-  # accepts_nested_attributes_for :extrapolate_technology_materials, allow_destroy: true
-
-  has_many :assemblies, as: :combination
+  has_many :assemblies, as: :combination, dependent: :destroy
   has_many :components, through: :assemblies, source: :item, source_type: 'Component'
   has_many :parts, through: :assemblies, source: :item, source_type: 'Part'
 
+  # TODO: Second deployment
+  monetize :price_cents, numericality: { greater_than_or_equal_to: 0 }
+
+  # TODO: Second deployment
   # scope :active, -> { kept }
   scope :status_worthy, -> { where('monthly_production_rate > ?', 0).order(monthly_production_rate: 'desc') }
   scope :list_worthy, -> { where(list_worthy: true).order(:name) }
+  scope :finance_worthy, -> { where.not(price_cents: 0).order(:name) }
 
-  # fake scope
-  def self.finance_worthy
-    ary = []
-    Technology.all.each do |technology|
-      ary << technology if technology.price.positive?
-    end
-    ary
-  end
+  before_create :set_short_name, if: -> { short_name.nil? }
 
   def leaders
     users.where(is_leader: true)
   end
 
+  # TODO: delete this
   def primary_component
     # find the component related to this technology that represents the completed tech
     components.where(completed_tech: true).first
   end
 
-  def price
+  # TODO: re-work this
+  def cprice
     return Money.new(0) if primary_component.nil?
 
     primary_component.price
-  end
-
-  def short_name_w_owner
-    "#{short_name} (#{owner_acronym})"
   end
 
   def event_tech_goals_within(num = 0)
@@ -65,6 +52,7 @@ class Technology < ApplicationRecord
     owner.gsub(/([a-z]|\s)/, '')
   end
 
+  # TODO: re-work this
   def produceable
     inventory = Inventory.latest_completed
 
@@ -132,5 +120,24 @@ class Technology < ApplicationRecord
     end
 
     tech_items_aoh.sort_by! { |hsh| hsh[:produceable] }
+  end
+
+  def short_name_w_owner
+    "#{short_name} (#{owner_acronym})"
+  end
+
+  # def superassemblies
+  #   Assembly.none
+  # end
+
+  # def subassemblies
+  #   # alias of assemblies, for tree traversal down
+  #   assemblies
+  # end
+
+  private
+
+  def set_short_name
+    self.short_name = name.gsub(' Filter', '').gsub(' for Bucket', '')
   end
 end

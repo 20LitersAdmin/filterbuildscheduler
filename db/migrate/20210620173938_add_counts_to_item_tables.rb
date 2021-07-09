@@ -16,14 +16,21 @@ class AddCountsToItemTables < ActiveRecord::Migration[6.1]
     add_column :components,   :box_count,            :integer, default: 0
     add_column :components,   :available_count,      :integer, default: 0
     add_column :components,   :history,              :jsonb, null: false, default: {}
+    # RubyMoney columns
+    add_monetize :components, :price
 
     add_column :technologies, :loose_count,          :integer, default: 0
     add_column :technologies, :box_count,            :integer, default: 0
     add_column :technologies, :available_count,      :integer, default: 0
     add_column :technologies, :history,              :jsonb, null: false, default: {}
     add_column :technologies, :quantities,           :jsonb, null: false, default: {}
+    # RubyMoney columns
+    add_monetize :technologies, :price
 
-    # add counts from latest inventory
+    ActiveRecord::Base.logger.level = 1
+
+    puts 'add counts from latest inventory'
+
     Inventory.latest.counts.each do |c|
       c.item.update_columns(
         loose_count: c.loose_count,
@@ -33,7 +40,7 @@ class AddCountsToItemTables < ActiveRecord::Migration[6.1]
       c.destroy
     end
 
-    # add history to every item
+    puts 'add history to every item'
     Inventory.order(date: :desc, created_at: :desc).each do |i|
       i.counts.each do |c|
         item = c.item
@@ -43,7 +50,7 @@ class AddCountsToItemTables < ActiveRecord::Migration[6.1]
       end
     end
 
-    # transfer counts from Components.where(completed_tech: true) to Technology
+    puts 'transfer counts from Components.where(completed_tech: true) to Technology'
     Component.where(completed_tech: true).each do |comp|
       tech = ExtrapolateTechnologyComponent.where(component_id: comp.id).first.technology
 
@@ -57,15 +64,17 @@ class AddCountsToItemTables < ActiveRecord::Migration[6.1]
       comp.update_columns(deleted_at: Time.now)
     end
 
-    # Data has been migrated, delete any remaining counts
+    puts 'Data has been migrated, delete any remaining counts'
     Count.all.delete_all unless Count.all.size.zero?
     ActiveRecord::Base.connection.reset_pk_sequence!('counts')
 
-    # Count: switch from booleans to polymorphic
+    puts 'Count: switch from booleans to polymorphic'
     # count.item_type && count.item_id
     add_reference :counts, :item, polymorphic: true, index: true
     remove_column :counts, :component_id
     remove_column :counts, :material_id
     remove_column :counts, :part_id
+
+    ActiveRecord::Base.logger.level = 1
   end
 end

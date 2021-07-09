@@ -22,8 +22,6 @@
 
 4. Images are soft-coded to Components, Parts and Materials based on UID, which is static, not dynamic
 
-5. `part.made_from_materials?` and any join table record with `part_id` is duplicative (currently not fixed)
-
 ### Solutions:
 1. Count records are temporary records, created when an inventory is created and destroyed after their meaningful values are transferred to their corresponding Materials, Parts, Components, and Technologies
   1. **DONE** Counts are polymorphically joined to an item, including Technology
@@ -44,14 +42,19 @@
       - `count.link_class`
       - `count.sort_by_user`
   6. **DONE** Count-related fields are added to Material, Part, Component, and Technology:
-    - Three `integer` attributes for current counts:
+    - **DONE** Three `integer` attributes for current counts:
       - `[ loose | box | available ]`
         - availabe == loose + (box * quantity_per_box)
-    - One `jsonb` for history:
+    - **DONE** One `jsonb` for history:
       - `{ inventory_id: { loose: #, box: #, total: # } }`
+    - **DONE** One `jsonb` for quantities:
+      - `{ UID: quantity_per_technology}`
+        - updated whenever an Assembly or MaterialsPart is saved/destroyed
+    - https://guides.rubyonrails.org/active_record_postgresql.html#json-and-jsonb
   7. A job handles transferring count-related fields to it's related item, then deletes the Count record.
     - The job runs `count.update_item_and_destroy!`
-    - The job runs after Inventory is marked completed via DelayedJob `perform_later`
+    - The job runs after Inventory is marked completed via `Delayed::Job#perform_later`
+
 2. **DONE** `Component.where(completed_tech: true)` are not duplicates of Technology
   - **DONE** Allow Technologies to be counted
   - **DONE** Technologies, Components, and Parts share a master `assemblies` polymorphic join table
@@ -59,20 +62,13 @@
 
 3. Item join tables are simplified
   - **DONE** dropping 'extrapolate' from all table names
-  - **DONE** following the [naming convention](https://guides.rubyonrails.org/association_basics.html#creating-join-tables-for-has-and-belongs-to-many-associations)
+  - **DONE** following the naming convention
   - **DONE** removing the following join tables:
     - `extrapolate_technology_parts`
     - `extrapolate_technology_materials`
   - Calculations of distant relations are handled via the existing join tables
-    - e.g. "parts per technology": `technology.parts.per_technology`
-      - must reach down through technology > components and sum matching parts as discovered, plus any parts directly "assembled" onto that technology
-    - best idea so far: traverse down and up to find common parents & children
-      - `technology.components_per_technology(part)`
-      - `technology.parts_per_technology(part)`
-      - `technology.materials_per_technology(part)`
-    - YAGNI validation:
-      - Bill of Materials / pick sheet
-      - Price calculation might be faster via BoM than via total tree traversal
+    - **DONE** Quantity calculation is handled via `QuantityCalculationJob`
+    - Price calculation is handled via `PriceCalculationJob`
 
 4. Images use an online cloud for storage
   - **DONE** An S3 bucket exists for storing item images
@@ -101,9 +97,6 @@
 8. Inventory#edit uses Websockets for real-time page changes when multiple users are performing an inventory at once.
 
 **Current:**
-- `technologies/:id/tree` as a visual of the Assembly tree, with pics!
-- NEXT: Re-build `TechnologyController#items`
-- NEXT: MaterialsPart allows for duplicates. Prevent this.
 - NEXT: Inventory flow && Count creation
 
 #### After 1st deployment:
@@ -114,7 +107,8 @@
 * Remove TEMP methods from Part, Component, Material
 * Delete Extrap models
 * Un-comment-out `has_one_attached` on Items
-* Un-comment-out `include Discard::Model` && `scoe :active` on Models
+* Un-comment-out `include Discard::Model` && `scope :active` on Models
+* Un-comment-out `monetize :price_cents` on Technology, Component, and Assembly
 * Remove `paranoia` gem
 * Delete all commented relations on Models
 * Un-do Paranoia -> Discard patching
@@ -125,7 +119,7 @@
 #### 3rd deployment work to be done:
 * Run `ImageSyncJob.perform_now` in production (now that Items `has_one_attached`)
 * Fix RailsAdmin, which will be pretty nerfed from 1st deploy
-* Remove assets.rb#12
+* Remove `assets.rb#12`
 
 
 ### 4th deployment work to be done:

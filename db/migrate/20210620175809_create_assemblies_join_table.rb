@@ -8,29 +8,67 @@ class CreateAssembliesJoinTable < ActiveRecord::Migration[6.1]
     # quantity: number of items per combination
     # priority: makes Assemblies orderable via item_type: { 'Component' => 0, 'Part' => 1 }
     create_table :assemblies do |t|
-      t.bigint  :combination_id,   null: false
-      t.string  :combination_type, null: false
-      t.bigint  :item_id,          null: false
-      t.string  :item_type,        null: false
-      t.integer :quantity,         null: false, default: 1
-      t.integer :priority
+      t.bigint   :combination_id,   null: false
+      t.string   :combination_type, null: false
+      t.bigint   :item_id,          null: false
+      t.string   :item_type,        null: false
+      t.integer  :quantity,         null: false, default: 1
+      t.monetize :price
+      t.integer  :depth
     end
 
     add_index :assemblies, [:item_id, :item_type]
     add_index :assemblies, [:combination_id, :combination_type]
 
-    # delete obsolete items before creating assemblies
-    moot_parts = [1, 20, 21, 24, 26, 45, 46, 47, 48, 49, 51, 52, 53, 54, 55, 57, 58, 62, 64, 65, 111]
+    # simplify the join table beetween Materials and Parts
+    # to get `quantity`, call `part.quantity_from_material`
+    create_table :materials_parts do |t|
+      t.belongs_to :part
+      t.belongs_to :material
+      t.decimal :quantity, precision: 8, scale: 4, default: 1, null: false
+    end
+
+    add_index :materials_parts, [:part_id, :material_id], unique: true
+
+    ActiveRecord::Base.logger.level = 1
+
+    puts 'delete obsolete items before creating assemblies'
+    moot_parts = [1, 20, 21, 24, 26, 30, 32, 45, 46, 47, 48, 49, 51, 52, 53, 54, 55, 57, 58, 62, 64, 65, 111]
     ExtrapolateMaterialPart.where(part_id: moot_parts).destroy_all
     ExtrapolateTechnologyPart.where(part_id: moot_parts).destroy_all
     ExtrapolateComponentPart.where(part_id: moot_parts).destroy_all
     Part.where(id: moot_parts).destroy_all
 
-    ExtrapolateTechnologyComponent.where(component_id: 7).destroy_all
-    ExtrapolateComponentPart.where(component_id: 7).destroy_all
-    Component.find(7).destroy
+    ExtrapolateTechnologyComponent.where(component_id: [7, 11]).destroy_all
+    ExtrapolateComponentPart.where(component_id: [7, 11]).destroy_all
+    Component.where(id: [7, 11]).destroy_all
 
-    # create assemblies for Parts in Technologies (NOT parts in Components, which are in Technologies)
+    puts 'deal with the single case of a Material being used directly in a Technology'
+    # M005 Tubing 1/4-inch x 12-inch L
+    # solution: transform it into a Part
+    m = Material.find(5)
+    Part.create!(m.attributes.except('id'))
+    # add the new part's assembly
+    Assembly.create!(combination: Technology.first, item: Part.last)
+
+    # ensure there are no old relationships
+    ExtrapolateMaterialPart.where(material_id: 5).destroy_all
+    # P040 Tubing 1/4-inch x 2-inch L was the Part that was made from this material
+    Part.find(40).update_columns(made_from_materials: false)
+    m.destroy
+
+    puts 'deal with the single case of a Material being used directly in a Technology'
+    ExtrapolateMaterialPart.all.each do |e|
+      mp = MaterialsPart.find_or_initialize_by(
+        part_id: e.part_id,
+        material_id: e.material_id
+      )
+
+      mp.quantity = e.parts_per_material
+      e.destroy if mp.save
+    end
+
+    puts 'create assemblies for Parts in Technologies (NOT parts in Components, which are in Technologies)'
     # THIS IS DONE FIRST because it relies upon existing join table records
     # If it's run later, those records are already deleted and duplicates are created around the tree
     Technology.list_worthy.each do |t|
@@ -52,7 +90,15 @@ class CreateAssembliesJoinTable < ActiveRecord::Migration[6.1]
       end
     end
 
-    # migrate extrapolate_component_parts into assemblies
+    puts 'destroy Component.where(completed_tech: true)'
+    completed_comps = Component.where(completed_tech: true)
+    ExtrapolateComponentPart.where(component_id: completed_comps.pluck(:id)).destroy_all
+
+    ExtrapolateTechnologyComponent.where(component_id: completed_comps.pluck(:id)).destroy_all
+
+    completed_comps.destroy_all
+
+    puts 'migrate extrapolate_component_parts into assemblies'
     ExtrapolateComponentPart.all.each do |e|
       asbly = Assembly.find_or_initialize_by(
         combination_id: e.component_id,
@@ -67,10 +113,7 @@ class CreateAssembliesJoinTable < ActiveRecord::Migration[6.1]
       e.destroy if asbly.save
     end
 
-    # migrate extrapolate_technology_components into assemblies
-    # Start by making assemblies for required components,
-    # they are the "primary" components
-    # the remaining ETCs are all for "subcomponents"
+    puts 'migrate extrapolate_technology_components into assemblies'
     ExtrapolateTechnologyComponent.required.each do |e|
       # don't make assemblies for the duplicated components
       if e.component.completed_tech?
@@ -91,40 +134,7 @@ class CreateAssembliesJoinTable < ActiveRecord::Migration[6.1]
       e.destroy if asbly.save
     end
 
-    # deal with the single case of a Material being used directly in a Technology:
-    # M005 Tubing 1/4-inch x 12-inch L
-    # solution: transform it into a Part
-    m = Material.find(5)
-    Part.create!(m.attributes.except('id'))
-    # add the new part's assembly
-    Assembly.create!(combination: Technology.first, item: Part.last)
-
-    # ensure there are no old relationships
-    ExtrapolateMaterialPart.where(material_id: 5).destroy_all
-    # P040 Tubing 1/4-inch x 2-inch L was the Part that was made from this material
-    Part.find(40).update_columns(made_from_materials: false)
-    m.destroy
-
-    # simplify the join table beetween Materials and Parts
-    # to get `quantity`, call `part.quantity_from_material`
-    create_table :materials_parts, id: false do |t|
-      t.belongs_to :part
-      t.belongs_to :material
-      t.decimal :quantity, precision: 8, scale: 4, default: 1, null: false
-    end
-
-    add_index :materials_parts, [:part_id, :material_id], unique: true
-
-    ExtrapolateMaterialPart.all.each do |e|
-      mp = MaterialsPart.find_or_initialize_by(
-        part_id: e.part_id,
-        material_id: e.material_id
-      )
-
-      mp.quantity = e.parts_per_material
-      e.destroy if mp.save
-    end
-
+    puts 'manually create missing assemblies'
     # SAM3 Sand pre-filter, all quantities are 1
     Assembly.create!(
       [
@@ -165,29 +175,30 @@ class CreateAssembliesJoinTable < ActiveRecord::Migration[6.1]
 
     Assembly.where(item_type: 'Component').each(&:remove_duplicates!)
 
+    puts 'drop old extrap tables'
     # destroy ExtrapolateComponentPart table
     drop_table 'extrapolate_component_parts'
-
-    # destroy ExtrapolateTechnologyComponent table only if all records are transferred
     drop_table 'extrapolate_technology_components'
-
     # the remaining records in ExtrapolateTechnologyPart are duplicative
     drop_table 'extrapolate_technology_parts'
-
-    # destroy ExtrapolateMaterialPart table
+    # the remaining records in ExtrapolateTechnologyMaterials are duplicative
+    drop_table 'extrapolate_technology_materials'
     drop_table 'extrapolate_material_parts'
 
-    # merge *20L* and *VWF* component
+    puts 'merge *20L* and *VWF* components, parts, and materials'
     # Components: [{1=>"3-inch core with O-rings *VWF*"}, {33=>"3-inch core with O-rings *20L*"}]
     Component.first.replace_with(33).destroy
     Component.find(33).update(name: '3-inch core with O-rings')
 
     # merge *20L* and *VWF* parts (5 match by name)
     tl_parts = Part.where('name LIKE ?', '%*20L*')
+    # tl_parts = [95, 93, 87, 101, 100]
     vwf_parts = Part.where('name LIKE ?', '%*VWF*')
+    # vwf_parts = [5, 35, 36, 66, 23, 56, 41, 160, 163, 162, 164, 165, 161, 166]
 
+    # find parts that match by name
+    # matching_parts == [16, 22, 6, 3, 2]
     tl_parts.each do |tl|
-      # find a match by name
       matching_part = vwf_parts.where(name: tl.name.gsub('*20L*', '*VWF*')).first
 
       next unless matching_part.present?
@@ -197,20 +208,26 @@ class CreateAssembliesJoinTable < ActiveRecord::Migration[6.1]
       matching_part.destroy
     end
 
+    vwf_parts_again = Part.where('name LIKE ?', '%*VWF*')
     # search for 20L parts that match VWF parts when ' *VWF*' is removed
-    vwf_parts.each do |vwf|
+    # matching_parts == [97, 109]
+
+    vwf_parts_again.each do |vwf|
       matching_part = Part.where(name: vwf.name.gsub(' *VWF*', '')).first
 
       next unless matching_part.present?
 
       matching_part.update(name: matching_part.name.gsub(' *20L*', ''))
 
-      vwf.replace_with(matching_part.id)
+      # vwf == Part.find(161)
+      # vwf.materials == Material.find(2)
+      # Part.find(109) is already linked to Material.find(11), so we don't want to link it to Material.find(2)
+      vwf.replace_with(matching_part.id) unless matching_part.id == 109
       vwf.destroy
     end
 
     # drop "*VWF*" from remaining parts
-    Part.where('name LIKE ?', '%*VWF*%').each do |part|
+    Part.where('name LIKE ?', '%*VWF*').each do |part|
       part.update(name: part.name.gsub(' *VWF*', ''))
     end
 
@@ -224,6 +241,12 @@ class CreateAssembliesJoinTable < ActiveRecord::Migration[6.1]
     mat = Material.find(11)
     mat.update(name: mat.name.gsub(' *20L*', ''))
 
-    QuantityCalculationJob.perform_now
+    # Calculate quantities of all components, parts and materials on every Technology, calculate depths for all Assemblies
+    QuantityAndDepthCalculationJob.perform_now
+
+    # Calculate all prices
+    PriceCalculationJob.perform_now
+
+    ActiveRecord::Base.logger.level = 0
   end
 end

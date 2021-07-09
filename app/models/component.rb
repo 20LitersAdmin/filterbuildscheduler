@@ -1,21 +1,19 @@
 # frozen_string_literal: true
 
 class Component < ApplicationRecord
+  # TODO: Second deployment
   # include Discard::Model
 
-  # has_many :extrapolate_technology_components, dependent: :destroy, inverse_of: :component
-  # has_many :technologies, through: :extrapolate_technology_components
-  # accepts_nested_attributes_for :extrapolate_technology_components, allow_destroy: true
-
-  # has_many :extrapolate_component_parts, dependent: :destroy, inverse_of: :component
-  # has_many :parts, through: :extrapolate_component_parts
-  # accepts_nested_attributes_for :extrapolate_component_parts, allow_destroy: true
-
-  # has_many :counts, dependent: :destroy
+  # TODO: Second deployment
   # has_one_attached :image, dependent: :purge
 
+  # TODO: Second deployment
   # scope :active, -> { kept }
-  # scope :required, -> { joins(:extrapolate_technology_components).where.not(completed_tech: true).where(extrapolate_technology_components: { required: true }) }
+
+  before_destroy :dependent_destroy_assemblies
+
+  # TODO: Second deployment
+  monetize :price_cents, numericality: { greater_than_or_equal_to: 0 }
 
   # TODO: TEMP merge function
   def replace_with(component_id)
@@ -28,7 +26,7 @@ class Component < ApplicationRecord
 
   # associations through Assembly
   def technologies
-    Technology.joins(:assemblies).where('assemblies.item_id = ? AND assemblies.item_type = ?', id, 'Component')
+    Technology.where('quantities ? :key', key: uid)
   end
 
   def superassemblies
@@ -60,25 +58,18 @@ class Component < ApplicationRecord
       AND assemblies.combination_id = #{id}"
     )
   end
-
   # end associations
 
   def parts
     Part.joins(:assemblies).where('assemblies.combination_id = ? AND assemblies.combination_type = ?', id, 'Component')
   end
 
-  def available
-    if latest_count.present?
-      latest_count.available
-    else
-      0
-    end
-  end
-
+  # TODO: fix this or un-use it
   def latest_count
     Count.where(inventory: Inventory.latest_completed, component: self).first
   end
 
+  # TODO: replace this with image
   def picture
     begin
       ActionController::Base.helpers.asset_path('uids/' + uid + '.jpg')
@@ -87,7 +78,8 @@ class Component < ApplicationRecord
     end
   end
 
-  def price
+  # TODO: replace this with price_cents
+  def cprice
     ary = []
     extrapolate_component_parts.each do |ecp|
       next if ecp&.part.nil?
@@ -103,6 +95,7 @@ class Component < ApplicationRecord
     ary.sum
   end
 
+  # TODO: un-use this
   def required?
     if extrapolate_technology_components.any?
       extrapolate_technology_components.first.required?
@@ -111,10 +104,12 @@ class Component < ApplicationRecord
     end
   end
 
+  # TODO: un-use this
   def technology
     technologies.first
   end
 
+  # TODO: un-use this
   def total
     if latest_count
       latest_count.total
@@ -124,6 +119,13 @@ class Component < ApplicationRecord
   end
 
   def uid
-    'C' + id.to_s.rjust(3, '0')
+    "C#{id.to_s.rjust(3, '0')}"
+  end
+
+  private
+
+  def dependent_destroy_assemblies
+    superassemblies.destroy_all
+    subassemblies.destroy_all
   end
 end

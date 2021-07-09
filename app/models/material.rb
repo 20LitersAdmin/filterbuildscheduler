@@ -1,26 +1,22 @@
 # frozen_string_literal: true
 
 class Material < ApplicationRecord
+  # TODO: Second deployment
   # include Discard::Model
 
-  # has_many :extrapolate_material_parts, dependent: :destroy, inverse_of: :material
-  has_many :materials_parts
+  has_many :materials_parts, dependent: :destroy
   has_many :parts, through: :materials_parts
-  # accepts_nested_attributes_for :extrapolate_material_parts, allow_destroy: true
+  accepts_nested_attributes_for :materials_parts, allow_destroy: true
 
-  # has_many :extrapolate_technology_materials, dependent: :destroy, inverse_of: :material
-  # has_many :technologies, through: :extrapolate_technology_materials
-  # accepts_nested_attributes_for :extrapolate_technology_materials, allow_destroy: true
-
-  # has_many :counts, dependent: :destroy
+  # TODO: Second deployment
   # has_one_attached :image, dependent: :purge
 
   belongs_to :supplier, optional: true
 
   monetize :price_cents, allow_nil: true, numericality: { greater_than_or_equal_to: 0 }
 
+  # TODO: Second deployment
   # scope :active, -> { kept }
-  # scope :required, -> { joins(:extrapolate_technology_materials).where(extrapolate_technology_materials: { required: true }) }
 
   # TODO: TEMP merge function
   def replace_with(material_id)
@@ -41,6 +37,7 @@ class Material < ApplicationRecord
     Count.where(inventory: Inventory.latest_completed, material: self).first
   end
 
+  # TODO: remove this
   def made_from_materials?
     false
   end
@@ -63,23 +60,8 @@ class Material < ApplicationRecord
     end
   end
 
-  def per_technology
-    if extrapolate_technology_materials.first.present?
-      per_tech = extrapolate_technology_materials.first.materials_per_technology
-    elsif extrapolate_material_parts.first.present?
-      ppm = extrapolate_material_parts.first.parts_per_material.to_f
-
-      part = extrapolate_material_parts.first.part
-      ppc = part.extrapolate_component_parts.first.parts_per_component.to_f
-      component = part.extrapolate_component_parts.first.component
-      cpt = component.extrapolate_technology_components.first.components_per_technology.to_f
-      # per_tech = 1.0 / ( ( ppm / ppc ) * cpt )
-      per_tech = (cpt * ppc.to_f) / ppm
-    else
-      per_tech = 0.0
-    end
-
-    per_tech
+  def per_technology(technology)
+    technology.quantities[uid]
   end
 
   def reorder?
@@ -98,23 +80,8 @@ class Material < ApplicationRecord
     end
   end
 
-  def technology
-    # The path from materials to technologies can vary:
-    # Material ->(materials_technologies)-> Technology
-    # Material ->(extrap_material_parts)-> Part ->(extrap_technology_parts)-> Technology
-    # Material ->(extrap_material_parts)-> Part ->(extrap_component_parts)-> Component ->(extrap_component_parts)-> Technology
-
-    if technologies.first.present?
-      technologies.first
-    elsif extrapolate_material_parts.first.present?
-      part = parts.first
-      if part.technologies.first.present?
-        part.technologies.first
-      elsif part.components.first.present?
-        component = part.components.first
-        component.technologies.first
-      end
-    end
+  def technologies
+    Technology.where('quantities ? :key', key: uid)
   end
 
   def tech_names_short

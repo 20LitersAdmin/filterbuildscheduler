@@ -1,10 +1,10 @@
 -# frozen_string_literal: true
-
+- price = humanized_money_with_symbol @technology.price
 .container
   .row
     = form_tag items_technology_path(@technology.id), method: 'get', class: 'form-inline', enforce_uft8: false do
       .col-md-5
-        %h3 #{@technology.name} Item List:
+        %h3 #{@technology.name} Item List (#{price}):
       .col-md-2.no-print.form-group
         = number_field_tag 'q', @quantity_val, { min: 0, step: 1, class: 'form-control', placeholder: 'Quantity' }
       .col-md-3.no-print.form-group
@@ -19,27 +19,30 @@
           %tr
             %th{ colspan: 5 } Components:
             %th Supplier
-            %th # per:
-            %th avail.
-            %th need
+            %th.right-align # per:
+            %th.right-align avail.
+            %th.right-align need
+            %th.right-align price
           -# Components
-          = render partial: 'assembly', collection: @assemblies.where(item_type: 'Component').prioritized, locals: { nesting: 0 }
+          = render partial: 'assembly', collection: @assemblies.where(item_type: 'Component').ascending, locals: { nesting: 0 }
           %tr
             %th{ colspan: 5 } Parts:
             %th Supplier
-            %th # per:
-            %th avail.
-            %th need
+            %th.right-align # per:
+            %th.right-align avail.
+            %th.right-align need
+            %th.right-align price
           -# Parts
-          = render partial: 'assembly', collection: @assemblies.where(item_type: 'Part').prioritized, locals: { nesting: 0 }
+          = render partial: 'assembly', collection: @assemblies.where(item_type: 'Part').ascending, locals: { nesting: 0 }
           -# Materials
           - if @materials.any?
             %tr
               %th{ colspan: 5 } Materials:
               %th Supplier
-              %th # per:
-              %th avail.
-              %th need
+              %th.right-align # per:
+              %th.right-align avail.
+              %th.right-align need
+              %th.right-align price
           = render partial: 'material', collection:  @materials
   .row.no-print
     .col.right-align

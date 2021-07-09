@@ -22,6 +22,6 @@ class TechnologiesController < ApplicationController
     material_uids.each { |uid| material_ids << uid.tr('M', '').to_i }
     @materials = Material.where(id: material_ids)
 
-    @assemblies = @technology.assemblies.prioritized
+    @assemblies = @technology.assemblies.ascending
   end
 end
