@@ -1,0 +1,12 @@
+-# frozen_string_literal: true
+
+%tr
+  %td
+    = technology.name
+  %td
+    %img{ height: '100', src: technology.img_url }
+  %td
+    = technology.owner
+  %td
+    = link_to 'Item List', items_technology_path(technology.id), class: 'btn blue use-load-screen'
+    = link_to 'Price List', prices_technology_path(technology.id), class: 'btn yellow use-load-screen'

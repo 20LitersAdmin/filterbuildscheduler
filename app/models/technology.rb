@@ -35,6 +35,13 @@ class Technology < ApplicationRecord
     components.where(completed_tech: true).first
   end
 
+  def components
+    uids = quantities.keys.grep(/^C[0-9]{3}/)
+    ary = []
+    uids.each { |u| ary << u.tr('C', '').to_i }
+    Component.where(id: ary)
+  end
+
   # TODO: re-work this
   def cprice
     return Money.new(0) if primary_component.nil?
@@ -48,8 +55,22 @@ class Technology < ApplicationRecord
     events.map(&:item_goal).sum
   end
 
+  def materials
+    uids = quantities.keys.grep(/^M[0-9]{3}/)
+    ary = []
+    uids.each { |u| ary << u.tr('M', '').to_i }
+    Material.where(id: ary)
+  end
+
   def owner_acronym
     owner.gsub(/([a-z]|\s)/, '')
+  end
+
+  def parts
+    uids = quantities.keys.grep(/^P[0-9]{3}/)
+    ary = []
+    uids.each { |u| ary << u.tr('P', '').to_i }
+    Part.where(id: ary)
   end
 
   # TODO: re-work this

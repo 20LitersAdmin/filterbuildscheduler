@@ -1,31 +1,35 @@
 -# frozen_string_literal: true
+- price = humanized_money_with_symbol @technology.price
 .container
   .row
     = form_tag prices_technology_path(@technology.id), method: 'get', class: 'form-inline', enforce_uft8: false do
       .col-md-8
-        %h3 #{ @technology.name } Item List:
+        %h3 #{ @technology.name } Price List (#{price} each):
+        %p= "#{ humanized_money_with_symbol @technology.price * @quantity } for #{ @quantity }" if @quantity > 1
       .col-md-2.no-print.form-group
         = number_field_tag 'q', @quantity_val, { min: 0, step: 1, class: 'form-control', placeholder: 'Quantity' }
       .col-md-2.no-print.form-group
         = submit_tag 'Set Quantity', class: 'btn yellow', name: nil
   .row
     .col
-      %table.table.table-bordered{ id: "list_item_tbl_#{@technology.id}" }
+      %table.table.table-bordered{ id: "price_item_tbl_#{@technology.id}" }
         %tbody
           %tr
             %th{ colspan: 5 } Components:
             %th Supplier
-            %th.right-align # per:
-            %th.right-align avail.
-            %th.right-align need
+            %th.right-align $ ea
+            %th.right-align # per
+            %th.right-align $ per
+            %th.right-align $ total
           -# Components
           = render partial: 'assembly', collection: @assemblies.where(item_type: 'Component').ascending, locals: { nesting: 0 }
           %tr
             %th{ colspan: 5 } Parts:
             %th Supplier
-            %th.right-align # per:
-            %th.right-align avail.
-            %th.right-align need
+            %th.right-align $ ea
+            %th.right-align # per
+            %th.right-align $ per
+            %th.right-align $ total
           -# Parts
           = render partial: 'assembly', collection: @assemblies.where(item_type: 'Part').ascending, locals: { nesting: 0 }
           -# Materials
@@ -33,9 +37,10 @@
             %tr
               %th{ colspan: 5 } Materials:
               %th Supplier
-              %th.right-align # per:
-              %th.right-align avail.
-              %th.right-align need
+              %th.right-align $ ea
+              %th.right-align # per
+              %th.right-align $ per
+              %th.right-align $ total
           = render partial: 'material', collection:  @materials
   .row.no-print
     .col.right-align

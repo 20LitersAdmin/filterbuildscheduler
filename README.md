@@ -89,6 +89,12 @@
 6. **DONE** Items are modified to fit new schema:
   1. unify anything with '**VWF**' and '**20l**'
 
+### Nerfed pages:
+* status_inventories_path
+* financials_inventories_path
+* labels_path
+* order_all_inventories_path
+
 ### Stretch goals:
 7. HAML > .html.erb
   - install HAML and use for all new/updated views

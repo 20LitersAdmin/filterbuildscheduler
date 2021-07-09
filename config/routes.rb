@@ -57,6 +57,7 @@ Rails.application.routes.draw do
   resources :technologies, only: [:index] do
     member do
       get 'items'
+      get 'prices'
     end
   end
 
