@@ -24,6 +24,7 @@ class Technology < ApplicationRecord
   scope :finance_worthy, -> { where.not(price_cents: 0).order(:name) }
 
   before_create :set_short_name, if: -> { short_name.nil? }
+  before_create :set_uid
 
   def leaders
     users.where(is_leader: true)
@@ -53,6 +54,19 @@ class Technology < ApplicationRecord
     events = Event.future.within_days(num).where(technology: self)
 
     events.map(&:item_goal).sum
+  end
+
+  # TODO: image should be probably needs to be adjusted
+  def label_hash
+    {
+      name: name,
+      description: 'Completed technology',
+      uid: uid,
+      technologies: [''],
+      quantity_per_box: quantity_per_box,
+      image: img_url,
+      only_loose: false
+    }
   end
 
   def materials
@@ -147,18 +161,18 @@ class Technology < ApplicationRecord
     "#{short_name} (#{owner_acronym})"
   end
 
-  # def superassemblies
-  #   Assembly.none
-  # end
-
-  # def subassemblies
-  #   # alias of assemblies, for tree traversal down
-  #   assemblies
-  # end
+  # TODO: delete after 1st migration
+  def uid
+    "T#{id.to_s.rjust(3, '0')}"
+  end
 
   private
 
   def set_short_name
     self.short_name = name.gsub(' Filter', '').gsub(' for Bucket', '')
+  end
+
+  def set_uid
+    self.uid = "T#{id.to_s.rjust(3, '0')}"
   end
 end

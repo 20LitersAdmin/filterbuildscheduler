@@ -2,16 +2,19 @@
 
 class AddCountsToItemTables < ActiveRecord::Migration[6.1]
   def change
+    add_column :materials,    :uid,                  :string
     add_column :materials,    :loose_count,          :integer, default: 0
     add_column :materials,    :box_count,            :integer, default: 0
     add_column :materials,    :available_count,      :integer, default: 0
     add_column :materials,    :history,              :jsonb, null: false, default: {}
 
+    add_column :parts,        :uid,                  :string
     add_column :parts,        :loose_count,          :integer, default: 0
     add_column :parts,        :box_count,            :integer, default: 0
     add_column :parts,        :available_count,      :integer, default: 0
     add_column :parts,        :history,              :jsonb, null: false, default: {}
 
+    add_column :components,   :uid,                  :string
     add_column :components,   :loose_count,          :integer, default: 0
     add_column :components,   :box_count,            :integer, default: 0
     add_column :components,   :available_count,      :integer, default: 0
@@ -19,18 +22,36 @@ class AddCountsToItemTables < ActiveRecord::Migration[6.1]
     # RubyMoney columns
     add_monetize :components, :price
 
+    add_column :technologies, :uid,                  :string
     add_column :technologies, :loose_count,          :integer, default: 0
     add_column :technologies, :box_count,            :integer, default: 0
     add_column :technologies, :available_count,      :integer, default: 0
     add_column :technologies, :history,              :jsonb, null: false, default: {}
     add_column :technologies, :quantities,           :jsonb, null: false, default: {}
+    add_column :technologies, :quantity_per_box,     :integer, default: 1
     # RubyMoney columns
     add_monetize :technologies, :price
 
     ActiveRecord::Base.logger.level = 1
 
-    puts 'add counts from latest inventory'
+    puts 'assign UIDs to items'
+    Technology.all.each do |t|
+      t.update_columns(uid: t.uid)
+    end
 
+    Component.all.each do |c|
+      c.update_columns(uid: c.uid)
+    end
+
+    Part.all.each do |pa|
+      pa.update_columns(uid: pa.uid)
+    end
+
+    Material.all.each do |m|
+      m.update_columns(uid: m.uid)
+    end
+
+    puts 'add counts from latest inventory'
     Inventory.latest.counts.each do |c|
       c.item.update_columns(
         loose_count: c.loose_count,

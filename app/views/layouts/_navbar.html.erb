@@ -28,7 +28,7 @@
               <%= link_to 'Builds', root_path %>
             </li>
           <% end %>
-          <% if !current_page?('/info') && !current_user.is_admin? %>
+          <% if !current_page?('/info') && !current_user&.is_admin? %>
             <li>
               <%= link_to 'Info', info_path %>
             </li>

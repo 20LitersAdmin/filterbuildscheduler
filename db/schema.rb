@@ -69,6 +69,7 @@ ActiveRecord::Schema.define(version: 2021_07_01_012526) do
     t.text "comments"
     t.boolean "only_loose", default: false
     t.text "description"
+    t.string "uid"
     t.integer "loose_count", default: 0
     t.integer "box_count", default: 0
     t.integer "available_count", default: 0
@@ -207,6 +208,7 @@ ActiveRecord::Schema.define(version: 2021_07_01_012526) do
     t.integer "last_ordered_quantity"
     t.datetime "last_received_at"
     t.integer "last_received_quantity"
+    t.string "uid"
     t.integer "loose_count", default: 0
     t.integer "box_count", default: 0
     t.integer "available_count", default: 0
@@ -276,6 +278,7 @@ ActiveRecord::Schema.define(version: 2021_07_01_012526) do
     t.integer "last_ordered_quantity"
     t.datetime "last_received_at"
     t.integer "last_received_quantity"
+    t.string "uid"
     t.integer "loose_count", default: 0
     t.integer "box_count", default: 0
     t.integer "available_count", default: 0
@@ -342,11 +345,13 @@ ActiveRecord::Schema.define(version: 2021_07_01_012526) do
     t.integer "monthly_production_rate", default: 1, null: false
     t.string "short_name"
     t.boolean "list_worthy", default: true, null: false
+    t.string "uid"
     t.integer "loose_count", default: 0
     t.integer "box_count", default: 0
     t.integer "available_count", default: 0
     t.jsonb "history", default: {}, null: false
     t.jsonb "quantities", default: {}, null: false
+    t.integer "quantity_per_box", default: 1
     t.integer "price_cents", default: 0, null: false
     t.string "price_currency", default: "USD", null: false
     t.index ["discarded_at"], name: "index_technologies_on_discarded_at"

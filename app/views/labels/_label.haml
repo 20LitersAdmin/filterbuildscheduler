@@ -1,0 +1,34 @@
+-# frozen_string_literal: true
+
+%table.item-label
+  %tr
+    %td.td-img{ rowspan: 5 }
+      %img{ src: label.image }
+    %td.td-name{ colspan: 2 }
+      %p
+        = label.name
+  %tr
+    %td.td-desc{ colspan: 2 }
+      %p
+        = label.description
+  %tr
+    %td.right-border
+      %p.bold
+        UID
+    %td
+      %p.bold
+        = label.uid
+  %tr
+    %td.right-border
+      %p
+        Tech
+    %td.td-tech-names
+      %p.tiny
+        = label.technologies.join(',')
+  %tr
+    %td.right-border
+      %p
+        Qty/box
+    %td
+      %p
+        = number_with_delimiter(label.quantity_per_box) unless label.only_loose?
