@@ -1,0 +1,34 @@
+-# frozen_string_literal: true
+
+.no-print
+  %h4 Printing instructions:
+  %ul
+    %li Print from Google Chrome
+    %li Under "More Settings", set Margins to "None"
+    %li There is no way to select a specific paper tray, so either remove all other paper from printer or open all other paper trays
+    %li Use Avery 8136 labels (4"x2", 10 per page), lay face-up in Operations Xerox 7120
+#paper_labels
+  %table#avery8163
+    %thead
+      %tr
+        %td.spacer-gutter &nbsp
+        %td.spacer-label &nbsp
+        %td.spacer-center &nbsp
+        %td.spacer-label &nbsp
+        %td.spacer-gutter &nbsp
+    %tfoot
+      %tr
+        %td{ colspan: 5 }
+    %tbody
+      - 5.times do
+        %tr.label-row
+          %td
+          / Left gutter
+          %td
+            = render partial: @label
+          %td
+          / Middle gutter
+          %td
+            = render partial: @label
+          %td
+          / Right gutter

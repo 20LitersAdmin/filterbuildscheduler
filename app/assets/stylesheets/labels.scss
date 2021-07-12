@@ -6,7 +6,13 @@
   }
 }
 
-// `/inventories/#id/counts/#id/label`
+// '/labels'
+.twentyliters form a.btn-check {
+  font-size: 9px;
+}
+
+// `/label/:uid`
+// TODO: where is #inventory_labels
 #inventory_labels, #paper_labels {
   width: 8.5in;
   margin-right: auto;
@@ -98,7 +104,8 @@ table#avery8163 {
 
       .td-tech-names {
         overflow: hidden;
-        white-space: nowrap;
+        // TODO: does commenting this out wreck the spacing on print?
+        // white-space: nowrap;
 
         .tiny {
           font-size: 0.8em;

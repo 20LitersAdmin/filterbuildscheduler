@@ -32,6 +32,19 @@ class CreateAssembliesJoinTable < ActiveRecord::Migration[6.1]
 
     ActiveRecord::Base.logger.level = 1
 
+    # shorten Technology Names:
+    ary = [
+      [1, 'VF100'],
+      [2, 'VF500'],
+      [3, 'SAM3'],
+      [4, 'VF200'],
+      [7, 'SAM2'],
+      [8, 'Pump']
+    ]
+    ary.each do |i|
+      Technology.find(i[0]).update(short_name: i[1])
+    end
+
     puts 'delete obsolete items before creating assemblies'
     moot_parts = [1, 20, 21, 24, 26, 30, 32, 45, 46, 47, 48, 49, 51, 52, 53, 54, 55, 57, 58, 62, 64, 65, 111]
     ExtrapolateMaterialPart.where(part_id: moot_parts).destroy_all

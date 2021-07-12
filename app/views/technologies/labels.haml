@@ -1,0 +1,48 @@
+-# frozen_string_literal: true
+
+= form_tag labels_select_path, method: 'post', class: 'form-inline' do
+  .row
+    .col-xs-8
+      %h3 Select labels to print
+    .col-xs-4
+      = submit_tag 'Submit', class: 'btn yellow float-right', name: nil
+  .row
+    .col-xs-12.right-align
+      %a{ href: '#', class: 'btn blue btn-check', id: 'check_all' }
+        = fa_stacked_icon('check', base: 'square-o')
+        %span.bnt-text  all
+      %a{ href: '#', class: 'btn blue btn-check', id: 'uncheck_all' }
+        = fa_stacked_icon 'square', base: 'square-o'
+        %span.bnt-text  all
+  .row
+    .col-xs-12
+      %table.table.table-striped.datatable-label-chooser
+        %thead
+          %tr
+            %th Item
+            %th Select
+        %tbody
+          - @technologies.each do |i|
+            %tr{ id: i[0] }
+              %td #{i[0]}: #{i[1]}
+              %td
+                = check_box_tag i[0], 1, false, { class: 'label-checkbox' }
+          - @components.each do |i|
+            %tr{ id: i[0] }
+              %td #{i[0]}: #{i[1]}
+              %td
+                = check_box_tag i[0], 1, false, { class: 'label-checkbox' }
+          - @parts.each do |i|
+            %tr{ id: i[0] }
+              %td #{i[0]}: #{i[1]}
+              %td
+                = check_box_tag i[0], 1, false, { class: 'label-checkbox' }
+          - @materials.each do |i|
+            %tr{ id: i[0] }
+              %td #{i[0]}: #{i[1]}
+              %td
+                = check_box_tag i[0], 1, false, { class: 'label-checkbox' }
+  .row
+    .col-xs-12
+      = submit_tag 'Submit', class: 'btn yellow float-right', name: nil
+

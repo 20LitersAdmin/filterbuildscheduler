@@ -54,6 +54,7 @@ $(document).on("turbolinks:load", function(){
   });
 
   $(document).on("click", ".use-load-screen", function() {
+    // TODO: this should fail if "Target=_blank"
     $("#load_screen").show();
   });
 });

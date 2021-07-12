@@ -105,16 +105,6 @@ class CountsController < ApplicationController
     end
   end
 
-  def labels
-    # Choose which label to print
-    authorize Count
-    @counts = Inventory.latest.counts.sort_by { |c| [c.group_by_tech, c.item.uid] }
-  end
-
-  def label
-    # print full sheet of lables for this one item
-  end
-
   def destroy; end
 
   private

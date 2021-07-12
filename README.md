@@ -103,7 +103,9 @@
 8. Inventory#edit uses Websockets for real-time page changes when multiple users are performing an inventory at once.
 
 **Current:**
+- labels path
 - NEXT: Inventory flow && Count creation
+- `/label/:uid` link in rails_admin
 
 #### After 1st deployment:
 * Migrate the db
@@ -111,7 +113,6 @@
 #### 2nd deployment work to be done
 * Un-comment-out `Part#before_save :set_made_from_materials`
 * Remove TEMP methods from Part, Component, Material
-* Delete Extrap models
 * Un-comment-out `has_one_attached` on Items
 * Un-comment-out `include Discard::Model` && `scope :active` on Models
 * Un-comment-out `monetize :price_cents` on Technology, Component, and Assembly

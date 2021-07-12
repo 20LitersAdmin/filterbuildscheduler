@@ -10,4 +10,18 @@ module Constants
     INTERNAL_DOMAINS = %w[@20liters @twentyliters @20litres @twentylitres].freeze
     public_constant :INTERNAL_DOMAINS
   end
+
+  module UID
+    CHAR = {
+      'C': 'Component',
+      'M': 'Material',
+      'P': 'Part',
+      'T': 'Technology'
+    }.freeze
+
+    REGEX = /^(C|M|P|T)[0-9]{3}$/.freeze
+
+    public_constant :CHAR
+    public_constant :REGEX
+  end
 end

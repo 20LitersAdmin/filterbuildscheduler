@@ -15,6 +15,8 @@ class Material < ApplicationRecord
 
   monetize :price_cents, allow_nil: true, numericality: { greater_than_or_equal_to: 0 }
 
+  before_create :set_uid
+
   # TODO: Second deployment
   # scope :active, -> { kept }
 
@@ -31,6 +33,20 @@ class Material < ApplicationRecord
     else
       0
     end
+  end
+
+  # TODO: image should be probably needs to be adjusted
+  # TODO: Needs technologies.active
+  def label_hash
+    {
+      name: name,
+      description: description,
+      uid: uid,
+      technologies: technologies.pluck(:short_name),
+      quantity_per_box: quantity_per_box,
+      image: picture,
+      only_loose: only_loose?
+    }
   end
 
   def latest_count
@@ -92,11 +108,18 @@ class Material < ApplicationRecord
     end
   end
 
+  # TODO: delete after 1st migration
   def uid
     "M#{id.to_s.rjust(3, 0.to_s)}"
   end
 
   def weeks_to_out
     latest_count.present? ? latest_count.weeks_to_out : 0
+  end
+
+  private
+
+  def set_uid
+    self.uid = "M#{id.to_s.rjust(3, 0.to_s)}"
   end
 end

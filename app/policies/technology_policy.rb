@@ -19,4 +19,16 @@ class TechnologyPolicy
   def prices?
     index?
   end
+
+  def label?
+    index?
+  end
+
+  def labels?
+    index?
+  end
+
+  def labels_select?
+    index?
+  end
 end

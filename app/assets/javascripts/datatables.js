@@ -111,8 +111,8 @@ $(document).on("turbolinks:load", function(){
     info: false,
     dom: "ft",
     columnDefs: [
-    { "orderable": false, "targets": -1 }
-  ]
+      { "orderable": false, "targets": -1 }
+    ]
   });
 
   $('.datatable-order-item').DataTable({
@@ -205,5 +205,23 @@ $(document).on("turbolinks:load", function(){
       "<'col-xs-8 no-overflow'f>"+
       "t"+
       "<'col-xs-8'p>"
+  });
+
+  $('.datatable-label-chooser').DataTable({
+    retrieve: true,
+    order: [[0, "asc"]],
+    lengthMenu: [[25, 50, 100, -1], [25, 50, 100, "All"] ],
+    pageLength: -1,
+    responsive: true,
+    autoWidth: false,
+    info: false,
+    dom:
+      "<'col-xs-4 no-overflow'l>"+
+      "<'col-xs-8 no-overflow'f>"+
+      "t",
+    columns: [
+      null,
+      { "orderDataType": "dom-checkbox", "orderSequence": [ "desc" ] }
+    ]
   });
 });

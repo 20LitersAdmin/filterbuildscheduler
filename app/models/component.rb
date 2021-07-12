@@ -10,6 +10,7 @@ class Component < ApplicationRecord
   # TODO: Second deployment
   # scope :active, -> { kept }
 
+  before_create :set_uid
   before_destroy :dependent_destroy_assemblies
 
   # TODO: Second deployment
@@ -25,14 +26,17 @@ class Component < ApplicationRecord
   end
 
   # associations through Assembly
+  # TODO: Needs .active
   def technologies
     Technology.where('quantities ? :key', key: uid)
   end
 
+  # TODO: Needs .active
   def superassemblies
     Assembly.where(item_id: id, item_type: 'Component')
   end
 
+  # TODO: Needs .active
   def supercomponents
     Component.find_by_sql(
       "SELECT * FROM components
@@ -44,10 +48,12 @@ class Component < ApplicationRecord
     )
   end
 
+  # TODO: Needs .active
   def subassemblies
     Assembly.where(combination_id: id, combination_type: 'Component')
   end
 
+  # TODO: Needs .active
   def subcomponents
     Component.find_by_sql(
       "SELECT * FROM components
@@ -59,6 +65,19 @@ class Component < ApplicationRecord
     )
   end
   # end associations
+
+  # TODO: image should be probably needs to be adjusted
+  def label_hash
+    {
+      name: name,
+      description: description,
+      uid: uid,
+      technologies: technologies.pluck(:short_name),
+      quantity_per_box: quantity_per_box,
+      image: picture,
+      only_loose: only_loose?
+    }
+  end
 
   def parts
     Part.joins(:assemblies).where('assemblies.combination_id = ? AND assemblies.combination_type = ?', id, 'Component')
@@ -118,6 +137,7 @@ class Component < ApplicationRecord
     end
   end
 
+  # TODO: delete after 1st migration
   def uid
     "C#{id.to_s.rjust(3, '0')}"
   end
@@ -127,5 +147,9 @@ class Component < ApplicationRecord
   def dependent_destroy_assemblies
     superassemblies.destroy_all
     subassemblies.destroy_all
+  end
+
+  def set_uid
+    self.uid = "C#{id.to_s.rjust(3, '0')}"
   end
 end

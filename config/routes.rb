@@ -10,12 +10,15 @@ Rails.application.routes.draw do
   get 'users/communication', to: 'users#communication', as: 'users_communication'
   put 'users/comm_complete', to: 'users#comm_complete', as: 'users_comm_complete'
   patch 'users/:id', to: 'users#update', as: 'update_user'
+  get 'users/:id/availability', to: 'users#availability', as: 'user_availability'
   get :waiver, controller: :application
 
   get 'info', to: 'pages#info', as: 'info'
-  get 'labels', to: 'counts#labels', as: 'labels'
   get 'leaders', to: 'users#leaders', as: 'leaders'
-  get 'users/:id/availability', to: 'users#availability', as: 'user_availability'
+
+  get 'labels', to: 'technologies#labels', as: 'labels'
+  get 'label/:uid', to: 'technologies#label', as: 'label'
+  post 'labels_select', to: 'technologies#labels_select', as: 'labels_select'
 
   resources :report, only: [:index] do
     collection do
@@ -70,7 +73,6 @@ Rails.application.routes.draw do
       get 'paper'
     end
     resources :counts do
-      get 'label', on: :member
       get 'polled_index', on: :collection
     end
   end

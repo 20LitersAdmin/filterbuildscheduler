@@ -24,6 +24,7 @@ class Part < ApplicationRecord
   scope :orderable, -> { where(made_from_materials: false) }
   scope :made_from_materials, -> { where(made_from_materials: true) }
 
+  before_create :set_uid
   # TODO: Second deployment
   # before_save :set_made_from_materials
 
@@ -44,6 +45,20 @@ class Part < ApplicationRecord
     return Money.new(0) if emp.nil?
 
     emp.material.price / emp.parts_per_material
+  end
+
+  # TODO: image should be probably needs to be adjusted
+  # TODO: Needs technologies.active
+  def label_hash
+    {
+      name: name,
+      description: description,
+      uid: uid,
+      technologies: technologies.pluck(:short_name),
+      quantity_per_box: quantity_per_box,
+      image: picture,
+      only_loose: only_loose?
+    }
   end
 
   # TODO: fix this or un-use it
@@ -112,6 +127,7 @@ class Part < ApplicationRecord
     technologies.pluck(:short_name)
   end
 
+  # TODO: delete after 1st migration
   def uid
     "P#{id.to_s.rjust(3, 0.to_s)}"
   end
@@ -125,5 +141,9 @@ class Part < ApplicationRecord
 
   def set_made_from_materials
     self.made_from_materials = materials.any?
+  end
+
+  def set_uid
+    self.uid = "P#{id.to_s.rjust(3, 0.to_s)}"
   end
 end

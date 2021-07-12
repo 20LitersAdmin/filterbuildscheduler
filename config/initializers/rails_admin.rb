@@ -30,7 +30,7 @@ require Rails.root.join('lib', 'rails_admin', 'discard.rb')
 RailsAdmin.config do |config|
   config.parent_controller = ApplicationController.to_s
   config.main_app_name = ['20 Liters', 'Admin']
-  config.excluded_models = ['ActiveStorage::Blob', 'ActiveStorage::Attachment']
+  # config.excluded_models = ['ActiveStorage::Blob', 'ActiveStorage::Attachment']
 
   # Monkey patch to remove default_scope
   #
