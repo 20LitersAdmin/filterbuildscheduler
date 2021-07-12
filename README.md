@@ -76,6 +76,7 @@
   - **DONE** Locations have an image
   - Images can be managed through the admin view
     * rails_admin [interface for management](https://github.com/sferik/rails_admin/wiki/ActiveStorage)
+  - **DONE** Images are automatically migrated (ImageSyncJob.perform_now)
 
 5. **DONE** `paranoia` is not a best practice
   - **DONE** Inventory and Counts do not need to soft-delete
@@ -92,8 +93,8 @@
 ### Nerfed pages:
 * status_inventories_path
 * financials_inventories_path
-* labels_path
 * order_all_inventories_path
+* order_inventories_path (for below minimums)
 
 ### Stretch goals:
 7. HAML > .html.erb
@@ -103,8 +104,12 @@
 8. Inventory#edit uses Websockets for real-time page changes when multiple users are performing an inventory at once.
 
 **Current:**
-- labels path
 - NEXT: Inventory flow && Count creation
+- order && order_all pages (unlink from Count && Inventory)
+  - might need a #below_minimum boolean on Items for quick grabbing of Item#count_is_below_minimum
+  - even Technology#has_items_below_minimum boolean
+  - calculate after every inventory
+- rails_admin
 - `/label/:uid` link in rails_admin
 
 #### After 1st deployment:
