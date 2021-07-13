@@ -1,9 +1,10 @@
 -# frozen_string_literal: true
+
 .container
   .row
-    = form_tag prices_technology_path(@technology.id), method: 'get', class: 'form-inline', enforce_uft8: false do
+    = form_tag items_technology_path(@technology.id), method: 'get', class: 'form-inline', enforce_uft8: false do
       .col-md-8
-        %h3 #{ @technology.name } Item List:
+        %h3 #{@technology.name} Item List:
       .col-md-2.no-print.form-group
         = number_field_tag 'q', @quantity_val, { min: 0, step: 1, class: 'form-control', placeholder: 'Quantity' }
       .col-md-2.no-print.form-group

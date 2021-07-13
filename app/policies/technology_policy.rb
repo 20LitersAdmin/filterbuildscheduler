@@ -31,4 +31,8 @@ class TechnologyPolicy
   def labels_select?
     index?
   end
+
+  def donation_list?
+    true
+  end
 end

@@ -1,0 +1,16 @@
+-# frozen_string_literal: true
+
+%tr
+  -# UID
+  %td= donation_item[0]
+  -# Item
+  %td= donation_item[1]
+  -# Supplier
+  %td= donation_item[2]
+  -# SKU
+  %td= donation_item[3]
+  -# Quantity needed
+  %td.text-right= human_float(donation_item[4].values.sum * @quantity)
+  %td.text-right= humanized_money_with_symbol(donation_item[5] / 100.00)
+  - if @quantity > 1
+    %td.text-right= humanized_money_with_symbol( (donation_item[5] / 100.00) * @quantity)

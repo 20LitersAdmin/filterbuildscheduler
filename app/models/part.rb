@@ -23,6 +23,7 @@ class Part < ApplicationRecord
   # scope :active, -> { kept }
   scope :orderable, -> { where(made_from_materials: false) }
   scope :made_from_materials, -> { where(made_from_materials: true) }
+  scope :not_made_from_materials, -> { where(made_from_materials: false) }
 
   before_create :set_uid
   # TODO: Second deployment

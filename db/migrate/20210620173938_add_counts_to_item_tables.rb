@@ -7,18 +7,21 @@ class AddCountsToItemTables < ActiveRecord::Migration[6.1]
     add_column :materials,    :box_count,            :integer, default: 0
     add_column :materials,    :available_count,      :integer, default: 0
     add_column :materials,    :history,              :jsonb, null: false, default: {}
+    add_column :materials,    :quantities,           :jsonb, null: false, default: {}
 
     add_column :parts,        :uid,                  :string
     add_column :parts,        :loose_count,          :integer, default: 0
     add_column :parts,        :box_count,            :integer, default: 0
     add_column :parts,        :available_count,      :integer, default: 0
     add_column :parts,        :history,              :jsonb, null: false, default: {}
+    add_column :parts,        :quantities,           :jsonb, null: false, default: {}
 
     add_column :components,   :uid,                  :string
     add_column :components,   :loose_count,          :integer, default: 0
     add_column :components,   :box_count,            :integer, default: 0
     add_column :components,   :available_count,      :integer, default: 0
     add_column :components,   :history,              :jsonb, null: false, default: {}
+
     # RubyMoney columns
     add_monetize :components, :price
 
