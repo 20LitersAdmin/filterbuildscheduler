@@ -1,5 +1,6 @@
 -# frozen_string_literal: true
 :ruby
+  # array comparison with '&'' prevents material.parts from returning parts associated with a different technology
   parts_uid_ary = material.parts.map(&:uid) & @part_uids
   available = material.available_count
   per_tech = @technology.quantities[material.uid]

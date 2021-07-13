@@ -213,6 +213,7 @@ ActiveRecord::Schema.define(version: 2021_07_01_012526) do
     t.integer "box_count", default: 0
     t.integer "available_count", default: 0
     t.jsonb "history", default: {}, null: false
+    t.jsonb "quantities", default: {}, null: false
     t.index ["discarded_at"], name: "index_materials_on_discarded_at"
     t.index ["supplier_id"], name: "index_materials_on_supplier_id"
   end
@@ -283,6 +284,7 @@ ActiveRecord::Schema.define(version: 2021_07_01_012526) do
     t.integer "box_count", default: 0
     t.integer "available_count", default: 0
     t.jsonb "history", default: {}, null: false
+    t.jsonb "quantities", default: {}, null: false
     t.index ["discarded_at"], name: "index_parts_on_discarded_at"
     t.index ["supplier_id"], name: "index_parts_on_supplier_id"
   end

@@ -14,11 +14,11 @@ $(document).on("turbolinks:load", function(){
     autoWidth: false,
     info: false,
     dom:
-      "<'col-xs-12 no-overflow center' B>"+
-      "<'col-xs-4 no-overflow'l>"+
-      "<'col-xs-8 no-overflow'f>"+
+      "<'col-xs-12 no-overflow center no-print' B>"+
+      "<'col-xs-4 no-overflow no-print'l>"+
+      "<'col-xs-8 no-overflow no-print'f>"+
       "t"+
-      "<'col-xs-8'p>",
+      "<'col-xs-8 no-print'p>",
     buttons: [ 'copy', 'csv', 'excel', 'print' ],
     language: {
       paginate: {
@@ -58,11 +58,11 @@ $(document).on("turbolinks:load", function(){
     autoWidth: false,
     info: false,
     dom:
-      "<'col-xs-12 no-overflow center' B>"+
-      "<'col-xs-4 no-overflow'l>"+
-      "<'col-xs-8 no-overflow'f>"+
+      "<'col-xs-12 no-overflow center no-print' B>"+
+      "<'col-xs-4 no-overflow no-print'l>"+
+      "<'col-xs-8 no-overflow no-print'f>"+
       "t"+
-      "<'col-xs-8'p>",
+      "<'col-xs-8 no-print'p>",
     buttons: [ 'copy', 'csv', 'excel', 'print' ],
     language: {
       paginate: {

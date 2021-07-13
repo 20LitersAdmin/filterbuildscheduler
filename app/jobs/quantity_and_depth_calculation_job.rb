@@ -5,16 +5,23 @@ class QuantityAndDepthCalculationJob < ApplicationJob
 
   def perform(*_args)
     set_all_assembly_depths_to_zero
+    set_all_item_quantities_to_zero
 
     Technology.list_worthy.each do |technology|
-      puts "Starting #{technology.name}"
-      loop_technology(technology)
+      @technology = technology
+      puts "Starting #{@technology.name}"
+      loop_technology
+
+      puts 'Setting Item quantities on items'
+      @technology.reload.quantities.each do |k, v|
+        insert_into_item_quantities(k, v) unless k[0] == 'C'
+      end
+
       puts "========================= FINISHED #{@technology.name} ========================="
     end
   end
 
-  def loop_technology(technology)
-    @technology = technology
+  def loop_technology
     # clear out any past quantity history
     @technology.quantities = {}
     # this counter is used to set the Assembly#depth needed for accurate PriceCalculationJob results
@@ -37,6 +44,7 @@ class QuantityAndDepthCalculationJob < ApplicationJob
       # for re-used assemblies, just increase the counter
       puts "Depth being set to #{a.depth + @counter}"
       a.update_columns(depth: a.depth + @counter)
+
       insert_into_quantity(a)
       @component_ids << a.item_id if a.item_type == 'Component'
       @part_ids_made_from_materials << a.item_id if a.item_type == 'Part' && a.item&.made_from_materials?
@@ -51,6 +59,12 @@ class QuantityAndDepthCalculationJob < ApplicationJob
     else
       @technology.quantities[assembly.item.uid] = assembly.quantity
     end
+  end
+
+  def insert_into_item_quantities(key, value)
+    item = key.objectify_uid
+    item.quantities[@technology.uid] = value
+    item.save
   end
 
   def loop_components(component_ids)
@@ -84,5 +98,10 @@ class QuantityAndDepthCalculationJob < ApplicationJob
 
   def set_all_assembly_depths_to_zero
     Assembly.update_all(depth: 0)
+  end
+
+  def set_all_item_quantities_to_zero
+    Part.update_all(quantities: {})
+    Material.update_all(quantities: {})
   end
 end

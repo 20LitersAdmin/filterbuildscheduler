@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class TechnologiesController < ApplicationController
-  before_action :set_technology, except: %i[index label labels labels_select]
+  before_action :set_technology, except: %i[index label labels labels_select donation_list]
   before_action :set_bom_items, only: %i[items prices]
 
   def index
@@ -11,6 +11,30 @@ class TechnologiesController < ApplicationController
   def items; end
 
   def prices; end
+
+  def donation_list
+    @quantity = params[:q].present? ? params[:q].to_i : 1
+    @quantity_val = params[:q].to_i if params[:q].present?
+
+    @technologies_select = Technology.list_worthy.pluck(:short_name, :id)
+    # params[:tech] can be used to limit the donations needed
+    tech_id_ary = broad_set_params.except(:q).keys
+
+    # TODO: Part.kept; Material.kept
+    @items = []
+    if tech_id_ary.any?
+      @selected_technologies = Technology.where(id: tech_id_ary)
+      @selected_technologies.each do |technology|
+        @items << technology.parts.joins(:supplier).pluck(:uid, :name, :'suppliers.name', :sku, :quantities, :price_cents)
+        @items << technology.materials.joins(:supplier).pluck(:uid, :name, :'suppliers.name', :sku, :quantities, :price_cents)
+      end
+    else
+      @selected_technologies = Technology.list_worthy
+      @items << Part.not_made_from_materials.joins(:supplier).pluck(:uid, :name, :'suppliers.name', :sku, :quantities, :price_cents)
+      @items << Material.all.joins(:supplier).pluck(:uid, :name, :'suppliers.name', :sku, :quantities, :price_cents)
+    end
+    @items.flatten!(1)
+  end
 
   def label
     authorize Technology
@@ -39,14 +63,14 @@ class TechnologiesController < ApplicationController
   def labels_select
     authorize Technology
 
-    if labels_select_params.empty?
+    if broad_set_params.empty?
       redirect_to labels_path
       flash[:danger] = 'No labels selected for printing.'
       return
     end
 
     @ary = []
-    labels_select_params.each do |uid, _bool|
+    broad_set_params.each do |uid, _bool|
       item = uid.objectify_uid
       @ary << Label.new(item.label_hash) unless item.nil?
     end
@@ -69,7 +93,7 @@ class TechnologiesController < ApplicationController
     @part_uids = @technology.quantities.keys.grep(/\AP/)
   end
 
-  def labels_select_params
+  def broad_set_params
     params.except(
       :authenticity_token,
       :action,
