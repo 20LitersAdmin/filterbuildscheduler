@@ -38,7 +38,7 @@ class TechnologiesController < ApplicationController
 
   def label
     authorize Technology
-    # get 'label', to: 'technologies#label', as: 'label'
+    # get 'label/:uid', to: 'technologies#label', as: 'label'
     # page to print a full page of labels for one item
     uid = params[:uid]
     item = uid.objectify_uid
@@ -53,7 +53,7 @@ class TechnologiesController < ApplicationController
     # get 'labels', to: 'technologies#labels', as: 'labels'
     # page to select multiple items to print individual lables
 
-    # TODO: Technology.kept.list_worthy; Component.kept et. al
+    # TODO: Technology.kept.list_worthy; Component.kept etc.
     @technologies = Technology.list_worthy.pluck(:uid, :name)
     @components =   Component.all.order(:name).pluck(:uid, :name)
     @parts =        Part.all.order(:name).pluck(:uid, :name)
@@ -89,7 +89,9 @@ class TechnologiesController < ApplicationController
     @quantity_val = params[:q].to_i if params[:q].present?
     @assemblies = @technology.assemblies.ascending
     @materials = @technology.materials
-    # Used for _material.haml#3
+    # Materials print which parts they are used to make.
+    # But this list can include parts not related to @technology
+    # So we compare material.parts & @part_uids
     @part_uids = @technology.quantities.keys.grep(/\AP/)
   end
 

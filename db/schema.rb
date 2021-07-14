@@ -84,7 +84,6 @@ ActiveRecord::Schema.define(version: 2021_07_01_012526) do
     t.bigint "inventory_id", null: false
     t.integer "loose_count", default: 0, null: false
     t.integer "unopened_boxes_count", default: 0, null: false
-    t.integer "extrapolated_count", default: 0, null: false
     t.boolean "partial_box", default: false
     t.boolean "partial_loose", default: false
     t.datetime "created_at", null: false

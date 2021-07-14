@@ -20,26 +20,35 @@
         %thead
           %tr
             %th Item
+            %th Print
             %th Select
         %tbody
           - @technologies.each do |i|
             %tr{ id: i[0] }
               %td #{i[0]}: #{i[1]}
               %td
+                = link_to 'print', label_path(i[0]), target: '_blank'
+              %td
                 = check_box_tag i[0], 1, false, { class: 'label-checkbox' }
           - @components.each do |i|
             %tr{ id: i[0] }
               %td #{i[0]}: #{i[1]}
+              %td
+                = link_to 'print', label_path(i[0]), target: '_blank'
               %td
                 = check_box_tag i[0], 1, false, { class: 'label-checkbox' }
           - @parts.each do |i|
             %tr{ id: i[0] }
               %td #{i[0]}: #{i[1]}
               %td
+                = link_to 'print', label_path(i[0]), target: '_blank'
+              %td
                 = check_box_tag i[0], 1, false, { class: 'label-checkbox' }
           - @materials.each do |i|
             %tr{ id: i[0] }
               %td #{i[0]}: #{i[1]}
+              %td
+                = link_to 'print', label_path(i[0]), target: '_blank'
               %td
                 = check_box_tag i[0], 1, false, { class: 'label-checkbox' }
   .row

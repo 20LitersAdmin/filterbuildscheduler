@@ -81,7 +81,7 @@ class User < ApplicationRecord
   end
 
   def can_do_inventory?
-    does_inventory? || is_admin? || send_inventory_emails?
+    does_inventory? || admin_or_leader? || send_inventory_emails?
   end
 
   def can_lead_event?(event)

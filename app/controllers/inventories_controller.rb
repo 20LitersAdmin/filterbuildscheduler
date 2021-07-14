@@ -39,7 +39,7 @@ class InventoriesController < ApplicationController
       @inventory.manual = true
     end
 
-    @technologies = Technology.list_worthy.order(name: :asc)
+    @technologies = Technology.list_worthy.order(:owner, :short_name)
   end
 
   def create
@@ -67,13 +67,12 @@ class InventoriesController < ApplicationController
     authorize @inventory = Inventory.create(inventory_params)
     @inventory.save
 
-    CountCreate.new(@inventory, technologies_params, current_user)
-
     if @inventory.errors.any?
       flash[:warning] = @inventory.errors.first.join(': ')
     else
+      CountCreate.new(@inventory.reload, technologies_params)
       flash[:success] = 'The inventory has been created.'
-      redirect_to inventories_path
+      redirect_to edit_inventory_path(@inventory)
     end
   end
 
@@ -91,9 +90,6 @@ class InventoriesController < ApplicationController
     authorize @inventory = Inventory.find(params[:id])
 
     @inventory.update(inventory_params)
-
-    # set count.extrapolated_count field values for all counts that are parts
-    Extrapolate.new(@inventory)
 
     # set :last_received_at and :last_received_quantity on active counts
     # early return: if @inventory.receiving?

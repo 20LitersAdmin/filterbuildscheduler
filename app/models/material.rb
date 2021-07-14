@@ -49,6 +49,7 @@ class Material < ApplicationRecord
     }
   end
 
+  # TODO: remove this
   def latest_count
     Count.where(inventory: Inventory.latest_completed, material: self).first
   end

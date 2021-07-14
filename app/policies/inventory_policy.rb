@@ -13,23 +13,23 @@ class InventoryPolicy
   end
 
   def create?
-    user&.can_do_inventory?
+    index?
   end
 
   def new?
-    user&.can_do_inventory?
+    index?
   end
 
   def edit?
-    user&.can_do_inventory?
+    index?
   end
 
   def show?
-    user&.can_do_inventory?
+    index?
   end
 
   def update?
-    user&.can_do_inventory?
+    index?
   end
 
   def destroy?
@@ -37,27 +37,27 @@ class InventoryPolicy
   end
 
   def order?
-    user&.can_do_inventory?
+    index?
   end
 
   def order_all?
-    user&.can_do_inventory?
+    index?
   end
 
   def status?
-    user&.admin_or_leader? || user&.can_do_inventory?
+    index?
   end
 
   def paper?
-    user&.admin_or_leader? || user&.can_do_inventory?
+    index?
   end
 
   def labels?
-    user&.admin_or_leader? || user&.can_do_inventory?
+    index?
   end
 
   def financials?
-    user&.can_do_inventory?
+    index?
   end
 end
 

@@ -33,6 +33,6 @@ class TechnologyPolicy
   end
 
   def donation_list?
-    true
+    index?
   end
 end
