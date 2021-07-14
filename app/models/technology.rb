@@ -20,7 +20,7 @@ class Technology < ApplicationRecord
   # TODO: Second deployment
   # scope :active, -> { kept }
   scope :status_worthy, -> { where('monthly_production_rate > ?', 0).order(monthly_production_rate: 'desc') }
-  scope :list_worthy, -> { where(list_worthy: true).order(:name) }
+  scope :list_worthy, -> { where(list_worthy: true) }
   scope :finance_worthy, -> { where.not(price_cents: 0).order(:name) }
 
   before_create :set_short_name, if: -> { short_name.nil? }
@@ -85,6 +85,11 @@ class Technology < ApplicationRecord
     ary = []
     uids.each { |u| ary << u.tr('P', '').to_i }
     Part.where(id: ary)
+  end
+
+  # TODO: temp method, remove after images are enabled
+  def picture
+    img_url
   end
 
   # TODO: re-work this

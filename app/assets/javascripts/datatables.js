@@ -215,12 +215,15 @@ $(document).on("turbolinks:load", function(){
     responsive: true,
     autoWidth: false,
     info: false,
+    columnDefs: [
+      { "orderable": false, "targets": 1 }
+    ],
     dom:
       "<'col-xs-4 no-overflow'l>"+
       "<'col-xs-8 no-overflow'f>"+
       "t",
     columns: [
-      null,
+      null, null,
       { "orderDataType": "dom-checkbox", "orderSequence": [ "desc" ] }
     ]
   });

@@ -10,7 +10,7 @@ class Count < ApplicationRecord
   belongs_to :item, polymorphic: true
 
   validates :inventory_id, :loose_count, :unopened_boxes_count, presence: true
-  validates :loose_count, :unopened_boxes_count, :extrapolated_count, numericality: { only_integer: true }
+  validates :loose_count, :unopened_boxes_count, numericality: { only_integer: true }
 
   scope :not_components, -> { where(component_id: nil) }
   scope :changed, -> { where.not(user_id: nil) }
@@ -22,37 +22,32 @@ class Count < ApplicationRecord
   end
 
   def avail_value
-    return available * item.price unless item.instance_of?(Part)
-
-    if part.made_from_materials? && part.price_cents.zero? && part.extrapolate_material_parts.any?
-      emp = part.extrapolate_material_parts.first
-      available * emp.part_price
-    else
-      available * item.price
-    end
+    available * item.price
   end
 
   def box_count
     item.quantity_per_box * unopened_boxes_count
   end
 
-  def can_produce_x_parent
-    return 0 if available.zero?
+  # TODO: fix or remove
+  # def can_produce_x_parent
+  #   return 0 if available.zero?
 
-    case type
-    when 'material'
-      # Materials are larger than parts (1 material makes many parts)
-      material.extrapolate_material_parts.any? ? available * material.extrapolate_material_parts.first.parts_per_material.to_i : available
-    when 'part'
-      part.extrapolate_component_parts.any? ? available / part.extrapolate_component_parts.first.parts_per_component.to_i : available
-    when 'component'
-      available / item.per_technology
-    end
-  end
+  #   case type
+  #   when 'material'
+  #     # Materials are larger than parts (1 material makes many parts)
+  #     material.extrapolate_material_parts.any? ? available * material.extrapolate_material_parts.first.parts_per_material.to_i : available
+  #   when 'part'
+  #     part.extrapolate_component_parts.any? ? available / part.extrapolate_component_parts.first.parts_per_component.to_i : available
+  #   when 'component'
+  #     available / item.per_technology
+  #   end
+  # end
 
-  def can_produce_x_tech
-    available.zero? ? 0 : available / item.per_technology
-  end
+  # TODO: fix or remove
+  # def can_produce_x_tech
+  #   available.zero? ? 0 : available / item.per_technology
+  # end
 
   def diff_from_previous(field)
     case field
@@ -69,7 +64,7 @@ class Count < ApplicationRecord
     item.technologies.map(&:id).min || 999
   end
 
-  # TODO: used by a job to update item's history when inventory is marked complete,
+  # history_json is used by a job to update item's history when inventory is marked complete,
   # before record is destroyed
   def history_json
     {
@@ -78,7 +73,10 @@ class Count < ApplicationRecord
     }
   end
 
+  # TODO: remove after first migration
   def item
+    return super if Count.column_names.include?('item_type')
+
     if part_id.present?
       Part.find(part_id)
     elsif material_id.present?
@@ -138,30 +136,25 @@ class Count < ApplicationRecord
   end
 
   def previous_box
-    previous_count.present? ? previous_count.unopened_boxes_count : 0
+    previous_count['box']
   end
 
   def previous_count
-    prev_inv = previous_inventory
+    date = inventory.date.iso8601
+    prev_date = item.history.keys.sort.reverse.find { |d| d <= date }
 
-    return unless prev_inv.present?
+    return { 'box': 0, 'loose': 0 } if prev_date.nil?
 
-    case type
-    when 'part'
-      prev_inv.counts.where(part: part.id).first
-    when 'material'
-      prev_inv.counts.where(material: material.id).first
-    when 'component'
-      prev_inv.counts.where(component: component.id).first
-    end
+    item.history[prev_date]
   end
 
+  # TODO: this should be unnecessary
   def previous_inventory
     Inventory.latest_since(inventory.created_at)
   end
 
   def previous_loose
-    previous_count.present? ? previous_count.loose_count : 0
+    previous_count['loose']
   end
 
   def price
@@ -189,6 +182,8 @@ class Count < ApplicationRecord
   end
 
   def tech_ids
+    return item.id if item_type == 'Technology'
+
     ids = item.technologies.pluck(:id)
 
     if ids.empty?
@@ -199,6 +194,8 @@ class Count < ApplicationRecord
   end
 
   def tech_names
+    return item.name if item_type == 'Technology'
+
     if item.technologies.map(&:name).empty?
       'not associated'
     else
@@ -207,6 +204,8 @@ class Count < ApplicationRecord
   end
 
   def tech_names_short
+    return item.short_name if item_type == 'Technology'
+
     if item.technologies.map(&:name).empty?
       'n/a'
     else
@@ -222,9 +221,9 @@ class Count < ApplicationRecord
     item.technologies
   end
 
-  def total
-    inventory.completed_at.nil? ? 'Not Finalized' : available + extrapolated_count
-  end
+  # def total
+  #   inventory.completed_at.nil? ? 'Not Finalized' : available + extrapolated_count
+  # end
 
   def ttl_value
     return '-' if inventory.completed_at.blank?

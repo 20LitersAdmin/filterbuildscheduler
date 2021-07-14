@@ -104,13 +104,12 @@
 8. Inventory#edit uses Websockets for real-time page changes when multiple users are performing an inventory at once.
 
 **Current:**
-- NEXT: Inventory flow && Count creation
-- order && order_all pages (unlink from Count && Inventory)
+- Inventory flow && Count creation
+- NEXT: order && order_all pages (unlink from Count && Inventory)
   - might need a #below_minimum boolean on Items for quick grabbing of Item#count_is_below_minimum
   - even Technology#has_items_below_minimum boolean
   - calculate after every inventory
 - rails_admin
-- `/label/:uid` link in rails_admin
 
 #### After 1st deployment:
 * Migrate the db

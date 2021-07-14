@@ -6,7 +6,6 @@
   per_tech = @technology.quantities[material.uid]
   need = per_tech * @quantity
   highlight = 'color: red; font-weight: bolder; border: solid 2px red' if available < need
-  total = material.price * need
 
 %tr
   %td.right-align
