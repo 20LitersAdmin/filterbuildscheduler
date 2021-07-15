@@ -146,14 +146,3 @@
 #   end
 # end
 
-
-Spring in bin/rails:
-#!/usr/bin/env ruby
-begin
-  load File.expand_path('../spring', __FILE__)
-rescue LoadError => e
-  raise unless e.message.include?('spring')
-end
-APP_PATH = File.expand_path('../config/application', __dir__)
-require_relative '../config/boot'
-require 'rails/commands'
