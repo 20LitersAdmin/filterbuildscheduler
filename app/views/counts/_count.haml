@@ -1,0 +1,22 @@
+-# frozen_string_literal: true
+.col-lg-3.col-md-4.col-sm-6.col-xs-12.count-parent{ id: "count_#{count.id}" }
+  .count-div
+    %p.count-title
+      = count.name
+    .half.count-img{ style: "background-image: url('#{count.item.picture}')" }
+    .half
+      %p.count-tech
+        %strong.count-uid
+          = count.item.uid
+        %br/
+        %strong.count-tech
+          For: #{count.tech_names_short}
+      - if count.user_id.present?
+        %p.current-count
+          %strong Avail:
+          = count.available
+    = link_to count.link_text, edit_inventory_count_path(count.inventory_id, count), remote: true, class: "count-btn btn #{count.link_class}"
+  .count-filters
+    %p.counted{ title: count.user_id.present? }
+    %p.partial{ title: (count.partial_box || count.partial_loose) }
+    %p.techs{ title: count.tech_ids }

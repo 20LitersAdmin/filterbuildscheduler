@@ -209,7 +209,8 @@ class Count < ApplicationRecord
     if item.technologies.map(&:name).empty?
       'n/a'
     else
-      item.technologies.map { |t| t.name.gsub(' Filter', '').gsub(' for Bucket', '') }.join(', ')
+      item.technologies.pluck(:short_name).join(', ')
+      # item.technologies.map { |t| t.name.gsub(' Filter', '').gsub(' for Bucket', '') }.join(', ')
     end
   end
 

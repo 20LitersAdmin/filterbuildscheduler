@@ -1,7 +1,7 @@
 <div id="counts_edit" class="col-xs-12" data-type="<%= @inventory.type_for_params %>">
   <div class="row">
     <div class="col-xs-12">
-      <%= render partial: 'shared/label', locals: { count: @count } %>
+      <%= render partial: 'labels/label', locals: { label: Label.new(@count.item.label_hash) } %>
     </div>
   </div>
   <div class="row">

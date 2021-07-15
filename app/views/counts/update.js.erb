@@ -4,4 +4,5 @@ $('#count_modal_body').html('');
 $('#edit_count_modal').modal('hide')
 
 // update the partial
-$("div#count_<%= @count.id %>").html("<%= j render @count %>");
+// this should now be handled by CountsChannel
+// $("div#count_<%= @count.id %>").html("<%= j render @count %>");

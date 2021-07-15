@@ -65,11 +65,8 @@
   }
 
   .count-div {
-    background-color: $slightly-darker-light-grey;
-    background-repeat: no-repeat;
-    background-size: cover;
     border-radius: 4px;
-    height: 156px;
+    height: 16em;
     margin: .8em .2em;
     padding: .8em;
     text-align: center;
@@ -83,34 +80,33 @@
       font-weight: bold;
       padding-bottom: 6px;
       border-bottom: 2px solid #fce000;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      overflow: hidden;
+      height: 3.25em;
     }
     .count-tech, .current-count {
       margin: 0;
     }
-    p {
-      z-index: 9;
+    .half {
+      display: flex;
+      justify-content: center;
+      align-content: center;
+      flex-direction: column;
+      width: 50%;
+      height: 8em;
+      float: left;
+
+      &.count-img {
+        background-repeat: no-repeat;
+        background-size: contain;
+        background-position: center;
+      }
     }
-    a {
+    .count-btn {
       position: absolute;
-      bottom: 5px;
+      bottom: 1.5em;
       left: 0;
       right: 0;
       width: 60%;
       margin: 0 auto;
-    }
-    .layer {
-      background-color: rgba(218, 218, 218, 0.75);
-      border-radius: 4px;
-      position: absolute;
-      top: 6%;
-      left: 6%;
-      width: 88%;
-      height: 88%;
-      z-index: 1;
-      padding-top: 4%;
     }
   }
 

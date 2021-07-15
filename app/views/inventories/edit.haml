@@ -1,0 +1,69 @@
+-# frozen_string_literal: true
+
+#inventory_edit{ 'data-id': @inventory.id }
+  .row
+    .col-xs-8
+      %h2
+        Edit #{@inventory.name}
+    .col-xs-4.match-h2
+      = link_to 'Back', inventories_path, class: 'btn yellow'
+      %a#show_finalize_form.btn.blue{ href: '#' } Finalize
+      %p.right-align
+        = pluralize(@uncounted, 'item')
+        uncounted.
+  .row.spacer-bottom
+  #finalize_form.col-xs-12
+    .row
+      .col-sm-12.center-align
+        %h4 When all items have been counted and verified, click "Finalize Inventory" to mark the inventory complete, extrapolate parts from components, calculate values, and send notfications.
+        - if @uncounted.positive?
+          %p
+            There are still #{pluralize(@uncounted, 'item')} uncounted. Do you really want to proceed?
+      .col-sm-12.center-align
+        = simple_form_for @inventory do |f|
+          = f.input :completed_at, as: :hidden, input_html: { value: Time.now }
+          = f.submit 'Finalize Inventory', class: 'btn yellow'
+          %a#hide_finalize_form.btn.blue{ href: '#' } Cancel
+  #filter_div.col-xs-12.center
+    .row
+      %p Filters:
+      %button#clear.btn.yellow.count-btn{ type: 'button' } Show All
+      .btn-group.btn-group-sm{ role: 'group' }
+        %button#uncounted.btn.yellow.count-btn{ type: 'button' } Uncounted
+        %button#partial.btn.blue.count-btn{ type: 'button' } Partial
+        %button#counted.btn.blue.count-btn{ type: 'button' } Counted
+      .btn-group.btn-group-sm{ role: 'group' }
+        - @techs.each do |t|
+          %button.btn.empty.tech-btn{ id: "tech_#{t.id}", type: 'button' }= t.short_name
+      .btn-group.btn-group-sm
+        %input#search{ name: 'search', placeholder: 'Search...', type: 'text' }
+      .btn-group.btn-group-sm
+        %button#calculator.btn.blue.count-btn{ 'data-target': '#calculator_modal', 'data-toggle': 'modal', type: 'button' } Calculator
+    .row
+      .col-xs-12.center
+        .col-xs-6.text-right
+          %p#count_refresh_message Live refresh is running...
+        .col-xs-6.text-left
+          %button#cancel_polling.btn.yellow.btn-sm{ type: 'button' } Cancel
+          %button#start_polling.btn.yellow.btn-sm{ style: 'display: none;', type: 'button' } Start
+  #counts_div.col-xs-12
+    #counts_row.row
+      = render partial: 'counts/count', collection: @counts
+
+  #edit_count_modal.modal.fade{ role: 'dialog', 'tab-index': '-1' }
+    .modal-dialog{ role: 'document' }
+      .modal-content
+        .modal-header
+          %button.close{ 'aria-label': 'Close', 'data-dismiss': 'modal', type: 'button' }
+            %span{ 'aria-hidden': 'true' } ×
+        #count_modal_body.modal-body.row
+          %p Oops! Something broke.
+  #calculator_modal.modal.fade{ role: 'dialog', 'tab-index': '-1' }
+    .modal-dialog{ role: 'document' }
+      .modal-content
+        .modal-header
+          %button.close{ 'aria-label': 'Close', 'data-dismiss': 'modal', type: 'button' }
+            %span{ 'aria-hidden': 'true' } ×
+        #calculator_modal_body.modal-body
+          .row
+            = render partial: 'shared/calculator'

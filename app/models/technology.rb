@@ -7,8 +7,8 @@ class Technology < ApplicationRecord
   has_and_belongs_to_many :users
 
   # TODO: Second deployment
-  # has_one_attached :image, dependent: :purge
-  # has_one_attached :display_image, dependent: :purge
+  has_one_attached :image, dependent: :purge
+  has_one_attached :display_image, dependent: :purge
 
   has_many :assemblies, as: :combination, dependent: :destroy
   has_many :components, through: :assemblies, source: :item, source_type: 'Component'
