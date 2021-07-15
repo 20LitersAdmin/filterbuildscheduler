@@ -347,6 +347,7 @@ ActiveRecord::Schema.define(version: 2021_07_01_012526) do
     t.string "short_name"
     t.boolean "list_worthy", default: true, null: false
     t.string "uid"
+    t.boolean "only_loose", default: false
     t.integer "loose_count", default: 0
     t.integer "box_count", default: 0
     t.integer "available_count", default: 0

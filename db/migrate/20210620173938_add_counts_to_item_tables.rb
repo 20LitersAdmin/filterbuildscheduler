@@ -26,6 +26,7 @@ class AddCountsToItemTables < ActiveRecord::Migration[6.1]
     add_monetize :components, :price
 
     add_column :technologies, :uid,                  :string
+    add_column :technologies, :only_loose,           :boolean, default: false
     add_column :technologies, :loose_count,          :integer, default: 0
     add_column :technologies, :box_count,            :integer, default: 0
     add_column :technologies, :available_count,      :integer, default: 0

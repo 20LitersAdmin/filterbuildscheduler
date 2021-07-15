@@ -22,6 +22,7 @@
 //= require bootstrap-datetimepicker
 //= require bootstrap-sprockets
 //= require turbolinks
+//= require_tree ./channels
 //= require_tree .
 
 function controllerMatches(controllers_ary) {

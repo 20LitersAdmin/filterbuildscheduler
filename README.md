@@ -26,12 +26,7 @@
 1. Count records are temporary records, created when an inventory is created and destroyed after their meaningful values are transferred to their corresponding Materials, Parts, Components, and Technologies
   1. **DONE** Counts are polymorphically joined to an item, including Technology
     - forms, params, and controllers will need to be adjusted
-  2. Counts are created based on items, not dynamically created when an inventory is created.
-    - Path:
-      - `InventoriesController#new` only sets inventory fields
-      - then `Inventories#create` fires
-      - then `Inventories#edit` shows all items in an ActiveRecord collection
-      - clicking a button on an item displays a count form, which AJAXes a count into existence
+  2. Counts are created based on items, dynamically created when an inventory is created
   3. `Receive.new()` function is handled by a job that runs after inventory is finalized
   4. Calculating `count.extrapolated_count` is depreciated
 
@@ -150,3 +145,15 @@
 #     true
 #   end
 # end
+
+
+Spring in bin/rails:
+#!/usr/bin/env ruby
+begin
+  load File.expand_path('../spring', __FILE__)
+rescue LoadError => e
+  raise unless e.message.include?('spring')
+end
+APP_PATH = File.expand_path('../config/application', __dir__)
+require_relative '../config/boot'
+require 'rails/commands'

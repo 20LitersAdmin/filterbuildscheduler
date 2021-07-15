@@ -91,6 +91,7 @@ Rails.application.routes.draw do
   post 'stripe-webhook', to: 'webhooks#stripe', as: 'stripe_webhook'
 
   mount LetterOpenerWeb::Engine, at: '/letter_opener' if Rails.env.development?
+  mount ActionCable.server => '/cable'
 
   authenticated :user, ->(user) { user.is_admin? } do
     mount DelayedJobWeb, at: '/delayed_job'

@@ -1,0 +1,47 @@
+-# frozen_string_literal: true
+
+#counts_edit.col-xs-12{ 'data-type': @inventory.type_for_params }
+  .row
+    .col-xs-12
+      = render partial: 'labels/label', locals: { label: Label.new(@count.item.label_hash) }
+  .row
+    = simple_form_for [@inventory, @count], remote: true do |f|
+      = f.error_notification
+      .col-xs-12
+        .row
+          .col-xs-6
+            = f.input :loose_count, input_html: { value: @loose_val }
+          .col-xs-6
+            - if @count.partial_loose?
+              %h4.center Ready to Submit
+            - else
+              = f.button :submit, name: 'partial_loose', value: 'Submit Loose Count', class: 'btn blue fullwidth btn-partial'
+        .row
+          .col-xs-12.expectation
+            #expected_loose_count_parent.highlight.red.empty.float-left
+              Current:
+              %span#expected_loose_count= @count.loose_count
+            #previous_loose_count_parent.highlight.red.empty.float-right
+              Previous:
+              %span#previous_loose_count= @count.previous_loose
+        - unless @count.item.only_loose?
+          .row
+            .col-xs-6
+              = f.input :unopened_boxes_count, label: "Unopened boxes: (#{@count.item.quantity_per_box} per box)", input_html: { value: @box_val }
+            .col-xs-6
+              - if @count.partial_box?
+                %h4.center Ready to Submit
+              - else
+                = f.button :submit, name: 'partial_box', value: 'Submit Box Count', class: 'btn blue fullwidth btn-partial'
+          .row
+            .col-xs-12.right-align.expectation
+              #expected_box_count_parent.highlight.red.empty.float-left
+                Current:
+                %span#expected_box_count= @count.unopened_boxes_count
+              #previous_box_count_parent.highlight.red.empty.float-right
+                Previous:
+                %span#previous_box_count= @count.previous_box
+      .col-xs-12
+        = f.submit 'Submit', class: 'btn yellow fullwidth'
+
+  %button.btn.empty.fullwidth{ 'aria-label': 'Close', 'data-dismiss': 'modal', type: 'button' } Back

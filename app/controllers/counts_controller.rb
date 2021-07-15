@@ -94,6 +94,18 @@ class CountsController < ApplicationController
       end
 
       @count.save
+      @count.reload
+
+      # render_to_string(partial: 'counts/count', collection: @inventory.counts.sort_by { |c| [c.sort_by_user, - c.name] })
+
+      CountsChannel.broadcast_to(
+        @inventory,
+        {
+          count_id: @count.id,
+          html_slug: render_to_string(partial: 'counts/count', collection: @inventory.counts.sort_by { |c| [c.sort_by_user, - c.name] })
+        }
+      )
+
       respond_to do |format|
         format.html do
           flash[:success] = 'Count submitted'
