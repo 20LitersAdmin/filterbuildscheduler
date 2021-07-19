@@ -1,7 +1,9 @@
 <tr class="active center-align tr-bordered">
   <td>
     <%= registration.user.name %>
-    <span class="list-float-right"><i class="fa fa-square-o"></i></span>
+    <span class="list-float-right">
+      <%= icon 'far', 'square' %>
+    </span>
     </td>
   <td><%= registration.user.email %></td>
   <td></td>
@@ -10,7 +12,9 @@
       Electronically signed on <%= registration.user.signed_waiver_on.strftime("%m/%-d/%y") %>
     <% end %>
   </td>
-  <td class="center-align"><i class="fa fa-square-o"></i></td>
+  <td class="center-align">
+    <%= icon 'far', 'square' %>
+  </td>
 </tr>
 <% registration.guests_registered.times do %>
   <tr>
@@ -18,6 +22,8 @@
     <td class="right-align">Relationship:</td>
     <td class="right-align">Email: <sub>(optional)</sub></td>
     <td></td>
-    <td class="center-align"><i class="fa fa-square-o"></i></td>
+    <td class="center-align">
+      <%= icon 'far', 'square' %>
+    </td>
   </tr>
 <% end %>

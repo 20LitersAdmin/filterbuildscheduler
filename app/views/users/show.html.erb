@@ -91,13 +91,13 @@
           <div class="panel-heading" role="tab" id="leading">
             <h3 class="panel-title">
               <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseLeading" aria-expanded="true" aria-controls="collapseLeading">
-                <i class="fa fa-plus"></i>
-                <i class="fa fa-minus"></i>
+                <%= icon('fa', 'plus') %>
+                <%= icon('fa', 'minus') %>
                 Events you're leading
               </a>
             </h3>
           </div>
-          <div id="collapseLeading" class="panel-collapse collapse" role="tabpanel" area-labelledby="leading">
+          <div id="collapseLeading" class="panel-collapse collapse" role="tabpanel" aria-labelledby="leading">
             <div class="panel-body">
               <% if @leading_events.length.positive? %>
                 <div class="event-container">
@@ -126,13 +126,13 @@
         <div class="panel-heading" role="tab" id="attending">
           <h3 class="panel-title">
             <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseAttending" aria-expanded="true" aria-controls="collapseAttending">
-              <i class="fa fa-plus"></i>
-              <i class="fa fa-minus"></i>
+              <%= icon('fa', 'plus') %>
+              <%= icon('fa', 'minus') %>
               Events you're attending
             </a>
           </h3>
         </div>
-        <div id="collapseAttending" class="panel-collapse collapse" role="tabpanel" area-labelledby="attending">
+        <div id="collapseAttending" class="panel-collapse collapse" role="tabpanel" aria-labelledby="attending">
           <div class="panel-body">
             <% if @attending_events.length.positive? %>
               <div class="event-container">
@@ -161,13 +161,13 @@
           <div class="panel-heading" role="tab" id="lead">
             <h3 class="panel-title">
               <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseLead" aria-expanded="true" aria-controls="collapseLead">
-                <i class="fa fa-plus"></i>
-                <i class="fa fa-minus"></i>
+                <%= icon('fa', 'plus') %>
+                <%= icon('fa', 'minus') %>
                 Events you've lead
               </a>
             </h3>
           </div>
-          <div id="collapseLead" class="panel-collapse collapse" role="tabpanel" area-labelledby="lead">
+          <div id="collapseLead" class="panel-collapse collapse" role="tabpanel" aria-labelledby="lead">
             <div class="panel-body">
               <% if @lead_events.length.positive? %>
                 <div class="event-container">
@@ -196,13 +196,13 @@
         <div class="panel-heading" role="tab" id="attended">
           <h3 class="panel-title">
             <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseAttended" aria-expanded="true" aria-controls="collapseAttended">
-              <i class="fa fa-plus"></i>
-              <i class="fa fa-minus"></i>
+              <%= icon('fa', 'plus') %>
+              <%= icon('fa', 'minus') %>
               Events you've attended
             </a>
           </h3>
         </div>
-        <div id="collapseAttended" class="panel-collapse collapse" role="tabpanel" area-labelledby="attended">
+        <div id="collapseAttended" class="panel-collapse collapse" role="tabpanel" aria-labelledby="attended">
           <div class="panel-body">
             <% if @attended_events.length.positive? %>
               <div class="event-container">
