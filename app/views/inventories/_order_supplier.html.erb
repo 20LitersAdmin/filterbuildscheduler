@@ -15,10 +15,18 @@
   <% if @supplier_items.count > 1 %>
     <div class="col-xs-4 right-align">
       <a href="#" class="btn blue btn-check" id="check_<%= @id %>">
-        <%= fa_stacked_icon "check", base: "square-o" %> <span class="btn-text">this</span>
+        <span class='fa-stack'>
+          <%= icon('fa', 'check', class: 'fa-stack-1x') %>
+          <%= icon('far', 'square', class: 'fa-stack-2x') %>
+        </span>
+        <span class="btn-text">this</span>
       </a>
       <a href="#" class="btn blue btn-check" id="uncheck_<%= @id %>">
-        <%= fa_stacked_icon "square", base: "square-o" %> <span class="btn-text">this</span>
+        <span class='fa-stack'>
+          <%= icon('fa', 'square', class: 'fa-stack-1x') %>
+          <%= icon('far', 'square', class: 'fa-stack-2x') %>
+        </span>
+        <span class="btn-text">this</span>
       </a>
     </div>
   <% end %>

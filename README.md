@@ -26,12 +26,12 @@
 1. Count records are temporary records, created when an inventory is created and destroyed after their meaningful values are transferred to their corresponding Materials, Parts, Components, and Technologies
   1. **DONE** Counts are polymorphically joined to an item, including Technology
     - forms, params, and controllers will need to be adjusted
-  2. Counts are created based on items, dynamically created when an inventory is created
+  2. **NOPE** Counts are created based on items, dynamically created when an inventory is created
   3. `Receive.new()` function is handled by a job that runs after inventory is finalized
   4. Calculating `count.extrapolated_count` is depreciated
 
   5. Count records can still track partial counts (loose items vs. boxed items), and record which User submitted the Count
-    - but the 'partial' interface has a better UX
+    - **DONE** but the 'partial' interface has a better UX
     - remove all Count methods, scopes, and item relationships except:
       - `count.link_text`
       - `count.link_class`
@@ -62,7 +62,7 @@
     - `extrapolate_technology_parts`
     - `extrapolate_technology_materials`
   - Calculations of distant relations are handled via the existing join tables
-    - **DONE** Quantity calculation is handled via `QuantityCalculationJob`
+    - **DONE** Quantity and depth calculations are handled via `QuantityAndDepthCalculationJob`
     - Price calculation is handled via `PriceCalculationJob`
 
 4. Images use an online cloud for storage
@@ -71,7 +71,7 @@
   - **DONE** Locations have an image
   - Images can be managed through the admin view
     * rails_admin [interface for management](https://github.com/sferik/rails_admin/wiki/ActiveStorage)
-  - **DONE** Images are automatically migrated (ImageSyncJob.perform_now)
+  - **DONE** Images are automatically migrated via `ImageSyncJob.perform_now`
 
 5. **DONE** `paranoia` is not a best practice
   - **DONE** Inventory and Counts do not need to soft-delete
@@ -90,16 +90,22 @@
 * financials_inventories_path
 * order_all_inventories_path
 * order_inventories_path (for below minimums)
+* Inventory#show - is it worth having?
 
 ### Stretch goals:
-7. HAML > .html.erb
-  - install HAML and use for all new/updated views
+7. **DONE** HAML > .html.erb
+  - **DONE** install HAML and use for all new/updated views
   - slowly migrate away from .html.erb via file replacement over time
 
-8. Inventory#edit uses Websockets for real-time page changes when multiple users are performing an inventory at once.
+8. **DONE** Inventory#edit uses Websockets for real-time page changes when multiple users are performing an inventory at once.
+  - ActionCable replaces all counts on page
+  - No conflict if 2 users have the same count open (just adds to it)
 
 **Current:**
 - Inventory flow && Count creation
+  - **DONE** ActionCable is working
+  - Remove remaining JS polling code, button & language
+  - Get JS filtering back working
 - NEXT: order && order_all pages (unlink from Count && Inventory)
   - might need a #below_minimum boolean on Items for quick grabbing of Item#count_is_below_minimum
   - even Technology#has_items_below_minimum boolean

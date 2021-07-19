@@ -10,10 +10,18 @@
   </div>
   <div class="col-xs-3 right-align">
     <a href="#" class="btn blue btn-check" id="check_all">
-      <%= fa_stacked_icon "check", base: "square-o" %> <span class="btn-text">all</span>
+      <span class='fa-stack'>
+        <%= icon('fa', 'check', class: 'fa-stack-1x') %>
+        <%= icon('far', 'square', class: 'fa-stack-2x') %>
+      </span>
+      <span class="btn-text">all</span>
     </a>
     <a href="#" class="btn blue btn-check" id="uncheck_all">
-      <%= fa_stacked_icon "square", base: "square-o" %> <span class="btn-text">all</span>
+      <span class='fa-stack'>
+        <%= icon('fa', 'square', class: 'fa-stack-1x') %>
+        <%= icon('far', 'square', class: 'fa-stack-2x') %>
+      </span>
+      <span class="btn-text">all</span>
     </a>
   </div>
 </div>
