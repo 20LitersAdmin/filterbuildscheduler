@@ -9,10 +9,14 @@
   .row
     .col-xs-12.right-align
       %a{ href: '#', class: 'btn blue btn-check', id: 'check_all' }
-        = fa_stacked_icon('check', base: 'square-o')
+        %span.fa-stack
+          = icon 'fas', 'check', class: 'fa-stack-1x'
+          = icon 'far', 'square', class: 'fa-stack-2x'
         %span.bnt-text  all
       %a{ href: '#', class: 'btn blue btn-check', id: 'uncheck_all' }
-        = fa_stacked_icon 'square', base: 'square-o'
+        %span.fa-stack
+          = icon 'fas', 'square', class: 'fa-stack-1x'
+          = icon 'far', 'square', class: 'fa-stack-2x'
         %span.bnt-text  all
   .row
     .col-xs-12
