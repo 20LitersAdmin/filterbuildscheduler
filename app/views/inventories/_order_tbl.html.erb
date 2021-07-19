@@ -21,7 +21,7 @@
       <% if supplier = order_tbl.supplier %>
         <%= link_to supplier.name, rails_admin.edit_path(model_name: supplier.model_name.name, id: supplier.id) %>
       <% elsif order_tbl.made_from_materials? %>
-        <i>material</i> <%= fa_icon "question-circle", class: 'light-blue', data: { toggle: 'tooltip', placement: 'right'}, title: "Made from #{order_tbl.materials.first.name}: #{order_tbl.materials.first.supplier&.name}" %>
+        <i>material</i> <%= icon('fa' 'question-circle', class: 'light-blue', data: { toggle: 'tooltip', placement: 'right'}, title: "Made from #{order_tbl.materials.first.name}: #{order_tbl.materials.first.supplier&.name}") %>
       <% end %>
     </td>
   <% end %>

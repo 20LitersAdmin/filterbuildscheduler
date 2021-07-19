@@ -64,19 +64,19 @@
         <h3>Permissions</h3>
         <ul class="list-group">
           <li class="list-group-item">
-            <%= @user.is_leader ? fa_icon("check-square-o") : fa_icon("square-o") %>
+            <%= @user.is_leader ? icon('far', 'check-square') : icon('fa', 'square') %>
             Build Leader
           </li>
           <li class="list-group-item">
-            <%= @user.does_inventory ? fa_icon("check-square-o") : fa_icon("square-o") %>
+            <%= @user.does_inventory ? icon('far', 'check-square') : icon('far', 'square') %>
             Inventory Specialist
           </li>
           <li class="list-group-item">
-            <%= @user.is_admin ? fa_icon("check-square-o") : fa_icon("square-o") %>
+            <%= @user.is_admin ? icon('far', 'check-square') : icon('far', 'square') %>
             Program Administrator
           </li>
           <li class="list-group-item">
-            <%= @user.send_notification_emails ? fa_icon("check-square-o") : fa_icon("square-o") %>
+            <%= @user.send_notification_emails ? icon('far', 'check-square') : icon('far', 'square') %>
             Filter Build Event Alerts
           </li>
         </ul>
