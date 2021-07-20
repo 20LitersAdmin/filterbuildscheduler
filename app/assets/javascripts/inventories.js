@@ -1,38 +1,16 @@
-function filterView(type, button) {
-  // type == "count" or "tech"
-  // button ids: [clear, uncounted, partial, counted]
-  var btnId = $(button).attr("id");
-  var target = "." + btnId;
+// InventoriesController#edit page: filters _count paritals
+function filterTech(techId) {
+  $('div.count-wrapper').hide();
+  var finder = '[data-techs*="' + techId + '"]';
+  $(finder).show();
+};
 
-  if (type == "count") {
-    var goal = "true"
-    var parentId = ""
-    if (btnId == "uncounted") {
-      target = ".counted";
-      goal = "false";
-    };
-    $(target).each(function() {
-      parentId = "#" + $(this).parents(".count-parent").attr("id");
-      if ( $(this).attr("title") != goal ) {
-        $(parentId).hide();
-      } else {
-        $(parentId).show();
-      };
-    });
-
-  } else { // type = "tech"
-    var goalStr = target.substring(6, target.length);
-    $(".techs").each(function() {
-      parentId = "#" + $(this).parents(".count-parent").attr("id");
-      var techStr = $(this).attr("title");
-      var techAry = techStr.split(",");
-      if ( techAry.includes(goalStr) ) {
-        $(parentId).show();
-      } else {
-        $(parentId).hide();
-      };
-    });
-  };
+// InventoriesController#edit page: filters _count paritals
+function filterStatus(status) {
+  // status options: [uncounted, partial, counted]
+  $('div.count-wrapper').hide();
+  var finder = '[data-status="' + status + '"]';
+  $(finder).show();
 };
 
 function stringMaker(float, fixed) {
@@ -147,28 +125,32 @@ function reformat(source) {
     event.preventDefault();
   });
   // Inventory#edit filter buttons
-  $(document).on("click", ".count-btn", function() {
-    filterView("count", this);
+  $(document).on("click", ".status-btn", function() {
+    var status = $(this).data('action')
+    filterStatus(status);
+    // filterView("count", this);
     event.preventDefault();
   });
   $(document).on("click", ".tech-btn", function() {
-    filterView("tech", this);
+    var techId = $(this).data('tech');
+    filterTech(techId);
     event.preventDefault();
   });
-  $(document).on("click", "#clear", function() {
-    $(".count-parent").show();
+  $(document).on("click", '[data-action="show_all"]', function() {
+    // Show all counts
+    $("div.count-wrapper").show();
     event.preventDefault();
   });
 
   // Inventory#edit search field
   $(document).on("keyup", "#search", function() {
     var term = $("#search").val().toUpperCase();
-    var collection = $(".count-parent").get();
+    var collection = $(".count-wrapper").get();
     var title;
     var uid;
 
     if (term === "") {
-      $('.count-parent').show();
+      $('.count-wrapper').show();
     } else {
       for ( i = 0; i < collection.length; i++ ) {
       title = $(collection[i]).find(".count-title");

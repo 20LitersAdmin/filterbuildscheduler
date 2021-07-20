@@ -27,18 +27,18 @@
   #filter_div.col-xs-12.center
     .row
       %p Filters:
-      %button#clear.btn.yellow.count-btn{ type: 'button' } Show All
+      %button.btn.yellow{ type: 'button', data: { action: 'show_all' } } Show All
       .btn-group.btn-group-sm{ role: 'group' }
-        %button#uncounted.btn.yellow.count-btn{ type: 'button' } Uncounted
-        %button#partial.btn.blue.count-btn{ type: 'button' } Partial
-        %button#counted.btn.blue.count-btn{ type: 'button' } Counted
+        %button.btn.yellow.status-btn{ type: 'button', data: { action: 'uncounted' } } Uncounted
+        %button.btn.blue.status-btn{ type: 'button', data: { action: 'partial' } } Partial
+        %button.btn.blue.status-btn{ type: 'button', data: { action: 'counted' } } Counted
       .btn-group.btn-group-sm{ role: 'group' }
         - @techs.each do |t|
-          %button.btn.empty.tech-btn{ id: "tech_#{t.id}", type: 'button' }= t.short_name
+          %button.btn.empty.tech-btn{ type: 'button' , data: { tech: t.id } }= t.short_name
       .btn-group.btn-group-sm
         %input#search{ name: 'search', placeholder: 'Search...', type: 'text' }
       .btn-group.btn-group-sm
-        %button#calculator.btn.blue.count-btn{ 'data-target': '#calculator_modal', 'data-toggle': 'modal', type: 'button' } Calculator
+        %button#calculator.btn.blue{ 'data-target': '#calculator_modal', 'data-toggle': 'modal', type: 'button' } Calculator
   #counts_div.col-xs-12
     #counts_row.row
       = render partial: 'counts/count', collection: @counts
