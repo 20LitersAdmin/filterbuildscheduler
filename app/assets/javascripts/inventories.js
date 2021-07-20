@@ -132,15 +132,6 @@ function reformat(source) {
   $(source).val(formatted);
 };
 
-function countFetcher() {
-  console.log('Would be polling if it wasnt blocked');
-  // var invId = window.location.pathname.match(/\d+/)[0];
-  // var url = '/inventories/' + invId + '/counts/polled_index.js';
-  // $.get(url, function(){});
-};
-
-var poller;
-
 (function() {
   // Inventory#edit finalize buttons
   $(document).on("click", "#show_finalize_form", function() {
@@ -197,32 +188,10 @@ var poller;
   });
 
   $(document).on("turbolinks:load", function(){
-    // if ($('body[data-controller=inventories][data-action=edit]').length > 0) {
-      // poller = setInterval(countFetcher, 2000);
-    // };
     // Inventory#order filter buttons
     $("#item_btn").hide();
     $('#order_supplier_div').hide();
     $('[data-toggle="popover"]').popover();
-  });
-
-  // Inventory#edit auto-updating poller
-  $(document).on('click', '#cancel_polling', function() {
-    // clearInterval(poller);
-    // console.log('Stopped polling');
-    // $('#count_refresh_message').html('Live refresh is stopped.');
-    // $(this).toggle();
-    // $('#start_polling').toggle();
-  });
-
-  $(document).on('click', '#start_polling', function() {
-    // make sure poller is not running
-    // clearInterval(poller);
-    // poller = setInterval(countFetcher, 2000);
-    // console.log('Started polling');
-    // $('#count_refresh_message').html('Live refresh is running.');
-    // $(this).toggle();
-    // $('#cancel_polling').toggle();
   });
 
   // Inventory#order filter buttons

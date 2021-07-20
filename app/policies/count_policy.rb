@@ -8,10 +8,6 @@ class CountPolicy
     @count = count
   end
 
-  def polled_index?
-    user&.can_do_inventory?
-  end
-
   def create?
     user&.can_do_inventory?
   end

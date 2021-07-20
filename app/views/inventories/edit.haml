@@ -39,13 +39,6 @@
         %input#search{ name: 'search', placeholder: 'Search...', type: 'text' }
       .btn-group.btn-group-sm
         %button#calculator.btn.blue.count-btn{ 'data-target': '#calculator_modal', 'data-toggle': 'modal', type: 'button' } Calculator
-    .row
-      .col-xs-12.center
-        .col-xs-6.text-right
-          %p#count_refresh_message Live refresh is running...
-        .col-xs-6.text-left
-          %button#cancel_polling.btn.yellow.btn-sm{ type: 'button' } Cancel
-          %button#start_polling.btn.yellow.btn-sm{ style: 'display: none;', type: 'button' } Start
   #counts_div.col-xs-12
     #counts_row.row
       = render partial: 'counts/count', collection: @counts
