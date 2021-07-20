@@ -64,7 +64,7 @@
     z-index: 2;
   }
 
-  .count-div {
+  .count-wrapper > .count-div {
     border-radius: 4px;
     height: 16em;
     margin: .8em .2em;
@@ -101,12 +101,8 @@
       }
     }
     .count-btn {
-      position: absolute;
-      bottom: 1.5em;
-      left: 0;
-      right: 0;
-      width: 60%;
-      margin: 0 auto;
+      margin-top: 0.25em;
+      width: 80%;
     }
   }
 
