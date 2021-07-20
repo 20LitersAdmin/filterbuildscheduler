@@ -1,18 +1,8 @@
 # frozen_string_literal: true
 
 class CountsController < ApplicationController
-  before_action :set_count, only: %i[edit show update label destroy]
-  before_action :set_inventory, only: %i[polled_index edit show update destroy]
-
-  def polled_index
-    # If the inventory is less than 1 minute old, return an empty ActiveRecord object
-    # otherwise, it would return all Counts until 1 minute had passed
-    authorize @counts = @inventory.updated_at > Time.now - 1.minute ? Count.none : Count.updated_since(Time.now - 1.minute)
-
-    respond_to do |format|
-      format.js { render 'polled_index.js.erb' }
-    end
-  end
+  before_action :set_count, only: %i[edit show update destroy]
+  before_action :set_inventory, only: %i[edit show update destroy]
 
   def edit
     # Set form values

@@ -101,7 +101,7 @@
   - ActionCable replaces all counts on page
   - No conflict if 2 users have the same count open (just adds to it)
 
-**Current:**
+### Current:
 - Inventory flow && Count creation
   - **DONE** ActionCable is working
   - Remove remaining JS polling code, button & language

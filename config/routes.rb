@@ -74,9 +74,7 @@ Rails.application.routes.draw do
       get 'financials'
       get 'paper'
     end
-    resources :counts do
-      get 'polled_index', on: :collection
-    end
+    resources :counts
   end
 
   get '/auth',                    to: 'oauth_users#index', as: :auth_index
