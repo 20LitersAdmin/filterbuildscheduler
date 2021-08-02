@@ -27,15 +27,11 @@ class Material < ApplicationRecord
     self
   end
 
-  def available
-    if latest_count.present?
-      latest_count.available
-    else
-      0
-    end
+  def all_technologies
+    # .technologies finds direct relations through Assembly, but doesn't include technologies where this material may be deeply nested in components or made from a nested part
+    Technology.where('quantities ? :key', key: uid)
   end
 
-  # TODO: image should be probably needs to be adjusted
   # TODO: Needs technologies.active
   def label_hash
     {
@@ -44,29 +40,20 @@ class Material < ApplicationRecord
       uid: uid,
       technologies: technologies.pluck(:short_name),
       quantity_per_box: quantity_per_box,
+      # TODO: image should not use picture
       image: picture,
       only_loose: only_loose?
     }
-  end
-
-  # TODO: remove this
-  def latest_count
-    Count.where(inventory: Inventory.latest_completed, material: self).first
-  end
-
-  # TODO: remove this
-  def made_from_materials?
-    false
   end
 
   def on_order?
     last_ordered_at.present? && (last_received_at.nil? || last_ordered_at > last_received_at)
   end
 
-  def owner
-    return 'N/A' unless technologies.present?
+  def owners
+    return ['N/A'] unless technologies.present?
 
-    technologies.map(&:owner_acronym).uniq.join(',')
+    technologies.map(&:owner_acronym)
   end
 
   def picture
@@ -81,20 +68,16 @@ class Material < ApplicationRecord
     technology.quantities[uid]
   end
 
+  def per_technologies
+    technologies.map { |t| t.quantities[uid] }
+  end
+
   def reorder?
-    available < minimum_on_hand
+    available_count < minimum_on_hand
   end
 
   def reorder_total_cost
     min_order * price
-  end
-
-  def required?
-    if extrapolate_technology_materials.any?
-      extrapolate_technology_materials.first.required?
-    else
-      false
-    end
   end
 
   def technologies
@@ -102,11 +85,7 @@ class Material < ApplicationRecord
   end
 
   def tech_names_short
-    if technologies.map(&:name).empty?
-      'n/a'
-    else
-      technologies.map { |t| t.name.gsub(' Filter', '').gsub(' for Bucket', '') }.join(', ')
-    end
+    all_technologies.pluck(:short_name)
   end
 
   # TODO: delete after 1st migration
@@ -115,7 +94,16 @@ class Material < ApplicationRecord
   end
 
   def weeks_to_out
-    latest_count.present? ? latest_count.weeks_to_out : 0
+    return 0 if available_count.zero?
+
+    monthly_rates = []
+    all_technologies.each do |t|
+      monthly_rates << t.monthly_production_rate * t.quantity(self)
+    end
+
+    return available_count if monthly_rates.sum.zero?
+
+    (available_count / (monthly_rates.sum / 4.0)).round(-1)
   end
 
   private

@@ -21,6 +21,7 @@ class Part < ApplicationRecord
   monetize :price_cents, allow_nil: true, numericality: { greater_than_or_equal_to: 0 }
 
   # scope :active, -> { kept }
+  scope :available, -> { where('available_count > 0') }
   scope :orderable, -> { where(made_from_materials: false) }
   scope :made_from_materials, -> { where(made_from_materials: true) }
   scope :not_made_from_materials, -> { where(made_from_materials: false) }
@@ -35,6 +36,11 @@ class Part < ApplicationRecord
     materials_parts.update_all(part_id: part_id) if made_from_materials?
 
     self
+  end
+
+  def all_technologies
+    # .technologies finds direct relations through Assembly, but doesn't include technologies where this part may be deeply nested in components
+    Technology.where('quantities ? :key', key: uid)
   end
 
   # TODO: fix this or un-use it
@@ -62,11 +68,6 @@ class Part < ApplicationRecord
     }
   end
 
-  # TODO: fix this or un-use it
-  def latest_count
-    Count.where(inventory: Inventory.latest_completed, part: self).first
-  end
-
   def material
     return Material.none unless made_from_materials?
 
@@ -83,11 +84,10 @@ class Part < ApplicationRecord
     last_ordered_at.present? && (last_received_at.nil? || last_ordered_at > last_received_at)
   end
 
-  # TODO: fix this or un-use it
-  def owner
-    return 'N/A' unless technologies.present?
+  def owners
+    return ['N/A'] unless technologies.present?
 
-    technologies.map(&:owner_acronym).uniq.join(',')
+    all_technologies.map(&:owner_acronym)
   end
 
   # TODO: replace this with image
@@ -101,6 +101,10 @@ class Part < ApplicationRecord
 
   def per_technology(technology)
     technology.quantities[uid]
+  end
+
+  def per_technologies
+    technologies.map { |t| t.quantities[uid] }
   end
 
   def reorder?
@@ -125,7 +129,7 @@ class Part < ApplicationRecord
   end
 
   def tech_names_short
-    technologies.pluck(:short_name)
+    all_technologies.pluck(:short_name)
   end
 
   # TODO: delete after 1st migration
@@ -135,7 +139,16 @@ class Part < ApplicationRecord
 
   # TODO: fix this or un-use it
   def weeks_to_out
-    latest_count.present? ? latest_count.weeks_to_out : 0
+    return 0 if available_count.zero?
+
+    monthly_rates = []
+    all_technologies.each do |t|
+      monthly_rates << t.monthly_production_rate * t.quantity(self)
+    end
+
+    return available_count if monthly_rates.sum.zero?
+
+    (available_count / (monthly_rates.sum / 4.0)).round(-1)
   end
 
   private
