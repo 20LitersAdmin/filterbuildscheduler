@@ -26,6 +26,20 @@ class Technology < ApplicationRecord
   before_create :set_short_name, if: -> { short_name.nil? }
   before_create :set_uid
 
+  def all_components
+    uids = quantities.keys.grep(/^C[0-9]{3}/)
+    ary = []
+    uids.each { |u| ary << u.tr('C', '').to_i }
+    Component.where(id: ary)
+  end
+
+  def all_parts
+    uids = quantities.keys.grep(/^P[0-9]{3}/)
+    ary = []
+    uids.each { |u| ary << u.tr('P', '').to_i }
+    Part.where(id: ary)
+  end
+
   def leaders
     users.where(is_leader: true)
   end
@@ -34,13 +48,6 @@ class Technology < ApplicationRecord
   def primary_component
     # find the component related to this technology that represents the completed tech
     components.where(completed_tech: true).first
-  end
-
-  def components
-    uids = quantities.keys.grep(/^C[0-9]{3}/)
-    ary = []
-    uids.each { |u| ary << u.tr('C', '').to_i }
-    Component.where(id: ary)
   end
 
   # TODO: re-work this
@@ -80,12 +87,6 @@ class Technology < ApplicationRecord
     owner.gsub(/([a-z]|\s)/, '')
   end
 
-  def parts
-    uids = quantities.keys.grep(/^P[0-9]{3}/)
-    ary = []
-    uids.each { |u| ary << u.tr('P', '').to_i }
-    Part.where(id: ary)
-  end
 
   # TODO: temp method, remove after images are enabled
   def picture
@@ -160,6 +161,10 @@ class Technology < ApplicationRecord
     end
 
     tech_items_aoh.sort_by! { |hsh| hsh[:produceable] }
+  end
+
+  def quantity(item)
+    quantities[item.uid]
   end
 
   def short_name_w_owner

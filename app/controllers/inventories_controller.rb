@@ -6,6 +6,9 @@ class InventoriesController < ApplicationController
     @inventories = Inventory.former
 
     authorize @latest
+
+    # TODO: Determine any items below minimum
+    @below_minimum = true
   end
 
   def show
@@ -114,8 +117,8 @@ class InventoriesController < ApplicationController
     @selected_tech = @technologies.find(@selected_tech_id) if @selected_tech_id
 
     if @selected_tech_id
-      parts = Part.orderable.select { |part| part.reorder? && part.technologies.map(&:id).include?(@selected_tech_id) }
-      materials = Material.all.select { |m| m.reorder? && m.technologies.map(&:id).include?(@selected_tech_id) }
+      parts = Part.orderable.select { |part| part.reorder? && part.all_technologies.map(&:id).include?(@selected_tech_id) }
+      materials = Material.all.select { |m| m.reorder? && m.all_technologies.map(&:id).include?(@selected_tech_id) }
     elsif @selected_owner_acronym
       parts = Part.orderable.select { |part| part.reorder? && part.owner.include?(@selected_owner_acronym) }
       materials = Material.all.select { |m| m.reorder? && m.owner.include?(@selected_owner_acronym) }

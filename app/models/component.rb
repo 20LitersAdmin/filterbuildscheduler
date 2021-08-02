@@ -28,6 +28,12 @@ class Component < ApplicationRecord
   # associations through Assembly
   # TODO: Needs .active
   def technologies
+    ids = Assembly.where(combination_type: 'Technology', item: self).pluck(:combination_id)
+    Technology.where(id: ids)
+  end
+
+  def all_technologies
+    # .technologies finds direct relations through Assembly, but doesn't include technologies where this component may be deeply nested in other components
     Technology.where('quantities ? :key', key: uid)
   end
 

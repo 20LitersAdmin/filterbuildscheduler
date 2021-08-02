@@ -88,8 +88,6 @@
 ### Nerfed pages:
 * status_inventories_path
 * financials_inventories_path
-* order_all_inventories_path
-* order_inventories_path (for below minimums)
 * Inventory#show - is it worth having?
 
 ### Stretch goals:
@@ -102,15 +100,17 @@
   - No conflict if 2 users have the same count open (just adds to it)
 
 ### Current:
-- Inventory flow && Count creation
-  - **DONE** ActionCable is working
-  - Remove remaining JS polling code, button & language
-  - Get JS filtering back working
-- NEXT: order && order_all pages (unlink from Count && Inventory)
-  - might need a #below_minimum boolean on Items for quick grabbing of Item#count_is_below_minimum
-  - even Technology#has_items_below_minimum boolean
-  - calculate after every inventory
 - rails_admin
+  - don't want bars on dashboard
+  - Part, Material, Component, Technolgy: manage images
+  - Handles Assemblies?
+- Item#show
+  - history
+  - quantities per tech
+  - assembly trees
+- Inventory#show? Or Inventory#index? or new page
+  - Jereme needs a snapshot of what he had on inventory at a given date: use closest-without-going-over history record
+  - If not Inventory#index, what should Inventory#index be used for
 
 #### After 1st deployment:
 * Migrate the db
