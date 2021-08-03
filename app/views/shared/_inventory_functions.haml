@@ -10,4 +10,4 @@
   = link_to 'Print Inventory', paper_inventories_path, class: 'btn yellow', target: '_blank'
   = link_to 'Print Labels', labels_path, class: 'btn yellow', target: '_blank'
   = link_to 'Order Items', order_all_inventories_path, class: 'btn empty use-load-screen'
-  = link_to('Items Below Minimum', order_inventories_path, class: 'btn blue use-load-screen') if @below_minimum
+  = link_to('Items Below Minimum!', order_inventories_path, class: 'btn blue use-load-screen') if @below_minimum

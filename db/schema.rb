@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_07_01_012526) do
+ActiveRecord::Schema.define(version: 2021_08_03_125336) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -213,6 +213,7 @@ ActiveRecord::Schema.define(version: 2021_07_01_012526) do
     t.integer "available_count", default: 0
     t.jsonb "history", default: {}, null: false
     t.jsonb "quantities", default: {}, null: false
+    t.boolean "below_minimum", default: false, null: false
     t.index ["discarded_at"], name: "index_materials_on_discarded_at"
     t.index ["supplier_id"], name: "index_materials_on_supplier_id"
   end
@@ -284,6 +285,7 @@ ActiveRecord::Schema.define(version: 2021_07_01_012526) do
     t.integer "available_count", default: 0
     t.jsonb "history", default: {}, null: false
     t.jsonb "quantities", default: {}, null: false
+    t.boolean "below_minimum", default: false, null: false
     t.index ["discarded_at"], name: "index_parts_on_discarded_at"
     t.index ["supplier_id"], name: "index_parts_on_supplier_id"
   end

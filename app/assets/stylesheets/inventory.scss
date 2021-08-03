@@ -1,9 +1,9 @@
 @import 'variables';
 
 #inventory_index {
-  .btn-group .btn {
-    margin: 1em;
-  }
+  // .btn-group .btn {
+  //   margin: 1em;
+  // }
 
   .col-sm-4 {
     text-align: center;
@@ -29,6 +29,30 @@
       margin-top: 8px;
     }
   }
+
+  #item_history_tbl {
+    width: 98%;
+    margin: 1em auto 0 auto;
+
+    thead {
+      // scrollbar is average 1em/16px width
+      // width: calc( 100% - 1em );
+      display: table;
+      width: 100%;
+      table-layout: fixed;
+    }
+    tbody{
+      display: block;
+      max-height: 280px;
+      overflow-y: scroll;
+
+      tr {
+        display: table;
+        width: 100%;
+        table-layout: fixed;
+      }
+    }
+  }
 }
 
 .match-h2 {
@@ -38,6 +62,11 @@
     margin-top: 15px;
     vertical-align: middle;
   }
+}
+
+.match-h3 {
+  min-height: 63px;
+  margin-top: 20px;
 }
 
 #inventory_edit {
