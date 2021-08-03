@@ -20,15 +20,20 @@ class Part < ApplicationRecord
 
   monetize :price_cents, allow_nil: true, numericality: { greater_than_or_equal_to: 0 }
 
+  # TODO: Second deployment
   # scope :active, -> { kept }
+
   scope :available, -> { where('available_count > 0') }
   scope :orderable, -> { where(made_from_materials: false) }
   scope :made_from_materials, -> { where(made_from_materials: true) }
   scope :not_made_from_materials, -> { where(made_from_materials: false) }
 
+  # TODO: Second deploy
+  scope :below_minimums, -> { where(below_minimum: true) }
+
   before_create :set_uid
   # TODO: Second deployment
-  # before_save :set_made_from_materials
+  before_save :set_made_from_materials, :set_below_minimum
 
   # TODO: TEMP merge function
   def replace_with(part_id)
@@ -107,10 +112,6 @@ class Part < ApplicationRecord
     technologies.map { |t| t.quantities[uid] }
   end
 
-  def reorder?
-    available_count < minimum_on_hand
-  end
-
   def reorder_total_cost
     min_order * price
   end
@@ -137,8 +138,9 @@ class Part < ApplicationRecord
     "P#{id.to_s.rjust(3, 0.to_s)}"
   end
 
-  # TODO: fix this or un-use it
   def weeks_to_out
+    # TODO: needs to simulate making more parts if part.made_from_materials?
+
     return 0 if available_count.zero?
 
     monthly_rates = []
@@ -152,6 +154,10 @@ class Part < ApplicationRecord
   end
 
   private
+
+  def set_below_minimum
+    self.below_minimum = available_count < minimum_on_hand
+  end
 
   def set_made_from_materials
     self.made_from_materials = materials.any?

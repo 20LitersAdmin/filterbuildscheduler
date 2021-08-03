@@ -49,6 +49,7 @@
   7. A job handles transferring count-related fields to it's related item, then deletes the Count record.
     - The job runs `count.update_item_and_destroy!`
     - The job runs after Inventory is marked completed via `Delayed::Job#perform_later`
+    - Should Counts persist for one cycle? Meaning, delete the `Inventory.former`'s counts when a new inventory is created?
 
 2. **DONE** `Component.where(completed_tech: true)` are not duplicates of Technology
   - **DONE** Allow Technologies to be counted
@@ -63,7 +64,7 @@
     - `extrapolate_technology_materials`
   - Calculations of distant relations are handled via the existing join tables
     - **DONE** Quantity and depth calculations are handled via `QuantityAndDepthCalculationJob`
-    - Price calculation is handled via `PriceCalculationJob`
+    - **DONE** Price calculation is handled via `PriceCalculationJob`
 
 4. Images use an online cloud for storage
   - **DONE** An S3 bucket exists for storing item images
@@ -104,13 +105,12 @@
   - don't want bars on dashboard
   - Part, Material, Component, Technolgy: manage images
   - Handles Assemblies?
-- Item#show
-  - history
-  - quantities per tech
-  - assembly trees
-- Inventory#show? Or Inventory#index? or new page
-  - Jereme needs a snapshot of what he had on inventory at a given date: use closest-without-going-over history record
-  - If not Inventory#index, what should Inventory#index be used for
+  - Show item history in show / edit
+- `Component#weeks_to_out` should traverse downward
+- Calculate how many more items can be made:
+  - Parts.where(made_from_materials: true)
+  - Components
+  - Technologies
 
 #### After 1st deployment:
 * Migrate the db
@@ -151,4 +151,3 @@
 #     true
 #   end
 # end
-

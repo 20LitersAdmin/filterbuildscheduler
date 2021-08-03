@@ -16,6 +16,7 @@ $(document).on("turbolinks:load", function(){
       format: 'MMM DD YYYY hh:mm A'
     });
   });
+
   $('.datepicker').each(function(){
     $(this).datetimepicker({
       date: this.value,
@@ -23,6 +24,15 @@ $(document).on("turbolinks:load", function(){
       maxDate: this.value
     });
   });
+
+  $('.datepicker-maxtoday').each(function(){
+    $(this).datetimepicker({
+      date: this.value,
+      format: 'MMM DD YYYY',
+      maxDate: Date.now()
+    });
+  });
+
   $('.datepicker-nomax').each(function(){
     $(this).datetimepicker({
       date: this.value,

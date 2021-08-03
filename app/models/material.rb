@@ -15,10 +15,16 @@ class Material < ApplicationRecord
 
   monetize :price_cents, allow_nil: true, numericality: { greater_than_or_equal_to: 0 }
 
+  # TODO: Second deploy
+  scope :below_minimums, -> { where(below_minimum: true) }
+
   before_create :set_uid
 
   # TODO: Second deployment
   # scope :active, -> { kept }
+
+  # TODO: Second deploy
+  before_save :set_below_minimum
 
   # TODO: TEMP merge function
   def replace_with(material_id)
@@ -107,6 +113,10 @@ class Material < ApplicationRecord
   end
 
   private
+
+  def set_below_minimum
+    self.below_minimum = available_count < minimum_on_hand
+  end
 
   def set_uid
     self.uid = "M#{id.to_s.rjust(3, 0.to_s)}"

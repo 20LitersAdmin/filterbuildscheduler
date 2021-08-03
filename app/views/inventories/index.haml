@@ -1,0 +1,53 @@
+-# frozen_string_literal: true
+
+#inventory_index.container
+  = render partial: 'shared/inventory_functions'
+
+  .row
+    = form_tag({}, method: :get) do
+      .col-xs-12.col-sm-6.right-align
+        %h3 As of date:
+      .col-xs-6.col-sm-3.match-h3
+        = text_field_tag 'date', date_for_form(@date), class: 'datepicker-maxtoday'
+      .col-xs-6.col-sm-3.match-h3
+        = submit_tag 'Submit', value: nil, name: nil, class: 'btn yellow'
+
+
+  - if @latest.counts.any?
+    .inv-latest.row
+      .col-xs-12
+        %h2 Current Inventory:
+        .row
+          .inventory.col-sm-4.col-md-3
+            %h4= @latest.name
+            %p= @latest.count_summary
+            %p
+              - if @latest.completed_at.present?
+                %strong FINALIZED
+                &nbsp;
+            = link_to 'View', inventory_path(@latest), class: 'btn yellow use-load-screen'
+            - if !@latest.completed_at.present?
+              = link_to 'Edit', edit_inventory_path(@latest), class: 'btn blue use-load-screen'
+            - elsif current_user.is_admin?
+              = link_to 'Unlock', edit_inventory_path(@latest, unlock: 'true'), class: 'btn blue use-load-screen'
+
+  .row
+    .col-xs-12
+      %h2 Inventory Counts as of #{ human_date @date }:
+      %p
+        %i Click on an item's name to see the count history
+    .col-xs-12
+      %table.table.table-striped.table-bordered.datatable-items
+        %thead
+          = render partial: 'item_tbl_head'
+        %tbody
+          = render partial: 'item_tbl', collection: @items
+
+  #item_history_modal.modal.fade{ role: 'dialog', 'tab-index': '-1' }
+    .modal-dialog.modal-lg{ role: 'document' }
+      .modal-content
+        .modal-header
+          %button.close{ 'aria-label': 'Close', 'data-dismiss': 'modal', type: 'button' }
+            %span{ 'aria-hidden': 'true' } ×
+        #history_modal_body.modal-body.row
+          %p Oops! Something broke.

@@ -1,0 +1,28 @@
+-# frozen_string_literal: true
+
+#item_history.col-xs-12
+  .row
+    .col-xs-12
+      = render partial: 'labels/label', locals: { label: Label.new(@item.label_hash) }
+    .col-xs-12
+      - if @item.history.any?
+        %p.bold-text.center-align #{ @item.history.size } counts total:
+        %table#item_history_tbl.table.table-striped.table-bordered.table-condensed
+          %thead
+            %tr
+              %th Date
+              %th.center-align Loose count
+              %th.center-align Box count
+              %th.center-align Ttl Available
+          %tbody
+            - @item.history.reverse_each do |h|
+              - ttl_avail = (h[1]['box'].to_i * @item.quantity_per_box) + h[1]['loose'].to_i
+              %tr
+                %td= human_date h[0]
+                %td.center-align= human_number h[1]['loose']
+                %td.center-align= human_number h[1]['box']
+                %td.center-align= human_number ttl_avail
+      - else
+        %p.center-align
+          %i No counts found for #{ @item.name }
+

@@ -89,11 +89,6 @@ class Component < ApplicationRecord
     Part.joins(:assemblies).where('assemblies.combination_id = ? AND assemblies.combination_type = ?', id, 'Component')
   end
 
-  # TODO: fix this or un-use it
-  def latest_count
-    Count.where(inventory: Inventory.latest_completed, component: self).first
-  end
-
   # TODO: replace this with image
   def picture
     begin
@@ -146,6 +141,11 @@ class Component < ApplicationRecord
   # TODO: delete after 1st migration
   def uid
     "C#{id.to_s.rjust(3, '0')}"
+  end
+
+  def weeks_to_out
+    # TODO: needs to traverse down through subassemblies
+    nil
   end
 
   private

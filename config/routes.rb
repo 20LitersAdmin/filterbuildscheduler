@@ -63,6 +63,7 @@ Rails.application.routes.draw do
     member do
       get 'items'
       get 'prices'
+      get 'history'
     end
   end
 
@@ -71,8 +72,9 @@ Rails.application.routes.draw do
       get 'order'
       get 'order_all'
       get 'status'
-      get 'financials'
       get 'paper'
+      get 'financials'
+      get 'history'
     end
     resources :counts
   end

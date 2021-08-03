@@ -19,7 +19,6 @@ require 'application_record'
 # require 'assembly'
 
 require 'application_helper'
-require 'events_helper'
 require 'devise_helper'
 require 'error_handler'
 require 'application_controller'

@@ -3,12 +3,19 @@
 class InventoriesController < ApplicationController
   def index
     @latest = Inventory.latest
-    @inventories = Inventory.former
-
     authorize @latest
 
-    # TODO: Determine any items below minimum
-    @below_minimum = true
+    @below_minimum = Part.below_minimums.any? || Material.below_minimums.any?
+
+    # TODO: Part.active instead of Part.all
+    components = Component.all
+    parts = Part.all
+    materials = Material.all
+
+    @items = [components, parts, materials].flatten
+
+    # TODO: Allow for a snapshot date??
+    @date = params[:date]&.to_date
   end
 
   def show
@@ -103,6 +110,10 @@ class InventoriesController < ApplicationController
     redirect_to inventories_path
   end
 
+  def destroy
+    authorize @inventory = Inventory.find(params[:id])
+  end
+
   def order
     authorize Inventory
 
@@ -179,10 +190,6 @@ class InventoriesController < ApplicationController
     @counts = @inventory.counts.sort_by { |c| [c.group_by_tech, c.name] }
   end
 
-  def destroy
-    authorize @inventory = Inventory.find(params[:id])
-  end
-
   def financials
     authorize @latest = Inventory.latest_completed
     @counts = @latest.counts
@@ -199,6 +206,17 @@ class InventoriesController < ApplicationController
       @val_unbuilt = @counts.where(component_id: nil).map(&:avail_value).sum
       @val_built = @built_counts.map(&:avail_value).sum
       @val_ttl = @val_built + @val_unbuilt
+    end
+  end
+
+  def history
+    # item type
+    # item id
+    # return js.erb trigger for modal
+    @item = params[:item_class].constantize.find(params[:item_id])
+
+    respond_to do |format|
+      format.js { render 'history.js.erb' }
     end
   end
 
@@ -229,6 +247,10 @@ class InventoriesController < ApplicationController
 
   def technologies_params
     params.require(:inventory).permit technologies: []
+  end
+
+  def history_params
+    params.permit(:item_class, :item_id)
   end
 
   def find_owner_from_acronym(owner)

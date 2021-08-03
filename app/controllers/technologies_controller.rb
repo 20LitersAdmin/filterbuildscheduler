@@ -7,8 +7,7 @@ class TechnologiesController < ApplicationController
   def index
     authorize @techs = Technology.list_worthy
 
-    # TODO: Determine any items below minimum
-    @below_minimum = true
+    @below_minimum = Part.below_minimums.any? || Material.below_minimums.any?
   end
 
   def items; end
