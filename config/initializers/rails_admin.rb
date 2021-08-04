@@ -25,28 +25,30 @@ require 'application_controller'
 
 require Rails.root.join('lib', 'rails_admin', 'restore.rb')
 require Rails.root.join('lib', 'rails_admin', 'discard.rb')
+require Rails.root.join('lib', 'rails_admin', 'dashboard.rb')
 
 RailsAdmin.config do |config|
   config.parent_controller = ApplicationController.to_s
   config.main_app_name = ['20 Liters', 'Admin']
   # config.excluded_models = ['ActiveStorage::Blob', 'ActiveStorage::Attachment']
 
+  # TODO: Second deploy delete for good
   # Monkey patch to remove default_scope
   #
   # require 'rails_admin/adapters/active_record'
 
-  module RailsAdmin::Adapters::ActiveRecord
-    def get(id)
-      object = model.with_deleted.find(id)
-      return unless object == scoped.where(primary_key => id).first
+  # module RailsAdmin::Adapters::ActiveRecord
+  #   def get(id)
+  #     object = model.with_deleted.find(id)
+  #     return unless object == scoped.where(primary_key => id).first
 
-      AbstractObject.new object
-    end
+  #     AbstractObject.new object
+  #   end
 
-    def scoped
-      model.unscoped
-    end
-  end
+  #   def scoped
+  #     model.unscoped
+  #   end
+  # end
 
   ## == Devise integration ==
   config.authenticate_with do
@@ -61,7 +63,7 @@ RailsAdmin.config do |config|
   config.model 'User' do
     weight 0
     list do
-      scopes %i[active leaders admins discarded]
+      scopes %i[active leaders builders inventoryists admins discarded]
       field :email
       field :fname
       field :lname
@@ -257,8 +259,8 @@ RailsAdmin.config do |config|
   end
 
   config.actions do
-    dashboard # mandatory
-    index     # mandatory
+    dashboard
+    index # mandatory
     new
     export
     bulk_delete

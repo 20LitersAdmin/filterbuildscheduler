@@ -22,8 +22,13 @@ class User < ApplicationRecord
   validates_confirmation_of :password
   before_save :ensure_authentication_token, :check_phone_format
 
-  # scope :active,                -> { kept }
+  # TODO: Second deployment
+  scope :kept, -> { all }
+  scope :discarded, -> { none }
+  scope :active, -> { kept }
+
   scope :leaders,               -> { where(is_leader: true) }
+  scope :inventoryists,         -> { where(does_inventory: true) }
   scope :admins,                -> { where(is_admin: true) }
   scope :notify,                -> { where(send_notification_emails: true) }
   scope :notify_inventory,      -> { where(send_inventory_emails: true) }

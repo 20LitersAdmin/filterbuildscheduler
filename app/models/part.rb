@@ -21,7 +21,9 @@ class Part < ApplicationRecord
   monetize :price_cents, allow_nil: true, numericality: { greater_than_or_equal_to: 0 }
 
   # TODO: Second deployment
-  # scope :active, -> { kept }
+  scope :kept, -> { all }
+  scope :discarded, -> { none }
+  scope :active, -> { kept }
 
   scope :available, -> { where('available_count > 0') }
   scope :orderable, -> { where(made_from_materials: false) }

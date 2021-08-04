@@ -10,7 +10,9 @@ module RailsAdmin
         RailsAdmin::Config::Actions.register(self)
 
         register_instance_option :visible? do
-          %w[Component Count Event Inventory Location Material Part Registration Supplier Technology User].include?(bindings[:object].class.to_s) && bindings[:object].deleted?
+          %w[Component Count Event Inventory Location Material Part Registration Supplier Technology User].include?(bindings[:object].class.to_s)
+          # TODO: Second deploy
+          # && bindings[:object].discarded?
         end
 
         register_instance_option :member do

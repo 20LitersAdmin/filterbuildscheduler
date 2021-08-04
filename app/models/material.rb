@@ -21,7 +21,9 @@ class Material < ApplicationRecord
   before_create :set_uid
 
   # TODO: Second deployment
-  # scope :active, -> { kept }
+  scope :kept, -> { all }
+  scope :discarded, -> { none }
+  scope :active, -> { kept }
 
   # TODO: Second deploy
   before_save :set_below_minimum

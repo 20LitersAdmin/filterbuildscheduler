@@ -8,7 +8,9 @@ class Component < ApplicationRecord
   # has_one_attached :image, dependent: :purge
 
   # TODO: Second deployment
-  # scope :active, -> { kept }
+  scope :kept, -> { all }
+  scope :discarded, -> { none }
+  scope :active, -> { kept }
 
   before_create :set_uid
   before_destroy :dependent_destroy_assemblies
