@@ -11,7 +11,9 @@ module RailsAdmin
 
         register_instance_option :visible? do
           if %w[Component Event Location Material Part Registration Supplier Technology User].include? bindings[:object].class.to_s
-            !bindings[:object].discarded?
+            # TODO: Second deploy
+            # bindings[:object].kept?
+            true
           else
             true
           end
@@ -35,7 +37,8 @@ module RailsAdmin
 
         register_instance_option :controller do
           proc do
-            @object.discard
+            # TODO: Second deploy
+            # @object.discard
             flash[:success] = t('admin.flash.successful', name: @model_config.label, action: t('admin.actions.delete.done'))
             redirect_to back_or_index
           end

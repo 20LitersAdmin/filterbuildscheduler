@@ -59,7 +59,7 @@ class UsersController < ApplicationController
     # filter out users with no registrations by joining
     authorize @users = User.builders.joins(:registrations).group('users.id').order('users.created_at DESC')
 
-    @cancelled_events = Event.only_deleted
+    @cancelled_events = Event.discarded
     @closed_events = Event.closed
 
     @finder = 'communication'

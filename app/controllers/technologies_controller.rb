@@ -6,8 +6,6 @@ class TechnologiesController < ApplicationController
 
   def index
     authorize @techs = Technology.list_worthy
-
-    @below_minimum = Part.below_minimums.any? || Material.below_minimums.any?
   end
 
   def items; end

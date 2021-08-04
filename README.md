@@ -90,6 +90,10 @@
 * status_inventories_path
 * financials_inventories_path
 * Inventory#show - is it worth having?
+* Inventories#status - still relies on counts && primary components
+* `/admin/event&scope=closed` vs. `/events/closed`
+* `Events#cancelled` - relies on `.only_deleted`
+  - vs. `/admin/event&scope=discarded`
 
 ### Stretch goals:
 7. **DONE** HAML > .html.erb
@@ -111,6 +115,20 @@
   - Parts.where(made_from_materials: true)
   - Components
   - Technologies
+- remove `_event_functions.html.erb` && calls to this partial
+  - Leaders should be able to get to `events/lead` without having to visit `rails_admin`
+- RailsAdmin Oauth users
+  - link to `admin/oauth_user/:id/status`
+  - link to `admin/oauth_user/:id/manual`
+- RailsAdmin Event
+  - link to `events/:id/edit` instead of `admin/event/:id/edit`
+  - disable Show link, change "Show in app" to "Show"
+- RailsAdmin attachments
+  - CRUD
+  - Rotate
+  - Resize
+- Assemblies
+  - How to CRUD? In  `rails_admin`?
 
 #### After 1st deployment:
 * Migrate the db

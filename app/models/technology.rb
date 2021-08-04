@@ -18,7 +18,10 @@ class Technology < ApplicationRecord
   monetize :price_cents, numericality: { greater_than_or_equal_to: 0 }
 
   # TODO: Second deployment
-  # scope :active, -> { kept }
+  scope :kept, -> { all }
+  scope :discarded, -> { none }
+  scope :active, -> { kept }
+
   scope :status_worthy, -> { where('monthly_production_rate > ?', 0).order(monthly_production_rate: 'desc') }
   scope :list_worthy, -> { where(list_worthy: true) }
   scope :finance_worthy, -> { where.not(price_cents: 0).order(:name) }

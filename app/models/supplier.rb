@@ -11,7 +11,11 @@ class Supplier < ApplicationRecord
   validate :valid_url?
   validates :email, :poc_email, format: { with: /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\z/i }, allow_blank: true
 
-  # scope :active, -> { kept }
+  # TODO: Second deployment
+  scope :kept, -> { all }
+  scope :discarded, -> { none }
+  scope :active, -> { kept }
+
   scope :without_parts, -> { left_outer_joins(:parts).where(parts: { id: nil }) }
   scope :without_materials, -> { left_outer_joins(:materials).where(materials: { id: nil }) }
   scope :without_items, -> { without_parts.without_materials }

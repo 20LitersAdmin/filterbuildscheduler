@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 class Inventory < ApplicationRecord
-  # acts_as_paranoid
-
   has_many :counts, dependent: :destroy
   accepts_nested_attributes_for :counts
   belongs_to :event, optional: true

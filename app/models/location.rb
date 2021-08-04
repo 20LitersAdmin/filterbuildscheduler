@@ -6,7 +6,10 @@ class Location < ApplicationRecord
 
   validates :name, :address1, :city, :state, :zip, presence: true
 
-  # scope :active, -> { kept }
+  # TODO: Second deployment
+  scope :kept, -> { all }
+  scope :discarded, -> { none }
+  scope :active, -> { kept }
 
   def one_liner
     "#{city}, #{state} #{zip}"
