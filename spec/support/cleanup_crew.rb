@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module CleanupCrew
-
+  # TODO: 2nd deploy: remove .with_deleted
   def clean_up!
     Registration.with_deleted.each do |r|
       r.really_destroy!
