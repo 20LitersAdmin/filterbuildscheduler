@@ -5,18 +5,26 @@ class Component < ApplicationRecord
   # include Discard::Model
 
   # TODO: Second deployment
-  # has_one_attached :image, dependent: :purge
+  monetize :price_cents, numericality: { greater_than_or_equal_to: 0 }
+
+  # TODO: Second deployment
+  has_one_attached :image, dependent: :purge
+  attr_accessor :remove_image
+
+  before_save :process_image, if: -> { attachment_changes.any? }
+  after_save { image.purge if remove_image == '1' }
 
   # TODO: Second deployment
   scope :kept, -> { all }
   scope :discarded, -> { none }
   scope :active, -> { kept }
 
+  # Exists in ActiveStorage already
+  # scope :with_attached_image, -> { joins(:image_attachment) }
+  scope :without_attached_image, -> { where.missing(:image_attachment) }
+
   before_create :set_uid
   before_destroy :dependent_destroy_assemblies
-
-  # TODO: Second deployment
-  monetize :price_cents, numericality: { greater_than_or_equal_to: 0 }
 
   # TODO: TEMP merge function
   def replace_with(component_id)
@@ -155,6 +163,26 @@ class Component < ApplicationRecord
   def dependent_destroy_assemblies
     superassemblies.destroy_all
     subassemblies.destroy_all
+  end
+
+  def process_image
+    file = attachment_changes['image'].attachable
+
+    # When this method is triggered properly, `file` is instance of `ActionDispatch::Http::UploadedFile`
+    # but apparently `ImageProcessing::MiniMagick.call` causes this callback to trigger again
+    # but this time `file` is the Hash from image.attach(io: String, filename: String, content_type: String) so...
+    # Early return if file is a Hash
+    return if file.instance_of?(Hash)
+
+    processed_image = ImageProcessing::MiniMagick
+                      .source(File.open(file))
+                      .resize_to_limit(600, 600)
+                      .convert('png')
+                      .call
+
+    image_name = "#{uid}_#{Date.today.iso8601}.png"
+
+    image.attach(io: File.open(processed_image.path), filename: image_name, content_type: 'image/png')
   end
 
   def set_uid

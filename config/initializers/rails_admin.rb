@@ -3,20 +3,6 @@
 require 'money-rails/rails_admin'
 require 'rails_admin/adapters/active_record'
 require 'application_record'
-# require 'user'
-# require 'event'
-# require 'registration'
-# require 'location'
-# require 'technology'
-# require 'supplier'
-# require 'component'
-# require 'part'
-# require 'material'
-# require 'count'
-# require 'inventory'
-# TODO: uncomment on second deploy
-# require 'materials_part'
-# require 'assembly'
 
 require 'application_helper'
 require 'devise_helper'
@@ -30,7 +16,6 @@ require Rails.root.join('lib', 'rails_admin', 'dashboard.rb')
 RailsAdmin.config do |config|
   config.parent_controller = ApplicationController.to_s
   config.main_app_name = ['20 Liters', 'Admin']
-  # config.excluded_models = ['ActiveStorage::Blob', 'ActiveStorage::Attachment']
 
   # TODO: Second deploy delete for good
   # Monkey patch to remove default_scope
@@ -58,6 +43,43 @@ RailsAdmin.config do |config|
 
   config.authorize_with do |_controller|
     redirect_to main_app.root_path unless current_user&.is_admin?
+  end
+
+  # pretty_value styling for booleans
+  def true_is_bad(boolean)
+    # e.g. component.below_minimum?
+    case boolean
+    when nil
+      %(<span class='label label-default'>&#x2012;</span>)
+    when false
+      %(<span class='label label-success'>&#x2718;</span>)
+    when true
+      %(<span class='label label-danger'>&#x2713;</span>)
+    end.html_safe
+  end
+
+  def false_is_invisible(boolean)
+    # e.g. component.made_from_materials?
+    case boolean
+    when nil
+      %(<span class='label label-default'>&#x2012;</span>)
+    when false
+      %(&nbsp)
+    when true
+      %(<span class='label label-success'>&#x2713;</span>)
+    end.html_safe
+  end
+
+  def true_is_bad_and_false_is_invisible(boolean)
+    # e.g. component.below_minimum?
+    case boolean
+    when nil
+      %(<span class='label label-default'>&#x2012;</span>)
+    when false
+      %(&nbsp)
+    when true
+      %(<span class='label label-danger'>&#x2713;</span>)
+    end.html_safe
   end
 
   config.model 'User' do
@@ -144,23 +166,11 @@ RailsAdmin.config do |config|
     weight 0
     list do
       scopes %i[active discarded]
-      field :uid do
-        sortable :id
-      end
+      field :uid
       field :name
-      field :technologies
-      field :price, :money do
-        formatted_value { bindings[:object].price }
-      end
-      field :completed_tech
+      field :price, :money
+      field :available_count
     end
-    # TODO: Extrapolate tables arent' searching by Part name??
-    # edit do
-    #   field :extrapolate_component_parts do
-    #     queryable true
-    #     searchable ['parts.name']
-    #   end
-    # end
     configure :description do
       label 'Label Description'
     end
@@ -173,23 +183,35 @@ RailsAdmin.config do |config|
     weight 1
     list do
       scopes %i[active discarded]
-      field :uid do
-        sortable :id
-      end
+      field :uid
       field :name
       field :supplier do
         formatted_value { bindings[:object].name }
+        column_width 120
       end
-      field :cprice, :money do
-        label 'Price'
-        formatted_value { bindings[:object].cprice }
+      field :available_count do
+        label 'Avail'
+        column_width 80
       end
-      field :made_from_materials
-      field :min_order
-      field :weeks_to_deliver
+      field :price, :money
+      field :made_from_materials do
+        column_width 80
+        pretty_value { false_is_invisible(bindings[:object].made_from_materials) }
+      end
+      field :below_minimum do
+        label 'Low?'
+        column_width 80
+        pretty_value { true_is_bad_and_false_is_invisible(bindings[:object].below_minimum) }
+      end
     end
     configure :description do
       label 'Label Description'
+    end
+
+    edit do
+      configure :image, :active_storage do
+        delete_method :remove_image
+      end
     end
 
     exclude_fields :components, :materials, :counts, :technologies
@@ -230,32 +252,23 @@ RailsAdmin.config do |config|
     end
   end
 
-  config.model 'Count' do
-    visible false
-  end
+  # Hide these models from navigation pane:
+  invisible_models = %w[
+    ActiveStorage::Attachment
+    ActiveStorage::Blob
+    ActiveStorage::VariantRecord
+    Count
+    Email
+    Inventory
+    MaterialsPart
+    OauthUser
+    Organization
+  ].freeze
 
-  config.model 'Inventory' do
-    visible false
-  end
-
-  config.model 'ExtrapolateComponentPart' do
-    visible false
-  end
-
-  config.model 'ExtrapolateMaterialPart' do
-    visible false
-  end
-
-  config.model 'ExtrapolateTechnologyComponent' do
-    visible false
-  end
-
-  config.model 'ExtrapolateTechnologyPart' do
-    visible false
-  end
-
-  config.model 'ExtrapolateTechnologyMaterial' do
-    visible false
+  invisible_models.each do |invisible_model|
+    config.model invisible_model do
+      visible false
+    end
   end
 
   config.actions do
