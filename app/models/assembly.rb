@@ -30,7 +30,7 @@ class Assembly < ApplicationRecord
 
     item_ids = []
     sub_component_assemblies.each do |sca|
-      item_ids << sca.item.subassemblies.pluck(:item_id)
+      item_ids << sca.item.sub_assemblies.pluck(:item_id)
     end
 
     combination_delete = Assembly.where(combination: combination, item: item_ids.flatten)

@@ -4,6 +4,12 @@ class Component < ApplicationRecord
   # TODO: Second deployment
   # include Discard::Model
 
+  has_many :super_assemblies, -> { where item_type: 'Component' }, class_name: 'Assembly', foreign_key: :item_id
+  has_many :sub_assemblies, -> { where combination_type: 'Component' }, class_name: 'Assembly', foreign_key: :combination_id
+
+  has_many :technologies, through: :super_assemblies, source: :combination, source_type: 'Technology'
+  has_many :parts, through: :sub_assemblies, source: :item, source_type: 'Part'
+
   # TODO: Second deployment
   monetize :price_cents, numericality: { greater_than_or_equal_to: 0 }
 
@@ -35,25 +41,22 @@ class Component < ApplicationRecord
     self
   end
 
-  # associations through Assembly
-  # TODO: Needs .active
-  def technologies
-    ids = Assembly.where(combination_type: 'Technology', item: self).pluck(:combination_id)
-    Technology.where(id: ids)
-  end
-
   def all_technologies
     # .technologies finds direct relations through Assembly, but doesn't include technologies where this component may be deeply nested in other components
     Technology.where('quantities ? :key', key: uid)
   end
 
-  # TODO: Needs .active
-  def superassemblies
-    Assembly.where(item_id: id, item_type: 'Component')
-  end
+  # TODO: is this necessary for anything?
+  # def all_parts
+    # .parts finds direct relations through Assembly, but doesn't include parts related to this component down the tree.
+
+    # If this component has no subcomponents, then `.parts` will return everything
+
+    # iterate over subcomponents, collect parts, then check for sub-subcomponents and repeat
+  # end
 
   # TODO: Needs .active
-  def supercomponents
+  def super_components
     Component.find_by_sql(
       "SELECT * FROM components
       INNER JOIN assemblies
@@ -65,12 +68,12 @@ class Component < ApplicationRecord
   end
 
   # TODO: Needs .active
-  def subassemblies
-    Assembly.where(combination_id: id, combination_type: 'Component')
-  end
+  # def subassemblies
+  #   Assembly.where(combination_id: id, combination_type: 'Component')
+  # end
 
   # TODO: Needs .active
-  def subcomponents
+  def sub_components
     Component.find_by_sql(
       "SELECT * FROM components
       INNER JOIN assemblies
@@ -95,9 +98,9 @@ class Component < ApplicationRecord
     }
   end
 
-  def parts
-    Part.joins(:assemblies).where('assemblies.combination_id = ? AND assemblies.combination_type = ?', id, 'Component')
-  end
+  # def parts
+  #   Part.joins(:assemblies).where('assemblies.combination_id = ? AND assemblies.combination_type = ?', id, 'Component')
+  # end
 
   # TODO: replace this with image
   def picture

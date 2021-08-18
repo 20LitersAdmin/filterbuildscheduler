@@ -157,6 +157,9 @@ RailsAdmin.config do |config|
       field :ideal_group_size
       field :ideal_leaders
     end
+    configure :image do
+      label 'Inventory Image'
+    end
 
     exclude_fields :components, :parts, :materials
   end

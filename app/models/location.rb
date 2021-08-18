@@ -34,7 +34,7 @@ class Location < ApplicationRecord
   private
 
   def name_underscore
-    name.tr(' ','').underscore
+    name.tr(' ', '').underscore
   end
 
   def process_image
