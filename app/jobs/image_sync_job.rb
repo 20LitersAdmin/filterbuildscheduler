@@ -9,22 +9,10 @@ class ImageSyncJob < ApplicationJob
       uid = filename[/[A-Z][0-9]{3}/]
       extracted_type = filename[/[a-z]{3}$/]
       type = extracted_type == 'jpg' ? 'jpeg' : 'png'
-      klass = uid[0]
-      strid = uid[1..3].to_i
 
-      object =
-        case klass
-        when 'C'
-          Component
-        when 'P'
-          Part
-        when 'M'
-          Material
-        end
+      record = uid.objectify_uid
 
-      record = object.where(id: strid).first
-
-      next unless record.present?
+      next if record.nil? || record.image.attached?
 
       record.image.attach(
         io: File.open(filename),
@@ -32,10 +20,11 @@ class ImageSyncJob < ApplicationJob
         content_type: "image/#{type}"
       )
     end
+    puts 'Done traversing the UID folder'
 
     # create display_image attachments from Technology.img_url
     Technology.all.each do |tech|
-      next if tech.img_url.nil?
+      next if tech.img_url.nil? || tech.display_image.attached?
 
       url = URI.parse(tech.img_url)
       file = URI.parse(tech.img_url).open
@@ -43,6 +32,7 @@ class ImageSyncJob < ApplicationJob
       extracted_type = filename[/\.[a-z]*/]
       extracted_type[0] = '' # remove the .
       type = extracted_type == 'jpg' ? 'jpeg' : extracted_type
+
       tech.display_image.attach(
         io: file,
         filename: filename,
@@ -50,14 +40,28 @@ class ImageSyncJob < ApplicationJob
       )
     end
 
+    puts 'Done traversing Technologies'
+
     # create image attachments from Location.photo_url
     Location.all.each do |loc|
-      next if loc.photo_url.nil?
+      next if loc.photo_url.blank? || loc.image.attached?
 
       url = URI.parse(loc.photo_url)
-      file = URI.parse(loc.photo_url).open
+
+      # If the file can't be found or opened, move on
+      begin
+        file = URI.parse(loc.photo_url).open
+      rescue OpenURI::HTTPError
+        puts 'Failed: #{loc.id}: #{loc.name}'
+        next
+      end
+
       filename = File.basename(url.path)
       extracted_type = filename[/\.[a-z]*/]
+
+      # if the URL doesn't point to an actual file, move on
+      next if extracted_type.nil?
+
       extracted_type[0] = '' # remove the .
       type = extracted_type == 'jpg' ? 'jpeg' : extracted_type
       loc.image.attach(
@@ -66,14 +70,7 @@ class ImageSyncJob < ApplicationJob
         content_type: "image/#{type}"
       )
     end
-  end
-end
 
-# Never trigger an analyzer when calling methods on ActiveStorage
-ActiveStorage::Blob::Analyzable.module_eval do
-  def analyze_later; end
-
-  def analyzed?
-    true
+    puts 'Done traversing Locations'
   end
 end

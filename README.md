@@ -105,11 +105,9 @@
   - No conflict if 2 users have the same count open (just adds to it)
 
 ### Current:
-- Shipping / Receiving inventories:
-  - No "bypass" on `inventories#new`
 - rails_admin
-  - don't want bars on dashboard
-  - Part, Material, Component, Technolgy: manage images
+  - **DONE** can manage images on: Component
+  - cannot manage images on: Part, Material, Technology
   - Handles Assemblies?
   - Show item history in show / edit
 - `Component#weeks_to_out` should traverse downward

@@ -9,6 +9,11 @@ class Technology < ApplicationRecord
   # TODO: Second deployment
   has_one_attached :image, dependent: :purge
   has_one_attached :display_image, dependent: :purge
+  attr_accessor :remove_image, :remove_display_image
+
+  before_save :process_images, if: -> { attachment_changes.any? }
+  after_save { image.purge if remove_image == '1' }
+  after_save { display_image.purge if remove_display_image == '1' }
 
   has_many :assemblies, as: :combination, dependent: :destroy
   has_many :components, through: :assemblies, source: :item, source_type: 'Component'
@@ -25,6 +30,10 @@ class Technology < ApplicationRecord
   scope :status_worthy, -> { where('monthly_production_rate > ?', 0).order(monthly_production_rate: 'desc') }
   scope :list_worthy, -> { where(list_worthy: true) }
   scope :finance_worthy, -> { where.not(price_cents: 0).order(:name) }
+
+  # Exists in ActiveStorage already
+  # scope :with_attached_image, -> { joins(:image_attachment) }
+  scope :without_attached_image, -> { where.missing(:image_attachment) }
 
   before_create :set_short_name, if: -> { short_name.nil? }
   before_create :set_uid
@@ -180,6 +189,18 @@ class Technology < ApplicationRecord
   end
 
   private
+
+  def name_underscore
+    name.tr(' ','').underscore
+  end
+
+  def process_images
+    # TODO: need to distringuish btw `image` and `display_image`.
+    # hoping `attachment_changes['image'].attachable` and `attachment_changes['display_image'].attachable` will differentiate
+    byebug
+
+    image_name = "#{name_underscore}_#{Date.today.iso8601}.png"
+  end
 
   def set_short_name
     self.short_name = name.gsub(' Filter', '').gsub(' for Bucket', '')
