@@ -76,7 +76,7 @@ class QuantityAndDepthCalculationJob < ApplicationJob
 
     puts '(starting a component loop)'
     components.each do |c|
-      assemblies_loop(c.subassemblies) if c.subassemblies.any?
+      assemblies_loop(c.sub_assemblies) if c.sub_assemblies.any?
     end
   end
 

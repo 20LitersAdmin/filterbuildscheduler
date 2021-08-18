@@ -8,7 +8,7 @@ class Part < ApplicationRecord
   has_many :materials, through: :materials_parts
   accepts_nested_attributes_for :materials_parts, allow_destroy: true
 
-  has_many :assemblies, as: :item, dependent: :destroy
+  has_many :assemblies, as: :item, dependent: :destroy, inverse_of: :item
   has_many :components,   through: :assemblies, source: :combination, source_type: 'Component'
   has_many :technologies, through: :assemblies, source: :combination, source_type: 'Technology'
   accepts_nested_attributes_for :assemblies, allow_destroy: true

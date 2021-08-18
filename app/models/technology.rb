@@ -191,15 +191,29 @@ class Technology < ApplicationRecord
   private
 
   def name_underscore
-    name.tr(' ','').underscore
+    name.tr(' ', '').underscore
   end
 
   def process_images
     # TODO: need to distringuish btw `image` and `display_image`.
     # hoping `attachment_changes['image'].attachable` and `attachment_changes['display_image'].attachable` will differentiate
-    byebug
 
-    image_name = "#{name_underscore}_#{Date.today.iso8601}.png"
+    attachment_changes.each do |ac|
+      target = ac[0]
+      file = attachment_changes[target].attachable
+
+      next if file.instance_of?(Hash)
+
+      processed_image = ImageProcessing::MiniMagick
+                        .source(File.open(file))
+                        .resize_to_limit(600, 600)
+                        .convert('png')
+                        .call
+
+      image_name = "#{name_underscore}_#{target}_#{Date.today.iso8601}.png"
+
+      public_send(target).attach(io: File.open(processed_image.path), filename: image_name, content_type: 'image/png')
+    end
   end
 
   def set_short_name
