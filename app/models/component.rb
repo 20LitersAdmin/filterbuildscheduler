@@ -4,6 +4,14 @@ class Component < ApplicationRecord
   # TODO: Second deployment
   # include Discard::Model
 
+  # NERF: This was to try to make rails_admin handle Assembly CRUD-ing
+  # has_many :assemblies,
+  #          lambda { |component|
+  #            unscope(where: :component_id)
+  #              .where("(combination_type = 'Component' AND combination_id = :component_id) OR (item_type = 'Component' AND item_id = :component_id)", component_id: component.id)
+  #          }
+  # accepts_nested_attributes_for :assemblies, allow_destroy: true
+
   has_many :super_assemblies, -> { where item_type: 'Component' }, class_name: 'Assembly', foreign_key: :item_id
   has_many :sub_assemblies, -> { where combination_type: 'Component' }, class_name: 'Assembly', foreign_key: :combination_id
 
@@ -68,11 +76,6 @@ class Component < ApplicationRecord
   end
 
   # TODO: Needs .active
-  # def subassemblies
-  #   Assembly.where(combination_id: id, combination_type: 'Component')
-  # end
-
-  # TODO: Needs .active
   def sub_components
     Component.find_by_sql(
       "SELECT * FROM components
@@ -83,7 +86,6 @@ class Component < ApplicationRecord
       AND assemblies.combination_id = #{id}"
     )
   end
-  # end associations
 
   # TODO: image should be probably needs to be adjusted
   def label_hash
@@ -97,10 +99,6 @@ class Component < ApplicationRecord
       only_loose: only_loose?
     }
   end
-
-  # def parts
-  #   Part.joins(:assemblies).where('assemblies.combination_id = ? AND assemblies.combination_type = ?', id, 'Component')
-  # end
 
   # TODO: replace this with image
   def picture

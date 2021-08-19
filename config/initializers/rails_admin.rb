@@ -11,29 +11,47 @@ require 'application_controller'
 
 require Rails.root.join('lib', 'rails_admin', 'restore.rb')
 require Rails.root.join('lib', 'rails_admin', 'discard.rb')
+# custom rails_admin dashboard
 require Rails.root.join('lib', 'rails_admin', 'dashboard.rb')
+require Rails.root.join('lib', 'rails_admin', 'assemble.rb')
+
+# NERF: this was to try to make rails_admin handle Assembly CRUD-ing through Component
+# module RailsAdmin::Adapters::ActiveRecord
+#   class Association
+#     # monkey patch Component#assemblies complex has_many with lambda
+#     def read_only?
+#       return false if association.active_record == Component && association.klass == Assembly
+
+#       (klass.all.instance_eval(&scope).readonly_value if scope.is_a? Proc) ||
+#         association.nested? ||
+#         false
+#     end
+#   end
+# end
 
 RailsAdmin.config do |config|
   config.parent_controller = ApplicationController.to_s
   config.main_app_name = ['20 Liters', 'Admin']
 
-  # TODO: Second deploy delete for good
-  # Monkey patch to remove default_scope
-  #
-  # require 'rails_admin/adapters/active_record'
+  # Hide these models from navigation pane:
+  invisible_models = %w[
+    Assembly
+    ActiveStorage::Attachment
+    ActiveStorage::Blob
+    ActiveStorage::VariantRecord
+    Count
+    Email
+    Inventory
+    MaterialsPart
+    OauthUser
+    Organization
+  ].freeze
 
-  # module RailsAdmin::Adapters::ActiveRecord
-  #   def get(id)
-  #     object = model.with_deleted.find(id)
-  #     return unless object == scoped.where(primary_key => id).first
-
-  #     AbstractObject.new object
-  #   end
-
-  #   def scoped
-  #     model.unscoped
-  #   end
-  # end
+  invisible_models.each do |invisible_model|
+    config.model invisible_model do
+      visible false
+    end
+  end
 
   ## == Devise integration ==
   config.authenticate_with do
@@ -43,43 +61,6 @@ RailsAdmin.config do |config|
 
   config.authorize_with do |_controller|
     redirect_to main_app.root_path unless current_user&.is_admin?
-  end
-
-  # pretty_value styling for booleans
-  def true_is_bad(boolean)
-    # e.g. component.below_minimum?
-    case boolean
-    when nil
-      %(<span class='label label-default'>&#x2012;</span>)
-    when false
-      %(<span class='label label-success'>&#x2718;</span>)
-    when true
-      %(<span class='label label-danger'>&#x2713;</span>)
-    end.html_safe
-  end
-
-  def false_is_invisible(boolean)
-    # e.g. component.made_from_materials?
-    case boolean
-    when nil
-      %(<span class='label label-default'>&#x2012;</span>)
-    when false
-      %(&nbsp)
-    when true
-      %(<span class='label label-success'>&#x2713;</span>)
-    end.html_safe
-  end
-
-  def true_is_bad_and_false_is_invisible(boolean)
-    # e.g. component.below_minimum?
-    case boolean
-    when nil
-      %(<span class='label label-default'>&#x2012;</span>)
-    when false
-      %(&nbsp)
-    when true
-      %(<span class='label label-danger'>&#x2713;</span>)
-    end.html_safe
   end
 
   config.model 'User' do
@@ -223,11 +204,12 @@ RailsAdmin.config do |config|
   config.model 'Material' do
     parent 'Technology'
     weight 2
+    include_all_fields
+    exclude_fields :history, :quantities, :parts, :price_cents, :price_currency
+
     list do
       scopes %i[active discarded]
-      field :uid do
-        sortable :id
-      end
+      field :uid
       field :name
       field :supplier do
         formatted_value { bindings[:object].name }
@@ -237,11 +219,57 @@ RailsAdmin.config do |config|
       field :weeks_to_deliver
       field :min_order
     end
+
     configure :description do
       label 'Label Description'
     end
 
-    exclude_fields :parts, :counts, :technologies
+    edit do
+      group :default do
+        field :name
+        field :comments do
+          label 'Admin notes'
+        end
+        field :description do
+          label 'Label description'
+        end
+        field :uid do
+          read_only true
+        end
+        field :image, :active_storage do
+          delete_method :remove_image
+        end
+      end
+      group 'Inventory Info' do
+        active false
+        field :loose_count
+        field :only_loose
+        field :box_count
+        field :available_count
+        field :minimum_on_hand
+        field :below_minimum
+        field :discarded_at do
+          read_only true
+        end
+      end
+      group 'Supplier Info' do
+        active false
+        field :supplier
+        field :sku
+        field :order_url
+        field :price, :money
+        field :min_order
+        field :quantity_per_box
+        field :weeks_to_deliver
+      end
+      group 'Order Info' do
+        active false
+        field :last_ordered_at
+        field :last_ordered_quantity
+        field :last_received_at
+        field :last_received_quantity
+      end
+    end
   end
 
   config.model 'Supplier' do
@@ -252,25 +280,6 @@ RailsAdmin.config do |config|
       field :url
       field :poc_name
       field :poc_email
-    end
-  end
-
-  # Hide these models from navigation pane:
-  invisible_models = %w[
-    ActiveStorage::Attachment
-    ActiveStorage::Blob
-    ActiveStorage::VariantRecord
-    Count
-    Email
-    Inventory
-    MaterialsPart
-    OauthUser
-    Organization
-  ].freeze
-
-  invisible_models.each do |invisible_model|
-    config.model invisible_model do
-      visible false
     end
   end
 
@@ -285,5 +294,45 @@ RailsAdmin.config do |config|
     show_in_app
     discard     # lib/rails_admin/discard.rb
     restore     # lib/rails_admin/restore.rb
+    assemble
+  end
+
+  # pretty_value styling for rails_admin booleans
+  def true_is_bad(boolean)
+    # e.g. component.below_minimum?
+    case boolean
+    when nil
+      %(<span class='label label-default'>&#x2012;</span>)
+    when false
+      %(<span class='label label-success'>&#x2718;</span>)
+    when true
+      %(<span class='label label-danger'>&#x2713;</span>)
+    end.html_safe
+  end
+
+  # pretty_value styling for rails_admin booleans
+  def false_is_invisible(boolean)
+    # e.g. component.made_from_materials?
+    case boolean
+    when nil
+      %(<span class='label label-default'>&#x2012;</span>)
+    when false
+      %(&nbsp)
+    when true
+      %(<span class='label label-success'>&#x2713;</span>)
+    end.html_safe
+  end
+
+  # pretty_value styling for rails_admin booleans
+  def true_is_bad_and_false_is_invisible(boolean)
+    # e.g. component.below_minimum?
+    case boolean
+    when nil
+      %(<span class='label label-default'>&#x2012;</span>)
+    when false
+      %(&nbsp)
+    when true
+      %(<span class='label label-danger'>&#x2713;</span>)
+    end.html_safe
   end
 end

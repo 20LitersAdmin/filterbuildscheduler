@@ -48,6 +48,10 @@ en:
         title: 'Discard'
         breadcrumb: 'Discard'
         done: 'deleted, but can be restored'
+      assemble:
+        menu: 'Assemble'
+        title: 'Assemble'
+        breadcrumb: 'Assemble'
   activerecord:
     attributes:
       user:

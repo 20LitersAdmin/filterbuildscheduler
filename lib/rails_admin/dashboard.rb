@@ -67,7 +67,7 @@ module RailsAdmin
                 { name: 'Sign in link', link: 'auth/in' },
                 { name: 'Sign out link', link: 'auth/out' },
                 { name: 'Stored emails', link: 'admin/email' },
-                { name: 'Stored organizations', link: 'admin/organization' },
+                { name: 'Stored organizations', link: 'admin/organization' }
               ]
             }
 
@@ -93,7 +93,6 @@ module RailsAdmin
         register_instance_option :statistics? do
           false
         end
-
       end
     end
   end
