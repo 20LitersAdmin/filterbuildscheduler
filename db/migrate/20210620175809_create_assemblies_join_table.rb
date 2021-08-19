@@ -23,8 +23,8 @@ class CreateAssembliesJoinTable < ActiveRecord::Migration[6.1]
     # simplify the join table beetween Materials and Parts
     # to get `quantity`, call `part.quantity_from_material`
     create_table :materials_parts do |t|
-      t.belongs_to :part
       t.belongs_to :material
+      t.belongs_to :part
       t.decimal :quantity, precision: 8, scale: 4, default: 1, null: false
     end
 

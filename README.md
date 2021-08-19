@@ -106,14 +106,16 @@
 
 ### Current:
 - rails_admin
-  - **DONE** can manage images on: Component, Part, Location, Technology, Material
-  - Handles Assemblies?
+  - links back to app for Assemblies
+    - `/assemble/UID` <- universal uri for all items
+      - use this for `MaterialsPart` too? Probably not
   - Show item history in show / edit
 - `Component#weeks_to_out` should traverse downward
 - price
   - Nerf #cprice on Items
   - make sure Part#not_made_from_materials and Material#all price is being escalated to assemblies on save
     - Right now, saving an Assembly trigers PriceCalculationJob, but what if you change the price of a Part or Material? That needs to cascade up.
+      - Assemblies have a price (item.price * quantity)
 - Calculate how many more items can be made:
   - Parts.where(made_from_materials: true)
   - Components

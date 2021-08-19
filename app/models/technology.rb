@@ -15,7 +15,9 @@ class Technology < ApplicationRecord
   after_save { image.purge if remove_image == '1' }
   after_save { display_image.purge if remove_display_image == '1' }
 
-  has_many :assemblies, as: :combination, dependent: :destroy
+  has_many :assemblies, as: :combination, dependent: :destroy, inverse_of: :combination
+  accepts_nested_attributes_for :assemblies, allow_destroy: true
+
   has_many :components, through: :assemblies, source: :item, source_type: 'Component'
   has_many :parts, through: :assemblies, source: :item, source_type: 'Part'
 
@@ -39,6 +41,8 @@ class Technology < ApplicationRecord
   before_create :set_uid
 
   def all_components
+    # .components will find 1st-level children but not all descendents
+    # so use the hash of all items stored in the quantities JSONB field
     uids = quantities.keys.grep(/^C[0-9]{3}/)
     ary = []
     uids.each { |u| ary << u.tr('C', '').to_i }
@@ -46,6 +50,8 @@ class Technology < ApplicationRecord
   end
 
   def all_parts
+    # .parts will find 1st-level children but not all descendents
+    # so use the hash of all items stored in the quantities JSONB field
     uids = quantities.keys.grep(/^P[0-9]{3}/)
     ary = []
     uids.each { |u| ary << u.tr('P', '').to_i }

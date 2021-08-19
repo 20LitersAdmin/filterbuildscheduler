@@ -9,6 +9,18 @@ class MaterialsPart < ApplicationRecord
   after_save :recalculate_technology_quantities
   after_destroy :recalculate_technology_quantities
 
+  def name
+    "#{material_uid}::#{part_uid}"
+  end
+
+  def material_uid
+    "M#{material_id.to_s.rjust(3, 0.to_s)}"
+  end
+
+  def part_uid
+    "P#{part_id.to_s.rjust(3, 0.to_s)}"
+  end
+
   private
 
   def calculate_price_for_part

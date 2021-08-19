@@ -1,8 +1,10 @@
 # frozen_string_literal: true
 
 class TechnologiesController < ApplicationController
-  before_action :set_technology, except: %i[index label labels labels_select donation_list]
+  before_action :set_technology, only: %i[items prices]
   before_action :set_bom_items, only: %i[items prices]
+
+  before_action :objectify_uid_from_param, only: %i[label assemble]
 
   def index
     authorize @techs = Technology.list_worthy
@@ -37,15 +39,13 @@ class TechnologiesController < ApplicationController
   end
 
   def label
-    authorize Technology
-    # get 'label/:uid', to: 'technologies#label', as: 'label'
     # page to print a full page of labels for one item
-    uid = params[:uid]
-    item = uid.objectify_uid
+    @label = Label.new(@item.label_hash)
+  end
 
-    raise ActiveRecord::RecordNotFound unless item.present?
-
-    @label = Label.new(item.label_hash)
+  def assemble
+    # page for showing assemblies
+    # @item is set
   end
 
   def labels
@@ -82,6 +82,14 @@ class TechnologiesController < ApplicationController
 
   def set_technology
     authorize @technology = Technology.find(params[:id])
+  end
+
+  def objectify_uid_from_param
+    authorize Technology
+    uid = params[:uid]
+    @item = uid.objectify_uid
+
+    raise ActiveRecord::RecordNotFound unless @item.present?
   end
 
   def set_bom_items

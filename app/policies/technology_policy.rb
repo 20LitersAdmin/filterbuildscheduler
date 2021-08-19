@@ -24,6 +24,10 @@ class TechnologyPolicy
     index?
   end
 
+  def assemble?
+    index?
+  end
+
   def labels?
     index?
   end

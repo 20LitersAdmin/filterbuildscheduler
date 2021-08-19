@@ -64,7 +64,7 @@ class Assembly < ApplicationRecord
     "#{combination_type}:#{item_type}"
   end
 
-  def subassemblies
+  def sub_assemblies
     return Assembly.none if item_type == 'Part'
 
     Assembly.where(combination: item)
@@ -76,7 +76,7 @@ class Assembly < ApplicationRecord
     Assembly.where(combination: item, item_type: 'Component')
   end
 
-  def superassemblies
+  def super_assemblies
     return Assembly.none if combination_type == 'Technology'
 
     Assembly.where(item_id: combination_id, item_type: combination_type)

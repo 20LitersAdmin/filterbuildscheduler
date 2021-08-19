@@ -2,7 +2,6 @@
 
 Rails.application.routes.draw do
   root to: 'events#index'
-  mount RailsAdmin::Engine => '/admin', as: 'rails_admin'
 
   devise_for :users, controllers: { sessions: 'sessions' }
   get 'users/:id/show', to: 'users#show', as: 'show_user'
@@ -19,8 +18,8 @@ Rails.application.routes.draw do
   get 'labels', to: 'technologies#labels', as: 'labels'
   get 'label/:uid', to: 'technologies#label', as: 'label'
   post 'labels_select', to: 'technologies#labels_select', as: 'labels_select'
-
   get 'donation_list', to: 'technologies#donation_list', as: 'donation_list'
+  get 'assemble/:uid', to: 'technologies#assemble', as: 'assemble'
 
   resources :report, only: [:index] do
     collection do
@@ -90,6 +89,7 @@ Rails.application.routes.draw do
 
   post 'stripe-webhook', to: 'webhooks#stripe', as: 'stripe_webhook'
 
+  mount RailsAdmin::Engine => '/admin', as: 'rails_admin'
   mount LetterOpenerWeb::Engine, at: '/letter_opener' if Rails.env.development?
   mount ActionCable.server => '/cable'
 
