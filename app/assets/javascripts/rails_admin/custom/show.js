@@ -1,14 +1,27 @@
-$(document).on("ready", function() {
-  // only run if on a rails_admin page
-  if ( !isRailsAdminPage() && !actionMatches(['show']) ) {
-    return;
-  };
-
-  // shift dd.well elems over behind their previous dt elems
-  $('dd.well').each( function() {
-    var transformWidth = $(this).prev().css('width');
-    var transformText = 'translateX(-' + transformWidth + ')';
-    $(this).css('transform', transformText);
+function shiftDdWells(jq_dd_ary) {
+  // shift all dd.well elems over behind their previous dt elems
+  jq_dd_ary.each( function() {
+    var transformWidth = $(this).prev().width();
+    var marginLeft = '-' + (transformWidth - 5) + 'px';
+    var minWidth = (transformWidth + 10) + 'px'
+    $(this).css('margin-left', marginLeft);
+    $(this).css('min-width', minWidth);
   });
+};
+
+// run on full page loads
+$(document).on("ready", function() {
+  if ( isRailsAdminPage() && actionMatches(['show']) ) {
+    ddWells = $('dd.well')
+    shiftDdWells(ddWells);
+  };
+});
+
+// run on ajaxComplete
+$(document).ajaxComplete( function() {
+  if ( isRailsAdminPage() && actionMatches(['show']) ) {
+    ddWells = $('dd.well')
+    shiftDdWells(ddWells);
+  };
 });
 
