@@ -108,6 +108,11 @@ class Material < ApplicationRecord
     "M#{id.to_s.rjust(3, 0.to_s)}"
   end
 
+  # Rails Admin virtual
+  def uid_and_name
+    "#{uid}: #{name}"
+  end
+
   def weeks_to_out
     return 0 if available_count.zero?
 
