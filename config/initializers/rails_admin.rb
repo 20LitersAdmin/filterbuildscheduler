@@ -165,17 +165,27 @@ RailsAdmin.config do |config|
   config.model 'Part' do
     parent 'Technology'
     weight 1
+
+    configure :description do
+      label 'Label Description'
+    end
+
     list do
       scopes %i[active discarded]
       field :uid
       field :name
       field :supplier do
         formatted_value { bindings[:object].name }
-        column_width 120
+        # column_width 120
       end
-      field :available_count do
-        label 'Avail'
-        column_width 80
+      field :order_url do
+        formatted_value do
+          bindings[:view].link_to bindings[:object].order_url, target: '_blank', rel: 'tooltip' do
+            "<i class='fa fa-external-link'></i>
+            <span style='display:none'>Visit</span>
+            ".html_safe
+          end
+        end
       end
       field :price, :money
       field :made_from_materials do
@@ -204,8 +214,10 @@ RailsAdmin.config do |config|
   config.model 'Material' do
     parent 'Technology'
     weight 2
-    include_all_fields
-    exclude_fields :history, :quantities, :parts, :price_cents, :price_currency
+
+    configure :description do
+      label 'Label Description'
+    end
 
     list do
       scopes %i[active discarded]
@@ -214,17 +226,72 @@ RailsAdmin.config do |config|
       field :supplier do
         formatted_value { bindings[:object].name }
       end
+      field :order_url do
+        formatted_value do
+          bindings[:view].link_to bindings[:object].order_url, target: '_blank', rel: 'tooltip' do
+            "<i class='fa fa-external-link'></i>
+            <span style='display:none'>Visit</span>
+            ".html_safe
+          end
+        end
+      end
+      field :price, :money
+      field :min_order
+    end
+
+    show do
+      group :default do
+        field :uid_and_name do
+          label 'UID: Name'
+        end
+        field :image, :active_storage
+        field :comments do
+          label 'Admin notes'
+        end
+        field :description do
+          label 'Label description'
+        end
+      end
+      group 'Inventory Info' do
+        field :loose_count
+        field :only_loose
+        field :box_count
+        field :available_count
+        field :minimum_on_hand
+        field :below_minimum
+        field :discarded_at
+      end
+      group 'Supplier Info' do
+        field :supplier do
+          label do
+            'Supplier & SKU'
+          end
+          pretty_value do
+            "#{bindings[:object].supplier.name}&nbsp;&nbsp;&nbsp;&nbsp; SKU:#{bindings[:view].link_to bindings[:object].sku, bindings[:object].order_url, target: '_blank', rel: 'tooltip'}".html_safe
+          end
+        end
+        field :price, :money
+        field :min_order
+        field :quantity_per_box
+        field :weeks_to_deliver
+      end
+      group 'Order Info' do
+        field :last_ordered_at
+        field :last_ordered_quantity
+        field :last_received_at
+        field :last_received_quantity
+      end
+
       field :price, :money
       field :min_order
       field :weeks_to_deliver
-      field :min_order
-    end
+      field :quantity_per_box
 
-    configure :description do
-      label 'Label Description'
+      exclude_fields :name, :uid, :history, :quantities, :parts, :price_cents, :price_currency, :order_url, :sku, :materials_parts
     end
 
     edit do
+      exclude_fields :history, :quantities, :parts, :price_cents, :price_currency
       group :default do
         field :name
         field :comments do
