@@ -69,7 +69,7 @@ class AddCountsToItemTables < ActiveRecord::Migration[6.1]
     Inventory.order(date: :desc, created_at: :desc).each do |i|
       i.counts.each do |c|
         item = c.item
-        item.history[i.date.iso8601] = c.history_json
+        item.history[i.date.iso8601] = c.available
         item.save!
         c.destroy
       end

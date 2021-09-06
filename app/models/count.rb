@@ -67,7 +67,8 @@ class Count < ApplicationRecord
   def history_json
     {
       loose: loose_count,
-      box: unopened_boxes_count
+      box: unopened_boxes_count,
+      available: available
     }
   end
 

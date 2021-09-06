@@ -22,6 +22,8 @@
 //= require bootstrap-datetimepicker
 //= require bootstrap-sprockets
 //= require turbolinks
+//= require chartkick
+//= require Chart.bundle
 //= require_tree ./channels
 //= require_tree .
 

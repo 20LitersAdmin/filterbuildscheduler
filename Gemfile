@@ -12,6 +12,7 @@ gem 'aws-sdk-s3'
 gem 'bootsnap', '>= 1.4.2', require: false
 gem 'bootstrap3-datetimepicker-rails'
 gem 'bootstrap-sass'
+gem 'chartkick'
 gem 'delayed_cron_job', '~> 0.7.2'
 gem 'delayed_job', '~> 4.1'
 gem 'delayed_job_active_record', '~> 4.1'
