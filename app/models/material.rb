@@ -95,6 +95,14 @@ class Material < ApplicationRecord
     min_order * price
   end
 
+  def supplier_and_sku
+    return supplier.name unless order_url.present?
+
+    sku_as_link = ActionController::Base.helpers.link_to sku, order_url, target: '_blank', rel: 'tooltip'
+
+    "#{supplier.name} - SKU: #{sku_as_link}".html_safe
+  end
+
   def technologies
     Technology.where('quantities ? :key', key: uid)
   end

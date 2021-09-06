@@ -105,7 +105,24 @@
   - No conflict if 2 users have the same count open (just adds to it)
 
 ### Current:
+- Item history:
+  - currently: { date: {box: #, loose: #}}
+  - for charting: { date: available }
+    - could stop saving box # loose separately
+    - could do this as a method
+
+
 - rails_admin
+  - Material list, edit and show are organized, need to organize ALL OTHER models:
+    - Part (list, show are done)
+    - Component
+    - Technology
+    - Supplier
+    - Location
+    - User
+    - Event?
+    - Registration?
+
   - links back to app for Assemblies
     - `/assemble/UID` <- universal uri for all items
       - use this for `MaterialsPart` too? Probably not
