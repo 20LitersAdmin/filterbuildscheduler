@@ -131,6 +131,15 @@ class Part < ApplicationRecord
     assemblies
   end
 
+  def supplier_and_sku
+    return '' if made_from_materials?
+
+    return supplier.name unless order_url.present?
+
+    sku_as_link = ActionController::Base.helpers.link_to sku, order_url, target: '_blank', rel: 'tooltip'
+    "#{supplier.name} - SKU: #{sku_as_link}".html_safe
+  end
+
   def subassemblies
     Assembly.none
   end
@@ -146,6 +155,11 @@ class Part < ApplicationRecord
   # TODO: delete after 1st migration
   def uid
     "P#{id.to_s.rjust(3, 0.to_s)}"
+  end
+
+  # Rails Admin virtual
+  def uid_and_name
+    "#{uid}: #{name}"
   end
 
   def weeks_to_out

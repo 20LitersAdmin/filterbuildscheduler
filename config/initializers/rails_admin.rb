@@ -13,7 +13,10 @@ require Rails.root.join('lib', 'rails_admin', 'restore.rb')
 require Rails.root.join('lib', 'rails_admin', 'discard.rb')
 # custom rails_admin dashboard
 require Rails.root.join('lib', 'rails_admin', 'dashboard.rb')
+# custom action to link to assemble pages
 require Rails.root.join('lib', 'rails_admin', 'assemble.rb')
+# custom field formats (e.g. number_with_delimiter)
+require Rails.root.join('lib', 'rails_admin', 'custom_fields.rb')
 
 # NERF: this was to try to make rails_admin handle Assembly CRUD-ing through Component
 # module RailsAdmin::Adapters::ActiveRecord
@@ -172,71 +175,40 @@ RailsAdmin.config do |config|
 
     list do
       scopes %i[active discarded]
-      field :uid
+      field :uid do
+        column_width 50
+      end
       field :name
       field :supplier do
         formatted_value { bindings[:object].name }
-        # column_width 120
+        column_width 120
       end
       field :order_url do
+        column_width 80
         formatted_value do
-          bindings[:view].link_to bindings[:object].order_url, target: '_blank', rel: 'tooltip' do
-            "<i class='fa fa-external-link'></i>
-            <span style='display:none'>Visit</span>
-            ".html_safe
+          if bindings[:object].order_url.present?
+            bindings[:view].link_to bindings[:object].order_url, target: '_blank', rel: 'tooltip' do
+              "<i class='fa fa-external-link'></i>
+              <span style='display:none'>Visit</span>
+              ".html_safe
+            end
+          else
+            '&nbsp'.html_safe
           end
         end
       end
       field :price, :money
-      field :made_from_materials do
+      field :available_count, :delimited do
+        label 'Available'
         column_width 80
-        pretty_value { false_is_invisible(bindings[:object].made_from_materials) }
       end
-      field :below_minimum do
+      field :below_minimum, :true_is_bad do
         label 'Low?'
         column_width 80
-        pretty_value { true_is_bad_and_false_is_invisible(bindings[:object].below_minimum) }
       end
-    end
-    configure :description do
-      label 'Label Description'
-    end
-
-    edit do
-      configure :image, :active_storage do
-        delete_method :remove_image
+      field :made_from_materials, :false_is_invisible do
+        column_width 80
       end
-    end
-
-    exclude_fields :components, :materials, :counts, :technologies
-  end
-
-  config.model 'Material' do
-    parent 'Technology'
-    weight 2
-
-    configure :description do
-      label 'Label Description'
-    end
-
-    list do
-      scopes %i[active discarded]
-      field :uid
-      field :name
-      field :supplier do
-        formatted_value { bindings[:object].name }
-      end
-      field :order_url do
-        formatted_value do
-          bindings[:view].link_to bindings[:object].order_url, target: '_blank', rel: 'tooltip' do
-            "<i class='fa fa-external-link'></i>
-            <span style='display:none'>Visit</span>
-            ".html_safe
-          end
-        end
-      end
-      field :price, :money
-      field :min_order
     end
 
     show do
@@ -253,41 +225,130 @@ RailsAdmin.config do |config|
         end
       end
       group 'Inventory Info' do
-        field :loose_count
+        field :loose_count, :delimited
         field :only_loose
-        field :box_count
-        field :available_count
-        field :minimum_on_hand
+        field :box_count, :delimited
+        field :available_count, :delimited
+        field :minimum_on_hand, :delimited
         field :below_minimum
-        field :discarded_at
+        field :discarded_at, :date
       end
       group 'Supplier Info' do
-        field :supplier do
+        field :supplier_and_sku do
           label do
             'Supplier & SKU'
           end
-          pretty_value do
-            "#{bindings[:object].supplier.name}&nbsp;&nbsp;&nbsp;&nbsp; SKU:#{bindings[:view].link_to bindings[:object].sku, bindings[:object].order_url, target: '_blank', rel: 'tooltip'}".html_safe
-          end
         end
         field :price, :money
-        field :min_order
-        field :quantity_per_box
+        field :min_order, :delimited
+        field :quantity_per_box, :delimited
         field :weeks_to_deliver
       end
       group 'Order Info' do
-        field :last_ordered_at
+        field :last_ordered_at, :date
         field :last_ordered_quantity
-        field :last_received_at
+        field :last_received_at, :date
         field :last_received_quantity
       end
 
-      field :price, :money
-      field :min_order
-      field :weeks_to_deliver
-      field :quantity_per_box
+      group 'History' do
+        field :history, :history_json
+      end
+    end
 
-      exclude_fields :name, :uid, :history, :quantities, :parts, :price_cents, :price_currency, :order_url, :sku, :materials_parts
+    edit do
+      configure :image, :active_storage do
+        delete_method :remove_image
+      end
+    end
+  end
+
+  config.model 'Material' do
+    parent 'Technology'
+    weight 2
+
+    configure :description do
+      label 'Label Description'
+    end
+
+    list do
+      scopes %i[active discarded]
+      field :uid do
+        column_width 50
+      end
+      field :name
+      field :supplier do
+        formatted_value { bindings[:object].name }
+        column_width 100
+      end
+      field :order_url do
+        column_width 80
+        formatted_value do
+          if bindings[:object].order_url.present?
+            bindings[:view].link_to bindings[:object].order_url, target: '_blank', rel: 'tooltip' do
+              "<i class='fa fa-external-link'></i>
+              <span style='display:none'>Visit</span>
+              ".html_safe
+            end
+          else
+            '&nbsp'.html_safe
+          end
+        end
+      end
+      field :price, :money
+      field :available_count, :delimited do
+        label 'Available'
+        column_width 80
+      end
+      field :below_minimum, :true_is_bad do
+        label 'Low?'
+        column_width 80
+      end
+    end
+
+    show do
+      group :default do
+        field :uid_and_name do
+          label 'UID: Name'
+        end
+        field :image, :active_storage
+        field :comments do
+          label 'Admin notes'
+        end
+        field :description do
+          label 'Label description'
+        end
+      end
+      group 'Inventory Info' do
+        field :loose_count, :delimited
+        field :only_loose
+        field :box_count, :delimited
+        field :available_count, :delimited
+        field :minimum_on_hand, :delimited
+        field :below_minimum
+        field :discarded_at, :date
+      end
+      group 'Supplier Info' do
+        field :supplier_and_sku do
+          label do
+            'Supplier & SKU'
+          end
+        end
+        field :price, :money
+        field :min_order, :delimited
+        field :quantity_per_box, :delimited
+        field :weeks_to_deliver
+      end
+      group 'Order Info' do
+        field :last_ordered_at, :date
+        field :last_ordered_quantity
+        field :last_received_at, :date
+        field :last_received_quantity
+      end
+
+      group 'History' do
+        field :history, :history_json
+      end
     end
 
     edit do
@@ -364,42 +425,13 @@ RailsAdmin.config do |config|
     assemble
   end
 
-  # pretty_value styling for rails_admin booleans
-  def true_is_bad(boolean)
-    # e.g. component.below_minimum?
-    case boolean
-    when nil
-      %(<span class='label label-default'>&#x2012;</span>)
-    when false
-      %(<span class='label label-success'>&#x2718;</span>)
-    when true
-      %(<span class='label label-danger'>&#x2713;</span>)
-    end.html_safe
-  end
+  def delimited(number)
+    integer = number.instance_of?(String) ? number.to_i : number
 
-  # pretty_value styling for rails_admin booleans
-  def false_is_invisible(boolean)
-    # e.g. component.made_from_materials?
-    case boolean
-    when nil
-      %(<span class='label label-default'>&#x2012;</span>)
-    when false
-      %(&nbsp)
-    when true
-      %(<span class='label label-success'>&#x2713;</span>)
-    end.html_safe
-  end
+    return '-' if integer.nil? || integer.zero?
 
-  # pretty_value styling for rails_admin booleans
-  def true_is_bad_and_false_is_invisible(boolean)
-    # e.g. component.below_minimum?
-    case boolean
-    when nil
-      %(<span class='label label-default'>&#x2012;</span>)
-    when false
-      %(&nbsp)
-    when true
-      %(<span class='label label-danger'>&#x2713;</span>)
-    end.html_safe
+    extend ActionView::Helpers::NumberHelper
+
+    number_with_delimiter(integer, delimiter: ',')
   end
 end
