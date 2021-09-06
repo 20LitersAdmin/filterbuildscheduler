@@ -45,7 +45,6 @@ RailsAdmin.config do |config|
     Count
     Email
     Inventory
-    MaterialsPart
     OauthUser
     Organization
   ].freeze
@@ -54,6 +53,11 @@ RailsAdmin.config do |config|
     config.model invisible_model do
       visible false
     end
+  end
+
+  config.model 'MaterialsPart' do
+    # this model can't be fully excluded or it breaks the nested form capabilities
+    visible { false }
   end
 
   ## == Devise integration ==
@@ -372,6 +376,7 @@ RailsAdmin.config do |config|
         field :uid do
           read_only true
         end
+        field :materials_parts
         field :image, :active_storage do
           delete_method :remove_image
         end
