@@ -51,12 +51,21 @@ class HistoryJson < RailsAdmin::Config::Fields::Base
 
   register_instance_option :formatted_value do
     html_response = ['<ul>']
-    value.reverse_each do |date, quantities|
-      html_response << "<li>#{date}: "
-      html_response << "#{quantities['loose']} loose; #{quantities['box']} box</li>"
+    value.reverse_each do |date, available|
+      html_response << "<li>#{date}: #{available}</li>"
     end
     html_response << ['</ul>']
 
-    html_response.join('').html_safe
+    html_response.join.html_safe
+  end
+end
+
+class HistoryLineChart < RailsAdmin::Config::Fields::Base
+  RailsAdmin::Config::Fields::Types.register(:line_chart, self)
+
+  register_instance_option :formatted_value do
+    extend Chartkick::Helper
+
+    line_chart value, curve: false, width: '800px', label: 'Available', thousands: ','
   end
 end

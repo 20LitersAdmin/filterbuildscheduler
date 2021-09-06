@@ -21,7 +21,7 @@ class Component < ApplicationRecord
   # TODO: Second deployment
   monetize :price_cents, numericality: { greater_than_or_equal_to: 0 }
 
-  # TODO: Second deployment
+  # TODO: Second deployment (fails on migration)
   has_one_attached :image, dependent: :purge
   attr_accessor :remove_image
 
@@ -162,8 +162,8 @@ class Component < ApplicationRecord
   private
 
   def dependent_destroy_assemblies
-    superassemblies.destroy_all
-    subassemblies.destroy_all
+    super_assemblies.destroy_all
+    sub_assemblies.destroy_all
   end
 
   def process_image

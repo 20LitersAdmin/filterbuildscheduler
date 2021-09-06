@@ -86,6 +86,12 @@
 6. **DONE** Items are modified to fit new schema:
   1. unify anything with '**VWF**' and '**20l**'
 
+### Decisions
+- Item history JSON structure:
+  - current: { date: available, ... }
+  - was: { date: {box: #, loose: #}}
+
+
 ### Nerfed pages:
 * status_inventories_path
 * financials_inventories_path
@@ -105,13 +111,6 @@
   - No conflict if 2 users have the same count open (just adds to it)
 
 ### Current:
-- Item history:
-  - currently: { date: {box: #, loose: #}}
-  - for charting: { date: available }
-    - could stop saving box # loose separately
-    - could do this as a method
-
-
 - rails_admin
   - Material list, edit and show are organized, need to organize ALL OTHER models:
     - Part (list, show are done)

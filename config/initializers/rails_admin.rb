@@ -225,10 +225,14 @@ RailsAdmin.config do |config|
         end
       end
       group 'Inventory Info' do
+        field :available_count, :delimited
         field :loose_count, :delimited
         field :only_loose
-        field :box_count, :delimited
-        field :available_count, :delimited
+        field :box_count, :delimited do
+          visible do
+            !bindings[:object].only_loose?
+          end
+        end
         field :minimum_on_hand, :delimited
         field :below_minimum
         field :discarded_at, :date
@@ -252,7 +256,7 @@ RailsAdmin.config do |config|
       end
 
       group 'History' do
-        field :history, :history_json
+        field :history, :line_chart
       end
     end
 
@@ -320,10 +324,14 @@ RailsAdmin.config do |config|
         end
       end
       group 'Inventory Info' do
+        field :available_count, :delimited
         field :loose_count, :delimited
         field :only_loose
-        field :box_count, :delimited
-        field :available_count, :delimited
+        field :box_count, :delimited do
+          visible do
+            !bindings[:object].only_loose?
+          end
+        end
         field :minimum_on_hand, :delimited
         field :below_minimum
         field :discarded_at, :date
@@ -347,7 +355,7 @@ RailsAdmin.config do |config|
       end
 
       group 'History' do
-        field :history, :history_json
+        field :history, :line_chart
       end
     end
 

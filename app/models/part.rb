@@ -17,7 +17,7 @@ class Part < ApplicationRecord
 
   monetize :price_cents, allow_nil: true, numericality: { greater_than_or_equal_to: 0 }
 
-  # TODO: Second deployment
+  # TODO: Second deployment (fails on migration)
   has_one_attached :image, dependent: :purge
   attr_accessor :remove_image
 
@@ -42,8 +42,8 @@ class Part < ApplicationRecord
   scope :without_attached_image, -> { where.missing(:image_attachment) }
 
   before_create :set_uid
-  # TODO: Second deployment
-  before_save :set_made_from_materials, :set_below_minimum
+  # TODO: Second deployment (fails on migration)
+  # before_save :set_made_from_materials, :set_below_minimum
 
   # TODO: TEMP merge function
   def replace_with(part_id)

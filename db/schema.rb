@@ -219,8 +219,8 @@ ActiveRecord::Schema.define(version: 2021_08_03_125336) do
   end
 
   create_table "materials_parts", force: :cascade do |t|
-    t.bigint "part_id"
     t.bigint "material_id"
+    t.bigint "part_id"
     t.decimal "quantity", precision: 8, scale: 4, default: "1.0", null: false
     t.index ["material_id"], name: "index_materials_parts_on_material_id"
     t.index ["part_id", "material_id"], name: "index_materials_parts_on_part_id_and_material_id", unique: true

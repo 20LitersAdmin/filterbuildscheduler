@@ -11,7 +11,7 @@ class Material < ApplicationRecord
 
   monetize :price_cents, allow_nil: true, numericality: { greater_than_or_equal_to: 0 }
 
-  # TODO: Second deployment
+  # TODO: Second deployment (fails on migration)
   has_one_attached :image, dependent: :purge
   attr_accessor :remove_image
 
@@ -32,8 +32,8 @@ class Material < ApplicationRecord
   # scope :with_attached_image, -> { joins(:image_attachment) }
   scope :without_attached_image, -> { where.missing(:image_attachment) }
 
-  # TODO: Second deploy
-  before_save :set_below_minimum
+  # TODO: Second deploy (fails on migration)
+  # before_save :set_below_minimum
 
   # TODO: TEMP merge function
   def replace_with(material_id)
