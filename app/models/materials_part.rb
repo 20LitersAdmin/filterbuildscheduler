@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 class MaterialsPart < ApplicationRecord
-  belongs_to :material
-  belongs_to :part
+  belongs_to :material, inverse_of: :materials_parts
+  belongs_to :part, inverse_of: :materials_parts
 
   validates :quantity, numericality: { greater_than: 0 }
   before_save :calculate_price_for_part

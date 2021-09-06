@@ -4,7 +4,7 @@ class Material < ApplicationRecord
   # TODO: Second deployment
   # include Discard::Model
 
-  has_many :materials_parts, dependent: :destroy
+  has_many :materials_parts, dependent: :destroy, inverse_of: :material
   has_many :parts, through: :materials_parts
   accepts_nested_attributes_for :materials_parts, allow_destroy: true
   belongs_to :supplier, optional: true
