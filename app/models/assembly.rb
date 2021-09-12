@@ -60,6 +60,10 @@ class Assembly < ApplicationRecord
     "#{item_type[0]}#{item_id.to_s.rjust(3, 0.to_s)}"
   end
 
+  def name
+    "#{combination_type[0]}#{combination_id}>#{item_type[0]}#{item_id}"
+  end
+
   def types
     "#{combination_type}:#{item_type}"
   end

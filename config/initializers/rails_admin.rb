@@ -265,8 +265,73 @@ RailsAdmin.config do |config|
     end
 
     edit do
-      configure :image, :active_storage do
-        delete_method :remove_image
+      # exclude_fields :history, :quantities, :parts, :price_cents, :price_currency, :assemblies
+      group :default do
+        field :uid do
+          read_only true
+        end
+        field :name
+        field :image, :active_storage do
+          delete_method :remove_image
+        end
+        field :comments do
+          label 'Admin notes'
+        end
+        field :description do
+          label 'Label description'
+        end
+        field :made_from_materials
+        field :materials_parts do
+          label 'Made from this material:'
+        end
+      end
+      group 'Inventory Info' do
+        active false
+        field :loose_count do
+          help 'Current loose count'
+        end
+        field :only_loose do
+          help 'Does not come in boxes or specific quantities'
+        end
+        field :box_count do
+          help 'Current box count'
+        end
+        field :quantity_per_box
+        field :available_count, :delimited do
+          help 'Calculated total available'
+          read_only true
+        end
+        field :minimum_on_hand
+        field :sample_size do
+          help 'Default sample size for weigh-counting'
+        end
+        field :sample_weight do
+          help 'Weight of sample size for weigh-counting'
+        end
+        field :discarded_at do
+          help 'Discarding hides this part from use'
+          read_only true
+        end
+      end
+      group 'Supplier Info' do
+        active false
+        field :supplier
+        field :sku
+        field :order_url
+        field :price, :money
+        field :min_order
+        field :weeks_to_deliver
+      end
+      group 'Order Info' do
+        active false
+        field :last_ordered_at do
+          label 'Last ordered'
+        end
+        field :last_ordered_quantity
+        field :last_received_at do
+          label 'Last received'
+        end
+        field :last_received_quantity
       end
     end
   end
@@ -364,32 +429,47 @@ RailsAdmin.config do |config|
     end
 
     edit do
-      exclude_fields :history, :quantities, :parts, :price_cents, :price_currency
+      # exclude_fields :history, :quantities, :parts, :price_cents, :price_currency
       group :default do
+        field :uid do
+          read_only true
+        end
         field :name
+        field :image, :active_storage do
+          delete_method :remove_image
+        end
         field :comments do
           label 'Admin notes'
         end
         field :description do
           label 'Label description'
         end
-        field :uid do
-          read_only true
-        end
-        field :materials_parts
-        field :image, :active_storage do
-          delete_method :remove_image
+        field :materials_parts do
+          label 'Makes these parts:'
         end
       end
       group 'Inventory Info' do
         active false
-        field :loose_count
-        field :only_loose
-        field :box_count
-        field :available_count
+        field :loose_count do
+          help 'Current loose count'
+        end
+        field :only_loose do
+          help 'Does not come in boxes or specific quantities'
+        end
+        field :box_count do
+          help 'Current box count'
+        end
+        field :quantity_per_box
+        field :available_count, :delimited do
+          help 'Calculated total available'
+          read_only true
+        end
         field :minimum_on_hand
-        field :below_minimum
+        field :below_minimum do
+          read_only true
+        end
         field :discarded_at do
+          help 'Discarding hides this material from use'
           read_only true
         end
       end
@@ -400,14 +480,17 @@ RailsAdmin.config do |config|
         field :order_url
         field :price, :money
         field :min_order
-        field :quantity_per_box
         field :weeks_to_deliver
       end
       group 'Order Info' do
         active false
-        field :last_ordered_at
+        field :last_ordered_at do
+          label 'Last ordered'
+        end
         field :last_ordered_quantity
-        field :last_received_at
+        field :last_received_at do
+          label 'Last received'
+        end
         field :last_received_quantity
       end
     end
