@@ -113,7 +113,6 @@
 ### Current:
 - rails_admin
   - Material list, edit and show are organized, need to organize ALL OTHER models:
-    - Part (list, show are done)
     - Component
     - Technology
     - Supplier
@@ -127,15 +126,26 @@
       - use this for `MaterialsPart` too? Probably not
   - Show item history in show / edit
 - `Component#weeks_to_out` should traverse downward
-- price
-  - Nerf #cprice on Items
-  - make sure Part#not_made_from_materials and Material#all price is being escalated to assemblies on save
-    - Right now, saving an Assembly trigers PriceCalculationJob, but what if you change the price of a Part or Material? That needs to cascade up.
-      - Assemblies have a price (item.price * quantity)
+
+- Drop from Db:
+  - `Component#completed_tech`
+  - `Component#tare_weight`
+  - `Component#sample_size`
+  - `Component#sample_weight`
+  - `Part#sample_size`
+  - `Part#sample_weight`
+
+- Nerf #cprice on Items
+
+- make sure Part#not_made_from_materials and Material#all price is being escalated to assemblies on save
+  - Right now, saving an Assembly trigers PriceCalculationJob, but what if you change the price of a Part or Material? That needs to cascade up.
+  - Assemblies have a price (item.price * quantity)
+
 - Calculate how many more items can be made:
   - Parts.where(made_from_materials: true)
   - Components
   - Technologies
+
 - remove `_event_functions.html.erb` && calls to this partial
   - Leaders should be able to get to `events/lead` without having to visit `rails_admin`
 - RailsAdmin Oauth users

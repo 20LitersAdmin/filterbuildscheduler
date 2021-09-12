@@ -25,6 +25,8 @@ class Component < ApplicationRecord
   has_one_attached :image, dependent: :purge
   attr_accessor :remove_image
 
+  validates_presence_of :name
+
   before_save :process_image, if: -> { attachment_changes.any? }
   after_save { image.purge if remove_image == '1' }
 
@@ -152,6 +154,11 @@ class Component < ApplicationRecord
   # TODO: delete after 1st migration
   def uid
     "C#{id.to_s.rjust(3, '0')}"
+  end
+
+  # Rails Admin virtual
+  def uid_and_name
+    "#{uid}: #{name}"
   end
 
   def weeks_to_out

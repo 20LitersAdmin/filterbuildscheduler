@@ -155,18 +155,101 @@ RailsAdmin.config do |config|
   config.model 'Component' do
     parent 'Technology'
     weight 0
+
+    configure :description do
+      label 'Label description'
+    end
+
+    configure :comments do
+      label 'Admin notes'
+    end
+
     list do
       scopes %i[active discarded]
-      field :uid
+      field :uid do
+        column_width 50
+      end
       field :name
       field :price, :money
       field :available_count
     end
-    configure :description do
-      label 'Label Description'
+
+    show do
+      group :default do
+        field :uid_and_name do
+          label 'UID: Name'
+        end
+        field :image, :active_storage
+        field :comments
+        field :description
+        field :price, :money
+      end
+      group 'Inventory Info' do
+        field :available_count, :delimited
+        field :only_loose
+        field :loose_count, :delimited do
+          visible do
+            !bindings[:object].only_loose?
+          end
+        end
+        field :box_count, :delimited do
+          visible do
+            !bindings[:object].only_loose?
+          end
+        end
+        field :quantity_per_box, :delimited do
+          visible do
+            !bindings[:object].only_loose?
+          end
+        end
+        field :discarded_at, :date
+      end
+
+      group 'History' do
+        field :history, :line_chart
+      end
     end
 
-    exclude_fields :parts, :counts, :technologies
+    edit do
+      group :default do
+        field :uid do
+          help ''
+          read_only true
+        end
+        field :name
+        field :image, :active_storage do
+          delete_method :remove_image
+        end
+        field :comments
+        field :description
+        field :price, :money do
+          help 'Calcuated from parts and materials'
+          read_only true
+        end
+      end
+
+      group 'Inventory Info' do
+        active false
+        field :loose_count do
+          help 'Current loose count'
+        end
+        field :only_loose do
+          help 'Does not come in boxes or specific quantities'
+        end
+        field :box_count do
+          help 'Current box count'
+        end
+        field :quantity_per_box
+        field :available_count, :delimited do
+          help 'Calculated total available'
+          read_only true
+        end
+        field :discarded_at do
+          help 'Discarding hides this component from use'
+          read_only true
+        end
+      end
+    end
   end
 
   config.model 'Part' do
@@ -175,6 +258,10 @@ RailsAdmin.config do |config|
 
     configure :description do
       label 'Label Description'
+    end
+
+    configure :comments do
+      label 'Admin notes'
     end
 
     list do
@@ -221,18 +308,23 @@ RailsAdmin.config do |config|
           label 'UID: Name'
         end
         field :image, :active_storage
-        field :comments do
-          label 'Admin notes'
-        end
-        field :description do
-          label 'Label description'
-        end
+        field :comments
+        field :description
       end
       group 'Inventory Info' do
         field :available_count, :delimited
-        field :loose_count, :delimited
         field :only_loose
+        field :loose_count, :delimited do
+          visible do
+            !bindings[:object].only_loose?
+          end
+        end
         field :box_count, :delimited do
+          visible do
+            !bindings[:object].only_loose?
+          end
+        end
+        field :quantity_per_box, :delimited do
           visible do
             !bindings[:object].only_loose?
           end
@@ -249,7 +341,6 @@ RailsAdmin.config do |config|
         end
         field :price, :money
         field :min_order, :delimited
-        field :quantity_per_box, :delimited
         field :weeks_to_deliver
       end
       group 'Order Info' do
@@ -265,21 +356,17 @@ RailsAdmin.config do |config|
     end
 
     edit do
-      # exclude_fields :history, :quantities, :parts, :price_cents, :price_currency, :assemblies
       group :default do
         field :uid do
+          help ''
           read_only true
         end
         field :name
         field :image, :active_storage do
           delete_method :remove_image
         end
-        field :comments do
-          label 'Admin notes'
-        end
-        field :description do
-          label 'Label description'
-        end
+        field :comments
+        field :description
         field :made_from_materials
         field :materials_parts do
           label 'Made from this material:'
@@ -302,12 +389,6 @@ RailsAdmin.config do |config|
           read_only true
         end
         field :minimum_on_hand
-        field :sample_size do
-          help 'Default sample size for weigh-counting'
-        end
-        field :sample_weight do
-          help 'Weight of sample size for weigh-counting'
-        end
         field :discarded_at do
           help 'Discarding hides this part from use'
           read_only true
@@ -344,12 +425,17 @@ RailsAdmin.config do |config|
       label 'Label Description'
     end
 
+    configure :comments do
+      label 'Admin notes'
+    end
+
     list do
       scopes %i[active discarded]
       field :uid do
         column_width 50
       end
       field :name
+      field :price, :money
       field :supplier do
         formatted_value { bindings[:object].name }
         column_width 100
@@ -368,7 +454,6 @@ RailsAdmin.config do |config|
           end
         end
       end
-      field :price, :money
       field :available_count, :delimited do
         label 'Available'
         column_width 80
@@ -385,18 +470,23 @@ RailsAdmin.config do |config|
           label 'UID: Name'
         end
         field :image, :active_storage
-        field :comments do
-          label 'Admin notes'
-        end
-        field :description do
-          label 'Label description'
-        end
+        field :comments
+        field :description
       end
       group 'Inventory Info' do
         field :available_count, :delimited
-        field :loose_count, :delimited
         field :only_loose
+        field :loose_count, :delimited do
+          visible do
+            !bindings[:object].only_loose?
+          end
+        end
         field :box_count, :delimited do
+          visible do
+            !bindings[:object].only_loose?
+          end
+        end
+        field :quantity_per_box, :delimited do
           visible do
             !bindings[:object].only_loose?
           end
@@ -413,7 +503,6 @@ RailsAdmin.config do |config|
         end
         field :price, :money
         field :min_order, :delimited
-        field :quantity_per_box, :delimited
         field :weeks_to_deliver
       end
       group 'Order Info' do
@@ -429,21 +518,17 @@ RailsAdmin.config do |config|
     end
 
     edit do
-      # exclude_fields :history, :quantities, :parts, :price_cents, :price_currency
       group :default do
         field :uid do
+          help ''
           read_only true
         end
         field :name
         field :image, :active_storage do
           delete_method :remove_image
         end
-        field :comments do
-          label 'Admin notes'
-        end
-        field :description do
-          label 'Label description'
-        end
+        field :comments
+        field :description
         field :materials_parts do
           label 'Makes these parts:'
         end

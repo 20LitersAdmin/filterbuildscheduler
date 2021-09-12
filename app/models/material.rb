@@ -15,6 +15,8 @@ class Material < ApplicationRecord
   has_one_attached :image, dependent: :purge
   attr_accessor :remove_image
 
+  validates_presence_of :name
+
   before_save :process_image, if: -> { attachment_changes.any? }
   after_save { image.purge if remove_image == '1' }
 
