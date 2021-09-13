@@ -24,6 +24,8 @@ class Technology < ApplicationRecord
   # TODO: Second deployment
   monetize :price_cents, numericality: { greater_than_or_equal_to: 0 }
 
+  validates_presence_of :name, :short_name
+
   # TODO: Second deployment
   scope :kept, -> { all }
   scope :discarded, -> { none }
@@ -37,7 +39,6 @@ class Technology < ApplicationRecord
   # scope :with_attached_image, -> { joins(:image_attachment) }
   scope :without_attached_image, -> { where.missing(:image_attachment) }
 
-  before_create :set_short_name, if: -> { short_name.nil? }
   before_create :set_uid
 
   def all_components
@@ -104,7 +105,6 @@ class Technology < ApplicationRecord
   def owner_acronym
     owner.gsub(/([a-z]|\s)/, '')
   end
-
 
   # TODO: temp method, remove after images are enabled
   def picture
@@ -220,10 +220,6 @@ class Technology < ApplicationRecord
 
       public_send(target).attach(io: File.open(processed_image.path), filename: image_name, content_type: 'image/png')
     end
-  end
-
-  def set_short_name
-    self.short_name = name.gsub(' Filter', '').gsub(' for Bucket', '')
   end
 
   def set_uid
