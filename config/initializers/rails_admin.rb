@@ -133,6 +133,15 @@ RailsAdmin.config do |config|
 
   config.model 'Technology' do
     weight 2
+
+    configure :image do
+      label 'Inventory Image'
+    end
+
+    configure :comments do
+      label 'Admin notes'
+    end
+
     list do
       scopes %i[active discarded]
       field :name
@@ -143,13 +152,149 @@ RailsAdmin.config do |config|
       field :family_friendly
       field :ideal_build_length
       field :ideal_group_size
-      field :ideal_leaders
-    end
-    configure :image do
-      label 'Inventory Image'
     end
 
-    exclude_fields :components, :parts, :materials
+    show do
+      group :default do
+        field :uid
+        field :name
+        field :short_name
+        field :price, :money
+        field :list_worthy do
+          label 'Show on lists'
+        end
+        field :owner
+        field :people do
+          label 'People served'
+        end
+        field :lifespan_in_years
+        field :liters_per_day
+        field :discarded_at, :date
+        field :info_url do
+          formatted_value do
+            fa_external_link(bindings[:view], value)
+          end
+        end
+        field :monthly_production_rate do
+          label 'Should produce per month'
+        end
+      end
+
+      group 'Images and Descriptions' do
+        field :image, :active_storage
+        field :display_image, :active_storage
+        field :description
+        field :comments
+      end
+
+      group 'Inventory info' do
+        field :available_count, :delimited
+        field :only_loose
+        field :loose_count, :delimited do
+          visible do
+            !bindings[:object].only_loose?
+          end
+        end
+        field :box_count, :delimited do
+          visible do
+            !bindings[:object].only_loose?
+          end
+        end
+        field :quantity_per_box, :delimited do
+          visible do
+            !bindings[:object].only_loose?
+          end
+        end
+      end
+
+      group 'Build info' do
+        field :family_friendly
+        field :ideal_build_length
+        field :ideal_group_size
+        field :ideal_leaders
+        field :unit_rate
+      end
+
+      group 'History' do
+        field :history, :line_chart
+      end
+    end
+
+    edit do
+      group :default do
+        field :uid do
+          help ''
+          read_only true
+        end
+        field :name
+        field :short_name
+        field :image, :active_storage
+        field :display_image, :active_storage
+
+        field :list_worthy do
+          help 'Un-check to hide from Inventory and Build dropboxes'
+        end
+        field :info_url
+      end
+
+      group 'Inventory info' do
+        active false
+        field :available_count, :delimited do
+          help 'Calculated total available'
+          read_only true
+        end
+        field :only_loose do
+          help 'Does not come in boxes or specific quantities'
+        end
+        field :loose_count do
+          help 'Current loose count'
+        end
+        field :box_count do
+          help 'Current box count'
+        end
+        field :quantity_per_box
+      end
+
+      group 'Build info' do
+        active false
+        field :family_friendly do
+          help 'Builds are good for young kids?'
+        end
+        field :ideal_build_length
+        field :ideal_group_size
+        field :ideal_leaders
+        field :monthly_production_rate do
+          help 'Need produced every month'
+        end
+        field :unit_rate do
+          help 'Average that can be built per builder per hour'
+        end
+      end
+
+      group 'More details' do
+        active false
+        field :description
+        field :comments
+        field :price, :money do
+          read_only true
+          help 'Calculated from parts and materials'
+        end
+        field :owner
+        field :people do
+          help '# of people served by each'
+        end
+        field :lifespan_in_years do
+          help 'How long one should last'
+        end
+        field :liters_per_day do
+          help 'Liters produced from one'
+        end
+        field :discarded_at, :date do
+          help 'Discarding hides this technology from use'
+          read_only true
+        end
+      end
+    end
   end
 
   config.model 'Component' do
@@ -277,12 +422,8 @@ RailsAdmin.config do |config|
       field :order_url do
         column_width 80
         formatted_value do
-          if bindings[:object].order_url.present?
-            bindings[:view].link_to bindings[:object].order_url, target: '_blank', rel: 'tooltip' do
-              "<i class='fa fa-external-link'></i>
-              <span style='display:none'>Visit</span>
-              ".html_safe
-            end
+          if value.present?
+            fa_external_link(bindings[:view], value)
           else
             '&nbsp'.html_safe
           end
@@ -443,12 +584,8 @@ RailsAdmin.config do |config|
       field :order_url do
         column_width 80
         formatted_value do
-          if bindings[:object].order_url.present?
-            bindings[:view].link_to bindings[:object].order_url, target: '_blank', rel: 'tooltip' do
-              "<i class='fa fa-external-link'></i>
-              <span style='display:none'>Visit</span>
-              ".html_safe
-            end
+          if value.present?
+            fa_external_link(bindings[:view], value)
           else
             '&nbsp'.html_safe
           end
@@ -614,5 +751,11 @@ RailsAdmin.config do |config|
     extend ActionView::Helpers::NumberHelper
 
     number_with_delimiter(integer, delimiter: ',')
+  end
+
+  def fa_external_link(view, link)
+    view.link_to link, target: '_blank', rel: 'noopener noreferrer' do
+      "<i class='fa fa-external-link'></i>".html_safe
+    end
   end
 end

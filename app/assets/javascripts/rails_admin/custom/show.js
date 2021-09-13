@@ -9,19 +9,25 @@ function shiftDdWells(jq_dd_ary) {
   });
 };
 
-// run on full page loads
-$(document).on("ready", function() {
+function runShowPageFunctions() {
   if ( isRailsAdminPage() && actionMatches(['show']) ) {
     ddWells = $('dd.well')
     shiftDdWells(ddWells);
+    // .well is set to max-width: 30% for long text block fields
+    // but line charts should get max-width: 100%
+    $('canvas').parents('.well').addClass('full-width');
   };
+};
+
+// run on full page loads
+$(document).on("ready", function() {
+  runShowPageFunctions();
 });
 
 // run on ajaxComplete
 $(document).ajaxComplete( function() {
-  if ( isRailsAdminPage() && actionMatches(['show']) ) {
-    ddWells = $('dd.well')
-    shiftDdWells(ddWells);
-  };
+  runShowPageFunctions();
 });
+
+
 
