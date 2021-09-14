@@ -85,7 +85,7 @@ class UsersController < ApplicationController
 
     @contact_size = @leaders.size
 
-    @availability = [['All hours', 0], ['Business hours', 1], ['After-hours', 2]]
+    @availability = [['All hours', 0], ['Business hours', 1], ['After hours', 2]]
     @technologies = [['All', 0]]
     Technology.list_worthy.each do |tech|
       @technologies << [tech.short_name, tech.id]

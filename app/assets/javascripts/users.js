@@ -1,6 +1,8 @@
 // Place all the behaviors and hooks related to the matching controller here.
 // All this logic will automatically be available in application.js.
 
+var availabilityByCode = { 0: 'All hours', 1: 'Business hours', 2: 'After hours'}
+
 function showPasswordWarning() {
   var pass = $("input#user_password").val();
   var passConf = $("input#user_password_confirmation").val();
@@ -78,14 +80,16 @@ function emailDirtyToggle() {
   });
 
   $(document).on("change", "select.avail-select", function() {
+    var select = $(this);
     var userId = parseInt($(this).attr("id"));
     var a = $(this).val();
     var url = "/users/" + userId + "/availability?a=" + a;
     $.ajax({url: url}).done(function(response) {
       if (response != a) {
-        console.log('Failed.');
+        console.log('User availability update failed.');
       } else {
-        console.log('Success!');
+        var availability = availabilityByCode[a];
+        select.parent().siblings('td.availability').html(availability);
       }
     });
   });
