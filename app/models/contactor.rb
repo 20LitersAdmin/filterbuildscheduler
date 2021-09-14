@@ -31,6 +31,10 @@ class Contactor
                         .uniq
   end
 
+  def empty?
+    user_ids.empty? && technology.nil? && availability.nil?
+  end
+
   private
 
   def collect_technologies

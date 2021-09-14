@@ -9,6 +9,9 @@
     <%= leader.phone %>
   </td>
   <td>
+    <%= leader.availability %>
+  </td>
+  <td>
     <%= select_tag "#{leader.id}_avail", options_for_select(@availability, leader.availability_code), class: 'avail-select'  %>
   </td>
   <td>
