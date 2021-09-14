@@ -86,11 +86,6 @@
 6. **DONE** Items are modified to fit new schema:
   1. unify anything with '**VWF**' and '**20l**'
 
-### Decisions
-- Item history JSON structure:
-  - current: { date: available, ... }
-  - was: { date: {box: #, loose: #}}
-
 
 ### Nerfed pages:
 * status_inventories_path
@@ -111,20 +106,22 @@
   - No conflict if 2 users have the same count open (just adds to it)
 
 ### Current:
+- NEW BRANCH: `/leaders`
+  - "Clear Filter" button from top section
+  - Exporting the table doesn't display actual availability, just the dd options
+
 - rails_admin
   - Material list, edit and show are organized, need to organize ALL OTHER models:
-    - Component
-    - Technology
     - Supplier
     - Location
     - User
-    - Event?
-    - Registration?
+    - Event? Yeah, just index
+    - Registration? Or only manage through Events
 
-  - links back to app for Assemblies
-    - `/assemble/UID` <- universal uri for all items
-      - use this for `MaterialsPart` too? Probably not
-  - Show item history in show / edit
+- For Setup crew:
+  - need a view similar to /technology/:id/items, but traversing over each component separately
+    - Each build station should have an inventory list showing just that component and its immediate children
+
 - `Component#weeks_to_out` should traverse downward
 
 - Drop from Db:
@@ -135,7 +132,15 @@
   - `Part#sample_size`
   - `Part#sample_weight`
 
-- Nerf #cprice on Items
+- Nerf #cprice on all Items
+
+- Event views
+  - use RailsAdmin for Index w/ scopes
+  - use standard form for Edit? NO
+  - use standard form for New? NO
+  - Use Show in App to link to main app
+    - hijack 'Show' pjax to navigate to same URL minus the '/admin/' path part
+    - or disable Show link, change "Show in app" to "Show"
 
 - make sure Part#not_made_from_materials and Material#all price is being escalated to assemblies on save
   - Right now, saving an Assembly trigers PriceCalculationJob, but what if you change the price of a Part or Material? That needs to cascade up.
@@ -148,14 +153,18 @@
 
 - remove `_event_functions.html.erb` && calls to this partial
   - Leaders should be able to get to `events/lead` without having to visit `rails_admin`
+
 - RailsAdmin Oauth users
   - link to `admin/oauth_user/:id/status`
   - link to `admin/oauth_user/:id/manual`
+
 - RailsAdmin Event
   - link to `events/:id/edit` instead of `admin/event/:id/edit`
-  - disable Show link, change "Show in app" to "Show"
+
 - Assemblies
-  - How to CRUD? In  `rails_admin`?
+  - How to CRUD? Not in  `rails_admin`.
+
+
 
 #### After 1st deployment:
 * Migrate the db
