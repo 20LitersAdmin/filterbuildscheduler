@@ -48,7 +48,7 @@ class User < ApplicationRecord
   end
 
   def availability
-    # [['All hours', 0], ['Business hours', 1], ['After-hours', 2]]
+    # [['All hours', 0], ['Business hours', 1], ['After hours', 2]]
     return 'Not a leader' unless is_leader?
 
     return 'All hours' if available_business_hours? && available_after_hours?
