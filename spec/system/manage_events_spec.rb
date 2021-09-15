@@ -52,8 +52,8 @@ RSpec.describe 'Managing events:', type: :system, js: true do
 
     it 'can change values of the event, which sends an email' do
       fill_in 'event_title', with: 'Leader can name the event'
-      fill_in 'event_start_time', with: 'Sep 11 2021 06:30 PM'
-      fill_in 'event_end_time', with: 'Sep 11 2021 09:00 PM'
+      fill_in 'event_start_time', with: 'Sep 11 2041 06:30 PM'
+      fill_in 'event_end_time', with: 'Sep 11 2041 09:00 PM'
       fill_in 'event_description', with: 'Leader can provide a description'
       check 'event_is_private'
       fill_in 'event_contact_name', with: @user.name
@@ -68,7 +68,7 @@ RSpec.describe 'Managing events:', type: :system, js: true do
       expect(page).to have_content @event.full_title
       expect(@event.title).to eq 'Leader can name the event'
       expect(@event.description).to eq 'Leader can provide a description'
-      expect(@event.format_time_range).to eq 'Sat, 9/11 6:30pm - 9:00pm'
+      expect(@event.format_time_range).to eq 'Wed, 9/11 6:30pm - 9:00pm'
 
       second_count = ActionMailer::Base.deliveries.count
       expect(second_count).to eq first_count + 3 # 2 registrants and the leader
