@@ -9,7 +9,12 @@ module RailsAdmin
       class Assemble < RailsAdmin::Config::Actions::Base
         RailsAdmin::Config::Actions.register(self)
 
-        register_instance_option :member? do
+        register_instance_option :visible? do
+          %w[Component Part Technology].include?(bindings[:object].class.to_s) &&
+            bindings[:object].kept?
+        end
+
+        register_instance_option :member do
           true
         end
 

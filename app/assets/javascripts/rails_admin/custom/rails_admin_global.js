@@ -43,9 +43,30 @@ function setBodyDataTags() {
   };
 };
 
+function confirmationOnDestroy() {
+  // destroy links should behave similar to Rails' data-confirm: 'Are you sure?'
+  if ( isRailsAdminPage() && !isRailsAdminDashboard() ) {
+    // pjax can't be interrupted as usual, so just remove it
+    $('li.destroy_member_link a').removeClass('pjax');
+
+    $(document).on('click', 'li.destroy_member_link a', function() {
+      var response = confirm('Destroying is permanent. Are you sure?');
+      if (response == false) {
+        event.preventDefault();
+        return false;
+      };
+    });
+  };
+};
+
 // Ensure <body> tag always has data attributes: data-controller && data-action
 // views/layouts/rails_admin/application.html.haml sets the data values for full page loads
 // ajaxComplete calls need to update data attributes so that rails_admin/custom/*.js functions can use controllerMatches() and actionMatches() confidently
 $(document).ajaxComplete( function() {
   setBodyDataTags();
+  confirmationOnDestroy();
+});
+
+$(document).ready( function() {
+  confirmationOnDestroy();
 });

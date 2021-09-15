@@ -106,10 +106,6 @@
   - No conflict if 2 users have the same count open (just adds to it)
 
 ### Current:
-- NEW BRANCH: `/leaders`
-  - "Clear Filter" button from top section
-  - Exporting the table doesn't display actual availability, just the dd options
-
 - rails_admin
   - Material list, edit and show are organized, need to organize ALL OTHER models:
     - Supplier

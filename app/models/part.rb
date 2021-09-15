@@ -27,8 +27,10 @@ class Part < ApplicationRecord
   after_save { image.purge if remove_image == '1' }
 
   # TODO: Second deployment
-  scope :kept, -> { all }
-  scope :discarded, -> { none }
+  # scope :kept, -> { all }
+  # scope :discarded, -> { none }
+
+  # rails_admin scope "active" sounds better than "kept"
   scope :active, -> { kept }
 
   scope :available, -> { where('available_count > 0') }
