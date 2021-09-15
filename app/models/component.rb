@@ -2,7 +2,7 @@
 
 class Component < ApplicationRecord
   # TODO: Second deployment
-  # include Discard::Model
+  include Discard::Model
 
   # NERF: This was to try to make rails_admin handle Assembly CRUD-ing
   # has_many :assemblies,
@@ -30,9 +30,11 @@ class Component < ApplicationRecord
   before_save :process_image, if: -> { attachment_changes.any? }
   after_save { image.purge if remove_image == '1' }
 
-  # TODO: Second deployment
-  scope :kept, -> { all }
-  scope :discarded, -> { none }
+  # TODO: Second deployment remove
+  # scope :kept, -> { all }
+  # scope :discarded, -> { none }
+
+  # rails_admin scope "active" sounds better than "kept"
   scope :active, -> { kept }
 
   # Exists in ActiveStorage already

@@ -36,18 +36,18 @@ en:
         menu: 'Restore'
         title: 'Restore'
         breadcrumb: 'Restore'
-        done: 'restored, along with associated records'
+        done: 'restored'
       # TODO: Second deploy remove
-      paranoid_delete:
-        menu: 'Delete'
-        title: 'Delete'
-        breadcrumb: 'Delete'
-        done: 'deleted, but can be restored'
       discard:
         menu: 'Discard'
         title: 'Discard'
         breadcrumb: 'Discard'
-        done: 'deleted, but can be restored'
+        done: 'discarded, but can be restored'
+      destroy:
+        menu: 'Delete'
+        title: 'Delete forever'
+        breadcrumb: 'Delete'
+        done: 'deleted forever'
       assemble:
         menu: 'Assemble'
         title: 'Assemble'

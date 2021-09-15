@@ -25,9 +25,11 @@ class Material < ApplicationRecord
 
   before_create :set_uid
 
-  # TODO: Second deployment
-  scope :kept, -> { all }
-  scope :discarded, -> { none }
+  # TODO: Second deployment remove
+  # scope :kept, -> { all }
+  # scope :discarded, -> { none }
+
+  # rails_admin scope "active" sounds better than "kept"
   scope :active, -> { kept }
 
   # Exists in ActiveStorage already

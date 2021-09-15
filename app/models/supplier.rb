@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Supplier < ApplicationRecord
-  # include Discard::Model
+  include Discard::Model
   require 'uri'
 
   has_many :parts
@@ -11,9 +11,9 @@ class Supplier < ApplicationRecord
   validate :valid_url?
   validates :email, :poc_email, format: { with: /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\z/i }, allow_blank: true
 
-  # TODO: Second deployment
-  scope :kept, -> { all }
-  scope :discarded, -> { none }
+  # TODO: Second deployment remove
+  # scope :kept, -> { all }
+  # scope :discarded, -> { none }
   scope :active, -> { kept }
 
   scope :without_parts, -> { left_outer_joins(:parts).where(parts: { id: nil }) }

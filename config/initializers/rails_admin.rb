@@ -9,28 +9,24 @@ require 'devise_helper'
 require 'error_handler'
 require 'application_controller'
 
-require Rails.root.join('lib', 'rails_admin', 'restore.rb')
+# Discard actions
+# if active, can be discarded
 require Rails.root.join('lib', 'rails_admin', 'discard.rb')
+
+# if discarded, can be restored
+require Rails.root.join('lib', 'rails_admin', 'restore.rb')
+
+# if discarded, can be destroyed
+require Rails.root.join('lib', 'rails_admin', 'destroy.rb')
+
 # custom rails_admin dashboard
 require Rails.root.join('lib', 'rails_admin', 'dashboard.rb')
+
 # custom action to link to assemble pages
 require Rails.root.join('lib', 'rails_admin', 'assemble.rb')
+
 # custom field formats (e.g. number_with_delimiter)
 require Rails.root.join('lib', 'rails_admin', 'custom_fields.rb')
-
-# NERF: this was to try to make rails_admin handle Assembly CRUD-ing through Component
-# module RailsAdmin::Adapters::ActiveRecord
-#   class Association
-#     # monkey patch Component#assemblies complex has_many with lambda
-#     def read_only?
-#       return false if association.active_record == Component && association.klass == Assembly
-
-#       (klass.all.instance_eval(&scope).readonly_value if scope.is_a? Proc) ||
-#         association.nested? ||
-#         false
-#     end
-#   end
-# end
 
 RailsAdmin.config do |config|
   config.parent_controller = ApplicationController.to_s
@@ -723,7 +719,25 @@ RailsAdmin.config do |config|
     list do
       scopes %i[active discarded]
       field :name
-      field :url
+      field :url do
+        formatted_value do
+          if value.present?
+            fa_external_link(bindings[:view], value)
+          else
+            '&nbsp'.html_safe
+          end
+        end
+      end
+      field :parts do
+        pretty_value do
+          value.size
+        end
+      end
+      field :materials do
+        pretty_value do
+          value.size
+        end
+      end
       field :poc_name
       field :poc_email
     end
@@ -734,12 +748,12 @@ RailsAdmin.config do |config|
     index # mandatory
     new
     export
-    bulk_delete
     show
     edit
     show_in_app
-    discard     # lib/rails_admin/discard.rb
-    restore     # lib/rails_admin/restore.rb
+    discard
+    restore
+    destroy
     assemble
   end
 
