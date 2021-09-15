@@ -3,31 +3,29 @@
 module ApplicationHelper
   def bootstrap_class_for(flash_type)
     h = {
-      success: "success",
-      danger: "danger",
-      error: "danger",
-      warning: "warning",
-      alert: "warning",
-      notice: "warning"
+      success: 'success',
+      danger: 'danger',
+      error: 'danger',
+      warning: 'warning',
+      alert: 'warning',
+      notice: 'warning'
     }
 
     h[flash_type.to_sym] || flash_type.to_s
   end
 
-  def date_for_form(date)
-    if date.present?
-      date.to_date.iso8601
-    else
-      Date.today.iso8601
-    end
+  def date_for_form(date = Date.today)
+    date.to_date.iso8601
   end
 
   def flash_messages(_opts = {})
     flash.each do |msg_type, message|
-      concat(content_tag(:div, message, class: "alert #{bootstrap_class_for(msg_type)} fade in") do
-        concat content_tag(:button, 'x', class: 'close', data: { dismiss: 'alert' })
-        concat message
-      end)
+      concat(
+        content_tag(:div, message, class: "alert #{bootstrap_class_for(msg_type)} fade in") do
+          concat content_tag(:button, 'x', class: 'close', data: { dismiss: 'alert' })
+          concat message
+        end
+      )
     end
     nil
   end
@@ -73,7 +71,7 @@ module ApplicationHelper
   end
 
   def pluralize_without_count(count, noun, text = nil)
-    return unless count != 0
+    return if count.zero?
 
     count == 1 ? "#{noun}#{text}" : "#{noun.pluralize}#{text}"
   end
