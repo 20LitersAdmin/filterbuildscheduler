@@ -64,18 +64,6 @@ RSpec.describe 'Technology items page', type: :system do
         @component.reload
       end
 
-      it 'that aren\'t completed tech' do
-        component_ct = FactoryBot.create(:component_ct)
-        component_ct.extrapolate_technology_components.create(technology: @technology, required: true)
-        component_ct.reload
-        @technology.reload
-
-        visit items_technology_path(@technology)
-
-        expect(page).to have_content @component.name
-        expect(page).not_to have_content component_ct.name
-      end
-
       it 'and their child parts' do
         3.times { FactoryBot.create(:comp_part, component: @component) }
 
