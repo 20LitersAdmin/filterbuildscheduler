@@ -107,9 +107,7 @@
 
 ### Current:
 - rails_admin
-  - Material list, edit and show are organized, need to organize ALL OTHER models:
-    - Supplier
-    - Location
+  - Organize ALL models:
     - User
     - Event? Yeah, just index
     - Registration? Or only manage through Events
@@ -127,6 +125,7 @@
   - `Component#sample_weight`
   - `Part#sample_size`
   - `Part#sample_weight`
+  - `Location#photo_url`
 
 - Nerf #cprice on all Items
 

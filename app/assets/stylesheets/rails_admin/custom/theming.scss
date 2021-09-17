@@ -14,7 +14,7 @@ body.rails_admin[data-action="show"] {
       margin-top: 0;
       margin-bottom: 20px;
       display: flex;
-      flex-wrap: wrap;
+      flex-wrap: nowrap;
 
       dt {
         // labels overtop of dd.well
