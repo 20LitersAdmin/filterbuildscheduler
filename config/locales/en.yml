@@ -37,7 +37,6 @@ en:
         title: 'Restore'
         breadcrumb: 'Restore'
         done: 'restored'
-      # TODO: Second deploy remove
       discard:
         menu: 'Discard'
         title: 'Discard'

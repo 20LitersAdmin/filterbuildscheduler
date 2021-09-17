@@ -26,7 +26,7 @@ class Part < ApplicationRecord
   before_save :process_image, if: -> { attachment_changes.any? }
   after_save { image.purge if remove_image == '1' }
 
-  # TODO: Second deployment
+  # TODO: Second deployment remove
   # scope :kept, -> { all }
   # scope :discarded, -> { none }
 

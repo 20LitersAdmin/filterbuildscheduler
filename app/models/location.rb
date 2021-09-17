@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
 class Location < ApplicationRecord
-  # include Discard::Model
+  include Discard::Model
+
   has_one_attached :image, dependent: :purge
   attr_accessor :remove_image
 
@@ -10,9 +11,11 @@ class Location < ApplicationRecord
 
   validates :name, :address1, :city, :state, :zip, presence: true
 
-  # TODO: Second deployment
-  scope :kept, -> { all }
-  scope :discarded, -> { none }
+  # TODO: Second deployment remove
+  # scope :kept, -> { all }
+  # scope :discarded, -> { none }
+
+  # rails_admin scope "active" sounds better than "kept"
   scope :active, -> { kept }
 
   # Exists in ActiveStorage already
@@ -23,12 +26,26 @@ class Location < ApplicationRecord
     "#{city}, #{state} #{zip}"
   end
 
-  def addr_one_liner
-    "#{address1}, #{city}, #{state} #{zip}"
-  end
-
   def address
     address2.present? ? "#{address1}, #{address2}" : address1
+  end
+
+  def address_block
+    area_is_present = city.present? || state.present? || zip.present?
+
+    full_address = address.squish
+    full_address += '<br />' if full_address.present? && area_is_present
+
+    full_area = city.present? ? "#{city}, " : ''
+    full_area += "#{state} #{zip}".squish if state.present? || zip.present?
+
+    full_address += full_area unless full_area.blank?
+
+    full_address&.html_safe
+  end
+
+  def addr_one_liner
+    "#{address1}, #{city}, #{state} #{zip}"
   end
 
   private

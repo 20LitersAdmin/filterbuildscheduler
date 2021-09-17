@@ -69,7 +69,8 @@ RailsAdmin.config do |config|
   config.model 'User' do
     weight 0
     list do
-      scopes %i[active leaders builders inventoryists admins discarded]
+      scopes %i[builders leaders inventoryists admins active discarded]
+      sort_by 'lname, fname'
       field :email
       field :fname
       field :lname
@@ -115,18 +116,6 @@ RailsAdmin.config do |config|
     end
   end
 
-  config.model 'Location' do
-    weight 1
-    parent Event
-    list do
-      scopes %i[active discarded]
-      field :name
-      field :address1
-      field :address2
-      field :zip
-    end
-  end
-
   config.model 'Technology' do
     weight 2
 
@@ -140,6 +129,7 @@ RailsAdmin.config do |config|
 
     list do
       scopes %i[active discarded]
+      sort_by :name
       field :name
       field :owner
       field :price, :money do
@@ -307,6 +297,7 @@ RailsAdmin.config do |config|
 
     list do
       scopes %i[active discarded]
+      sort_by :name
       field :uid do
         column_width 50
       end
@@ -407,6 +398,7 @@ RailsAdmin.config do |config|
 
     list do
       scopes %i[active discarded]
+      sort_by :name
       field :uid do
         column_width 50
       end
@@ -568,6 +560,7 @@ RailsAdmin.config do |config|
 
     list do
       scopes %i[active discarded]
+      sort_by :name
       field :uid do
         column_width 50
       end
@@ -718,6 +711,7 @@ RailsAdmin.config do |config|
     weight 3
     list do
       scopes %i[active discarded]
+      sort_by :name
       field :name
       field :url do
         formatted_value do
@@ -740,6 +734,116 @@ RailsAdmin.config do |config|
       end
       field :poc_name
       field :poc_email
+    end
+
+    show do
+      group :default do
+        field :name
+        field :comments
+        field :url do
+          pretty_value { external_link(bindings[:view], value) }
+        end
+        field :email
+        field :phone
+        field :address_block do
+          label 'Address'
+        end
+        field :discarded_at
+      end
+
+      group 'Point of Contact' do
+        field :poc_name
+        field :poc_email
+        field :poc_phone
+        field :poc_address
+      end
+
+      group 'Parts' do
+        field :parts do
+          visible { value.any? }
+        end
+      end
+
+      group 'Materials' do
+        field :materials do
+          visible { value.any? }
+        end
+      end
+    end
+
+    edit do
+      group :default do
+        field :name
+        field :comments
+        field :url
+        field :email
+        field :phone
+        field :address1
+        field :address2
+        field :city
+        field :state
+        field :province
+        field :zip
+        field :country
+        field :discarded_at do
+          help 'Discarding hides this supplier from use'
+          read_only true
+        end
+      end
+
+      group 'Point of Contact' do
+        active false
+        field :poc_name
+        field :poc_email
+        field :poc_phone
+        field :poc_address
+      end
+
+      group 'Items' do
+        field :parts do
+          sortable 'name'
+        end
+        field :materials do
+          sortable 'name'
+        end
+      end
+    end
+  end
+
+  config.model 'Location' do
+    weight 4
+    list do
+      scopes %i[active discarded]
+      sort_by :name
+      field :name
+      field :addr_one_liner do
+        label 'Address'
+      end
+    end
+
+    show do
+      field :name
+      field :instructions
+      field :address_block do
+        label 'Address'
+      end
+      field :discarded_at
+      field :image, :active_storage
+    end
+
+    edit do
+      field :name
+      field :instructions
+      field :address1
+      field :address2
+      field :city
+      field :state
+      field :zip
+      field :discarded_at do
+        help 'Discarding hides this location from use'
+        read_only true
+      end
+      field :image, :active_storage
     end
   end
 
@@ -765,6 +869,10 @@ RailsAdmin.config do |config|
     extend ActionView::Helpers::NumberHelper
 
     number_with_delimiter(integer, delimiter: ',')
+  end
+
+  def external_link(view, link)
+    view.link_to link, link, target: '_blank', rel: 'noopener noreferrer'
   end
 
   def fa_external_link(view, link)

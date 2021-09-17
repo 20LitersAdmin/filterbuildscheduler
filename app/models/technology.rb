@@ -2,7 +2,7 @@
 
 class Technology < ApplicationRecord
   # TODO: Second deployment
-  # include Discard::Model
+  include Discard::Model
 
   has_and_belongs_to_many :users
 
@@ -26,9 +26,11 @@ class Technology < ApplicationRecord
 
   validates_presence_of :name, :short_name
 
-  # TODO: Second deployment
-  scope :kept, -> { all }
-  scope :discarded, -> { none }
+  # TODO: Second deployment remove
+  # scope :kept, -> { all }
+  # scope :discarded, -> { none }
+
+  # rails_admin scope "active" sounds better than "kept"
   scope :active, -> { kept }
 
   scope :status_worthy, -> { where('monthly_production_rate > ?', 0).order(monthly_production_rate: 'desc') }
