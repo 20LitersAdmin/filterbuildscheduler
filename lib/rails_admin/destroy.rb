@@ -32,10 +32,9 @@ module RailsAdmin
 
         register_instance_option :controller do
           proc do
-            # TODO: Second deploy
             @object.destroy
             flash[:success] = t('admin.flash.successful', name: @model_config.label, action: t('admin.actions.destroy.done'))
-            redirect_to back_or_index
+            redirect_to request.referrer
           end
         end
 

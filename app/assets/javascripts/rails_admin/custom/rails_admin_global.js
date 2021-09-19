@@ -18,8 +18,10 @@ function actionMatches(actions_ary) {
   return actions_ary.indexOf(action) !== -1;
 };
 
+// Ensure <body> tag always has data attributes: data-controller && data-action
+// views/layouts/rails_admin/application.html.haml sets the data values for full page loads, so it's not needed on $(document).ready
+// BUT ajaxComplete calls need to update data attributes so that rails_admin/custom/*.js functions can use controllerMatches() and actionMatches() confidently
 function setBodyDataTags() {
-  // I don't think these JS files are accessible outside of RailsAdmin, but to be safe, wrap everything in a check to see if we're inside RailsAdmin and not on the dashboard
   if ( isRailsAdminPage() && !isRailsAdminDashboard() ) {
     dataAction = $('body').attr('data-action');
     pathAry = window.location.pathname.split('/');
@@ -40,25 +42,22 @@ function setBodyDataTags() {
   };
 };
 
+// destroy links should behave similar to Rails' data-confirm: 'Are you sure?'
 function confirmationOnDestroy() {
-  // destroy links should behave similar to Rails' data-confirm: 'Are you sure?'
   if ( isRailsAdminPage() && !isRailsAdminDashboard() ) {
     // pjax can't be interrupted as usual, so just remove it
-    $('li.destroy_member_link a').removeClass('pjax');
+    // $('li.destroy_member_link a').removeClass('pjax');
 
-    $(document).on('click', 'li.destroy_member_link a', function() {
+    $(document).off('click', 'li.destroy_member_link a').on('click', 'li.destroy_member_link a', function() {
       var response = confirm('Destroying is permanent. Are you sure?');
       if (response == false) {
-        event.preventDefault();
+        event.preventDefault;
         return false;
       };
     });
   };
 };
 
-// Ensure <body> tag always has data attributes: data-controller && data-action
-// views/layouts/rails_admin/application.html.haml sets the data values for full page loads, so it's not needed on $(document).ready
-// BUT ajaxComplete calls need to update data attributes so that rails_admin/custom/*.js functions can use controllerMatches() and actionMatches() confidently
 $(document).ajaxComplete( function() {
   setBodyDataTags();
   confirmationOnDestroy();

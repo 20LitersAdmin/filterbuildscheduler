@@ -72,15 +72,21 @@ RailsAdmin.config do |config|
       scopes %i[builders leaders inventoryists admins active discarded]
       sort_by 'lname, fname'
       field :email
-      field :fname
-      field :lname
+      field :name
       field :primary_location
-      field :is_leader
-      field :does_inventory
-      field :is_admin
-      field :send_notification_emails
-      field :sign_in_count
-      field :last_sign_in_at
+      field :registrations do
+        column_width 80
+        pretty_value do
+          value.size
+        end
+      end
+      field :events do
+        column_width 80
+        pretty_value do
+          value.size
+        end
+      end
+      field :role
     end
 
     exclude_fields :registrations, :counts
@@ -857,7 +863,9 @@ RailsAdmin.config do |config|
     show_in_app
     discard
     restore
-    destroy
+    destroy do
+      pjax { false }
+    end
     assemble
   end
 
