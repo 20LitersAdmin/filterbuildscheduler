@@ -46,6 +46,21 @@ class TrueIsBad < RailsAdmin::Config::Fields::Base
   end
 end
 
+class TrueIsBadFalseIsGood < RailsAdmin::Config::Fields::Base
+  RailsAdmin::Config::Fields::Types.register(:true_is_bad_false_is_good, self)
+
+  register_instance_option :formatted_value do
+    case value
+    when nil
+      %(<span class='label label-default'>&#x2012;</span>)
+    when false
+      %(<span class='label label-success'>&#x2718;</span>)
+    when true
+      %(<span class='label label-danger'>&#x2713;</span>)
+    end.html_safe
+  end
+end
+
 class HistoryJson < RailsAdmin::Config::Fields::Base
   RailsAdmin::Config::Fields::Types.register(:history_json, self)
 

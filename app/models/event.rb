@@ -69,9 +69,9 @@ class Event < ApplicationRecord
 
   def format_time_range
     if start_time.beginning_of_day == end_time.beginning_of_day
-      start_time.strftime('%a, %-m/%-d %-l:%M%P') + ' - ' + end_time.strftime('%-l:%M%P')
+      "#{start_time.strftime('%a, %-m/%-d %-l:%M%P')} - #{end_time.strftime('%-l:%M%P')}"
     else
-      start_time.strftime('%a, %-m/%-d %-l:%M%P') + ' to ' + end_time.strftime('%a, %-m/%-d at %-l:%M%P')
+      "#{start_time.strftime('%a, %-m/%-d %-l:%M%P')} to #{end_time.strftime('%a, %-m/%-d at %-l:%M%P')}"
     end
   end
 
@@ -84,11 +84,11 @@ class Event < ApplicationRecord
   end
 
   def full_title
-    start_time.strftime('%-m/%-d') + ' - ' + title
+    "#{start_time.strftime('%-m/%-d')} - #{title}"
   end
 
   def full_title_w_year
-    start_time.strftime('%-m/%-d/%y') + ' - ' + title
+    "#{start_time.strftime('%-m/%-d/%y')} - #{title}"
   end
 
   def has_begun?
@@ -112,11 +112,19 @@ class Event < ApplicationRecord
   end
 
   def leaders_names
-    registrations.registered_as_leader.map { |r| r.user.fname }.join(', ') if leaders_registered.present?
+    return unless leaders_registered.present?
+
+    registrations.registered_as_leader
+                 .map { |r| r.user.fname }
+                 .join(', ')
   end
 
   def leaders_names_full
-    registrations.registered_as_leader.map { |r| r.user.name }.join(', ') if leaders_registered.present?
+    return unless leaders_registered.present?
+
+    registrations.registered_as_leader
+                 .map { |r| r.user.name }
+                 .join(', ')
   end
 
   def leaders_registered(scope = '')
@@ -141,6 +149,11 @@ class Event < ApplicationRecord
 
   def mailer_time
     start_time.strftime('%a, %-m/%-d')
+  end
+
+  def name
+    # RailsAdmin defaults to using name
+    full_title_w_year
   end
 
   def needs_leaders?(scope = '')
@@ -258,6 +271,7 @@ class Event < ApplicationRecord
     length * attendance
   end
 
+  # TODO: only_deleted switch
   def you_are_attendee(user, scope = '')
     if scope == 'only_deleted'
       ' (including you)' if user && registrations.only_deleted.where(user_id: user.id).where(leader: false).present?
@@ -266,6 +280,7 @@ class Event < ApplicationRecord
     end
   end
 
+  # TODO: only_deleted switch
   def you_are_leader(user, scope = '')
     if scope == 'only_deleted'
       ' (including you)' if user&.is_leader && registrations.only_deleted.where(user_id: user.id).where(leader: true).present?

@@ -108,7 +108,7 @@
 ### Current:
 - rails_admin
   - Organize ALL models:
-    - User
+    - User -- how to handle Admins nerfing Admins?
     - Event? Yeah, just index
     - Registration? Or only manage through Events
 

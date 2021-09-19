@@ -14,7 +14,7 @@ body.rails_admin[data-action="show"] {
       margin-top: 0;
       margin-bottom: 20px;
       display: flex;
-      flex-wrap: nowrap;
+      flex-wrap: wrap;
 
       dt {
         // labels overtop of dd.well
@@ -33,6 +33,10 @@ body.rails_admin[data-action="show"] {
 
         &.full-width {
           max-width: 100%;
+        }
+
+        ul {
+          padding-left: 1em;
         }
       }
     }

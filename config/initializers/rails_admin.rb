@@ -71,8 +71,8 @@ RailsAdmin.config do |config|
     list do
       scopes %i[builders leaders inventoryists admins active discarded]
       sort_by 'lname, fname'
-      field :email
       field :name
+      field :email
       field :primary_location
       field :registrations do
         column_width 80
@@ -89,7 +89,89 @@ RailsAdmin.config do |config|
       field :role
     end
 
-    exclude_fields :registrations, :counts
+    show do
+      group :default do
+        field :name
+        field :email
+        field :phone do
+          label 'Phone'
+        end
+        field :role
+        field :email_opt_out, :true_is_bad_false_is_good
+      end
+
+      group 'Event Stats' do
+        field :signed_waiver_on
+        field :registrations do
+          pretty_value { value.size }
+        end
+        field :events_attended do
+          pretty_value { value.size }
+        end
+        field :events_skipped do
+          pretty_value { value.size }
+        end
+        field :total_volunteer_hours do
+          label 'Volunteer hours'
+          pretty_value { precise(value) }
+        end
+        field :total_guests
+      end
+
+      group 'Leader Stats' do
+        field :events_led do
+          pretty_value { value.size }
+        end
+        field :total_leader_hours do
+          label 'Leader hours'
+          pretty_value { precise(value) }
+        end
+        field :availability
+        field :primary_location
+      end
+
+      group 'Leader Qualifications' do
+        field :techs_qualified_html do
+          label 'Qualifications'
+        end
+
+        field :role_leadership_html do
+          label 'Roles'
+        end
+      end
+
+      group 'System access' do
+        field :has_password, :boolean
+        field :sign_in_count
+        field :last_sign_in_at, :date
+      end
+    end
+
+    edit do
+      group :default do
+        field :fname
+        field :lname
+        field :email
+        field :phone
+      end
+
+      group 'Permissions' do
+        field :is_leader
+        field :does_inventory
+        field :send_inventory_emails do
+          help 'Will get an email everytime an inventory is complete'
+        end
+        field :is_admin do
+          help 'Full access to all system functions'
+          read_only do
+            bindings[:object].is_admin?
+          end
+        end
+        field :send_notification_emails do
+          help 'Will get an email everytime an event is created or changed'
+        end
+      end
+    end
   end
 
   config.model 'Event' do
@@ -877,6 +959,16 @@ RailsAdmin.config do |config|
     extend ActionView::Helpers::NumberHelper
 
     number_with_delimiter(integer, delimiter: ',')
+  end
+
+  def precise(number, precision = 2)
+    float = number.instance_of?(String) ? number.to_f : number
+
+    return '-' if float.nil? || float.zero?
+
+    extend ActionView::Helpers::NumberHelper
+
+    number_with_precision(float, precision: precision, delimiter: ',')
   end
 
   def external_link(view, link)
