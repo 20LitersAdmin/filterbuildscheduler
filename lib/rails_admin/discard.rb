@@ -10,8 +10,13 @@ module RailsAdmin
         RailsAdmin::Config::Actions.register(self)
 
         register_instance_option :visible? do
-          %w[Component Event Location Material Part Registration Supplier Technology User].include?(bindings[:object].class.to_s) &&
-            bindings[:object].kept?
+          # class must respond to #kept?
+          bindings[:object]&.kept? &&
+            (
+              # user.is_admin? cannot be discarded
+              bindings[:object].class.to_s == 'User' &&
+              !bindings[:object].is_admin?
+            )
         end
 
         register_instance_option :member do

@@ -26,6 +26,10 @@ class UserPolicy < ApplicationPolicy
     user&.is_admin?
   end
 
+  def admin_password_reset?
+    user&.is_admin?
+  end
+
   class Scope
     attr_reader :user, :scope
 

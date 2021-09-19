@@ -10,6 +10,7 @@ Rails.application.routes.draw do
   put 'users/comm_complete', to: 'users#comm_complete', as: 'users_comm_complete'
   patch 'users/:id', to: 'users#update', as: 'update_user'
   get 'users/:id/availability', to: 'users#availability', as: 'user_availability'
+  get 'users/:id/admin_password_reset', to: 'users#admin_password_reset', as: 'user_admin_password_reset'
   get :waiver, controller: :application
 
   get 'info', to: 'pages#info', as: 'info'

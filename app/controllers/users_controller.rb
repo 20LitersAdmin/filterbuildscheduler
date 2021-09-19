@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class UsersController < ApplicationController
-  before_action :find_and_authorize_user, only: %i[show edit update delete availability]
+  before_action :find_and_authorize_user, only: %i[show edit update delete availability admin_password_reset]
 
   def show
     flash[:warning] = 'You haven\'t set your password yet, please do so now.' if @user.has_no_password
@@ -109,6 +109,14 @@ class UsersController < ApplicationController
     end
 
     render json: @user.reload.availability_code
+  end
+
+  def admin_password_reset
+    # custom RailsAdmin link on admin/user/:id/edit hits this action
+    @user.send_reset_password_instructions
+
+    flash[:success] = 'Password reset email sent!'
+    redirect_to request.referrer
   end
 
   private
