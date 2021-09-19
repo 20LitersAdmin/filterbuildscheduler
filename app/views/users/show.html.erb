@@ -54,8 +54,8 @@
           <p>Not currently qualified with any technologies.</p>
         <% else %>
           <ul class="list-group">
-            <% @user.technologies.each do |technology| %>
-              <li class="list-group-item"><%= technology.name %> (<%= technology.owner %>)</li>
+            <% @user.techs_qualified.each do |tech| %>
+              <li class="list-group-item"><%= tech %></li>
             <% end %>
           </ul>
         <% end %>

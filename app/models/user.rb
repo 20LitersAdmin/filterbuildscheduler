@@ -53,7 +53,7 @@ class User < ApplicationRecord
 
   def availability
     # [['All hours', 0], ['Business hours', 1], ['After hours', 2]]
-    return 'Not a leader' unless is_leader?
+    return unless is_leader?
 
     return 'All hours' if available_business_hours? && available_after_hours?
 
@@ -106,6 +106,24 @@ class User < ApplicationRecord
     !email_opt_out?
   end
 
+  def events_attended
+    applicable_event_ids = registrations.attended.joins(:event).where('events.discarded_at IS NULL').map(&:event_id)
+
+    Event.where(id: applicable_event_ids)
+  end
+
+  def events_led
+    applicable_event_ids = registrations.attended.leaders.joins(:event).where('events.discarded_at IS NULL').map(&:event_id)
+
+    Event.where(id: applicable_event_ids).any? ? Event.where(id: applicable_event_ids) : nil
+  end
+
+  def events_skipped
+    applicable_event_ids = registrations.where(attended: false).joins(:event).where('events.discarded_at IS NULL').map(&:event_id)
+
+    Event.where(id: applicable_event_ids)
+  end
+
   def events_led_between(start_date: nil, end_date: nil)
     return unless is_leader?
 
@@ -126,9 +144,17 @@ class User < ApplicationRecord
     !encrypted_password.present?
   end
 
+  def has_password
+    encrypted_password.present?
+  end
+
   def latest_event
     if registrations.count.positive?
-      registrations.includes(:event).order('events.start_time DESC').first.event.full_title
+      registrations.includes(:event)
+                   .order('events.start_time DESC')
+                   .first
+                   .event
+                   .name
     else
       'No Event'
     end
@@ -162,6 +188,25 @@ class User < ApplicationRecord
     end
   end
 
+  def role_leadership_html
+    ary = []
+    ary << 'Admin' if is_admin?
+    ary << 'Leader' if is_leader?
+    ary << 'Inventoryist' if does_inventory?
+    ary << 'Notified of events' if send_notification_emails?
+    ary << 'Notified of inventories' if send_inventory_emails?
+
+    return unless ary.any?
+
+    str = '<ul>'
+    ary.each do |role|
+      str += "<li>#{role}</li>"
+    end
+    str += '</ul>'
+
+    str.html_safe
+  end
+
   def self.to_csv
     attributes = %w[fname lname email]
     CSV.generate(headers: true) do |csv|
@@ -180,8 +225,41 @@ class User < ApplicationRecord
                  .sum
   end
 
+  def total_leader_hours
+    return unless is_leader?
+
+    registrations.attended
+                 .leaders
+                 .includes(:event)
+                 .map { |r| r.event.length }
+                 .sum
+  end
+
   def total_guests
     registrations.attended.map(&:guests_attended).sum
+  end
+
+  def techs_qualified
+    return unless is_leader?
+
+    ary = []
+    technologies.list_worthy.order(:name).pluck(:name, :owner).each do |tech|
+      ary << "#{tech[0]} (#{tech[1]})"
+    end
+
+    ary
+  end
+
+  def techs_qualified_html
+    return unless is_leader?
+
+    str = '<ul>'
+    techs_qualified.each do |tech|
+      str += "<li>#{tech}</li>"
+    end
+    str += '</ul>'
+
+    str.html_safe
   end
 
   private
