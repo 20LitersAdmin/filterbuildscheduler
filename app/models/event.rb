@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
 class Event < ApplicationRecord
-  # include Discard::Model
+  # TODO: second deploy enable
+  include Discard::Model
 
   belongs_to :location
   belongs_to :technology
@@ -18,9 +19,11 @@ class Event < ApplicationRecord
   validate :registrations_are_valid?
   validate :leaders_are_valid?
 
-  # TODO: Second deployment
-  scope :kept, -> { all }
-  scope :discarded, -> { none }
+  # TODO: Second deployment remove
+  # scope :kept, -> { all }
+  # scope :discarded, -> { none }
+
+  # RailsAdmin "active" is better than "kept"
   scope :active, -> { kept }
 
   scope :non_private,   -> { where(is_private: false) }
@@ -30,6 +33,7 @@ class Event < ApplicationRecord
   scope :past,          -> { where('end_time <= ?', Time.now).order(start_time: :desc) }
   scope :needs_report,  -> { where('start_time <= ?', Time.now).where(attendance: 0).order(start_time: :desc) }
   scope :closed,        -> { where('start_time <= ?', Time.now).order(start_time: :desc) }
+  scope :needs_leaders, -> { future.select('events.*').joins('LEFT OUTER JOIN registrations ON (registrations.event_id = events.id)').having('count(registrations.leader IS TRUE) < events.max_leaders').group('events.id') }
 
   def builders_attended
     attendance - leaders_attended
@@ -60,15 +64,23 @@ class Event < ApplicationRecord
   end
 
   def format_date_only
-    if start_time.beginning_of_day == end_time.beginning_of_day
+    if start_time.to_date == end_time.to_date
       start_time.strftime('%a, %-m/%-d')
     else
       start_time.strftime('%a, %-m/%-d %l:%M%P') + end_time.strftime(' to %a, %-m/%-d %l:%M%P')
     end
   end
 
+  def format_date_w_year
+    if start_time.to_date == end_time.to_date
+      start_time.strftime('%a, %-m/%-d/%y')
+    else
+      start_time.strftime('%a, %-m/%-d/%y') + end_time.strftime(' to %a, %-m/%-d')
+    end
+  end
+
   def format_time_range
-    if start_time.beginning_of_day == end_time.beginning_of_day
+    if start_time.to_date == end_time.to_date
       "#{start_time.strftime('%a, %-m/%-d %-l:%M%P')} - #{end_time.strftime('%-l:%M%P')}"
     else
       "#{start_time.strftime('%a, %-m/%-d %-l:%M%P')} to #{end_time.strftime('%a, %-m/%-d at %-l:%M%P')}"
@@ -76,11 +88,15 @@ class Event < ApplicationRecord
   end
 
   def format_time_only
-    if start_time.beginning_of_day == end_time.beginning_of_day
+    if start_time.to_date == end_time.to_date
       start_time.strftime('%l:%M%P') + end_time.strftime(' - %l:%M%P')
     else
       ' '
     end
+  end
+
+  def format_time_slim
+    start_time.strftime('%-l:%M%P').sub(':00', '') + end_time.strftime('-%-l:%-M%P').sub(':00', '')
   end
 
   def full_title
@@ -99,6 +115,10 @@ class Event < ApplicationRecord
     !complete?
   end
 
+  def in_the_future?
+    end_time >= Time.zone.now
+  end
+
   def in_the_past?
     end_time <= Time.zone.now
   end
@@ -111,10 +131,18 @@ class Event < ApplicationRecord
     errors.add(:max_leaders, 'there are more registered leaders than the event max leaders') if leaders_registered.count > max_leaders
   end
 
+  def leaders_attended
+    registrations.leaders.attended.size
+  end
+
+  def leaders_have_vs_needed
+    "#{registrations.leaders.size} of #{max_leaders}"
+  end
+
   def leaders_names
     return unless leaders_registered.present?
 
-    registrations.registered_as_leader
+    registrations.leaders
                  .map { |r| r.user.fname }
                  .join(', ')
   end
@@ -122,21 +150,18 @@ class Event < ApplicationRecord
   def leaders_names_full
     return unless leaders_registered.present?
 
-    registrations.registered_as_leader
+    registrations.leaders
                  .map { |r| r.user.name }
                  .join(', ')
   end
 
+  # TODO: remove only_deleted
   def leaders_registered(scope = '')
     if scope == 'only_deleted'
-      registrations.only_deleted.registered_as_leader
+      registrations.only_deleted.leaders
     else
-      registrations.registered_as_leader
+      registrations.leaders
     end
-  end
-
-  def leaders_attended
-    registrations.leaders.attended.size
   end
 
   def leaders_hours
@@ -151,11 +176,7 @@ class Event < ApplicationRecord
     start_time.strftime('%a, %-m/%-d')
   end
 
-  def name
-    # RailsAdmin defaults to using name
-    full_title_w_year
-  end
-
+  # TODO: remove only_deleted
   def needs_leaders?(scope = '')
     if scope == 'only_deleted'
       leaders_registered('only_deleted').count < max_leaders
@@ -168,6 +189,7 @@ class Event < ApplicationRecord
     attendance.zero?
   end
 
+  # TODO: remove only_deleted
   def non_leaders_registered(scope = '')
     if scope == 'only_deleted'
       registrations.only_deleted.non_leader
@@ -287,5 +309,12 @@ class Event < ApplicationRecord
     else
       ' (including you)' if user&.is_leader && registrations.where(user_id: user.id).where(leader: true).present?
     end
+  end
+
+  private
+
+  def convert_hour(hour)
+    _quotient, modulus = hour.divmod(12)
+    (modulus.zero? ? 12 : modulus).to_s
   end
 end

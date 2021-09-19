@@ -51,6 +51,10 @@ en:
         menu: 'Assemble'
         title: 'Assemble'
         breadcrumb: 'Assemble'
+      edit_in_app:
+        menu: 'Edit in app'
+        title: 'Edit in app'
+        breadcrumb: 'Edit'
     scopes:
       user:
         active: 'All'
