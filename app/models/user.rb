@@ -207,6 +207,12 @@ class User < ApplicationRecord
     str.html_safe
   end
 
+  def send_reset_password_email
+    # RailsAdmin custom form field with custom partial
+    # custom partial links to UsersController#admin_password_reset
+    # which fires Devise#send_reset_password_instructions
+  end
+
   def self.to_csv
     attributes = %w[fname lname email]
     CSV.generate(headers: true) do |csv|

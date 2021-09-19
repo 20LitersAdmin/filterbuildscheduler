@@ -126,8 +126,10 @@ RailsAdmin.config do |config|
           label 'Leader hours'
           pretty_value { precise(value) }
         end
-        field :availability
         field :primary_location
+        field :availability do
+          visible { bindings[:object].is_leader? }
+        end
       end
 
       group 'Leader Qualifications' do
@@ -137,6 +139,7 @@ RailsAdmin.config do |config|
 
         field :role_leadership_html do
           label 'Roles'
+          visible { bindings[:object].is_leader? }
         end
       end
 
@@ -152,23 +155,70 @@ RailsAdmin.config do |config|
         field :fname
         field :lname
         field :email
+        field :email_opt_out do
+          # TODO: not true for VWF
+          help 'Prevents ANY email from being sent; overrides settings in Permissions.<br />Is synced with Kindful and Mailchimp.'.html_safe
+        end
         field :phone
+        field :discarded_at, :date do
+          help 'Discarding hides this user from lists.<br />Discarded users can be deleted.'.html_safe
+          pretty_value do
+            'Not discarded' if value.nil?
+          end
+          read_only true
+        end
+      end
+
+      group 'Password reset' do
+        field :has_password, :boolean do
+          read_only true
+          help 'Users don\'t have to set a password to register for a build.<br />But they need a password to login for other functions like doing inventory.'.html_safe
+        end
+        field :send_reset_password_email do
+          help 'Send an email to the address on file with a link to reset their own password'
+          render do
+            bindings[:view].render partial: 'send_password_reset_email', locals: { field: self, view: bindings[:view], object: bindings[:object] }
+          end
+        end
+        field :reset_password_sent_at do
+          read_only true
+        end
       end
 
       group 'Permissions' do
-        field :is_leader
+        field :is_leader do
+          help 'If making a new leader, use "Save and edit" button to see additional leader options and settings.'
+        end
         field :does_inventory
         field :send_inventory_emails do
           help 'Will get an email everytime an inventory is complete'
         end
         field :is_admin do
-          help 'Full access to all system functions'
+          help 'Full access to all system functions. Admins can\'t be discarded or deleted.'
           read_only do
-            bindings[:object].is_admin?
+            # can't de-admin the first user
+            bindings[:object].id == 1
           end
         end
         field :send_notification_emails do
           help 'Will get an email everytime an event is created or changed'
+        end
+      end
+
+      group 'Leader details' do
+        field :primary_location do
+          visible { bindings[:object].is_leader? }
+        end
+        field :available_business_hours do
+          visible { bindings[:object].is_leader? }
+        end
+        field :available_after_hours do
+          visible { bindings[:object].is_leader? }
+        end
+        field :technologies do
+          label 'Qualified to lead:'
+          visible { bindings[:object].is_leader? }
+          inline_add false
         end
       end
     end
