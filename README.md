@@ -106,12 +106,6 @@
   - No conflict if 2 users have the same count open (just adds to it)
 
 ### Current:
-- rails_admin
-  - Organize ALL models:
-    - User -- how to handle Admins nerfing Admins?
-    - Event? Yeah, just index
-    - Registration? Or only manage through Events
-
 - For Setup crew:
   - need a view similar to /technology/:id/items, but traversing over each component separately
     - Each build station should have an inventory list showing just that component and its immediate children

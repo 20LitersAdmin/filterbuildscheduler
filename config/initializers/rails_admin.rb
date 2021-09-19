@@ -25,6 +25,9 @@ require Rails.root.join('lib', 'rails_admin', 'dashboard.rb')
 # custom action to link to assemble pages
 require Rails.root.join('lib', 'rails_admin', 'assemble.rb')
 
+# custom action to link to assemble pages
+require Rails.root.join('lib', 'rails_admin', 'edit_in_app.rb')
+
 # custom field formats (e.g. number_with_delimiter)
 require Rails.root.join('lib', 'rails_admin', 'custom_fields.rb')
 
@@ -32,8 +35,8 @@ RailsAdmin.config do |config|
   config.parent_controller = ApplicationController.to_s
   config.main_app_name = ['20 Liters', 'Admin']
 
-  # Hide these models from navigation pane:
-  invisible_models = %w[
+  # Exclude these models RailsAdmin:
+  excluded_models = %w[
     Assembly
     ActiveStorage::Attachment
     ActiveStorage::Blob
@@ -43,17 +46,25 @@ RailsAdmin.config do |config|
     Inventory
     OauthUser
     Organization
+    Registration
   ].freeze
 
-  invisible_models.each do |invisible_model|
-    config.model invisible_model do
+  excluded_models.each do |excluded_model|
+    config.model excluded_model do
       visible false
     end
   end
 
-  config.model 'MaterialsPart' do
-    # this model can't be fully excluded or it breaks the nested form capabilities
-    visible { false }
+  # Hide but don't exclude models which are needed as associations
+  invisible_models = %w[
+    MaterialsPart
+    Registration
+  ].freeze
+
+  invisible_models.each do |invisible_model|
+    config.model invisible_model do
+      visible { false }
+    end
   end
 
   ## == Devise integration ==
@@ -226,31 +237,29 @@ RailsAdmin.config do |config|
 
   config.model 'Event' do
     weight 1
-    object_label_method :format_time_range
     list do
-      scopes %i[active future past needs_report closed discarded]
-      field :start_time
-      field :end_time
+      scopes %i[needs_leaders future past needs_report discarded]
+      sort_by :start_time
       field :title
+      field :format_date_w_year do
+        label 'Date'
+        column_width 110
+      end
+      field :format_time_slim do
+        label 'Time'
+        column_width 80
+      end
       field :location
-      field :is_private
-      field :leaders_names_full
-    end
-
-    exclude_fields :registrations, :users, :inventory
-  end
-
-  config.model 'Registration' do
-    weight 0
-    parent Event
-    list do
-      scopes %i[active discarded]
-      field :event
-      field :user
-      field :attended
-      field :leader
-      field :guests_registered
-      field :guests_attended
+      field :needs_leaders?, :true_is_bad do
+        column_width 80
+      end
+      field :leaders_have_vs_needed do
+        label 'Leaders Registered'
+        column_width 80
+      end
+      field :leaders_names_full do
+        label 'Leaders'
+      end
     end
   end
 
@@ -990,9 +999,26 @@ RailsAdmin.config do |config|
     index # mandatory
     new
     export
-    show
-    edit
-    show_in_app
+    show do
+      visible do
+        !bindings[:object].instance_of?(Event)
+      end
+    end
+    edit do
+      visible do
+        !bindings[:object].instance_of?(Event)
+      end
+    end
+    show_in_app do
+      visible do
+        bindings[:object].instance_of?(Event)
+      end
+    end
+    edit_in_app do
+      visible do
+        bindings[:object].instance_of?(Event)
+      end
+    end
     discard
     restore
     destroy do
