@@ -35,7 +35,7 @@ module RailsAdmin
             # TODO: Second deploy
             @object.discard
             flash[:success] = t('admin.flash.successful', name: @model_config.label, action: t('admin.actions.discard.done'))
-            redirect_to back_or_index
+            redirect_to request.referrer
           end
         end
 

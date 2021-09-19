@@ -51,6 +51,9 @@ en:
         menu: 'Assemble'
         title: 'Assemble'
         breadcrumb: 'Assemble'
+    scopes:
+      user:
+        active: 'All'
   activerecord:
     attributes:
       user:

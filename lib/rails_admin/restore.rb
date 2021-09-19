@@ -26,7 +26,7 @@ module RailsAdmin
           proc do
             @object.undiscard
             flash[:success] = t('admin.flash.successful', name: @model_config.label, action: t('admin.actions.restore.done'))
-            redirect_to back_or_index
+            redirect_to request.referrer
           end
         end
       end

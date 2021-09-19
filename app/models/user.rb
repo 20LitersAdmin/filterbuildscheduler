@@ -23,16 +23,18 @@ class User < ApplicationRecord
   before_save :ensure_authentication_token, :check_phone_format
 
   # TODO: Second deployment
-  scope :kept, -> { all }
-  scope :discarded, -> { none }
+  # scope :kept, -> { all }
+  # scope :discarded, -> { none }
+
+  # rails_admin scope "active" sounds better than "kept"
   scope :active, -> { kept }
 
-  scope :leaders,               -> { where(is_leader: true) }
-  scope :inventoryists,         -> { where(does_inventory: true) }
-  scope :admins,                -> { where(is_admin: true) }
+  scope :leaders,               -> { kept.where(is_leader: true) }
+  scope :inventoryists,         -> { kept.where(does_inventory: true) }
+  scope :admins,                -> { kept.where(is_admin: true) }
   scope :notify,                -> { where(send_notification_emails: true) }
   scope :notify_inventory,      -> { where(send_inventory_emails: true) }
-  scope :builders,              -> { where(is_admin: false, is_leader: false, does_inventory: false, send_notification_emails: false, send_inventory_emails: false) }
+  scope :builders,              -> { kept.where(is_admin: false, is_leader: false, does_inventory: false, send_notification_emails: false, send_inventory_emails: false) }
   scope :non_builders,          -> { where(is_admin: true).or(where(is_leader: true)).or(where(does_inventory: true)).or(where(send_notification_emails: true)).or(where(send_inventory_emails: true)) }
   scope :for_monthly_report,    -> { builders.where(email_opt_out: false).where('created_at >= ?', Date.today.beginning_of_month) }
   scope :with_registrations,    -> { joins(:registrations).uniq }
@@ -101,7 +103,23 @@ class User < ApplicationRecord
 
   def email_opt_in
     # KindfulClient wants email_opt_in, not email_opt_out
-    email_opt_out?
+    !email_opt_out?
+  end
+
+  def events_led_between(start_date: nil, end_date: nil)
+    return unless is_leader?
+
+    applicable_event_ids = registrations.attended.joins(:event).map(&:event_id)
+
+    if start_date.present? && end_date.present?
+      Event.where(end_time: start_date..end_date).where(id: applicable_event_ids).order(start_time: :asc)
+    elsif start_date.present?
+      Event.where('start_time >= ?', start_date).where(id: applicable_event_ids).order(start_time: :asc)
+    elsif end_date.present?
+      Event.where('end_time <= ?', end_date).where(id: applicable_event_ids).order(start_time: :asc)
+    else
+      Event.where(id: applicable_event_ids).order(start_time: :asc)
+    end
   end
 
   def has_no_password
@@ -132,6 +150,18 @@ class User < ApplicationRecord
     Registration.where(user: self, event: event).present?
   end
 
+  def role
+    if is_admin?
+      'Admin'
+    elsif is_leader?
+      'Leader'
+    elsif does_inventory?
+      'Inventory'
+    else
+      'Builder'
+    end
+  end
+
   def self.to_csv
     attributes = %w[fname lname email]
     CSV.generate(headers: true) do |csv|
@@ -144,27 +174,14 @@ class User < ApplicationRecord
   end
 
   def total_volunteer_hours
-    registrations.attended.includes(:event).map { |r| r.event.length }.sum
+    registrations.attended
+                 .includes(:event)
+                 .map { |r| r.event.length }
+                 .sum
   end
 
   def total_guests
     registrations.attended.map(&:guests_attended).sum
-  end
-
-  def events_led_between(start_date: nil, end_date: nil)
-    return unless is_leader?
-
-    applicable_event_ids = registrations.attended.joins(:event).map(&:event_id)
-
-    if start_date.present? && end_date.present?
-      Event.where(end_time: start_date..end_date).where(id: applicable_event_ids).order(start_time: :asc)
-    elsif start_date.present?
-      Event.where('start_time >= ?', start_date).where(id: applicable_event_ids).order(start_time: :asc)
-    elsif end_date.present?
-      Event.where('end_time <= ?', end_date).where(id: applicable_event_ids).order(start_time: :asc)
-    else
-      Event.where(id: applicable_event_ids).order(start_time: :asc)
-    end
   end
 
   private
