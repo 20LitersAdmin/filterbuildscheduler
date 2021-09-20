@@ -15,7 +15,7 @@ class InventoriesController < ApplicationController
     @items = [components, parts, materials].flatten
 
     # TODO: Allow for a snapshot date??
-    @date = params[:date]&.to_date
+    # @date = params[:date]&.to_date || Date.today
   end
 
   def show

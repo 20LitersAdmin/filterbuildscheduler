@@ -1,31 +1,11 @@
 -# frozen_string_literal: true
-
-:ruby
-  if @date.present? && item_tbl.history.any?
-    # find the closest smaller (or matching) date to @date
-    history_key = item_tbl.history.keys.reverse.find { |d| d <= @date.iso8601 }
-    if history_key.nil?
-      loose_count = 0
-      box_count = 0
-    else
-      history_entry = item_tbl.history[history_key]
-      loose_count = history_entry['loose']
-      box_count = history_entry['box']
-      available_count = box_count * item_tbl.quantity_per_box
-    end
-  else
-    loose_count = item_tbl.loose_count
-    box_count = item_tbl.box_count
-    available_count = item_tbl.available_count
-  end
-
 %tr
   %td
     = link_to item_tbl.name, history_inventories_path(item_class: item_tbl.class, item_id: item_tbl.id), remote: true, data: { target: '#item_history_modal' }
   %td= item_tbl.uid
   %td
     = item_tbl.supplier&.name unless item_tbl.instance_of?(Component)
-  %td.center-align= human_number loose_count
-  %td.center-align= human_number box_count
+  %td.center-align= human_number item_tbl.loose_count
+  %td.center-align= human_number item_tbl.box_count
   %td.center-align= human_number item_tbl.quantity_per_box
-  %td.center-align= human_number available_count
+  %td.center-align= human_number item_tbl.available_count

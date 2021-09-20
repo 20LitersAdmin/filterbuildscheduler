@@ -106,6 +106,11 @@
   - No conflict if 2 users have the same count open (just adds to it)
 
 ### Current:
+- Assembly: `get 'assemble/:uid', to: 'technologies#assemble', as: 'assemble'`
+  - use for Component and Technology
+  - `get 'assemble/:uid/items', to: 'technologies#assembly_items', as: 'assembly_items'` use instead of `/technology/:id/items`:
+
+
 - For Setup crew:
   - need a view similar to /technology/:id/items, but traversing over each component separately
     - Each build station should have an inventory list showing just that component and its immediate children
@@ -122,14 +127,6 @@
   - `Location#photo_url`
 
 - Nerf #cprice on all Items
-
-- Event views
-  - use RailsAdmin for Index w/ scopes
-  - use standard form for Edit? NO
-  - use standard form for New? NO
-  - Use Show in App to link to main app
-    - hijack 'Show' pjax to navigate to same URL minus the '/admin/' path part
-    - or disable Show link, change "Show in app" to "Show"
 
 - make sure Part#not_made_from_materials and Material#all price is being escalated to assemblies on save
   - Right now, saving an Assembly trigers PriceCalculationJob, but what if you change the price of a Part or Material? That needs to cascade up.

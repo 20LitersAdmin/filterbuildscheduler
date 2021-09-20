@@ -20,7 +20,9 @@ Rails.application.routes.draw do
   get 'label/:uid', to: 'technologies#label', as: 'label'
   post 'labels_select', to: 'technologies#labels_select', as: 'labels_select'
   get 'donation_list', to: 'technologies#donation_list', as: 'donation_list'
+
   get 'assemble/:uid', to: 'technologies#assemble', as: 'assemble'
+  get 'assemble/:uid/items', to: 'technologies#assembly_items', as: 'assembly_items'
 
   resources :report, only: [:index] do
     collection do
