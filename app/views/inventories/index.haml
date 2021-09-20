@@ -3,16 +3,6 @@
 #inventory_index.container
   = render partial: 'shared/inventory_functions'
 
-  .row
-    = form_tag({}, method: :get) do
-      .col-xs-12.col-sm-6.right-align
-        %h3 As of date:
-      .col-xs-6.col-sm-3.match-h3
-        = text_field_tag 'date', date_for_form(@date), class: 'datepicker-maxtoday'
-      .col-xs-6.col-sm-3.match-h3
-        = submit_tag 'Submit', value: nil, name: nil, class: 'btn yellow'
-
-
   - if @latest.counts.any?
     .inv-latest.row
       .col-xs-12
@@ -33,7 +23,7 @@
 
   .row
     .col-xs-12
-      %h2 Inventory Counts as of #{ human_date @date }:
+      %h2 Inventory Counts:
       %p
         %i Click on an item's name to see the count history
     .col-xs-12
