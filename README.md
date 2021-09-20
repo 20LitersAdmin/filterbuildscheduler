@@ -108,7 +108,8 @@
 ### Current:
 - Assembly: `get 'assemble/:uid', to: 'technologies#assemble', as: 'assemble'`
   - use for Component and Technology
-  - `get 'assemble/:uid/items', to: 'technologies#assembly_items', as: 'assembly_items'` use instead of `/technology/:id/items`:
+  - `get 'assemble/:uid/items', to: 'technologies#assembly_items', as: 'assembly_items'` <- use instead of `/technologies/:id/items`
+    - but keep `/technologies/:id/prices`
 
 
 - For Setup crew:
