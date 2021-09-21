@@ -39,6 +39,7 @@
           <%= event.total_registered %> of <%= event.max_registrations %> Registered<%= event.you_are_attendee(@user) %>.
         </div>
 
+        <!-- TODO: &.admin_or_leader? -->
         <% if current_user&.is_leader %>
           <% if event.does_not_need_leaders? %>
             <div class="bar blue">
