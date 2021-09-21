@@ -127,6 +127,11 @@
   - `Part#sample_weight`
   - `Location#photo_url`
 
+- Add to Db: For being able to highlight low-quantity items
+  - `Component#minimum_on_hand`
+  - `Component#quantities` <- see QuantityAndDepthCalculationJob ln#19
+  - `Technology#minimum_on_hand`
+
 - Nerf #cprice on all Items
 
 - make sure Part#not_made_from_materials and Material#all price is being escalated to assemblies on save

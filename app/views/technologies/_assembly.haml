@@ -12,7 +12,7 @@
   - if nesting.positive?
     %td{ colspan: nesting }
   %td.right-align
-    = item.uid
+    #{item.uid} (#{assembly.depth})
   %td{ colspan: 4 - nesting }
     = item.name
 

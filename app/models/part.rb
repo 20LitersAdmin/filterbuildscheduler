@@ -2,7 +2,11 @@
 
 class Part < ApplicationRecord
   # TODO: Second deployment
-  # include Discard::Model
+  include Discard::Model
+
+  # SCHEMA notes
+  # #history is a JSON store of historical inventory counts: { date.iso8601 => 99, date.iso8601 => 99 }
+  # #quantities is a JSON store of the total number (integer) needed per technology: { technology.uid => 99, technology.uid => 99 }
 
   has_many :materials_parts, dependent: :destroy, inverse_of: :part
   has_many :materials, through: :materials_parts

@@ -48,7 +48,7 @@ class User < ApplicationRecord
   after_save :update_kindful, if: ->(user) { user.saved_change_to_fname? || user.saved_change_to_lname? || user.saved_change_to_email? || user.saved_change_to_email_opt_out? || user.saved_change_to_phone? }
 
   def admin_or_leader?
-    is_admin? || is_leader?
+    is_admin? || is_leader? || does_inventory?
   end
 
   def availability

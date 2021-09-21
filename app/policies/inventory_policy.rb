@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class InventoryPolicy
+class InventoryPolicy < ApplicationPolicy
   attr_reader :user, :inventory
 
   def initialize(user, inventory)

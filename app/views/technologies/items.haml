@@ -20,7 +20,7 @@
             %th.right-align avail.
             %th.right-align need
           -# Components
-          = render partial: 'assembly', collection: @assemblies.where(item_type: 'Component').ascending, locals: { nesting: 0 }
+          = render partial: 'assembly', collection: @assemblies.component_items, locals: { nesting: 0 }
           %tr
             %th{ colspan: 5 } Parts:
             %th Supplier
@@ -28,7 +28,7 @@
             %th.right-align avail.
             %th.right-align need
           -# Parts
-          = render partial: 'assembly', collection: @assemblies.where(item_type: 'Part').ascending, locals: { nesting: 0 }
+          = render partial: 'assemblies/assembly', collection: @assemblies.part_items, locals: { nesting: 0 }
           -# Materials
           - if @materials.any?
             %tr

@@ -16,13 +16,15 @@ Rails.application.routes.draw do
   get 'info', to: 'pages#info', as: 'info'
   get 'leaders', to: 'users#leaders', as: 'leaders'
 
-  get 'labels', to: 'technologies#labels', as: 'labels'
-  get 'label/:uid', to: 'technologies#label', as: 'label'
-  post 'labels_select', to: 'technologies#labels_select', as: 'labels_select'
-  get 'donation_list', to: 'technologies#donation_list', as: 'donation_list'
-
-  get 'assemble/:uid', to: 'technologies#assemble', as: 'assemble'
-  get 'assemble/:uid/items', to: 'technologies#assembly_items', as: 'assembly_items'
+  resources :assemblies, only: %i[index show], constraints: { id: Constants::UID::URL_REGEX } do
+    # we're hacking the standard structure
+    # although we're calling `/assembly/:id`,
+    # we're actually rendering `/assembly/:uid`
+    member do
+      get 'items'
+      get 'price'
+    end
+  end
 
   resources :report, only: [:index] do
     collection do
@@ -68,6 +70,11 @@ Rails.application.routes.draw do
       get 'history'
     end
   end
+
+  get 'labels', to: 'technologies#labels', as: 'labels'
+  get 'label/:uid', to: 'technologies#label', as: 'label'
+  post 'labels_select', to: 'technologies#labels_select', as: 'labels_select'
+  get 'donation_list', to: 'technologies#donation_list', as: 'donation_list'
 
   resources :inventories do
     collection do
