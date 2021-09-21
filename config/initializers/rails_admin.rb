@@ -586,7 +586,6 @@ RailsAdmin.config do |config|
         field :image, :active_storage
         field :comments
         field :description
-        # field :quantities
       end
       group 'Inventory Info' do
         field :available_count, :delimited
@@ -740,7 +739,6 @@ RailsAdmin.config do |config|
 
     show do
       group :default do
-        field :quantities
         field :uid_and_name do
           label 'UID: Name'
         end

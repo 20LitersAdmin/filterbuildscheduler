@@ -118,6 +118,8 @@
 
 - `Component#weeks_to_out` should traverse downward
 
+- RailsAdmin: show Item#quantities? #quantities is number of items in a specific technology.
+
 - Drop from Db:
   - `Component#completed_tech`
   - `Component#tare_weight`
@@ -126,6 +128,9 @@
   - `Part#sample_size`
   - `Part#sample_weight`
   - `Location#photo_url`
+
+  - `User#is_primary_leader`
+  - `User#is_helper_leader`
 
 - Add to Db: For being able to highlight low-quantity items
   - `Component#minimum_on_hand`
