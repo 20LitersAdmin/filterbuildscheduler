@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class TechnologyPolicy
+class TechnologyPolicy < ApplicationPolicy
   attr_reader :user, :technology
 
   def initialize(user, technology)
@@ -9,7 +9,7 @@ class TechnologyPolicy
   end
 
   def index?
-    user&.can_do_inventory?
+    user&.admin_or_leader?
   end
 
   def items?

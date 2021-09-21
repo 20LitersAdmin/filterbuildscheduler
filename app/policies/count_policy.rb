@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class CountPolicy
+class CountPolicy < ApplicationPolicy
   attr_reader :user, :count
 
   def initialize(user, count)

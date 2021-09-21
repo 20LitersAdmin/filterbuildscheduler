@@ -4,8 +4,6 @@ class TechnologiesController < ApplicationController
   before_action :set_technology, only: %i[items prices]
   before_action :set_bom_items, only: %i[items prices]
 
-  before_action :objectify_uid_from_param, only: %i[label assemble]
-
   def index
     authorize @techs = Technology.list_worthy
   end
@@ -41,11 +39,6 @@ class TechnologiesController < ApplicationController
   def label
     # page to print a full page of labels for one item
     @label = Label.new(@item.label_hash)
-  end
-
-  def assemble
-    # page for showing assemblies
-    # @item is set
   end
 
   def labels

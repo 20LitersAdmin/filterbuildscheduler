@@ -1,0 +1,22 @@
+-# frozen_string_literal: true
+
+.container
+  .row
+    .col
+      %table.table.table-bordered{ id: "list_item_tbl_#{@item.uid}" }
+        %thead
+          %tr
+            %th{ colspan: 5 } #{@item.name} Item list:
+            %th.right-align #per
+            %th.right-align avail.
+            %th depth
+        %tbody
+          %tr
+            %th= @item.uid
+            %th{ colspan: 4 }= @item.name
+            %td.right-align
+            %td.right-align= @item.available_count
+            %td
+          = render partial: 'assembly', collection: @assemblies, locals: { nesting: 1 }
+
+

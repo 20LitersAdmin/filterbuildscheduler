@@ -21,7 +21,10 @@ module Constants
 
     REGEX = /^(C|M|P|T)[0-9]{3}$/.freeze
 
+    URL_REGEX = /(C|M|P|T)[0-9]{3}/.freeze
+
     public_constant :CHAR
     public_constant :REGEX
+    public_constant :URL_REGEX
   end
 end

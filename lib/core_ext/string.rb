@@ -2,21 +2,10 @@
 
 class String
   def objectify_uid
-    return if match(Constants::UID::REGEX).nil?
+    return unless match(Constants::UID::REGEX).present?
 
-    begin
-      case self[0]
-      when 'C'
-        Component.find(self[1..])
-      when 'M'
-        Material.find(self[1..])
-      when 'P'
-        Part.find(self[1..])
-      when 'T'
-        Technology.find(self[1..])
-      end
-    rescue ActiveRecord::RecordNotFound
-      nil
-    end
+    Constants::UID::CHAR[self[0].to_sym].constantize.find(self[1..])
+  rescue ActiveRecord::RecordNotFound
+    nil
   end
 end

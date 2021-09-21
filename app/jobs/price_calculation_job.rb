@@ -7,6 +7,8 @@ class PriceCalculationJob < ApplicationJob
     Technology.update_all(price_cents: 0)
     Component.update_all(price_cents: 0)
 
+    # starting with the "lowest" nodes is crucial to make sure prices
+    # get summed as we traverse upwards towards the roots
     Assembly.descending.each do |a|
       # reclaculates a.price_cents on save
       a.save

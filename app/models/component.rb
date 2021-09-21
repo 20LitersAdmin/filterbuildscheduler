@@ -4,6 +4,10 @@ class Component < ApplicationRecord
   # TODO: Second deployment
   include Discard::Model
 
+  # assembly_path wants to call @item.assemblies regardless of whether the @item
+  # is a Technology or Component
+  alias_attribute :assemblies, :sub_assemblies
+
   # NERF: This was to try to make rails_admin handle Assembly CRUD-ing
   # has_many :assemblies,
   #          lambda { |component|
@@ -12,6 +16,7 @@ class Component < ApplicationRecord
   #          }
   # accepts_nested_attributes_for :assemblies, allow_destroy: true
 
+  # NOTE: these two scopes will only find 1st-level children, not all descendents
   has_many :super_assemblies, -> { where item_type: 'Component' }, class_name: 'Assembly', foreign_key: :item_id
   has_many :sub_assemblies, -> { where combination_type: 'Component' }, class_name: 'Assembly', foreign_key: :combination_id
 
@@ -58,16 +63,8 @@ class Component < ApplicationRecord
     Technology.where('quantities ? :key', key: uid)
   end
 
-  # TODO: is this necessary for anything?
-  # def all_parts
-    # .parts finds direct relations through Assembly, but doesn't include parts related to this component down the tree.
-
-    # If this component has no subcomponents, then `.parts` will return everything
-
-    # iterate over subcomponents, collect parts, then check for sub-subcomponents and repeat
-  # end
-
   # TODO: Needs .active
+  # NOTE: will only find 1st-level parents, not all ancestors
   def super_components
     Component.find_by_sql(
       "SELECT * FROM components
@@ -80,6 +77,7 @@ class Component < ApplicationRecord
   end
 
   # TODO: Needs .active
+  # NOTE: will only find 1st-level children, not all descendents
   def sub_components
     Component.find_by_sql(
       "SELECT * FROM components

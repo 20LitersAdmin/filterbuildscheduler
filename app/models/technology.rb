@@ -4,6 +4,10 @@ class Technology < ApplicationRecord
   # TODO: Second deployment
   include Discard::Model
 
+  # SCHEMA notes
+  # #history is a JSON store of historical inventory counts: { date.iso8601 => 99, date.iso8601 => 99 }
+  # #quantities is a JSON store of the total number (integer / float) needed of each item [Component, Part, Material]: { item.uid => 99, item.uid => 99 }
+
   has_and_belongs_to_many :users
 
   # TODO: Second deployment

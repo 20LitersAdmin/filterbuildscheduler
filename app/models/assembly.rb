@@ -1,6 +1,13 @@
 # frozen_string_literal: true
 
 class Assembly < ApplicationRecord
+  # SCHEMA notes
+  # 'combination' represents the 'parent' object
+  # 'item' represents the 'child' object
+  # #quantity stores the number of 'items' needed per 'combination'
+  # 'price' is the cost of a single 'item' * #quantity
+  # #depth is a rough number of steps removed from the root Technology
+
   belongs_to :combination, polymorphic: true
   belongs_to :item, polymorphic: true
 
@@ -15,13 +22,16 @@ class Assembly < ApplicationRecord
   monetize :price_cents, allow_nil: true, numericality: { greater_than_or_equal_to: 0 }
 
   # ascending ensures that the "highest" nodes of the tree appear first
-  scope :ascending, -> { order(:depth, :item_id) }
+  scope :ascending, -> { order(:depth, :item_type, :item_id) }
   # descending ensures that the "lowest" nodes of the tree appear first
-  scope :descending, -> { order(depth: :desc, item_id: :asc) }
+  scope :descending, -> { order(depth: :desc, item_type: :asc, item_id: :asc) }
+
+  scope :ordered, -> { order(:item_type, :item_id) }
+
+  scope :technology_combinations, -> { where(combination_type: 'Technology') }
   scope :component_combinations, -> { where(combination_type: 'Component') }
   scope :component_items, -> { where(item_type: 'Component') }
   scope :part_items, -> { where(item_type: 'Part') }
-  scope :technology_combinations, -> { where(combination_type: 'Technology') }
 
   # TODO: temporary clean-up method
   # remove duplicates where items exist under this Component AND under a subcomponent of this component
