@@ -74,7 +74,7 @@ class Count < ApplicationRecord
 
   # TODO: remove after first migration
   def item
-    return super if Count.column_names.include?('item_type')
+    return super if item_type.present? && item_id.present?
 
     if part_id.present?
       Part.find(part_id)

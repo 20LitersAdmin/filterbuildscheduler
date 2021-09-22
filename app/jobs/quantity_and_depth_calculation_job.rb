@@ -6,21 +6,24 @@ class QuantityAndDepthCalculationJob < ApplicationJob
   def perform(*_args)
     ActiveRecord::Base.logger.level = 1
 
+    puts "========================= Starting QuantityAndDepthCalculationJob ========================="
+
     set_all_assembly_depths_to_zero
     set_all_item_quantities_to_zero
 
     Technology.list_worthy.each do |technology|
       @technology = technology
-      puts "========================= Starting #{@technology.name} ========================="
+      puts "== Starting #{@technology.name} =="
       loop_technology
 
-      puts 'Setting Item quantities on items'
       @technology.reload.quantities.each do |k, v|
-        insert_into_item_quantities(k, v) unless k[0] == 'C'
+        insert_into_item_quantities(k, v)
       end
 
-      puts "========================= FINISHED #{@technology.name} ========================="
+      puts "== FINISHED #{@technology.name} =="
     end
+
+    puts "========================= FINISHED QuantityAndDepthCalculationJob ========================="
 
     ActiveRecord::Base.logger.level = 0
   end
@@ -35,7 +38,6 @@ class QuantityAndDepthCalculationJob < ApplicationJob
 
     # this counter is used to set the Assembly#depth needed for accurate PriceCalculationJob results
     @counter = 0
-    puts "Counter is set to #{@counter} for component_items"
     assemblies_loop(@technology.assemblies)
 
     loop_parts_for_materials(@part_ids_made_from_materials.uniq)
@@ -44,19 +46,12 @@ class QuantityAndDepthCalculationJob < ApplicationJob
   end
 
   def assemblies_loop(assemblies)
-    puts '(starting an assembly loop)'
     assemblies.each do |a|
-      puts "Counter is at #{@counter} for #{a.types} => #{a.combination.name}:#{a.item.name}"
-      if @counter > a.depth
-        puts "Assembly depth was at #{a.depth}"
-      else
-        puts "Assembly depth is at #{a.depth}"
-      end
       # only set the depth to the counter if it's higher than the existing value
       # this ensures that components or parts shared by multiple assemblies only
       # get pushed lower and not accidentally raised higher
       a.update_columns(depth: @counter) if @counter > a.depth
-      puts "Assembly depth is now at #{a.depth}" if @counter > a.depth
+
 
       insert_into_quantity(a)
 
@@ -86,16 +81,12 @@ class QuantityAndDepthCalculationJob < ApplicationJob
     # reset the array to avoid infinite looping
     @component_ids = []
     @counter += 1
-    puts "Counter is incremented to #{@counter}"
 
-    puts '(starting a component loop)'
     components.each do |c|
       assemblies_loop(c.sub_assemblies)
     end
-    puts '(ending a component loop)'
 
     @counter -= 1
-    puts "Counter is decremented to #{@counter}"
   end
 
   def loop_parts_for_materials(part_ids)
@@ -115,11 +106,14 @@ class QuantityAndDepthCalculationJob < ApplicationJob
   end
 
   def set_all_assembly_depths_to_zero
-    Assembly.update_all(depth: 0)
+    puts 'Setting all Assembly depths to 0'
+    Assembly.update_all depth: 0
   end
 
   def set_all_item_quantities_to_zero
-    Part.update_all(quantities: {})
-    Material.update_all(quantities: {})
+    puts 'Setting all Component, Part and Material quantities to 0'
+    Component.update_all quantities: {}
+    Part.update_all quantities: {}
+    Material.update_all quantities: {}
   end
 end

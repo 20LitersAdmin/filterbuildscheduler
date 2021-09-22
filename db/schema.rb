@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_08_03_125336) do
+ActiveRecord::Schema.define(version: 2021_09_22_144155) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -74,6 +74,7 @@ ActiveRecord::Schema.define(version: 2021_08_03_125336) do
     t.integer "box_count", default: 0
     t.integer "available_count", default: 0
     t.jsonb "history", default: {}, null: false
+    t.jsonb "quantities", default: {}, null: false
     t.integer "price_cents", default: 0, null: false
     t.string "price_currency", default: "USD", null: false
     t.index ["discarded_at"], name: "index_components_on_discarded_at"

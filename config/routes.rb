@@ -13,7 +13,6 @@ Rails.application.routes.draw do
   patch 'users/:id', to: 'users#update', as: 'update_user'
   get 'users/:id/availability', to: 'users#availability', as: 'user_availability'
   get 'users/:id/admin_password_reset', to: 'users#admin_password_reset', as: 'user_admin_password_reset'
-  get 'users/:id/availability', to: 'users#availability', as: 'user_availability'
   get 'users/:id/leader_type', to: 'users#leader_type', as: 'user_leader_type'
   get :waiver, controller: :application
 

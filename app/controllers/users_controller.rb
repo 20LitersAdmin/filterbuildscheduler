@@ -108,7 +108,7 @@ class UsersController < ApplicationController
     end
 
     @finder = 'leaders'
-    @cancelled_events = Event.only_deleted
+    @cancelled_events = Event.discarded
     @closed_events = Event.closed
   end
 
@@ -127,14 +127,14 @@ class UsersController < ApplicationController
     render json: @user.reload.availability_code
   end
 
-<<<<<<< HEAD
   def admin_password_reset
     # custom RailsAdmin link on admin/user/:id/edit hits this action
     @user.send_reset_password_instructions
 
     flash[:success] = 'Password reset email sent!'
     redirect_to request.referrer
-=======
+  end
+
   def leader_type
     # users/:id/leader_type?t=[0,1,2,99]
     # [['', nil][trainee, 0], [helper, 1], [primary, 2]]
@@ -145,7 +145,6 @@ class UsersController < ApplicationController
     @user.update(leader_type: t) if hsh.values.include?(t) || t.nil?
 
     render json: User.leader_types[@user.reload.leader_type]
->>>>>>> master
   end
 
   private
