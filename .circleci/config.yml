@@ -1,44 +1,47 @@
-version: 2
+# https://circleci.com/docs/2.0/language-ruby/
+version: 2.1
+
+orbs:
+  ruby: circleci/ruby@1.1.4
+  browser-tools: circleci/browser-tools@1.1
+
 jobs:
-  build:
-    parallelism: 1
+  # build:
+  #   docker:
+  #     - image: cimg/ruby:3.0.2-browsers
+
+
+  #   steps:
+  #     - browser-tools/install-chrome
+  #     - browser-tools/install-chromedriver
+  #     - checkout
+  #     - ruby/install-deps
+
+  test:
+    parallelism: 3
     docker:
-      - image: circleci/ruby:2.7.0-node-browsers-legacy
-        environment:
-          BUNDLE_JOBS: 3
-          BUNDLE_RETRY: 3
-          BUNDLE_PATH: vendor/bundle
-          PGHOST: 127.0.0.1
-          PGUSER: ckragt
-          RAILS_ENV: test
+      - image: cimg/ruby:3.0.2-browsers
+
       - image: circleci/postgres:9.5-alpine
         environment:
-          POSTGRES_USER: ckragt
+          POSTGRES_USER: chiperific
           POSTGRES_DB: build_planner_test
           POSTGRES_PASSWORD: ""
+
+    environment:
+      BUNDLE_JOBS: '3'
+      BUNDLE_RETRY: '3'
+      BUNDLE_PATH: vendor/bundle
+      PGHOST: 127.0.0.1
+      PGUSER: chiperific
+      PGPASSWORD: ''
+      RAILS_ENV: test
+
     steps:
+      - browser-tools/install-chrome
+      - browser-tools/install-chromedriver
       - checkout
-
-      # Which version of bundler?
-      - run:
-          name: Which bundler?
-          command: bundle -v
-
-      # Restore bundle cache
-      - restore_cache:
-          keys:
-            - filter-build-bundle-v2-{{ checksum "Gemfile.lock" }}
-            - filter-build-bundle-v2-
-
-      - run:
-          name: Bundle Install
-          command: bundle check || bundle install
-
-      # Store bundle cache
-      - save_cache:
-          key: filter-build-bundle-v2-{{ checksum "Gemfile.lock" }}
-          paths:
-            - vendor/bundle
+      - ruby/install-deps
 
       - run:
           name: Wait for DB
@@ -46,25 +49,14 @@ jobs:
 
       - run:
           name: Database setup
-          command: bin/rails db:schema:load --trace
+          command: bundle exec rails db:schema:load --trace
+      - ruby/rspec-test
 
-      # run tests!
-      - run:
-          name: run tests
-          command: |
-            mkdir /tmp/test-results
-            TEST_FILES="$(circleci tests glob "spec/**/*_spec.rb" | circleci tests split)"
-
-            bundle exec rspec --format progress \
-                --format RspecJunitFormatter \
-                --out /tmp/test-results/rspec.xml \
-                --format progress \
-                -- \
-                $TEST_FILES
-
-      # collect reports
-      - store_test_results:
-          path: /tmp/test-results
-      - store_artifacts:
-          path: /tmp/test-results
-          destination: test-results
+workflows:
+  version: 2
+  just_test:
+    jobs:
+      # - build
+      - test
+          # requires:
+            # - build
