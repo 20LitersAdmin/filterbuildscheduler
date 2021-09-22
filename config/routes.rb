@@ -7,8 +7,10 @@ Rails.application.routes.draw do
   devise_for :users, controllers: { sessions: 'sessions' }
   get 'users/:id/show', to: 'users#show', as: 'show_user'
   get 'users/:id/edit', to: 'users#edit', as: 'edit_user'
+  get 'users/:id/edit_leader_notes', to: 'users#edit_leader_notes', as: 'edit_leader_notes'
   get 'users/communication', to: 'users#communication', as: 'users_communication'
   put 'users/comm_complete', to: 'users#comm_complete', as: 'users_comm_complete'
+  get 'users/:id', to: 'users#update', as: 'user'
   patch 'users/:id', to: 'users#update', as: 'update_user'
   get :waiver, controller: :application
 
@@ -16,6 +18,7 @@ Rails.application.routes.draw do
   get 'labels', to: 'counts#labels', as: 'labels'
   get 'leaders', to: 'users#leaders', as: 'leaders'
   get 'users/:id/availability', to: 'users#availability', as: 'user_availability'
+  get 'users/:id/leader_type', to: 'users#leader_type', as: 'user_leader_type'
 
   resources :report, only: [:index] do
     collection do

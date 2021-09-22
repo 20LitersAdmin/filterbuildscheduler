@@ -6,7 +6,7 @@
   </div>
   <div class="row">
     <div class="col-xs-12">
-      <%= simple_form_for [@inventory, @count], remote: true  do |f| %>
+      <%= simple_form_for [@inventory, @count], remote: true do |f| %>
         <%= f.error_notification %>
 
         <%= f.input :loose_count, input_html: { value: @loose_val } %>
