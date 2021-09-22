@@ -1,7 +1,9 @@
 // Place all the behaviors and hooks related to the matching controller here.
 // All this logic will automatically be available in application.js.
 
-var availabilityByCode = { 0: 'All hours', 1: 'Business hours', 2: 'After hours'}
+var availabilityByCode = { 0: 'All hours', 1: 'Business hours', 2: 'After hours'};
+
+var typeByCode = { 0: 'Trainee', 1: 'Helper', 2: 'Primary', '': '' };
 
 function showPasswordWarning() {
   var pass = $("input#user_password").val();
@@ -90,6 +92,21 @@ function emailDirtyToggle() {
       } else {
         var availability = availabilityByCode[a];
         select.parent().siblings('td.availability').html(availability);
+      }
+    });
+  });
+
+  $(document).on("change", "select.type-select", function() {
+    var select = $(this);
+    var userId = parseInt($(this).attr("id"));
+    var t = $(this).val();
+    var url = "/users/" + userId + "/leader_type?t=" + t;
+    $.ajax({url: url}).done(function(response) {
+      if (response == t || ( t == '' && response == null)) {
+        var type = typeByCode[t];
+        select.parent().siblings('td.type').html(type);
+      } else {
+        console.log('User leader_type update failed.');
       }
     });
   });

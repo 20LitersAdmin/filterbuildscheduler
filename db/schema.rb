@@ -396,6 +396,8 @@ ActiveRecord::Schema.define(version: 2021_08_03_125336) do
     t.boolean "email_opt_out", default: false
     t.boolean "available_business_hours", default: false, null: false
     t.boolean "available_after_hours", default: false, null: false
+    t.integer "leader_type"
+    t.string "leader_notes"
     t.index ["authentication_token"], name: "index_users_on_authentication_token", unique: true
     t.index ["discarded_at"], name: "index_users_on_discarded_at"
     t.index ["email"], name: "index_users_on_email", unique: true

@@ -11,19 +11,27 @@ class UserPolicy < ApplicationPolicy
   end
 
   def update?
-    user&.is_admin? || user == record
+    show?
   end
 
   def communication?
-    user&.is_admin?
+    delete?
   end
 
   def leaders?
-    user&.is_admin?
+    delete?
   end
 
   def availability?
-    user&.is_admin?
+    delete?
+  end
+
+  def leader_type?
+    delete?
+  end
+
+  def edit_leader_notes?
+    delete?
   end
 
   def admin_password_reset?
@@ -46,5 +54,4 @@ class UserPolicy < ApplicationPolicy
       end
     end
   end
-
 end

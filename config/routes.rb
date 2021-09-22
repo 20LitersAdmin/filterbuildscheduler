@@ -6,11 +6,15 @@ Rails.application.routes.draw do
   devise_for :users, controllers: { sessions: 'sessions' }
   get 'users/:id/show', to: 'users#show', as: 'show_user'
   get 'users/:id/edit', to: 'users#edit', as: 'edit_user'
+  get 'users/:id/edit_leader_notes', to: 'users#edit_leader_notes', as: 'edit_leader_notes'
   get 'users/communication', to: 'users#communication', as: 'users_communication'
   put 'users/comm_complete', to: 'users#comm_complete', as: 'users_comm_complete'
+  get 'users/:id', to: 'users#update', as: 'user'
   patch 'users/:id', to: 'users#update', as: 'update_user'
   get 'users/:id/availability', to: 'users#availability', as: 'user_availability'
   get 'users/:id/admin_password_reset', to: 'users#admin_password_reset', as: 'user_admin_password_reset'
+  get 'users/:id/availability', to: 'users#availability', as: 'user_availability'
+  get 'users/:id/leader_type', to: 'users#leader_type', as: 'user_leader_type'
   get :waiver, controller: :application
 
   get 'info', to: 'pages#info', as: 'info'

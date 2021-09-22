@@ -18,6 +18,11 @@ class User < ApplicationRecord
   has_many :counts
   belongs_to :primary_location, class_name: 'Location', primary_key: 'id', foreign_key: 'primary_location_id', optional: true
 
+  # maps to User(leader_type: integer)
+  # getter: user.trainee?
+  # setter: user.trainee!
+  enum leader_type: %i[trainee helper primary]
+
   validates :fname, :lname, :email, presence: true
   validates_confirmation_of :password
   before_save :ensure_authentication_token, :check_phone_format

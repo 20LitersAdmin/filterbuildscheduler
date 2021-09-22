@@ -401,6 +401,12 @@ hr.bar {
   }
 }
 
+@media screen {
+  .no-screen, .no-screen * {
+    display: none !important;
+  }
+}
+
 @media (max-width: 768px) {
   .admin-div {
     a {
