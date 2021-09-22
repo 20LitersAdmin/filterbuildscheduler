@@ -54,9 +54,9 @@ jobs:
 
 workflows:
   version: 2
-  build_and_test:
+  just_test:
     jobs:
       # - build
-      - test:
+      - test
           # requires:
             # - build
