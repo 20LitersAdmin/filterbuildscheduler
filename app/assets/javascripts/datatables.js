@@ -210,16 +210,13 @@ $(document).on("turbolinks:load", function(){
   $('.datatable-leaders').DataTable({
     retrieve: true,
     order: [[0, "asc"]],
-    lengthMenu: [[25, 50, 100, -1], [25, 50, 100, "All"] ],
     responsive: true,
     autoWidth: false,
     info: false,
     dom:
       "<'col-xs-12 no-overflow center' B>"+
-      "<'col-xs-4 no-overflow'l>"+
-      "<'col-xs-8 no-overflow'f>"+
-      "t"+
-      "<'col-xs-8'p>",
+      "<'col-xs-12 no-overflow'f>"+
+      "t",
     buttons: [
       {
         extend: 'copy',
