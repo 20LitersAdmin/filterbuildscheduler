@@ -100,7 +100,7 @@ class CountsController < ApplicationController
           redirect_to edit_inventory_path(@inventory)
         end
 
-        format.js { render 'update.js.erb' }
+        format.js { render 'update' }
       end
     end
   end

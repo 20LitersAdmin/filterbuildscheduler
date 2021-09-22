@@ -1,0 +1,30 @@
+-# frozen_string_literal: true
+
+%tr
+  %td
+    = leader.name
+  %td
+    = leader.email
+  %td
+    = leader.phone
+  %td.availability.no-screen
+    = leader.availability
+  %td.no-print
+    = select_tag "#{leader.id}_avail", options_for_select(@availability, leader.availability_code), class: 'avail-select'
+  %td.type.no-screen
+    = leader.leader_type&.capitalize
+  %td.no-print
+    = select_tag "#{leader.id}_type", options_for_select(@types, User.leader_types[leader.leader_type]), class: 'type-select'
+  %td
+    = leader.technologies.list_worthy.map(&:short_name).join(', ')
+  %td
+    %p{ id: "#{leader.id}_leader_notes"}= leader.leader_notes
+    %p.no-print
+      = link_to fa_icon('edit'), edit_leader_notes_path(leader), remote: true
+
+
+  - if current_user.is_admin?
+    %td.no-print
+      = link_to 'Edit', rails_admin.edit_path(model_name: 'user', id: leader.id), class: 'btn blue'
+  %td.no-print
+    = mail_to leader.email, 'Email', class: 'btn yellow', target: '_blank'
