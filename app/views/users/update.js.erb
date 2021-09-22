@@ -1,0 +1,8 @@
+// clear out the modal body
+$('#leader_notes_modal_body').html('');
+// close the modal
+$('#edit_leader_notes_modal').modal('hide');
+
+// update the leader_notes cell on '/leaders' view
+$("p#<%= @user.id %>_leader_notes").html("<%= @user.leader_notes %>");
+

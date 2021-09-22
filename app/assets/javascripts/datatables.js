@@ -207,10 +207,9 @@ $(document).on("turbolinks:load", function(){
       "<'col-xs-8'p>"
   });
 
-  $('.datatable-items').DataTable({
+  $('.datatable-leaders').DataTable({
     retrieve: true,
     order: [[0, "asc"]],
-    pageLength: -1,
     lengthMenu: [[25, 50, 100, -1], [25, 50, 100, "All"] ],
     responsive: true,
     autoWidth: false,
@@ -221,7 +220,32 @@ $(document).on("turbolinks:load", function(){
       "<'col-xs-8 no-overflow'f>"+
       "t"+
       "<'col-xs-8'p>",
-    buttons: [ 'copy', 'csv', 'excel', 'print' ],
+    buttons: [
+      {
+        extend: 'copy',
+        exportOptions: {
+          columns: [0, 1, 2, 3, 5, 7, 8]
+        }
+      },
+      {
+        extend: 'csv',
+        exportOptions: {
+          columns: [0, 1, 2, 3, 5, 7, 8]
+        }
+      },
+      {
+        extend: 'excel',
+        exportOptions: {
+          columns: [0, 1, 2, 3, 5, 7, 8]
+        }
+      },
+      {
+        extend: 'print',
+        exportOptions: {
+          columns: [0, 1, 2, 3, 5, 7, 8]
+        }
+      }
+    ],
     language: {
       paginate: {
         first: "&#8676",

@@ -1,0 +1,47 @@
+-# frozen_string_literal: true
+
+.container.user-leaders
+  = render partial: 'shared/event_functions' if current_user&.admin_or_leader?
+  .row.spacer-top
+    = simple_form_for @contactor, method: :get, url: leaders_path do |f|
+      .col-sm-3
+        %h3 Email leaders with:
+      .col-sm-3
+        = f.input :availability, collection: @availability, include_blank: false
+      .col-sm-3
+        = f.input :technology, collection: @technologies, include_blank: false
+      .col-sm-2.col-xs-6
+        = link_to "Copy #{pluralize(@contact_size, 'Email')}", '#!', class: 'btn yellow inline-form-btn', id: 'contactor_email', data: { count: @contact_size }
+        = f.button :submit, 'Filter', class: 'btn yellow inline-form-btn', id: 'contactor_submit'
+      .col-sm-1.col-xs-6
+        = link_to 'Reset', leaders_path, class: 'btn yellow inline-form-btn', id: 'contactor_reset' unless @contactor.empty?
+  = hidden_field_tag 'contactor_email_list', @leaders.map(&:email).join(', ')
+  .row
+    .col-xs-12
+      %h1 Leaders:
+    .col-xs-12
+      %table.datatable-leaders.table.table-striped.table-bordered#leaders_tbl
+        %thead
+          %tr
+            %th Name
+            %th Email
+            %th Phone
+            %th.no-screen Availability
+            %th.no-print Availability
+            %th.no-screen Leader Type
+            %th.no-print Leader Type
+            %th Qualified
+            %th Notes
+            - if current_user.is_admin?
+              %th.no-print
+            %th.no-print
+        %tbody= render partial: 'leader', collection: @leaders
+
+  .modal.fade#edit_leader_notes_modal{ 'tab-index': -1, role: 'dialog' }
+    .modal-dialog{ role: 'document' }
+      .modal-content
+        .modal-header
+          %button.close{ type: 'button', 'data-dismiss': 'modal', 'aria-label': 'Close' }
+            %span{ 'aria-hidden': 'true' } &times;
+        .modal-body.row#leader_notes_modal_body
+          %p Oops! Something broke.

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class UsersController < ApplicationController
-  before_action :find_and_authorize_user, only: %i[show edit update delete availability admin_password_reset]
+  before_action :find_and_authorize_user, only: %i[show edit update delete availability leader_type edit_leader_notes]
 
   def show
     flash[:warning] = 'You haven\'t set your password yet, please do so now.' if @user.has_no_password
@@ -32,20 +32,35 @@ class UsersController < ApplicationController
     flash[:warning] = 'You haven\'t set your password yet, please do so now.' if @user.has_no_password
   end
 
+  def edit_leader_notes
+    respond_to do |format|
+      format.js { render 'edit_leader_notes' }
+    end
+  end
+
   def update
     modified_params = params[:user][:password].blank? && params[:user][:password_confirmation].blank? ? user_params_no_pws : user_params
 
     if @user.update(modified_params)
-      flash[:success] = 'Info updated!'
+      respond_to do |format|
+        format.html do
+          flash[:success] = 'Info updated!'
 
-      if modified_params[:password].present?
-        DeviseMailer.password_change(@user).deliver_now
-        sign_out @user
+          if modified_params[:password].present?
+            DeviseMailer.password_change(@user).deliver_now
+            sign_out @user
+          end
+
+          redirect_to show_user_path @user
+        end
+        # from `/leaders` updating leader_notes
+        format.js { render 'update' }
       end
-
-      redirect_to show_user_path @user
     else
-      render 'edit'
+      respond_to do |format|
+        format.html { render 'edit' }
+        format.js { head 500 }
+      end
     end
   end
 
@@ -86,6 +101,7 @@ class UsersController < ApplicationController
     @contact_size = @leaders.size
 
     @availability = [['All hours', 0], ['Business hours', 1], ['After hours', 2]]
+    @types = [['', nil], ['Trainee', 0], ['Helper', 1], ['Primary', 2]]
     @technologies = [['All', 0]]
     Technology.list_worthy.each do |tech|
       @technologies << [tech.short_name, tech.id]
@@ -111,12 +127,25 @@ class UsersController < ApplicationController
     render json: @user.reload.availability_code
   end
 
+<<<<<<< HEAD
   def admin_password_reset
     # custom RailsAdmin link on admin/user/:id/edit hits this action
     @user.send_reset_password_instructions
 
     flash[:success] = 'Password reset email sent!'
     redirect_to request.referrer
+=======
+  def leader_type
+    # users/:id/leader_type?t=[0,1,2,99]
+    # [['', 99][trainee, 0], [helper, 1], [primary, 2]]
+    hsh = User.leader_types.dup
+
+    t = params[:t].blank? ? nil : params[:t].to_i
+
+    @user.update leader_type: t if hsh.values.include?(t) || t.nil?
+
+    render json: User.leader_types[@user.reload.leader_type]
+>>>>>>> master
   end
 
   private
@@ -131,6 +160,7 @@ class UsersController < ApplicationController
                                  :email,
                                  :phone,
                                  :email_opt_out,
+                                 :leader_notes,
                                  :password,
                                  :password_confirmation
   end
@@ -140,7 +170,8 @@ class UsersController < ApplicationController
                                  :lname,
                                  :email,
                                  :phone,
-                                 :email_opt_out
+                                 :email_opt_out,
+                                 :leader_notes
   end
 
   def contactor_params
