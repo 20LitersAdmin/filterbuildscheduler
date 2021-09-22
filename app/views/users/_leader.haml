@@ -18,7 +18,7 @@
   %td
     = leader.technologies.list_worthy.map(&:short_name).join(', ')
   %td
-    %p{ id: "#{leader.id}_leader_notes"}= leader.leader_notes
+    %p{ id: "#{leader.id}_leader_notes" }= leader.leader_notes
     %p.no-print
       = link_to fa_icon('edit'), edit_leader_notes_path(leader), remote: true
 
