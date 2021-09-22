@@ -2,23 +2,20 @@
 version: 2.1
 
 orbs:
-  ruby: circleci/ruby@1.0
-  node: circleci/node@2
+  ruby: circleci/ruby@1.1.4
   browser-tools: circleci/browser-tools@1.1
 
 jobs:
-  build:
-    docker:
-      - image: cimg/ruby:3.0.2-browsers
+  # build:
+  #   docker:
+  #     - image: cimg/ruby:3.0.2-browsers
 
 
-    steps:
-      - browser-tools/install-browser-tools
-      - checkout
-      - ruby/install-deps
-      - node/install-packages:
-          pkg-manager: yarn
-          cache-key: "yarn.lock"
+  #   steps:
+  #     - browser-tools/install-chrome
+  #     - browser-tools/install-chromedriver
+  #     - checkout
+  #     - ruby/install-deps
 
   test:
     parallelism: 3
@@ -32,39 +29,19 @@ jobs:
           POSTGRES_PASSWORD: ""
 
     environment:
-      BUNDLE_JOBS: "3"
-      BUNDLE_RETRY: "3"
+      BUNDLE_JOBS: '3'
+      BUNDLE_RETRY: '3'
       BUNDLE_PATH: vendor/bundle
       PGHOST: 127.0.0.1
       PGUSER: chiperific
-      PGPASSWORD: ""
+      PGPASSWORD: ''
       RAILS_ENV: test
 
     steps:
-      - browser-tools/install-browser-tools
+      - browser-tools/install-chrome
+      - browser-tools/install-chromedriver
       - checkout
       - ruby/install-deps
-      - node/install-packages:
-          pkg-manager: yarn
-          cache-key: "yarn.lock"
-
-      # - run:
-      #     name: Which bundler?
-      #     command: bundle -v
-
-      # - restore_cache:
-      #     keys:
-      #       - filter-build-bundle-v3-{{ checksum "Gemfile.lock" }}
-      #       - filter-build-bundle-v3-
-
-      # - run:
-      #     name: Bundle Install
-      #     command: bundle check || bundle install
-
-      # - save_cache:
-      #     key: filter-build-bundle-v3-{{ checksum "Gemfile.lock" }}
-      #     paths:
-      #       - vendor/bundle
 
       - run:
           name: Wait for DB
@@ -73,34 +50,13 @@ jobs:
       - run:
           name: Database setup
           command: bundle exec rails db:schema:load --trace
-
-      # # run tests!
-      # - run:
-      #     name: run tests
-      #     command: |
-      #       mkdir /tmp/test-results
-      #       TEST_FILES="$(circleci tests glob "spec/**/*_spec.rb" | circleci tests split)"
-
-      #       bundle exec rspec --format progress \
-      #           --format RspecJunitFormatter \
-      #           --out /tmp/test-results/rspec.xml \
-      #           --format progress \
-      #           -- \
-      #           $TEST_FILES
-
-      # # collect reports
-      # - store_test_results:
-      #     path: /tmp/test-results
-      # - store_artifacts:
-      #     path: /tmp/test-results
-      #     destination: test-results
       - ruby/rspec-test
 
 workflows:
   version: 2
-  build_and_test:
+  just_test:
     jobs:
-      - build
-      - test:
-          requires:
-            - build
+      # - build
+      - test
+          # requires:
+            # - build
