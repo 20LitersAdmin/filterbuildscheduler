@@ -1,44 +1,67 @@
-version: 3
+# https://circleci.com/docs/2.0/language-ruby/
+version: 2.1
+
+orbs:
+  ruby: circleci/ruby@1.0
+  node: circleci/node@2
+
 jobs:
   build:
-    parallelism: 1
     docker:
       - image: cimg/ruby:3.0.2-browsers
-        environment:
-          BUNDLE_JOBS: 3
-          BUNDLE_RETRY: 3
-          BUNDLE_PATH: vendor/bundle
-          PGHOST: 127.0.0.1
-          PGUSER: ckragt
-          RAILS_ENV: test
-      - image: circleci/postgres:9.5-alpine
-        environment:
-          POSTGRES_USER: ckragt
-          POSTGRES_DB: build_planner_test
-          POSTGRES_PASSWORD: ""
+
+
     steps:
       - checkout
+      - ruby/install-deps
+      - node/install-packages:
+          pkg-manager: yarn
+          cache-key: "yarn.lock"
 
-      # Which version of bundler?
-      - run:
-          name: Which bundler?
-          command: bundle -v
+  test:
+    parallelism: 3
+    docker:
+      - image: cimg/ruby:3.0.2-browsers
 
-      # Restore bundle cache
-      - restore_cache:
-          keys:
-            - filter-build-bundle-v3-{{ checksum "Gemfile.lock" }}
-            - filter-build-bundle-v3-
+      - image: circleci/postgres:9.5-alpine
+        environment:
+          POSTGRES_USER: chiperific
+          POSTGRES_DB: build_planner_test
+          POSTGRES_PASSWORD: ""
 
-      - run:
-          name: Bundle Install
-          command: bundle check || bundle install
+    environment:
+      BUNDLE_JOBS: "3"
+      BUNDLE_RETRY: "3"
+      BUNDLE_PATH: vendor/bundle
+      PGHOST: 127.0.0.1
+      PGUSER: chiperific
+      PGPASSWORD: ""
+      RAILS_ENV: test
 
-      # Store bundle cache
-      - save_cache:
-          key: filter-build-bundle-v3-{{ checksum "Gemfile.lock" }}
-          paths:
-            - vendor/bundle
+    steps:
+      - checkout
+      - ruby/install-deps
+      - node/install-packages:
+          pkg-manager: yarn
+          cache-key: "yarn.lock"
+
+      # - run:
+      #     name: Which bundler?
+      #     command: bundle -v
+
+      # - restore_cache:
+      #     keys:
+      #       - filter-build-bundle-v3-{{ checksum "Gemfile.lock" }}
+      #       - filter-build-bundle-v3-
+
+      # - run:
+      #     name: Bundle Install
+      #     command: bundle check || bundle install
+
+      # - save_cache:
+      #     key: filter-build-bundle-v3-{{ checksum "Gemfile.lock" }}
+      #     paths:
+      #       - vendor/bundle
 
       - run:
           name: Wait for DB
@@ -46,25 +69,35 @@ jobs:
 
       - run:
           name: Database setup
-          command: bin/rails db:schema:load --trace
+          command: bundle exec rails db:schema:load --trace
 
-      # run tests!
-      - run:
-          name: run tests
-          command: |
-            mkdir /tmp/test-results
-            TEST_FILES="$(circleci tests glob "spec/**/*_spec.rb" | circleci tests split)"
+      # # run tests!
+      # - run:
+      #     name: run tests
+      #     command: |
+      #       mkdir /tmp/test-results
+      #       TEST_FILES="$(circleci tests glob "spec/**/*_spec.rb" | circleci tests split)"
 
-            bundle exec rspec --format progress \
-                --format RspecJunitFormatter \
-                --out /tmp/test-results/rspec.xml \
-                --format progress \
-                -- \
-                $TEST_FILES
+      #       bundle exec rspec --format progress \
+      #           --format RspecJunitFormatter \
+      #           --out /tmp/test-results/rspec.xml \
+      #           --format progress \
+      #           -- \
+      #           $TEST_FILES
 
-      # collect reports
-      - store_test_results:
-          path: /tmp/test-results
-      - store_artifacts:
-          path: /tmp/test-results
-          destination: test-results
+      # # collect reports
+      # - store_test_results:
+      #     path: /tmp/test-results
+      # - store_artifacts:
+      #     path: /tmp/test-results
+      #     destination: test-results
+      - ruby/rspec-test
+
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      - build
+      - test:
+        requires:
+          - build
