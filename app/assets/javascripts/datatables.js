@@ -206,4 +206,53 @@ $(document).on("turbolinks:load", function(){
       "t"+
       "<'col-xs-8'p>"
   });
+
+  $('.datatable-leaders').DataTable({
+    retrieve: true,
+    order: [[0, "asc"]],
+    lengthMenu: [[25, 50, 100, -1], [25, 50, 100, "All"] ],
+    responsive: true,
+    autoWidth: false,
+    info: false,
+    dom:
+      "<'col-xs-12 no-overflow center' B>"+
+      "<'col-xs-4 no-overflow'l>"+
+      "<'col-xs-8 no-overflow'f>"+
+      "t"+
+      "<'col-xs-8'p>",
+    buttons: [
+      {
+        extend: 'copy',
+        exportOptions: {
+          columns: [0, 1, 2, 3, 5, 7, 8]
+        }
+      },
+      {
+        extend: 'csv',
+        exportOptions: {
+          columns: [0, 1, 2, 3, 5, 7, 8]
+        }
+      },
+      {
+        extend: 'excel',
+        exportOptions: {
+          columns: [0, 1, 2, 3, 5, 7, 8]
+        }
+      },
+      {
+        extend: 'print',
+        exportOptions: {
+          columns: [0, 1, 2, 3, 5, 7, 8]
+        }
+      }
+    ],
+    language: {
+      paginate: {
+        first: "&#8676",
+        previous: "&#8592",
+        next: "&#8594",
+        last: "&#8677"
+      }
+    }
+  });
 });

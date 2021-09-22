@@ -18,6 +18,11 @@ class User < ApplicationRecord
   has_many :counts
   belongs_to :primary_location, class_name: 'Location', primary_key: 'id', foreign_key: 'primary_location_id', optional: true
 
+  # maps to User(leader_type: integer)
+  # getter: user.trainee?
+  # setter: user.trainee!
+  enum leader_type: %i[trainee helper primary]
+
   scope :leaders,               -> { where(is_leader: true) }
   scope :admins,                -> { where(is_admin: true) }
   scope :notify,                -> { where(send_notification_emails: true) }

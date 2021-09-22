@@ -1,0 +1,7 @@
+-# frozen_string_literal: true
+.col-xs-12
+  %h3 Update Leader Notes for #{@user.name}:
+.col-xs-12
+  = form_with model: @user, url: update_user_path(@user), remote: true do |f|
+    = f.text_area :leader_notes
+    = f.submit 'Update'
