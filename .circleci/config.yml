@@ -1,4 +1,4 @@
-version: 2
+version: 3
 jobs:
   build:
     parallelism: 1
@@ -27,8 +27,8 @@ jobs:
       # Restore bundle cache
       - restore_cache:
           keys:
-            - filter-build-bundle-v2-{{ checksum "Gemfile.lock" }}
-            - filter-build-bundle-v2-
+            - filter-build-bundle-v3-{{ checksum "Gemfile.lock" }}
+            - filter-build-bundle-v3-
 
       - run:
           name: Bundle Install
@@ -36,7 +36,7 @@ jobs:
 
       # Store bundle cache
       - save_cache:
-          key: filter-build-bundle-v2-{{ checksum "Gemfile.lock" }}
+          key: filter-build-bundle-v3-{{ checksum "Gemfile.lock" }}
           paths:
             - vendor/bundle
 
