@@ -129,12 +129,12 @@ class UsersController < ApplicationController
 
   def leader_type
     # users/:id/leader_type?t=[0,1,2,99]
-    # [['', 99][trainee, 0], [helper, 1], [primary, 2]]
+    # [['', nil][trainee, 0], [helper, 1], [primary, 2]]
     hsh = User.leader_types.dup
 
     t = params[:t].blank? ? nil : params[:t].to_i
 
-    @user.update leader_type: t if hsh.values.include?(t) || t.nil?
+    @user.update(leader_type: t) if hsh.values.include?(t) || t.nil?
 
     render json: User.leader_types[@user.reload.leader_type]
   end
