@@ -1,5 +1,4 @@
 -# frozen_string_literal: true
-
 %tr
   %td
     = leader.name
@@ -20,7 +19,7 @@
   %td
     %p{ id: "#{leader.id}_leader_notes" }= leader.leader_notes
     %p.no-print
-      = link_to fa_icon('edit'), edit_leader_notes_path(leader), remote: true
+      = link_to icon('far', 'edit'), edit_leader_notes_path(leader), remote: true
 
 
   - if current_user.is_admin?

@@ -106,9 +106,10 @@
   - No conflict if 2 users have the same count open (just adds to it)
 
 ### Current:
-- Assembly: `get 'assemble/:uid', to: 'technologies#assemble', as: 'assemble'`
+- Assembly:
   - use for Component and Technology
-  - `get 'assemble/:uid/items', to: 'technologies#assembly_items', as: 'assembly_items'` <- use instead of `/technologies/:id/items`
+  - `resources :assemblies`
+    - use instead of `/technologies/:id/items`
     - but keep `/technologies/:id/prices`
 
 
@@ -164,7 +165,7 @@
 
 
 #### After 1st deployment:
-* Migrate the db
+* Migrate the db (will perform InventoryMigrationJob)
 
 #### 2nd deployment work to be done
 * Un-comment-out `Part#before_save :set_made_from_materials`

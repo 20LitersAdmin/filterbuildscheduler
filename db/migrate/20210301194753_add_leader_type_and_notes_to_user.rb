@@ -2,7 +2,9 @@
 
 class AddLeaderTypeAndNotesToUser < ActiveRecord::Migration[6.1]
   def change
-    add_column :users, :leader_type, :integer
-    add_column :users, :leader_notes, :string
+    unless ActiveRecord::Base.connection.column_exists?(:users, :leader_type)
+      add_column :users, :leader_type, :integer
+      add_column :users, :leader_notes, :string
+    end
   end
 end
