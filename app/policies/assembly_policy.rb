@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class AssemblyPolicy < ApplicationPolicy
-  attr_reader :user, :technology
+  attr_reader :user, :assembly
 
   def index?
     user&.admin_or_leader?

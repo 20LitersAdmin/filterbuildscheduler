@@ -8,17 +8,10 @@ class Component < ApplicationRecord
   # is a Technology or Component
   alias_attribute :assemblies, :sub_assemblies
 
-  # NERF: This was to try to make rails_admin handle Assembly CRUD-ing
-  # has_many :assemblies,
-  #          lambda { |component|
-  #            unscope(where: :component_id)
-  #              .where("(combination_type = 'Component' AND combination_id = :component_id) OR (item_type = 'Component' AND item_id = :component_id)", component_id: component.id)
-  #          }
-  # accepts_nested_attributes_for :assemblies, allow_destroy: true
-
-  # NOTE: these two scopes will only find 1st-level children, not all descendents
   has_many :super_assemblies, -> { where item_type: 'Component' }, class_name: 'Assembly', foreign_key: :item_id
   has_many :sub_assemblies, -> { where combination_type: 'Component' }, class_name: 'Assembly', foreign_key: :combination_id
+
+  accepts_nested_attributes_for :sub_assemblies, allow_destroy: true
 
   has_many :technologies, through: :super_assemblies, source: :combination, source_type: 'Technology'
   has_many :parts, through: :sub_assemblies, source: :item, source_type: 'Part'
@@ -47,6 +40,20 @@ class Component < ApplicationRecord
   after_save { image.purge if remove_image == '1' }
   after_save :check_uid
   before_destroy :dependent_destroy_assemblies
+
+  def self.search_name_and_uid(string)
+    raise StandardError, 'String was blank' if string.blank?
+    raise StandardError, 'Not a string' unless string.is_a? String
+
+    ary = []
+    args = string.tr(',', '').tr(';', '').split
+
+    args.each do |arg|
+      ary << "%#{arg}%"
+    end
+
+    Component.where('name ILIKE any ( array[?] )', ary).or(where('uid ILIKE any ( array[?] )', ary))
+  end
 
   # TODO: TEMP merge function
   def replace_with(component_id)

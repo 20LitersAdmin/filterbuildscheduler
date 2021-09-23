@@ -60,6 +60,20 @@ class Part < ApplicationRecord
     self
   end
 
+  def self.search_name_and_uid(string)
+    raise StandardError, 'String was blank' if string.blank?
+    raise StandardError, 'Not a string' unless string.is_a? String
+
+    ary = []
+    args = string.tr(',', '').tr(';', '').split
+
+    args.each do |arg|
+      ary << "%#{arg}%"
+    end
+
+    Part.where('name ILIKE any ( array[?] )', ary).or(where('uid ILIKE any ( array[?] )', ary))
+  end
+
   def all_technologies
     # .technologies finds direct relations through Assembly, but doesn't include technologies where this part may be deeply nested in components
     Technology.where('quantities ? :key', key: uid)

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-class CombinationPolicy < ApplicationPolicy
-  attr_reader :user, :technology
+class CombinationPolicy < Struct.new(:user, :combination)
+  # attr_reader :user, :technology
 
   def show?
     user&.admin_or_leader?
@@ -15,15 +15,7 @@ class CombinationPolicy < ApplicationPolicy
     show?
   end
 
-  def open_modal_form?
-    edit?
-  end
-
-  def update?
-    edit?
-  end
-
-  def create?
-    new?
+  def item_search?
+    show?
   end
 end

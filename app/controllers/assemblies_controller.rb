@@ -1,22 +1,23 @@
 # frozen_string_literal: true
 
 class AssembliesController < ApplicationController
-  before_action :authorize_assembly
-  before_action :set_assembly, only: %i[open_modal_form update]
-  before_action :set_component
+  before_action :set_combination, :authorize_assembly
+  before_action :set_assembly, only: %i[edit update]
+  before_action :create_assembly, only: %i[new create]
 
-  def index
-    # show all assembly records in some meaningful way?
-    # since we aren't in RailsAdmin
+  def edit
+    respond_to do |format|
+      format.js { render 'edit' }
+    end
   end
-
-  def edit; end
 
   def update
     if @assembly.update(assembly_params)
+
       @message = 'Assembly saved!'
       @msg_type = 'success'
     else
+      @assembly.reload
       @message = 'There was an error saving the assembly.'
       @msg_type = 'danger'
     end
@@ -29,16 +30,12 @@ class AssembliesController < ApplicationController
   end
 
   def new
-    @assembly = Assembly.new
-
     respond_to do |format|
-      format.js { render 'open_modal_form' }
+      format.js { render 'new' }
     end
   end
 
   def create
-    @assembly = Assembly.new
-
     if @assembly.create(assembly_params)
       @message = 'Assembly created!'
       @msg_type = 'success'
@@ -54,23 +51,7 @@ class AssembliesController < ApplicationController
     end
   end
 
-  def open_modal_form
-    respond_to do |format|
-      format.js { render 'open_modal_form' }
-    end
-  end
-
   def price; end
-
-  # YAGNI: Calculates how deep the tree goes
-  # def downward(assembly)
-  #   @depth_ary << assembly.depth
-  #   assemblies = assembly.item.sub_assemblies.component_items
-
-  #   assemblies.each do |sub_assembly|
-  #     downward(sub_assembly)
-  #   end
-  # end
 
   private
 
@@ -78,8 +59,12 @@ class AssembliesController < ApplicationController
     authorize Assembly
   end
 
+  def create_assembly
+    @assembly = @combination.assemblies.new
+  end
+
   def set_assembly
-    @assembly = Assembly.find(params[:id])
+    authorize @assembly = Assembly.find(params[:id])
   end
 
   def set_combination
