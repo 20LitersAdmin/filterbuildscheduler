@@ -6,10 +6,13 @@
   - else
     New Assembly
 .col-xs-12
-  = simple_form_for @assembly, method: :post, url: update_assembly_path(@assembly), remote: true do |f|
-    = f.error_notification
-    - unless @assembly.persisted?
-      = f.input :item_type
-      = f.input :item_id
-    = f.input :quantity, hint: "#{@assembly.quantity_hint}"
-    = f.submit class: 'btn yellow'
+  - if @assembly.persisted?
+    = simple_form_for @assembly, method: :post, url: update_assembly_path(@assembly), remote: true do |f|
+      = f.error_notification
+      = f.input :quantity, hint: "#{@assembly.quantity_hint}"
+      = f.submit class: 'btn yellow'
+  - else
+    = simple_form_for @assembly, method: :post, url: update_assembly_path(@assembly), remote: true do |f|
+      = f.error_notification
+      = f.input :quantity, hint: "#{@assembly.quantity_hint}"
+      = f.submit class: 'btn yellow'

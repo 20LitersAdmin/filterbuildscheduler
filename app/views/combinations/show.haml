@@ -7,15 +7,15 @@
         %h5 In these Technologies:
         %ul
           - @all_technologies.each do |tech|
-            %li= link_to tech.name, assembly_path(tech.uid)
+            %li= link_to tech.name, item_path(tech.uid)
     .col-xs-4
       - if @parents&.any?
         %h5 Parent assemblies:
         %ul
           - @parents.each do |parent|
-            %li= link_to parent.name, assembly_path(parent.uid)
+            %li= link_to parent.name, item_path(parent.uid)
     .col-xs-4.right-align
-      = link_to 'Edit', edit_assembly_path(@item.uid), class: 'btn blue'
+      = link_to 'Edit', edit_item_path(@item.uid), class: 'btn blue'
       = link_to @toggle_lang, @toggle_link, class: 'btn yellow'
   .row
     .col-xs-12
