@@ -1,0 +1,23 @@
+-# frozen_string_literal: true
+:ruby
+  item = assembly_edit.item
+  item_type = assembly_edit.item_type
+
+%tr
+  %td.right-align.left-border
+    - if item_type == 'Component'
+      = link_to item.uid, edit_assembly_path(item.uid)
+    - else
+      = item.uid
+  %td
+    = item.name
+  %td{ id: "assembly_quantity_#{assembly_edit.id}" }
+    = assembly_edit.quantity
+  %td
+    - if item.image.attached?
+      %img{ src: url_for(item.image), height: '60' }
+  %td
+    = link_to 'Edit', open_modal_form_assembly_path(assembly_edit), remote: true, class: 'btn blue'
+  %td
+    Discard
+

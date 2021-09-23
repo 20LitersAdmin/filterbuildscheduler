@@ -2,20 +2,21 @@
 
 .container#assemblies_show
   .row
-    .col-xs-5
+    .col-xs-4
       - if @all_technologies
         %h5 In these Technologies:
         %ul
           - @all_technologies.each do |tech|
             %li= link_to tech.name, assembly_path(tech.uid)
-    .col-xs-5
+    .col-xs-4
       - if @parents&.any?
         %h5 Parent assemblies:
         %ul
           - @parents.each do |parent|
             %li= link_to parent.name, assembly_path(parent.uid)
-    .col-xs-2.right-align
-      = link_to @toggle_lang, @toggle_link
+    .col-xs-4.right-align
+      = link_to 'Edit', edit_assembly_path(@item.uid), class: 'btn blue'
+      = link_to @toggle_lang, @toggle_link, class: 'btn yellow'
   .row
     .col-xs-12
       %table.table.list_item_tbl{ id: "list_item_tbl_#{@item.uid}" }
@@ -28,7 +29,6 @@
             %th.right-align # per
             %th.right-align avail.
         %tbody
-          %tr
-            = render partial: 'assembly', collection: @assemblies, locals: { nesting: 0 }
+          = render partial: 'assembly', collection: @assemblies, locals: { nesting: 0 }
 
 

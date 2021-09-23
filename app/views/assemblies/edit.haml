@@ -1,0 +1,44 @@
+-# frozen_string_literal: true
+
+.container#assemblies_edit
+  .row
+    .col-xs-4
+      - if @all_technologies
+        %h5 In these Technologies:
+        %ul
+          - @all_technologies.each do |tech|
+            %li= link_to tech.name, assembly_path(tech.uid)
+    .col-xs-4
+      - if @parents&.any?
+        %h5 Parent assemblies:
+        %ul
+          - @parents.each do |parent|
+            %li= link_to parent.name, assembly_path(parent.uid)
+    .col-xs-4.right-align
+      = link_to 'Show', assembly_path(@item.uid), class: 'btn yellow'
+  .row
+    .col-xs-12
+      %h4 #{@item.uid}: #{@item.name} (#{@item.available_count} available)
+    .col-xs-12
+      %table.table.edit_item_tbl{ id: "edit_item_tbl_#{@item.uid}" }
+        %thead
+          %tr
+            %th{ colspan: 2 } #{@item.uid}: #{@item.name} (#{@item.available_count} available)
+            %th # per
+            %th
+              - if @item.image.attached?
+                %img{ src: url_for(@item.image), height: '60' }
+            %th.right-align
+              = link_to 'New', new_assembly_path, remote: true, class: 'btn yellow'
+            %th.right-align
+        %tbody
+          = render partial: 'assembly_edit', collection: @assemblies
+
+  #edit_assembly_modal.modal.fade{ role: 'dialog', 'tab-index': '-1' }
+    .modal-dialog{ role: 'document' }
+      .modal-content
+        .modal-header
+          %button.close{ 'aria-label': 'Close', 'data-dismiss': 'modal', type: 'button' }
+            %span{ 'aria-hidden': 'true' } ×
+        #assembly_modal_body.modal-body.row
+          %p Oops! Something broke.

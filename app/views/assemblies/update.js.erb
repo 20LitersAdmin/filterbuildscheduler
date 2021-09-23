@@ -1,0 +1,4 @@
+$('#assembly_modal_body').html('');
+$('#edit_assembly_modal').modal('hide');
+
+$('.main').prepend('<div class="alert fade in <%= @msg_type %>"><button class="close" data-dismiss="alert">x</button><%= @message %></div>');
