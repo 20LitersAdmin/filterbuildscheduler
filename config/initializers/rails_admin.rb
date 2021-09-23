@@ -9,18 +9,15 @@ require 'devise_helper'
 require 'error_handler'
 require 'application_controller'
 
-require 'discard'
-require 'discard/model'
-
 # Discard actions
 # if active, can be discarded
 require Rails.root.join('lib', 'rails_admin', 'discardable.rb')
 
 # if discarded, can be restored
-require Rails.root.join('lib', 'rails_admin', 'restore.rb')
+require Rails.root.join('lib', 'rails_admin', 'restorable.rb')
 
 # if discarded, can be destroyed
-require Rails.root.join('lib', 'rails_admin', 'destroy.rb')
+require Rails.root.join('lib', 'rails_admin', 'destroyable.rb')
 
 # custom rails_admin dashboard
 require Rails.root.join('lib', 'rails_admin', 'dashboard.rb')
@@ -1023,8 +1020,8 @@ RailsAdmin.config do |config|
       end
     end
     discardable
-    restore
-    destroy do
+    restorable
+    destroyable do
       pjax { false }
     end
     assemble

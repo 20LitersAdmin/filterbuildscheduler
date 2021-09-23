@@ -32,7 +32,7 @@
 en:
   admin:
     actions:
-      restore:
+      restorable:
         menu: 'Restore'
         title: 'Restore'
         breadcrumb: 'Restore'
@@ -42,7 +42,7 @@ en:
         title: 'Discard'
         breadcrumb: 'Discard'
         done: 'discarded, but can be restored'
-      destroy:
+      destroyable:
         menu: 'Delete'
         title: 'Delete forever'
         breadcrumb: 'Delete'
