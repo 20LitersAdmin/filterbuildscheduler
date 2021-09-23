@@ -1,0 +1,18 @@
+-# frozen_string_literal: true
+
+.col-xs-12
+  New Assembly
+.col-xs-12
+  = simple_form_for @assembly, as: :assembly, method: :post, url: new_combination_assembly_path(@combination.uid), remote: true do |f|
+    = f.error_notification
+    .row
+      .col-xs-10
+        = f.input :item_search, as: :string, label: false, hint: 'search for items by name and UID. Matches will appear below'
+      .col-xs-2
+        = icon('fas', 'search fa-2x', class: 'btn blue')
+    = f.input :combination_type, as: :hidden
+    = f.input :combination_id, as: :hidden
+    = f.input :item_type, as: :hidden
+    = f.input :item_id, as: :hidden
+    = f.input :quantity, hint: "#{@assembly.quantity_hint}"
+    = f.submit class: 'btn yellow'

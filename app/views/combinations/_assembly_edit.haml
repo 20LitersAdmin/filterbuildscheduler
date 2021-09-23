@@ -6,7 +6,7 @@
 %tr
   %td.right-align.left-border
     - if item_type == 'Component'
-      = link_to item.uid, edit_assembly_path(item.uid)
+      = link_to item.uid, edit_combination_path(item.uid)
     - else
       = item.uid
   %td
@@ -17,7 +17,7 @@
     - if item.image.attached?
       %img{ src: url_for(item.image), height: '60' }
   %td
-    = link_to 'Edit', open_modal_form_assembly_path(assembly_edit), remote: true, class: 'btn blue'
+    = link_to 'Edit', edit_combination_assembly_path(@combination.uid, assembly_edit.id), remote: true, class: 'btn blue'
   %td
     Discard
 

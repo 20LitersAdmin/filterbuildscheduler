@@ -1,31 +1,31 @@
 -# frozen_string_literal: true
 
-.container#assemblies_show
+.container#combinations_show
   .row
     .col-xs-4
       - if @all_technologies
         %h5 In these Technologies:
         %ul
           - @all_technologies.each do |tech|
-            %li= link_to tech.name, item_path(tech.uid)
+            %li= link_to tech.name, combination_path(tech.uid)
     .col-xs-4
       - if @parents&.any?
         %h5 Parent assemblies:
         %ul
           - @parents.each do |parent|
-            %li= link_to parent.name, item_path(parent.uid)
+            %li= link_to parent.name, combination_path(parent.uid)
     .col-xs-4.right-align
-      = link_to 'Edit', edit_item_path(@item.uid), class: 'btn blue'
+      = link_to 'Edit', edit_combination_path(@combination.uid), class: 'btn blue'
       = link_to @toggle_lang, @toggle_link, class: 'btn yellow'
   .row
     .col-xs-12
-      %table.table.list_item_tbl{ id: "list_item_tbl_#{@item.uid}" }
+      %table.table.show_combination_tbl{ id: "show_combination_tbl_#{@combination.uid}" }
         %thead
           %tr
-            %th{ colspan: 5 } #{@item.uid}: #{@item.name} (#{@item.available_count} available)
+            %th{ colspan: 5 } #{@combination.uid}: #{@combination.name} (#{@combination.available_count} available)
             %th
-              - if @item.image.attached?
-                %img{ src: url_for(@item.image), height: '60' }
+              - if @combination.image.attached?
+                %img{ src: url_for(@combination.image), height: '60' }
             %th.right-align # per
             %th.right-align avail.
         %tbody

@@ -8,6 +8,9 @@ class Assembly < ApplicationRecord
   # 'price' is the cost of a single 'item' * #quantity
   # #depth is a rough number of steps removed from the root Technology
 
+  # simple_form field
+  attr_accessor :item_search
+
   belongs_to :combination, polymorphic: true
   belongs_to :item, polymorphic: true
 
@@ -79,11 +82,7 @@ class Assembly < ApplicationRecord
   end
 
   def quantity_hint
-    "How many #{item.name.pluralize} are needed to make one #{combination.name}?"
-  end
-
-  def types
-    "#{combination_type}:#{item_type}"
+    "How many are needed to make one #{combination.name}?"
   end
 
   def sub_assemblies
@@ -103,6 +102,11 @@ class Assembly < ApplicationRecord
 
     Assembly.where(item_id: combination_id, item_type: combination_type)
   end
+
+  def types
+    "#{combination_type}:#{item_type}"
+  end
+
 
   private
 

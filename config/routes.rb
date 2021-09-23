@@ -23,14 +23,16 @@ Rails.application.routes.draw do
     # A common controller for Technology & Component
     # since all the CRUDding is happening in RailsAdmin
     # we only really need to manage assemblies here.
+    collection do
+      post 'item_search'
+    end
     member do
       get 'price'
     end
 
-    resources :assemblies do
-      # standard routes for assemblies model
-      # combination/:combination_uid/assemblies
-    end
+    # standard routes for assemblies model
+    # combination/:combination_uid/assemblies
+    resources :assemblies
   end
 
   # since we actually want to use the assembly ID, these need to be outside the resources block

@@ -12,7 +12,7 @@
     %td.no-bottom-border{ colspan: nesting }
   %td.right-align.left-border
     - if item_type == 'Component'
-      = link_to item.uid, assembly_path(item.uid)
+      = link_to item.uid, combination_path(item.uid)
     - else
       = item.uid
   %td{ colspan: 4 - nesting }

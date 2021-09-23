@@ -1,44 +1,61 @@
 # frozen_string_literal: true
 
 class CombinationsController < ApplicationController
-  before_action :set_combination
+  before_action :set_combination, except: :item_search
 
   def show
-    @assemblies = @item.assemblies.ascending
+    authorize :combination, :show?
 
-    if @item.is_a? Component
-      @all_technologies = @item.all_technologies
-      @parents = @item.super_components
+    @assemblies = @combination.assemblies.ascending
+
+    if @combination.is_a? Component
+      @all_technologies = @combination.all_technologies
+      @parents = @combination.super_components
     end
 
     if params[:s].to_i == 1
       @show_sub_assemblies = true
       @toggle_lang = 'Hide sub-assemblies'
-      @toggle_link = item_path(@item.uid)
+      @toggle_link = combination_path(@combination.uid)
     else
       @show_sub_assemblies = false
       @toggle_lang = 'Show sub-assemblies'
-      @toggle_link = item_path(@item.uid, s: 1)
+      @toggle_link = combination_path(@combination.uid, s: 1)
     end
-
-    # YAGNI: Calculates how deep the tree goes, real slow
-    # @depth_ary = []
-    # @assemblies.component_items.each do |assembly|
-    #   downward(assembly)
-    # end
-    # @depth = @depth_ary.max + 1
   end
 
   def edit
-    @assemblies = @item.assemblies.ascending
+    authorize :combination, :edit?
 
-    return unless @item.is_a? Component
+    @assemblies = @combination.assemblies.ascending
 
-    @all_technologies = @item.all_technologies
-    @parents = @item.super_components
+    return unless @combination.is_a? Component
+
+    @all_technologies = @combination.all_technologies
+    @parents = @combination.super_components
   end
 
   def price; end
+
+  def item_search
+    authorize :combination, :item_search?
+
+    terms = item_search_params[:terms]
+
+    @collection = []
+
+    if terms.length > 3
+      # look in Components first (smaller)
+      @collection << Component.search_name_and_uid(terms).pluck(:id, :name, :uid)
+
+      # look in Parts second
+      @collection << Part.search_name_and_uid(terms)
+    end
+
+    respond_to do |format|
+      format.json { @collection.flatten.as_json }
+    end
+  end
 
   private
 
@@ -50,5 +67,9 @@ class CombinationsController < ApplicationController
     flash[:alert] = 'Please check UID and try again. Must be a Technology or Component'
     # TODO: Where is the best place to return the browser to if the UID fails && reqest.referrer is blank?
     redirect_to request.referrer || rails_admin.dashboard_path
+  end
+
+  def item_search_params
+    params.require(:search).permit(:terms)
   end
 end
