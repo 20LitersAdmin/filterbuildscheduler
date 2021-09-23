@@ -45,9 +45,7 @@ module RailsAdmin
         # - @object if you're on an object scope
         register_instance_option :controller do
           proc do
-            respond_to do |format|
-              format.html { redirect_to "/assemble/#{@object.uid}" }
-            end
+            redirect_to "/combinations/#{@object.uid}"
           end
         end
       end

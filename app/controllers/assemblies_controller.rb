@@ -3,47 +3,14 @@
 class AssembliesController < ApplicationController
   before_action :authorize_assembly
   before_action :set_assembly, only: %i[open_modal_form update]
-  before_action :set_item_from_uid, only: %i[show edit price]
+  before_action :set_component
 
   def index
     # show all assembly records in some meaningful way?
     # since we aren't in RailsAdmin
   end
 
-  def show
-    @assemblies = @item.assemblies.ascending
-
-    if @item.is_a? Component
-      @all_technologies = @item.all_technologies
-      @parents = @item.super_components
-    end
-
-    if params[:s].to_i == 1
-      @show_sub_assemblies = true
-      @toggle_lang = 'Hide sub-assemblies'
-      @toggle_link = assembly_path(@item.uid)
-    else
-      @show_sub_assemblies = false
-      @toggle_lang = 'Show sub-assemblies'
-      @toggle_link = assembly_path(@item.uid, s: 1)
-    end
-
-    # YAGNI: Calculates how deep the tree goes, real slow
-    # @depth_ary = []
-    # @assemblies.component_items.each do |assembly|
-    #   downward(assembly)
-    # end
-    # @depth = @depth_ary.max + 1
-  end
-
-  def edit
-    @assemblies = @item.assemblies.ascending
-
-    return unless @item.is_a? Component
-
-    @all_technologies = @item.all_technologies
-    @parents = @item.super_components
-  end
+  def edit; end
 
   def update
     if @assembly.update(assembly_params)
@@ -115,13 +82,13 @@ class AssembliesController < ApplicationController
     @assembly = Assembly.find(params[:id])
   end
 
-  def set_item_from_uid
+  def set_combination
     # we're mimicing the standard structure, but
     # we're actually passing the `:uid` in place of the `:id`
     # so we can objectify the string to get the @item
-    @item = params[:id].objectify_uid
+    @combination = params[:combination_uid].objectify_uid
 
-    return if @item.present? && [Technology, Component].include?(@item.class)
+    return if @combination.present? && [Technology, Component].include?(@combination.class)
 
     flash[:alert] = 'Please check UID and try again. Must be a Technology or Component'
     # TODO: Where is the best place to return the browser to if the UID fails && reqest.referrer is blank?

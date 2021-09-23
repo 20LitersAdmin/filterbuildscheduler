@@ -106,12 +106,17 @@
   - No conflict if 2 users have the same count open (just adds to it)
 
 ### Current:
-- Assembly:
-  - use for Component and Technology
+- Assembly management:
   - `resources :assemblies`
-    - use instead of `/technologies/:id/items`
-    - but keep `/technologies/:id/prices`
-
+    - standard MVC for managing assemblies, but mostly remote: true
+    - nested within `:combinations`
+  - `resources :combinations`
+    - `combinations/:uid` routes:
+      - `show`: shows assemblies for the given combination
+        - use instead of `/technologies/:id/items`
+      - `edit`: views with modal_form for create, update, delete
+      - `prices`:
+        - use instead of `/technologies/:id/prices`
 
 - For Setup crew:
   - need a view similar to /technology/:id/items, but traversing over each component separately

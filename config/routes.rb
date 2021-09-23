@@ -19,18 +19,23 @@ Rails.application.routes.draw do
   get 'info', to: 'pages#info', as: 'info'
   get 'leaders', to: 'users#leaders', as: 'leaders'
 
-  resources :assemblies, constraints: { id: Constants::UID::URL_REGEX } do
-    # we're hacking the standard structure
-    # although we're calling `/assembly/:id`,
-    # we're actually rendering `/assembly/:uid`
+  resources :combinations, only: %i[show edit], param: :uid, constraints: { uid: Constants::UID::URL_REGEX } do
+    # A common controller for Technology & Component
+    # since all the CRUDding is happening in RailsAdmin
+    # we only really need to manage assemblies here.
     member do
       get 'price'
+    end
+
+    resources :assemblies do
+      # standard routes for assemblies model
+      # combination/:combination_uid/assemblies
     end
   end
 
   # since we actually want to use the assembly ID, these need to be outside the resources block
-  get 'assemblies/:id/open_modal_form', to: 'assemblies#open_modal_form', as: 'open_modal_form_assembly'
-  post 'assemblies/:id/update', to: 'assemblies#update', as: 'update_assembly'
+  # get 'assemblies/:id/open_modal_form', to: 'assemblies#open_modal_form', as: 'open_modal_form_assembly'
+  # post 'assemblies/:id/update', to: 'assemblies#update', as: 'update_assembly'
 
   resources :report, only: [:index] do
     collection do
