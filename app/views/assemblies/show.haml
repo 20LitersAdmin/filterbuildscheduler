@@ -1,21 +1,34 @@
 -# frozen_string_literal: true
-.container
+
+.container#assemblies_show
   .row
-    .col
-      %table.table.table-bordered{ id: "list_item_tbl_#{@item.uid}" }
+    .col-xs-5
+      - if @all_technologies
+        %h5 In these Technologies:
+        %ul
+          - @all_technologies.each do |tech|
+            %li= link_to tech.name, assembly_path(tech.uid)
+    .col-xs-5
+      - if @parents&.any?
+        %h5 Parent assemblies:
+        %ul
+          - @parents.each do |parent|
+            %li= link_to parent.name, assembly_path(parent.uid)
+    .col-xs-2.right-align
+      = link_to @toggle_lang, @toggle_link
+  .row
+    .col-xs-12
+      %table.table.list_item_tbl{ id: "list_item_tbl_#{@item.uid}" }
         %thead
           %tr
-            %th{ colspan: 5 } #{@item.name} Item list:
-            %th.right-align #per
+            %th{ colspan: 5 } #{@item.uid}: #{@item.name} (#{@item.available_count} available)
+            %th
+              - if @item.image.attached?
+                %img{ src: url_for(@item.image), height: '60' }
+            %th.right-align # per
             %th.right-align avail.
-            %th depth
         %tbody
           %tr
-            %th= @item.uid
-            %th{ colspan: 4 }= @item.name
-            %td.right-align
-            %td.right-align= @item.available_count
-            %td
-          = render partial: 'assembly', collection: @assemblies, locals: { nesting: 1 }
+            = render partial: 'assembly', collection: @assemblies, locals: { nesting: 0 }
 
 

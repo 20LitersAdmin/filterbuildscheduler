@@ -11,6 +11,28 @@ class AssembliesController < ApplicationController
 
   def show
     @assemblies = @item.assemblies.ascending
+
+    if @item.is_a? Component
+      @all_technologies = @item.all_technologies
+      @parents = @item.super_components
+    end
+
+    if params[:s].to_i == 1
+      @show_sub_assemblies = true
+      @toggle_lang = 'Hide sub-assemblies'
+      @toggle_link = assembly_path(@item.uid)
+    else
+      @show_sub_assemblies = false
+      @toggle_lang = 'Show sub-assemblies'
+      @toggle_link = assembly_path(@item.uid, s: 1)
+    end
+
+    # YAGNI: Calculates how deep the tree goes, real slow
+    # @depth_ary = []
+    # @assemblies.component_items.each do |assembly|
+    #   downward(assembly)
+    # end
+    # @depth = @depth_ary.max + 1
   end
 
   def items
@@ -18,6 +40,17 @@ class AssembliesController < ApplicationController
 
   def price
   end
+
+
+  # YAGNI: Calculates how deep the tree goes, real slow
+  # def downward(assembly)
+  #   @depth_ary << assembly.depth
+  #   assemblies = assembly.item.sub_assemblies.component_items
+
+  #   assemblies.each do |sub_assembly|
+  #     downward(sub_assembly)
+  #   end
+  # end
 
   private
 

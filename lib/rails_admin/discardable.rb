@@ -6,17 +6,16 @@ require 'rails_admin/config/actions/base'
 module RailsAdmin
   module Config
     module Actions
-      class Discard < RailsAdmin::Config::Actions::Base
+      class Discardable < RailsAdmin::Config::Actions::Base
         RailsAdmin::Config::Actions.register(self)
 
         register_instance_option :visible? do
-          # class must respond to #kept?
-          bindings[:object]&.kept? &&
-            (
-              # user.is_admin? cannot be discarded
-              bindings[:object].instance_of?(User) &&
-              !bindings[:object].is_admin?
-            )
+          object = bindings[:object]
+
+          # if Object is a User, it can't be an Admin User
+          # if Object is not a User, it's class must include Discard::Model
+          (object.instance_of?(User) && !object.is_admin?) ||
+            (!object.instance_of?(User) && object.class.include?(Discard::Model))
         end
 
         register_instance_option :member do

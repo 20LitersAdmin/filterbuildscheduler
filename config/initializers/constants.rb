@@ -19,9 +19,9 @@ module Constants
       'T': 'Technology'
     }.freeze
 
-    REGEX = /^(C|M|P|T)[0-9]{3}$/.freeze
+    REGEX = /^(C|M|P|T)[0-9]{3}$/
 
-    URL_REGEX = /(C|M|P|T)[0-9]{3}/.freeze
+    URL_REGEX = /(C|M|P|T)[0-9]{3}/
 
     public_constant :CHAR
     public_constant :REGEX

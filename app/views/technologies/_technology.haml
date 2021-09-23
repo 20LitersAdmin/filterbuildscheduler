@@ -3,9 +3,10 @@
   %td
     = technology.name
   %td
-    %img{ height: '100', src: technology.img_url }
+    - if technology.image.attached?
+    %img{ height: '100', src: url_for(technology.image) }
   %td
     = technology.owner
   %td
-    = link_to 'Item List', items_technology_path(technology.id), class: 'btn blue use-load-screen'
-    = link_to 'Price List', prices_technology_path(technology.id), class: 'btn yellow use-load-screen'
+    = link_to 'Item List', items_technology_path(technology.id), class: 'btn blue'
+    = link_to 'Price List', prices_technology_path(technology.id), class: 'btn yellow'

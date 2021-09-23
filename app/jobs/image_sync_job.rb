@@ -4,7 +4,11 @@ class ImageSyncJob < ApplicationJob
   queue_as :image_sync
 
   def perform(*_args)
-    # take all images from UID folder and attach them to an Item
+    ActiveRecord::Base.logger.level = 1
+
+    puts '========================= Starting ImageSyncJob ========================='
+
+    puts 'taking all images from UID folder and attaching them to an Item'
     Dir['app/assets/images/uids/*'].each do |filename|
       uid = filename[/[A-Z][0-9]{3}/]
       extracted_type = filename[/[a-z]{3}$/]
@@ -52,7 +56,7 @@ class ImageSyncJob < ApplicationJob
       begin
         file = URI.parse(loc.photo_url).open
       rescue OpenURI::HTTPError
-        puts 'Failed: #{loc.id}: #{loc.name}'
+        puts "Failed: #{loc.id}: #{loc.name}"
         next
       end
 
@@ -72,5 +76,9 @@ class ImageSyncJob < ApplicationJob
     end
 
     puts 'Done traversing Locations'
+
+    puts '========================= FINISHED ImageSyncJob ========================='
+
+    ActiveRecord::Base.logger.level = 0
   end
 end

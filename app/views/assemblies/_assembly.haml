@@ -3,23 +3,28 @@
   item = assembly.item
   item_type = assembly.item_type
   available = item.available_count
-  # need = assembly.quantity
-  highlight = 'color: red; font-weight: bolder; border: solid 2px red' if (item_type != 'Component' && (available < item&.minimum_on_hand)) || item.available_count == 0
-  # total = item.price * need
+  highlight = 'color: red; font-weight: bolder; border: solid 2px red' if
+    available < item&.minimum_on_hand ||
+    item.available_count == 0
 
 %tr
   - if nesting.positive?
-    %td{ colspan: nesting }
-  %td.right-align
-    = link_to item.uid, rails_admin.show_path(model_name: item_type.downcase, id: item.id), target: '_blank'
+    %td.no-bottom-border{ colspan: nesting }
+  %td.right-align.left-border
+    - if item_type == 'Component'
+      = link_to item.uid, assembly_path(item.uid)
+    - else
+      = item.uid
   %td{ colspan: 4 - nesting }
     = item.name
+  %td
+    - if item.image.attached?
+      %img{ src: url_for(item.image), height: '60' }
   %td.right-align
     = human_number assembly.quantity
   %td.right-align{ style: highlight }
-    = item.available_count
-  %td= assembly.depth
+    = human_number item.available_count
 
--# - if item_type == 'Component' && item.sub_assemblies.any?
-  -# = render partial: 'assembly', collection: item.sub_assemblies.ascending, locals: { nesting: nesting += 1 }
+- if @show_sub_assemblies && item_type == 'Component' && item.sub_assemblies.any?
+  = render partial: 'assembly', collection: item.sub_assemblies.ascending, locals: { nesting: nesting += 1 }
 

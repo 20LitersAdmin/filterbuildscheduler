@@ -119,24 +119,10 @@
 
 - `Component#weeks_to_out` should traverse downward
 
-- RailsAdmin: show Item#quantities? #quantities is number of items in a specific technology.
-
-- Drop from Db:
-  - `Component#completed_tech`
-  - `Component#tare_weight`
-  - `Component#sample_size`
-  - `Component#sample_weight`
-  - `Part#sample_size`
-  - `Part#sample_weight`
-  - `Location#photo_url`
-
-  - `User#is_primary_leader`
-  - `User#is_helper_leader`
-
-- Add to Db: For being able to highlight low-quantity items
-  - `Component#minimum_on_hand`
-  - `Component#quantities` <- see QuantityAndDepthCalculationJob ln#19
-  - `Technology#minimum_on_hand`
+- RailsAdmin:
+  - CRUD OauthUsers?
+  - CRUD Emails?
+  - CRUD Organizations?
 
 - Nerf #cprice on all Items
 
@@ -152,20 +138,14 @@
 - remove `_event_functions.html.erb` && calls to this partial
   - Leaders should be able to get to `events/lead` without having to visit `rails_admin`
 
-- RailsAdmin Oauth users
-  - link to `admin/oauth_user/:id/status`
-  - link to `admin/oauth_user/:id/manual`
-
-- RailsAdmin Event
-  - link to `events/:id/edit` instead of `admin/event/:id/edit`
-
-- Assemblies
-  - How to CRUD? Not in  `rails_admin`.
+- Events
+  - EventsController ln 28: `technology.img_url`
+  - probably a few `event.img_url` hanging out there as well
 
 
 
 #### After 1st deployment:
-* Migrate the db (will perform InventoryMigrationJob)
+* Migrate the db (will perform the migration jobs)
 
 #### 2nd deployment work to be done
 * Un-comment-out `Part#before_save :set_made_from_materials`
@@ -178,18 +158,11 @@
 * Un-do Paranoia -> Discard patching
   -  `EventsController#398`
   -
-
-
-#### 3rd deployment work to be done:
-* Run `ImageSyncJob.perform_now` in production (now that Items `has_one_attached`)
-* Fix RailsAdmin, which will be pretty nerfed from 1st deploy
 * Remove `assets.rb#12`
-
-
-### 4th deployment work to be done:
-* Drop `Technology.img_url`
-* Drop `Location.photo_url`
 * Remove UIDS folder
+* Delete the migration jobs:
+  - ImageSyncJob
+  - InventoryMigrationJob
 
 
 ## Remind myself:

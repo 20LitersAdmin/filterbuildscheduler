@@ -9,9 +9,12 @@ require 'devise_helper'
 require 'error_handler'
 require 'application_controller'
 
+require 'discard'
+require 'discard/model'
+
 # Discard actions
 # if active, can be discarded
-require Rails.root.join('lib', 'rails_admin', 'discard.rb')
+require Rails.root.join('lib', 'rails_admin', 'discardable.rb')
 
 # if discarded, can be restored
 require Rails.root.join('lib', 'rails_admin', 'restore.rb')
@@ -1019,7 +1022,7 @@ RailsAdmin.config do |config|
         bindings[:object].instance_of?(Event)
       end
     end
-    discard
+    discardable
     restore
     destroy do
       pjax { false }

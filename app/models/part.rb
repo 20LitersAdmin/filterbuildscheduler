@@ -27,9 +27,6 @@ class Part < ApplicationRecord
 
   validates_presence_of :name
 
-  before_save :process_image, if: -> { attachment_changes.any? }
-  after_save { image.purge if remove_image == '1' }
-
   # TODO: Second deployment remove
   # scope :kept, -> { all }
   # scope :discarded, -> { none }
@@ -49,7 +46,9 @@ class Part < ApplicationRecord
   # scope :with_attached_image, -> { joins(:image_attachment) }
   scope :without_attached_image, -> { where.missing(:image_attachment) }
 
-  before_create :set_uid
+  before_save :process_image, if: -> { attachment_changes.any? }
+  after_save { image.purge if remove_image == '1' }
+  after_save :check_uid
   # TODO: Second deployment (fails on migration)
   # before_save :set_made_from_materials, :set_below_minimum
 
@@ -161,9 +160,9 @@ class Part < ApplicationRecord
   end
 
   # TODO: delete after 1st migration
-  def uid
-    "P#{id.to_s.rjust(3, 0.to_s)}"
-  end
+  # def uid
+  #   "P#{id.to_s.rjust(3, 0.to_s)}"
+  # end
 
   # Rails Admin virtual
   def uid_and_name
@@ -215,7 +214,7 @@ class Part < ApplicationRecord
     self.made_from_materials = materials.any?
   end
 
-  def set_uid
-    self.uid = "P#{id.to_s.rjust(3, 0.to_s)}"
+  def check_uid
+    update_columns(uid: "P#{id.to_s.rjust(3, '0')}") if uid.blank? || id != uid[1..].to_i
   end
 end

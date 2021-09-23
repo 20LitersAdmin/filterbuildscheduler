@@ -10,8 +10,12 @@ module RailsAdmin
         RailsAdmin::Config::Actions.register(self)
 
         register_instance_option :visible? do
-          %w[Component Count Event Inventory Location Material Part Registration Supplier Technology User].include?(bindings[:object].class.to_s) &&
-            bindings[:object].discarded?
+          object = bindings[:object]
+
+          # Object's class must include Discard::Model AND
+          # Object must be discarded
+          object.class.include?(Discard::Model) &&
+            object.discarded?
         end
 
         register_instance_option :member do

@@ -18,6 +18,7 @@ class Technology < ApplicationRecord
   before_save :process_images, if: -> { attachment_changes.any? }
   after_save { image.purge if remove_image == '1' }
   after_save { display_image.purge if remove_display_image == '1' }
+  after_save :check_uid
 
   has_many :assemblies, as: :combination, dependent: :destroy, inverse_of: :combination
   accepts_nested_attributes_for :assemblies, allow_destroy: true
@@ -44,8 +45,6 @@ class Technology < ApplicationRecord
   # Exists in ActiveStorage already
   # scope :with_attached_image, -> { joins(:image_attachment) }
   scope :without_attached_image, -> { where.missing(:image_attachment) }
-
-  before_create :set_uid
 
   def all_components
     # .components will find 1st-level children but not all descendents
@@ -196,9 +195,9 @@ class Technology < ApplicationRecord
   end
 
   # TODO: delete after 1st migration
-  def uid
-    "T#{id.to_s.rjust(3, '0')}"
-  end
+  # def uid
+  #   "T#{id.to_s.rjust(3, '0')}"
+  # end
 
   private
 
@@ -228,7 +227,7 @@ class Technology < ApplicationRecord
     end
   end
 
-  def set_uid
-    self.uid = "T#{id.to_s.rjust(3, '0')}"
+  def check_uid
+    update_columns(uid: "T#{id.to_s.rjust(3, '0')}") if uid.blank? || id != uid[1..].to_i
   end
 end
