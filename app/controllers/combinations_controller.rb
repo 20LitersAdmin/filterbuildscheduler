@@ -40,6 +40,8 @@ class CombinationsController < ApplicationController
   def item_search
     authorize :combination, :item_search?
 
+    byebug
+
     terms = item_search_params[:terms]
 
     @collection = []
@@ -52,9 +54,7 @@ class CombinationsController < ApplicationController
       @collection << Part.search_name_and_uid(terms)
     end
 
-    respond_to do |format|
-      format.json { @collection.flatten.as_json }
-    end
+    render json: @collection.flatten
   end
 
   private

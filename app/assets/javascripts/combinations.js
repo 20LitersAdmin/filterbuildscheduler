@@ -6,17 +6,17 @@ $(document).on('turbolinks:load', function() {
   // Combination/edit: item search AJAX lookup
   $(document).on('change', '#assembly_item_search', function() {
     var searchString = $(this).val();
-    console.log(searchString);
-    // $.ajax({
-    //   type: 'Post',
-    //   url: '/combinations/item_search',
-    //   data: { search: { terms: searchString } },
-    //   success: function(response) {
-    //     // update some dob object that can be selected
-    //     console.log(response);
-    //   },
-    //   error: function(response) { console.log(response); }
-    // });
+    $.ajax({
+      type: 'post',
+      url: '/combinations/item_search',
+      data: { search: { terms: searchString } },
+      success: function(response) {
+        console.log(response);
+        // throw the response array into select#asembly_item_id
+        // as options
+      },
+      error: function(response) { console.log(response); }
+    });
   });
 
 });
