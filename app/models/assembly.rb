@@ -71,7 +71,15 @@ class Assembly < ApplicationRecord
   end
 
   def name
-    "#{combination_type[0]}#{combination_id}>#{item_type[0]}#{item_id}"
+    "#{combination_uid}>#{item_uid}"
+  end
+
+  def name_long
+    "#{combination_uid} (#{combination.name}) > #{item_uid} (#{item.name})"
+  end
+
+  def quantity_hint
+    "How many #{item.name.pluralize} are needed to make one #{combination.name}?"
   end
 
   def types

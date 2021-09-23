@@ -7,7 +7,11 @@ class AssemblyPolicy < ApplicationPolicy
     user&.admin_or_leader?
   end
 
-  def items?
+  def edit?
+    index?
+  end
+
+  def new?
     index?
   end
 
@@ -17,5 +21,17 @@ class AssemblyPolicy < ApplicationPolicy
 
   def show?
     index?
+  end
+
+  def open_modal_form?
+    edit?
+  end
+
+  def update?
+    edit?
+  end
+
+  def create?
+    new?
   end
 end
