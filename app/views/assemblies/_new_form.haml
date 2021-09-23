@@ -10,9 +10,15 @@
         = f.input :item_search, as: :string, label: false, hint: 'search for items by name and UID. Matches will appear below'
       .col-xs-2
         = icon('fas', 'search fa-2x', class: 'btn blue')
-    = f.input :combination_type, as: :hidden
-    = f.input :combination_id, as: :hidden
-    = f.input :item_type, as: :hidden
-    = f.input :item_id, as: :hidden
-    = f.input :quantity, hint: "#{@assembly.quantity_hint}"
-    = f.submit class: 'btn yellow'
+    .row
+      .col-xs-12
+        %ul#search_results
+    .row
+      .col-xs-12
+        = f.input :combination_type, as: :hidden
+        = f.input :combination_id, as: :hidden
+        = f.input :item_type, as: :hidden
+
+        = f.input :item_id, as: :select, required: true, collection: [], label: false, input_html: { style: 'display: none;'}
+        = f.input :quantity, hint: "#{@assembly.quantity_hint}"
+        = f.submit class: 'btn yellow'
