@@ -6,7 +6,7 @@ class QuantityAndDepthCalculationJob < ApplicationJob
   def perform(*_args)
     ActiveRecord::Base.logger.level = 1
 
-    puts "========================= Starting QuantityAndDepthCalculationJob ========================="
+    puts '========================= Starting QuantityAndDepthCalculationJob ========================='
 
     set_all_assembly_depths_to_zero
     set_all_item_quantities_to_zero
@@ -23,7 +23,7 @@ class QuantityAndDepthCalculationJob < ApplicationJob
       puts "== FINISHED #{@technology.name} =="
     end
 
-    puts "========================= FINISHED QuantityAndDepthCalculationJob ========================="
+    puts '========================= FINISHED QuantityAndDepthCalculationJob ========================='
 
     ActiveRecord::Base.logger.level = 0
   end
@@ -51,8 +51,6 @@ class QuantityAndDepthCalculationJob < ApplicationJob
       # this ensures that components or parts shared by multiple assemblies only
       # get pushed lower and not accidentally raised higher
       a.update_columns(depth: @counter) if @counter > a.depth
-
-
       insert_into_quantity(a)
 
       @component_ids << a.item_id if a.item_type == 'Component'
@@ -70,8 +68,12 @@ class QuantityAndDepthCalculationJob < ApplicationJob
     end
   end
 
-  def insert_into_item_quantities(key, value)
-    item = key.objectify_uid
+  def insert_into_item_quantities(uid, value)
+    item = uid.objectify_uid
+
+    # safety incase uid is somehow not in parity with id
+    return unless item.present?
+
     item.quantities[@technology.uid] = value
     item.save
   end

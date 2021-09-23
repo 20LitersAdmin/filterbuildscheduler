@@ -21,13 +21,8 @@ class Material < ApplicationRecord
 
   validates_presence_of :name
 
-  before_save :process_image, if: -> { attachment_changes.any? }
-  after_save { image.purge if remove_image == '1' }
-
   # TODO: Second deploy
   scope :below_minimums, -> { where(below_minimum: true) }
-
-  before_create :set_uid
 
   # TODO: Second deployment remove
   # scope :kept, -> { all }
@@ -41,7 +36,10 @@ class Material < ApplicationRecord
   scope :without_attached_image, -> { where.missing(:image_attachment) }
 
   # TODO: Second deploy (fails on migration)
-  # before_save :set_below_minimum
+  before_save :set_below_minimum
+  before_save :process_image, if: -> { attachment_changes.any? }
+  after_save { image.purge if remove_image == '1' }
+  after_save :check_uid
 
   # TODO: TEMP merge function
   def replace_with(material_id)
@@ -120,9 +118,9 @@ class Material < ApplicationRecord
   end
 
   # TODO: delete after 1st migration
-  def uid
-    "M#{id.to_s.rjust(3, 0.to_s)}"
-  end
+  # def uid
+  #   "M#{id.to_s.rjust(3, 0.to_s)}"
+  # end
 
   # Rails Admin virtual
   def uid_and_name
@@ -168,7 +166,7 @@ class Material < ApplicationRecord
     self.below_minimum = available_count < minimum_on_hand
   end
 
-  def set_uid
-    self.uid = "M#{id.to_s.rjust(3, 0.to_s)}"
+  def check_uid
+    update_columns(uid: "M#{id.to_s.rjust(3, '0')}") if uid.blank? || id != uid[1..].to_i
   end
 end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_09_22_144155) do
+ActiveRecord::Schema.define(version: 2021_09_22_194933) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -58,14 +58,10 @@ ActiveRecord::Schema.define(version: 2021_09_22_144155) do
 
   create_table "components", force: :cascade do |t|
     t.string "name", null: false
-    t.integer "sample_size"
-    t.float "sample_weight"
-    t.boolean "completed_tech", default: false
     t.datetime "discarded_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "quantity_per_box", default: 1
-    t.float "tare_weight", default: 0.0
     t.text "comments"
     t.boolean "only_loose", default: false
     t.text "description"
@@ -77,6 +73,7 @@ ActiveRecord::Schema.define(version: 2021_09_22_144155) do
     t.jsonb "quantities", default: {}, null: false
     t.integer "price_cents", default: 0, null: false
     t.string "price_currency", default: "USD", null: false
+    t.integer "minimum_on_hand", default: 0, null: false
     t.index ["discarded_at"], name: "index_components_on_discarded_at"
   end
 
@@ -179,7 +176,6 @@ ActiveRecord::Schema.define(version: 2021_09_22_144155) do
     t.string "state"
     t.string "zip"
     t.string "map_url"
-    t.string "photo_url"
     t.text "instructions"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -262,8 +258,6 @@ ActiveRecord::Schema.define(version: 2021_09_22_144155) do
     t.integer "min_order", default: 1
     t.string "sku"
     t.float "weeks_to_deliver", default: 1.0
-    t.integer "sample_size"
-    t.float "sample_weight"
     t.boolean "made_from_materials", default: false
     t.datetime "discarded_at"
     t.datetime "created_at", null: false
@@ -339,7 +333,6 @@ ActiveRecord::Schema.define(version: 2021_09_22_144155) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.datetime "discarded_at"
-    t.string "img_url"
     t.string "info_url"
     t.string "owner"
     t.integer "people", default: 0, null: false

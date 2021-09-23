@@ -6,9 +6,9 @@ class InventoryMigrationJob < ApplicationJob
   def perform(*_args)
     ActiveRecord::Base.logger.level = 1
 
-    puts "========================= Starting InventoryMigrationJob ========================="
+    puts '========================= Starting InventoryMigrationJob ========================='
 
-    assign_UIDs_to_items
+    assign_uids_to_items
     transfer_latest_count_values_to_items
     add_history_to_every_item
     turn_components_into_technologies
@@ -24,7 +24,7 @@ class InventoryMigrationJob < ApplicationJob
     create_missing_assemblies
     merge_and_rename_vfw_items
 
-    puts "========================= FINISHED InventoryMigrationJob ========================="
+    puts '========================= FINISHED InventoryMigrationJob ========================='
 
     ActiveRecord::Base.logger.level = 0
     # Calculate quantities of all components, parts and materials on every Technology, calculate depths for all Assemblies
@@ -32,35 +32,34 @@ class InventoryMigrationJob < ApplicationJob
 
     # Calculate all prices
     PriceCalculationJob.perform_now
-
   end
 
-
-  def assign_UIDs_to_items
+  def assign_uids_to_items
     puts 'assign UIDs to items'
+    Technology.update_all(uid: nil)
     Technology.all.each do |t|
-      t.update_columns(uid: t.uid)
+      t.update_columns(uid: "T#{t.id.to_s.rjust(3, '0')}")
     end
 
+    Component.update_all(uid: nil)
     Component.all.each do |c|
-      c.update_columns(uid: c.uid)
+      c.update_columns(uid: "C#{c.id.to_s.rjust(3, '0')}")
     end
 
+    Part.update_all(uid: nil)
     Part.all.each do |pa|
-      pa.update_columns(uid: pa.uid)
+      pa.update_columns(uid: "P#{pa.id.to_s.rjust(3, '0')}")
     end
 
+    Material.update_all(uid: nil)
     Material.all.each do |m|
-      m.update_columns(uid: m.uid)
+      m.update_columns(uid: "M#{m.id.to_s.rjust(3, '0')}")
     end
   end
 
   def transfer_latest_count_values_to_items
     puts 'add counts from latest inventory'
     Inventory.latest.counts.each do |c|
-
-      byebug unless c.item
-
       c.item.update_columns(
         loose_count: c.loose_count,
         box_count: c.unopened_boxes_count,
@@ -135,7 +134,7 @@ class InventoryMigrationJob < ApplicationJob
     # M005 Tubing 1/4-inch x 12-inch L
     # solution: transform it into a Part
     m = Material.find(5)
-    Part.create!(m.attributes.except('id'))
+    Part.create!(m.attributes.except('id', 'uid'))
     # add the new part's assembly
     Assembly.create!(combination: Technology.first, item: Part.last)
 
@@ -289,7 +288,7 @@ class InventoryMigrationJob < ApplicationJob
   def merge_and_rename_vfw_items
     puts 'merge *20L* and *VWF* components, parts, and materials'
     # Components: [{1=>"3-inch core with O-rings *VWF*"}, {33=>"3-inch core with O-rings *20L*"}]
-    comp = Component.first.replace_with(33).destroy
+    Component.first.replace_with(33).destroy
     Component.find(33).update(name: '3-inch core with O-rings')
 
     # merge *20L* and *VWF* parts (5 match by name)
