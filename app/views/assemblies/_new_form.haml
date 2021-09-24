@@ -1,24 +1,26 @@
 -# frozen_string_literal: true
 
 .col-xs-12
-  New Assembly
+  %h3 Create a new Assembly
+  %p Search for a Component or Part that is used to assemble #{@combination.name}, then select it from the drop-down list of matching items.
 .col-xs-12
   = simple_form_for @assembly, as: :assembly, method: :post, url: new_combination_assembly_path(@combination.uid), remote: true do |f|
     = f.error_notification
     .row
       .col-xs-10
-        = f.input :item_search, as: :string, label: false, hint: 'search for items by name and UID. Matches will appear below'
+        = f.input :item_search, as: :string, label: false, hint: 'search for items by name and UID. Matches will appear in the dropdown below'
       .col-xs-2
-        = icon('fas', 'search fa-2x', class: 'btn blue')
+        = icon('fas', 'search', class: 'btn blue')
     .row
-      .col-xs-12
-        %ul#search_results
+      .col-xs-12.center#item_search_response{ style: 'display: none;' }
+      .col-xs-12.center#spinner_div{ style: 'display: none;' }
+        = icon('fas', 'spinner fa-pulse fa-2x', id: 'ajax_spinner')
     .row
       .col-xs-12
         = f.input :combination_type, as: :hidden
         = f.input :combination_id, as: :hidden
         = f.input :item_type, as: :hidden
 
-        = f.input :item_id, as: :select, required: true, collection: [], label: false, input_html: { style: 'display: none;'}
+        = f.input :item_id, as: :select, required: true, collection: [], label: 'Select Item', label_html: { style: 'display: none;'}, input_html: { style: 'display: none;'}
         = f.input :quantity, hint: "#{@assembly.quantity_hint}"
         = f.submit class: 'btn yellow'
