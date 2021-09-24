@@ -40,21 +40,17 @@ class CombinationsController < ApplicationController
   def item_search
     authorize :combination, :item_search?
 
-    byebug
-
     terms = item_search_params[:terms]
 
     @collection = []
 
-    if terms.length > 3
-      # look in Components first (smaller)
-      @collection << Component.search_name_and_uid(terms).pluck(:id, :name, :uid)
+    # look in Components first (smaller)
+    @collection << Component.search_name_and_uid(terms).order(:uid, :name).pluck(:id, :uid, :name)
 
-      # look in Parts second
-      @collection << Part.search_name_and_uid(terms)
-    end
+    # look in Parts second
+    @collection << Part.search_name_and_uid(terms).order(:uid, :name).pluck(:id, :uid, :name)
 
-    render json: @collection.flatten
+    render json: @collection.flatten(1)
   end
 
   private

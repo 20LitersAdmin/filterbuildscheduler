@@ -61,8 +61,7 @@ class Part < ApplicationRecord
   end
 
   def self.search_name_and_uid(string)
-    raise StandardError, 'String was blank' if string.blank?
-    raise StandardError, 'Not a string' unless string.is_a? String
+    return [] if string.blank? || !string.is_a?(String)
 
     ary = []
     args = string.tr(',', '').tr(';', '').split
