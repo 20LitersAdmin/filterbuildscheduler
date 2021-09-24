@@ -107,16 +107,20 @@
 
 ### Current:
 - Assembly management:
-  - `resources :assemblies`
-    - standard MVC for managing assemblies, but mostly remote: true
-    - nested within `:combinations`
+  - **DONE** `resources :assemblies`
+    - **DONE** nested within `:combinations`
   - `resources :combinations`
     - `combinations/:uid` routes:
-      - `show`: shows assemblies for the given combination
-        - use instead of `/technologies/:id/items`
       - `edit`: views with modal_form for create, update, delete
+        - **CURRENT**: Assembly#new form fills as expected, will it save??
+          - Assembly#create needs to fire a re-load of the page
+        - **DONE**: Assembly#update
+          - Assembly#update just uses jQuery to update the @assembly.quantity in the table
+        - Assembly#discard
       - `prices`:
         - use instead of `/technologies/:id/prices`
+      - **DONE** `show`: shows assemblies for the given combination
+        - use instead of `/technologies/:id/items`
 
 - For Setup crew:
   - need a view similar to /technology/:id/items, but traversing over each component separately

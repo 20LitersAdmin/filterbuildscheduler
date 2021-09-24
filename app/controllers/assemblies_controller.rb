@@ -13,7 +13,6 @@ class AssembliesController < ApplicationController
 
   def update
     if @assembly.update(assembly_params)
-
       @message = 'Assembly saved!'
       @msg_type = 'success'
     else
@@ -36,6 +35,7 @@ class AssembliesController < ApplicationController
   end
 
   def create
+    # TODO: Here.
     if @assembly.create(assembly_params)
       @message = 'Assembly created!'
       @msg_type = 'success'
@@ -44,6 +44,8 @@ class AssembliesController < ApplicationController
       @msg_type = 'danger'
     end
 
+    # TODO: Can just redirect_to edit_combination_path(@combination.uid)
+    # Or can <%= j render 'assembly_edit', collection: @assembly %>
     respond_to do |format|
       format.js do
         render 'update'
