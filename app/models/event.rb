@@ -18,7 +18,7 @@ class Event < ApplicationRecord
   validate :registrations_are_valid?
   validate :leaders_are_valid?
 
-  scope :active,       -> { where(deleted_at: nil) }
+  # scope :active,       -> { where(deleted_at: nil) }
   scope :non_private,  -> { where(is_private: false) }
   scope :pre_reminders, -> { where(reminder_sent_at: nil) }
   scope :future,       -> { where('end_time > ?', Time.now).order(start_time: :asc) }
