@@ -12,6 +12,9 @@
     <%= human_boolean(leader.can_lead_event?(@event)) %>
   </td>
   <td>
+    <%= leader.leader_type.capitalize %>
+  </td>
+  <td>
     <% if already %>
       <%= link_to "Remove", leader_unregister_event_path(@event, user_id: leader.id), class: "btn yellow" %>
     <% else %>
