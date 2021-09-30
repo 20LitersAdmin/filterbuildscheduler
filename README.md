@@ -106,6 +106,8 @@
   - No conflict if 2 users have the same count open (just adds to it)
 
 ### Current:
+- `events/:id/leaders`
+  - Add column: `user.leader_type`
 - Assembly management:
   - **DONE** `resources :assemblies`
     - **DONE** nested within `:combinations`

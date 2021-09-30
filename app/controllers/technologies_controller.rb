@@ -8,8 +8,6 @@ class TechnologiesController < ApplicationController
     authorize @techs = Technology.list_worthy
   end
 
-  def items; end
-
   def prices; end
 
   def donation_list
