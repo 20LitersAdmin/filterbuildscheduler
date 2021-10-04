@@ -6,7 +6,7 @@ class Assembly < ApplicationRecord
   # 'item' represents the 'child' object
   # #quantity stores the number of 'items' needed per 'combination'
   # 'price' is the cost of a single 'item' * #quantity
-  # #depth is a rough number of steps removed from the root Technology
+  # #depth is a rough calculation of the number of steps removed from the root Technology
 
   # simple_form field
   attr_accessor :item_search
@@ -16,7 +16,6 @@ class Assembly < ApplicationRecord
 
   before_save :calculate_price
   after_save :recalculate_quantities_depths_prices
-  # TODO: Add price job
   after_destroy :recalculate_quantities_depths_prices
 
   validates_numericality_of :quantity, greater_than: 0
@@ -107,7 +106,6 @@ class Assembly < ApplicationRecord
     "#{combination_type}:#{item_type}"
   end
 
-
   private
 
   def calculate_price
@@ -115,6 +113,8 @@ class Assembly < ApplicationRecord
   end
 
   def recalculate_quantities_depths_prices
+    # TODO: Current: Run unless on exists
+    # Better: If one exists, destroy it, then schedule a new one
     QuantityAndDepthCalculationJob.perform_later unless Delayed::Job.where(queue: 'quantity_calc').any?
     PriceCalculationJob.perform_later unless Delayed::Job.where(queue: 'price_calc').any?
   end

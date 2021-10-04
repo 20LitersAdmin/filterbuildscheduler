@@ -31,8 +31,11 @@ $(document).on('turbolinks:load', function() {
         ajaxSpinner.hide();
 
         if (response.length != 0) {
+          console.log(response);
+          var itemLang = ((response.length > 1) ? 'items' : 'item');
+
           searchResponseDiv.html(
-            `Found ${response.length} items that match "${searchString}".`
+            `Found ${response.length} ${itemLang} that match "${searchString}".`
           );
           searchResponseDiv.show();
 

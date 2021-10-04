@@ -34,4 +34,8 @@ class AssemblyPolicy < ApplicationPolicy
   def create?
     new?
   end
+
+  def destroy?
+    edit?
+  end
 end
