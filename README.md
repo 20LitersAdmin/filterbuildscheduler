@@ -25,9 +25,13 @@
 ### Solutions:
 1. Count records are temporary records, created when an inventory is created and destroyed after their meaningful values are transferred to their corresponding Materials, Parts, Components, and Technologies
   1. **DONE** Counts are polymorphically joined to an item, including Technology
+
     - forms, params, and controllers will need to be adjusted
+
   2. **NOPE** Counts are created based on items, dynamically created when an inventory is created
+
   3. `Receive.new()` function is handled by a job that runs after inventory is finalized
+
   4. Calculating `count.extrapolated_count` is depreciated
 
   5. Count records can still track partial counts (loose items vs. boxed items), and record which User submitted the Count
@@ -59,10 +63,10 @@
 3. Item join tables are simplified
   - **DONE** dropping 'extrapolate' from all table names
   - **DONE** following the naming convention
-  - **DONE** removing the following join tables:
+  -  removing the following join tables:
     - `extrapolate_technology_parts`
     - `extrapolate_technology_materials`
-  - Calculations of distant relations are handled via the existing join tables
+  - **YAGNI** Calculations of distant relations are handled via the existing join tables
     - **DONE** Quantity and depth calculations are handled via `QuantityAndDepthCalculationJob`
     - **DONE** Price calculation is handled via `PriceCalculationJob`
 
@@ -96,28 +100,51 @@
 * `Events#cancelled` - relies on `.only_deleted`
   - vs. `/admin/event&scope=discarded`
 
-### Stretch goals:
-7. **DONE** HAML > .html.erb
-  - **DONE** install HAML and use for all new/updated views
-  - slowly migrate away from .html.erb via file replacement over time
-
-8. **DONE** Inventory#edit uses Websockets for real-time page changes when multiple users are performing an inventory at once.
-  - ActionCable replaces all counts on page
-  - No conflict if 2 users have the same count open (just adds to it)
 
 ### Current:
-- `Component#weeks_to_out` should traverse downward
+0. Inventory: Count CRUDding still works, right?
 
-- RailsAdmin:
-  - CRUD OauthUsers?
-  - CRUD Emails?
-  - CRUD Organizations?
+1. Count records are temporary records, created when an inventory is created and destroyed after their meaningful values are transferred to their corresponding Materials, Parts, Components, and Technologies
+  1. **DONE** Counts are polymorphically joined to an item, including Technology
 
+    - forms, params, and controllers will need to be adjusted
+
+  2. **NOPE** Counts are created based on items, dynamically created when an inventory is created
+
+  3. Receive.new() function is handled by a job that runs after inventory is finalized
+
+  4. Calculating count.extrapolated_count is depreciated
+
+  5. Count records can still track partial counts (loose items vs. boxed items), and record which User submitted the Count
+    - **DONE** but the 'partial' interface has a better UX
+    - remove all Count methods, scopes, and item relationships except:
+      - count.link_text
+      - count.link_class
+      - count.sort_by_user
+  6. **DONE** Count-related fields are added to Material, Part, Component, and Technology:
+    - **DONE** Three integer attributes for current counts:
+      - [ loose | box | available ]
+        - availabe == loose + (box * quantity_per_box)
+    - **DONE** One jsonb for history:
+      - { inventory_id: available }
+    - **DONE** One jsonb for quantities:
+      - { UID: quantity_per_technology}
+        - updated whenever an Assembly or MaterialsPart is saved/destroyed
+    - https://guides.rubyonrails.org/active_record_postgresql.html#json-and-jsonb
+  7. A job handles transferring count-related fields to it's related item, then deletes the Count record.
+    - The job runs `count.update_item_and_destroy!`
+    - The job runs after Inventory is marked completed via `Delayed::Job#perform_later`
+    - Should Counts persist for one cycle? Meaning, delete the `Inventory.former`'s counts when a new inventory is created?
+
+
+### Still to do:
 - Nerf #cprice on all Items
 
-- make sure `Part#not_made_from_materials` and `Material#all`price is being escalated to assemblies on save
+- Make sure `Part#not_made_from_materials` and `Material#all`price is being escalated to assemblies on save
   - Right now, saving an Assembly trigers PriceCalculationJob, but what if you change the price of a Part or Material? That needs to cascade up.
   - Assemblies have a price (item.price * quantity)
+
+- `Component#weeks_to_out` should traverse downward
 
 - Calculate how many more items can be made:
   - Parts.where(made_from_materials: true)
@@ -131,27 +158,15 @@
   - EventsController ln 28: `technology.img_url`
   - probably a few `event.img_url` hanging out there as well
 
-  - is Oauth Email syncing causing the R14 Memory Quota Exceeded warning?
+- RailsAdmin:
+  - CRUD OauthUsers?
+  - CRUD Emails?
+    - is Oauth Email syncing causing the R14 Memory Quota Exceeded issue?
+  - CRUD Organizations?
 
-#### After 1st deployment:
-* Migrate the db (will perform the migration jobs)
-
-#### 2nd deployment work to be done
-* Un-comment-out `Part#before_save :set_made_from_materials`
-* Remove TEMP methods from Part, Component, Material
-* Un-comment-out `has_one_attached` on Items
-* Un-comment-out `include Discard::Model` && `scope :active` on Models
-* Un-comment-out `monetize :price_cents` on Technology, Component, and Assembly
-* Remove `paranoia` gem
-* Delete all commented relations on Models
-* Un-do Paranoia -> Discard patching
-  -  `EventsController#398`
-  -
-* Remove `assets.rb#12`
-* Remove UIDS folder
-* Delete the migration jobs:
-  - ImageSyncJob
-  - InventoryMigrationJob
+## After 1st deploy:
+- migrate the dB (which runs the necessary jobs)
+- remove temp methods e.g. TEMP merge function from Items
 
 
 ## Remind myself:

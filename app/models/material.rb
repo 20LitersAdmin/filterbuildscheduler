@@ -75,7 +75,6 @@ class Material < ApplicationRecord
     technologies.map(&:owner_acronym)
   end
 
-
   def picture
     image.attached? ? image : 'http://placekitten.com/140/140'
   end
@@ -111,11 +110,6 @@ class Material < ApplicationRecord
   def tech_names_short
     all_technologies.pluck(:short_name)
   end
-
-  # TODO: delete after 1st migration
-  # def uid
-  #   "M#{id.to_s.rjust(3, 0.to_s)}"
-  # end
 
   # Rails Admin virtual
   def uid_and_name

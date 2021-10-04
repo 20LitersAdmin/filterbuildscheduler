@@ -146,11 +146,6 @@ class Component < ApplicationRecord
     end
   end
 
-  # TODO: delete after 1st migration
-  # def uid
-  #   "C#{id.to_s.rjust(3, '0')}"
-  # end
-
   # Rails Admin virtual
   def uid_and_name
     "#{uid}: #{name}"
