@@ -1,7 +1,12 @@
 # frozen_string_literal: true
 
 class CombinationsController < ApplicationController
-  before_action :set_combination, except: :item_search
+  before_action :set_combination, only: %i[show edit prices]
+
+  def index
+    authorize :combination, :index?
+    @techs = Technology.list_worthy.order(short_name: :asc)
+  end
 
   def show
     authorize :combination, :show?
@@ -34,8 +39,6 @@ class CombinationsController < ApplicationController
     @all_technologies = @combination.all_technologies
     @parents = @combination.super_components
   end
-
-  def price; end
 
   def item_search
     authorize :combination, :item_search?

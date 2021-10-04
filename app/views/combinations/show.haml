@@ -15,6 +15,7 @@
           - @parents.each do |parent|
             %li= link_to parent.name, combination_path(parent.uid)
     .col-xs-4.right-align
+      = link_to 'Tech List', combinations_path, class: 'btn empty'
       = link_to 'Edit', edit_combination_path(@combination.uid), class: 'btn blue'
       = link_to @toggle_lang, @toggle_link, class: 'btn yellow'
   .row
@@ -26,6 +27,8 @@
             %th
               - if @combination.image.attached?
                 %img{ src: url_for(@combination.image), height: '60' }
+            %th.right-align
+              = humanized_money_with_symbol @combination.price
             %th.right-align # per
             %th.right-align avail.
         %tbody

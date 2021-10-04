@@ -15,7 +15,7 @@
           - @parents.each do |parent|
             %li= link_to parent.name, combination_path(parent.uid)
     .col-xs-4.right-align
-      = link_to 'Show', combination_path(@combination.uid), class: 'btn yellow'
+      = link_to 'Back', combination_path(@combination.uid), class: 'btn yellow'
   .row.spacer-top
     .col-xs-12.admin-div
       %h4  EDIT Assemblies for #{@combination.uid}: #{@combination.name} (#{@combination.available_count} available)

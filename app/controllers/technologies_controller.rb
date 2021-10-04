@@ -4,12 +4,6 @@ class TechnologiesController < ApplicationController
   before_action :set_technology, only: %i[items prices]
   before_action :set_bom_items, only: %i[items prices]
 
-  def index
-    authorize @techs = Technology.list_worthy
-  end
-
-  def prices; end
-
   def donation_list
     @quantity = params[:q].present? ? params[:q].to_i : 1
     @quantity_val = params[:q].to_i if params[:q].present?
@@ -36,6 +30,10 @@ class TechnologiesController < ApplicationController
 
   def label
     # page to print a full page of labels for one item
+    @item = params[:uid].objectify_uid
+
+    raise ActiveRecord::RecordNotFound unless @item.present?
+
     @label = Label.new(@item.label_hash)
   end
 
@@ -71,30 +69,8 @@ class TechnologiesController < ApplicationController
 
   private
 
-  def set_technology
-    authorize @technology = Technology.find(params[:id])
-  end
-
-  def objectify_uid_from_param
-    authorize Technology
-    uid = params[:uid]
-    @item = uid.objectify_uid
-
-    raise ActiveRecord::RecordNotFound unless @item.present?
-  end
-
-  def set_bom_items
-    @quantity = params[:q].present? ? params[:q].to_i : 1
-    @quantity_val = params[:q].to_i if params[:q].present?
-    @assemblies = @technology.assemblies.ascending
-    @materials = @technology.materials
-    # Materials print which parts they are used to make.
-    # But this list can include parts not related to @technology
-    # So we compare material.parts & @part_uids
-    @part_uids = @technology.quantities.keys.grep(/\AP/)
-  end
-
   def broad_set_params
+    # used for labels_select and donation_lis
     params.except(
       :authenticity_token,
       :action,

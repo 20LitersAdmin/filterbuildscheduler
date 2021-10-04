@@ -8,4 +8,8 @@ class Label
   def only_loose?
     only_loose
   end
+
+  def picture
+    image.attached? ? image : 'http://placekitten.com/140/140'
+  end
 end

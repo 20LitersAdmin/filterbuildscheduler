@@ -3,19 +3,23 @@
 class CombinationPolicy < Struct.new(:user, :combination)
   # attr_reader :user, :technology
 
-  def show?
+  def index?
     user&.admin_or_leader?
   end
 
+  def show?
+    index?
+  end
+
   def edit?
-    show?
+    index?
   end
 
   def price?
-    show?
+    index?
   end
 
   def item_search?
-    show?
+    index?
   end
 end

@@ -87,7 +87,7 @@ class Technology < ApplicationRecord
     events.map(&:item_goal).sum
   end
 
-  # TODO: image should be probably needs to be adjusted
+  # TODO: image needs to be adjusted
   def label_hash
     {
       name: name,
@@ -95,7 +95,7 @@ class Technology < ApplicationRecord
       uid: uid,
       technologies: [''],
       quantity_per_box: quantity_per_box,
-      image: img_url,
+      image: image,
       only_loose: false
     }
   end
@@ -109,11 +109,6 @@ class Technology < ApplicationRecord
 
   def owner_acronym
     owner.gsub(/([a-z]|\s)/, '')
-  end
-
-  # TODO: temp method, remove after images are enabled
-  def picture
-    img_url
   end
 
   # TODO: re-work this
