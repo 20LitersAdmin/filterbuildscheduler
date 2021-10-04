@@ -106,21 +106,6 @@
   - No conflict if 2 users have the same count open (just adds to it)
 
 ### Current:
-- Assembly management:
-  - **DONE** `resources :assemblies`
-    - **DONE** nested within `:combinations`
-  - `resources :combinations`
-    - `combinations/:uid` routes:
-      - **DONE** `edit`: views with modal_form for create, update, delete
-      - `prices`:
-        - use instead of `/technologies/:id/prices`
-      - **DONE** `show`: shows assemblies for the given combination
-        - use instead of `/technologies/:id/items`
-
-- For Setup crew:
-  - need a view similar to /technology/:id/items, but traversing over each component separately
-    - Each build station should have an inventory list showing just that component and its immediate children
-
 - `Component#weeks_to_out` should traverse downward
 
 - RailsAdmin:

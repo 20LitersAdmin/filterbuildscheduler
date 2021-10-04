@@ -89,16 +89,16 @@ class Part < ApplicationRecord
     emp.material.price / emp.parts_per_material
   end
 
-  # TODO: image should be probably needs to be adjusted
+  # TODO: image needs to be adjusted
   # TODO: Needs technologies.active
   def label_hash
     {
       name: name,
       description: description,
       uid: uid,
-      technologies: technologies.pluck(:short_name),
+      technologies: technologies.active.pluck(:short_name),
       quantity_per_box: quantity_per_box,
-      image: picture,
+      image: image,
       only_loose: only_loose?
     }
   end
@@ -123,15 +123,6 @@ class Part < ApplicationRecord
     return ['N/A'] unless technologies.present?
 
     all_technologies.map(&:owner_acronym)
-  end
-
-  # TODO: replace this with image
-  def picture
-    begin
-      ActionController::Base.helpers.asset_path("uids/#{uid}.jpg")
-    rescue => e
-      'http://placekitten.com/140/140'
-    end
   end
 
   def per_technology(technology)

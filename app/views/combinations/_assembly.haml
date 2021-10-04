@@ -21,6 +21,8 @@
     - if item.image.attached?
       %img{ src: url_for(item.image), height: '60' }
   %td.right-align
+    = humanized_money_with_symbol item.price
+  %td.right-align
     = human_number assembly.quantity
   %td.right-align{ style: highlight }
     = human_number item.available_count

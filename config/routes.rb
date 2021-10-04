@@ -19,7 +19,7 @@ Rails.application.routes.draw do
   get 'info', to: 'pages#info', as: 'info'
   get 'leaders', to: 'users#leaders', as: 'leaders'
 
-  resources :combinations, only: %i[show edit], param: :uid, constraints: { uid: Constants::UID::URL_REGEX } do
+  resources :combinations, only: %i[index show edit], param: :uid, constraints: { uid: Constants::UID::URL_REGEX } do
     # A common controller for Technology & Component
     # since all the CRUDding is happening in RailsAdmin
     # we only really need to manage assemblies here.
@@ -27,17 +27,12 @@ Rails.application.routes.draw do
       post 'item_search'
     end
     member do
-      get 'price'
+      get 'history'
     end
-
     # standard routes for assemblies model
     # combination/:combination_uid/assemblies
     resources :assemblies
   end
-
-  # since we actually want to use the assembly ID, these need to be outside the resources block
-  # get 'assemblies/:id/open_modal_form', to: 'assemblies#open_modal_form', as: 'open_modal_form_assembly'
-  # post 'assemblies/:id/update', to: 'assemblies#update', as: 'update_assembly'
 
   resources :report, only: [:index] do
     collection do
@@ -76,18 +71,11 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :technologies, only: [:index] do
-    member do
-      get 'items'
-      get 'prices'
-      get 'history'
-    end
-  end
-
-  get 'labels', to: 'technologies#labels', as: 'labels'
-  get 'label/:uid', to: 'technologies#label', as: 'label'
-  post 'labels_select', to: 'technologies#labels_select', as: 'labels_select'
+  # Technologies resources:
   get 'donation_list', to: 'technologies#donation_list', as: 'donation_list'
+  get 'label/:uid', to: 'technologies#label', as: 'label'
+  get 'labels', to: 'technologies#labels', as: 'labels'
+  post 'labels_select', to: 'technologies#labels_select', as: 'labels_select'
 
   resources :inventories do
     collection do

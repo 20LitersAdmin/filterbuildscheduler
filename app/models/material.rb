@@ -53,16 +53,14 @@ class Material < ApplicationRecord
     Technology.where('quantities ? :key', key: uid)
   end
 
-  # TODO: Needs technologies.active
   def label_hash
     {
       name: name,
       description: description,
       uid: uid,
-      technologies: technologies.pluck(:short_name),
+      technologies: technologies.active.pluck(:short_name),
       quantity_per_box: quantity_per_box,
-      # TODO: image should not use picture
-      image: picture,
+      image: image,
       only_loose: only_loose?
     }
   end
@@ -77,12 +75,9 @@ class Material < ApplicationRecord
     technologies.map(&:owner_acronym)
   end
 
+
   def picture
-    begin
-      ActionController::Base.helpers.asset_path("uids/#{uid}.jpg")
-    rescue => e
-      'http://placekitten.com/140/140'
-    end
+    image.attached? ? image : 'http://placekitten.com/140/140'
   end
 
   def per_technology(technology)

@@ -1,0 +1,10 @@
+-# frozen_string_literal: true
+%tr
+  %td
+    = link_to combination_path(technology.uid), class: 'btn empty' do
+      = "#{technology.uid}: #{technology.short_name} #{technology.name}"
+  %td
+    - if technology.image.attached?
+      %img{ height: '100', src: url_for(technology.image) }
+  %td
+    = technology.owner

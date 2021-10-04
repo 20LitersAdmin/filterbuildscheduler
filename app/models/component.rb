@@ -94,26 +94,16 @@ class Component < ApplicationRecord
     )
   end
 
-  # TODO: image should be probably needs to be adjusted
   def label_hash
     {
       name: name,
       description: description,
       uid: uid,
-      technologies: technologies.pluck(:short_name),
+      technologies: technologies.active.pluck(:short_name),
       quantity_per_box: quantity_per_box,
-      image: picture,
+      image: image,
       only_loose: only_loose?
     }
-  end
-
-  # TODO: replace this with image
-  def picture
-    begin
-      ActionController::Base.helpers.asset_path('uids/' + uid + '.jpg')
-    rescue => error
-      'http://placekitten.com/140/140'
-    end
   end
 
   # TODO: replace this with price_cents
