@@ -163,11 +163,6 @@ class Part < ApplicationRecord
     all_technologies.pluck(:short_name)
   end
 
-  # TODO: delete after 1st migration
-  # def uid
-  #   "P#{id.to_s.rjust(3, 0.to_s)}"
-  # end
-
   # Rails Admin virtual
   def uid_and_name
     "#{uid}: #{name}"
