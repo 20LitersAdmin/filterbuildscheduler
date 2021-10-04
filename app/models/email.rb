@@ -14,6 +14,9 @@ class Email < ApplicationRecord
   scope :synced, -> { where.not(sent_to_kindful_on: nil) }
 
   def self.from_gmail(response, body_data, oauth_user)
+    # TODO: trim body_data if too large?
+    # migt be causing Heroku R14 memory overflow issue
+
     message_id = cleanup_text response.payload.headers.select { |header| header.name.downcase == 'message-id' }.first&.value
 
     return if message_id.nil?

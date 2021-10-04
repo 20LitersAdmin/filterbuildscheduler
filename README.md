@@ -130,6 +130,8 @@
 
 - `Component#weeks_to_out` should traverse downward
 
+- is Oauth Email syncing causing the R14 Memory Quota Exceeded warning?
+
 - RailsAdmin:
   - CRUD OauthUsers?
   - CRUD Emails?
