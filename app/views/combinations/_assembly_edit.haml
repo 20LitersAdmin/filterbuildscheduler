@@ -3,7 +3,7 @@
   item = assembly_edit.item
   item_type = assembly_edit.item_type
 
-%tr
+%tr{ id: "assembly_#{assembly_edit.id}" }
   %td.right-align.left-border
     - if item_type == 'Component'
       = link_to item.uid, edit_combination_path(item.uid)
@@ -16,8 +16,7 @@
   %td
     - if item.image.attached?
       %img{ src: url_for(item.image), height: '60' }
-  %td
+  %td.right-align
     = link_to 'Edit', edit_combination_assembly_path(@combination.uid, assembly_edit.id), remote: true, class: 'btn blue'
-  %td
-    Discard
-
+  %td.right-align
+    = link_to 'Delete', combination_assembly_path(@combination.uid, assembly_edit.id), remote: true, method: :delete, class: 'btn red', 'data-confirm': 'Are you sure? This can\'t be undone.'

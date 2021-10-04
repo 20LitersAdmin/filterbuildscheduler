@@ -2,8 +2,8 @@
 
 class AssembliesController < ApplicationController
   before_action :set_combination, :authorize_assembly
-  before_action :set_assembly, only: %i[edit update]
-  before_action :create_assembly, only: %i[new create]
+  before_action :set_assembly, only: %i[edit update destroy]
+  before_action :create_assembly, only: %i[new]
 
   def edit
     respond_to do |format|
@@ -13,7 +13,7 @@ class AssembliesController < ApplicationController
 
   def update
     if @assembly.update(assembly_params)
-      @message = 'Assembly saved!'
+      @message = 'Assembly updated!'
       @msg_type = 'success'
     else
       @assembly.reload
@@ -35,9 +35,16 @@ class AssembliesController < ApplicationController
   end
 
   def create
-    # TODO: Here.
-    if @assembly.create(assembly_params)
-      @message = 'Assembly created!'
+    # Check if assembly already exists
+    @assembly = @combination.assemblies.find_or_initialize_by assembly_params.except(:quantity)
+
+    @assembly.quantity = assembly_params[:quantity]
+
+    new_record = @assembly.new_record?
+    success_message = new_record ? 'Assembly created!' : 'Found existing assembly and updated it.'
+
+    if @assembly.save
+      @message = success_message
       @msg_type = 'success'
     else
       @message = 'There was an error making the assembly.'
@@ -48,7 +55,27 @@ class AssembliesController < ApplicationController
     # Or can <%= j render 'assembly_edit', collection: @assembly %>
     respond_to do |format|
       format.js do
-        render 'update'
+        if new_record
+          render 'create'
+        else
+          render 'update'
+        end
+      end
+    end
+  end
+
+  def destroy
+    if @assembly.destroy
+      @message = 'Assembly deleted.'
+      @msg_type = 'success'
+    else
+      @message = 'Failed to delete.'
+      @msg_type = 'danger'
+    end
+
+    respond_to do |format|
+      format.js do
+        render 'delete'
       end
     end
   end

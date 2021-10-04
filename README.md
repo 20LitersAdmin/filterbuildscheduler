@@ -106,19 +106,12 @@
   - No conflict if 2 users have the same count open (just adds to it)
 
 ### Current:
-- `events/:id/leaders`
-  - Add column: `user.leader_type`
 - Assembly management:
   - **DONE** `resources :assemblies`
     - **DONE** nested within `:combinations`
   - `resources :combinations`
     - `combinations/:uid` routes:
-      - `edit`: views with modal_form for create, update, delete
-        - **CURRENT**: Assembly#new form fills as expected, will it save??
-          - Assembly#create needs to fire a re-load of the page
-        - **DONE**: Assembly#update
-          - Assembly#update just uses jQuery to update the @assembly.quantity in the table
-        - Assembly#discard
+      - **DONE** `edit`: views with modal_form for create, update, delete
       - `prices`:
         - use instead of `/technologies/:id/prices`
       - **DONE** `show`: shows assemblies for the given combination
@@ -130,8 +123,6 @@
 
 - `Component#weeks_to_out` should traverse downward
 
-- is Oauth Email syncing causing the R14 Memory Quota Exceeded warning?
-
 - RailsAdmin:
   - CRUD OauthUsers?
   - CRUD Emails?
@@ -139,7 +130,7 @@
 
 - Nerf #cprice on all Items
 
-- make sure Part#not_made_from_materials and Material#all price is being escalated to assemblies on save
+- make sure `Part#not_made_from_materials` and `Material#all`price is being escalated to assemblies on save
   - Right now, saving an Assembly trigers PriceCalculationJob, but what if you change the price of a Part or Material? That needs to cascade up.
   - Assemblies have a price (item.price * quantity)
 
@@ -155,7 +146,7 @@
   - EventsController ln 28: `technology.img_url`
   - probably a few `event.img_url` hanging out there as well
 
-
+  - is Oauth Email syncing causing the R14 Memory Quota Exceeded warning?
 
 #### After 1st deployment:
 * Migrate the db (will perform the migration jobs)
