@@ -11,6 +11,7 @@ $(document).on('turbolinks:load', function() {
     var itemType = $('input#assembly_item_type');
     var ajaxSpinner = $('div#spinner_div');
     var searchResponseDiv = $('div#item_search_response');
+    var combinationUid = $('#new_asssembly_form').attr('data-uid');
 
     // start fresh everytime to avoid duplicate options and clutter
     itemSelect.html('<option value=""></option>');
@@ -26,7 +27,7 @@ $(document).on('turbolinks:load', function() {
     $.ajax({
       type: 'post',
       url: '/combinations/item_search',
-      data: { search: { terms: searchString } },
+      data: { search: { terms: searchString, uid: combinationUid } },
       success: function(response) {
         ajaxSpinner.hide();
 
@@ -38,6 +39,10 @@ $(document).on('turbolinks:load', function() {
             `Found ${response.length} ${itemLang} that match "${searchString}".`
           );
           searchResponseDiv.show();
+
+          // BUG: sometimes the select is populated with duplicates
+          // trying to ensure it starts empty
+          itemSelect.html('<option value=""></option>');
 
           $(response).each(function(i, item) {
             // throw the response array into select#asembly_item_id as options

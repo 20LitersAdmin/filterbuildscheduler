@@ -23,7 +23,7 @@
       %table.table.show_combination_tbl{ id: "show_combination_tbl_#{@combination.uid}" }
         %thead
           %tr
-            %th{ colspan: 5 } #{@combination.uid}: #{@combination.name} (#{@combination.available_count} available)
+            %th{ colspan: 9 } #{@combination.uid}: #{@combination.name} (#{@combination.available_count} available)
             %th
               - if @combination.image.attached?
                 %img{ src: url_for(@combination.image), height: '60' }
