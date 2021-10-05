@@ -43,12 +43,19 @@ class CombinationsController < ApplicationController
   def item_search
     authorize :combination, :item_search?
 
+    # combination can be a Technology or a Component
+    @combination = item_search_params[:uid].objectify_uid
+
     terms = item_search_params[:terms]
 
     @collection = []
 
+    # prevent the current Component from being returned
+    # to prevent an Assembly where the combination and the item are the same thing
+    components = @combination.instance_of?(Component) ? Component.where.not(id: @combination.id) : Component
+
     # look in Components first (smaller)
-    @collection << Component.search_name_and_uid(terms).order(:uid, :name).pluck(:id, :uid, :name)
+    @collection << components.search_name_and_uid(terms).order(:uid, :name).pluck(:id, :uid, :name)
 
     # look in Parts second
     @collection << Part.search_name_and_uid(terms).order(:uid, :name).pluck(:id, :uid, :name)
@@ -69,6 +76,6 @@ class CombinationsController < ApplicationController
   end
 
   def item_search_params
-    params.require(:search).permit(:terms)
+    params.require(:search).permit(:terms, :uid)
   end
 end
