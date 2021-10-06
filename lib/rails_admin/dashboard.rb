@@ -28,7 +28,7 @@ module RailsAdmin
                 { name: 'Assign Leaders', link: 'events/lead' },
                 { name: 'Manage Builder Communication Preferences', link: 'users/communication' },
                 { name: 'Closed Events', link: 'admin/event&scope=closed' },
-                { name: 'Cancelled Events', link: 'admin/event&scope=discarded' },
+                { name: 'Cancelled Events', link: 'admin/event&scope=discarded' }
               ]
             }
 
@@ -48,9 +48,8 @@ module RailsAdmin
               base_uri: '/',
               links: [
                 { name: 'Edit/Update Technologies', link: 'admin/technology' },
-                { name: 'Item and Price lists', link: 'combinations' },
+                { name: 'Manage Assemblies', link: 'combinations' },
                 { name: 'Labels', link: 'labels' },
-                { name: 'Manage Assemblies', link: '#' },
                 { name: 'Order Items', link: 'inventories/order_all' },
                 { name: 'Donation List', link: 'donation_list' }
               ]

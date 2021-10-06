@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class Material < ApplicationRecord
-  # TODO: Second deployment
   include Discard::Model
 
   # SCHEMA notes
@@ -15,18 +14,12 @@ class Material < ApplicationRecord
 
   monetize :price_cents, allow_nil: true, numericality: { greater_than_or_equal_to: 0 }
 
-  # TODO: Second deployment (fails on migration)
   has_one_attached :image, dependent: :purge
   attr_accessor :remove_image
 
   validates_presence_of :name
 
-  # TODO: Second deploy
   scope :below_minimums, -> { where(below_minimum: true) }
-
-  # TODO: Second deployment remove
-  # scope :kept, -> { all }
-  # scope :discarded, -> { none }
 
   # rails_admin scope "active" sounds better than "kept"
   scope :active, -> { kept }
@@ -40,13 +33,6 @@ class Material < ApplicationRecord
   before_save :process_image, if: -> { attachment_changes.any? }
   after_save { image.purge if remove_image == '1' }
   after_save :check_uid
-
-  # TODO: TEMP merge function
-  def replace_with(material_id)
-    materials_parts.update_all(material_id: material_id)
-
-    self
-  end
 
   def all_technologies
     # .technologies finds direct relations through Assembly, but doesn't include technologies where this material may be deeply nested in components or made from a nested part

@@ -102,7 +102,17 @@
 
 
 ### Current:
-0. Inventory: Count CRUDding still works, right?
+0. To figure out how to handle Inventory#create, I decided to purge all VWF stuff from our system, which led to me deciding to hand-code all Assemblies instead of relying on what's currently in Production.
+
+1. InventoryMigrationJob#manually_create_assemblies
+  - **DONE** SAM3
+  - **DONE** SAM3-M
+  - **DONE** Handpump
+  - RWHS
+  - SAM2 (wait for re-design?)
+
+### Next:
+0. Inventory#create: Don't run CountCreate job, just find a way to quickly display Items and link to a count#create form (instead of count#edit)
 
 1. Count records are temporary records, created when an inventory is created and destroyed after their meaningful values are transferred to their corresponding Materials, Parts, Components, and Technologies
   1. **DONE** Counts are polymorphically joined to an item, including Technology
@@ -166,7 +176,8 @@
 
 ## After 1st deploy:
 - migrate the dB (which runs the necessary jobs)
-- remove temp methods e.g. TEMP merge function from Items
+- un-comment:
+  - Part#before_saves
 
 
 ## Remind myself:

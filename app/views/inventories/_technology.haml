@@ -1,0 +1,10 @@
+.col-xs-3.col-sm-2
+  .panel.panel-default
+    .panel-heading
+      .checkbox
+        %label
+          = check_box "inventory", "technologies", { multiple: true, class: 'checkbox'}, technology.uid, nil
+          = technology.short_name_w_owner
+    .panel-body
+      - if technology.image.attached?
+        = image_tag technology.image, alt: technology.name, class: ''

@@ -55,7 +55,7 @@ class InventoriesController < ApplicationController
   def create
     @date = inventory_params[:date]
 
-    @matching = Inventory.where(date: Date.parse(@date)).latest
+    # @matching = Inventory.where(date: Date.parse(@date)).latest
 
     @type =
       if inventory_params[:receiving] == 'true'
@@ -68,11 +68,11 @@ class InventoriesController < ApplicationController
         'unknown'
       end
 
-    if @matching.present? && @matching.type_for_params == @type
-      # No two inventories of the same type on the same day
-      flash[:warning] = "A #{@type} inventory already exists for #{inventory_params[:date]}, please use that one."
-      return redirect_to inventories_path
-    end
+    # if @matching.present? && @matching.type_for_params == @type
+    #   # No two inventories of the same type on the same day
+    #   flash[:warning] = "A #{@type} inventory already exists for #{inventory_params[:date]}, please use that one."
+    #   return redirect_to inventories_path
+    # end
 
     authorize @inventory = Inventory.create(inventory_params)
     @inventory.save
@@ -80,7 +80,8 @@ class InventoriesController < ApplicationController
     if @inventory.errors.any?
       flash[:warning] = @inventory.errors.first.join(': ')
     else
-      CountCreate.new(@inventory.reload, technologies_params)
+      # technologies_param used to bypass techs
+      # CountCreate.new(@inventory.reload, technologies_params)
       flash[:success] = 'The inventory has been created.'
       redirect_to edit_inventory_path(@inventory)
     end
