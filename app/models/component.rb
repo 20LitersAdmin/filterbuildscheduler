@@ -1,8 +1,11 @@
 # frozen_string_literal: true
 
 class Component < ApplicationRecord
-  # TODO: Second deployment
   include Discard::Model
+
+  # SCHEMA notes
+  # #history is a JSON store of historical inventory counts: { date.iso8601 => 99, date.iso8601 => 99 }
+  # #quantities is a JSON store of the total number (integer) needed per technology: { technology.uid => 99, technology.uid => 99 }
 
   # assembly_path wants to call @item.assemblies regardless of whether the @item
   # is a Technology or Component
@@ -24,10 +27,6 @@ class Component < ApplicationRecord
   attr_accessor :remove_image
 
   validates_presence_of :name
-
-  # TODO: Second deployment remove
-  # scope :kept, -> { all }
-  # scope :discarded, -> { none }
 
   # rails_admin scope "active" sounds better than "kept"
   scope :active, -> { kept }
@@ -54,21 +53,12 @@ class Component < ApplicationRecord
     Component.where('name ILIKE any ( array[?] )', ary).or(where('uid ILIKE any ( array[?] )', ary))
   end
 
-  # TODO: TEMP merge function
-  def replace_with(component_id)
-    Assembly.where(combination: self).update_all(combination_id: component_id)
-
-    Assembly.where(item: self).update_all(item_id: component_id)
-
-    self
-  end
-
   def all_technologies
     # .technologies finds direct relations through Assembly, but doesn't include technologies where this component may be deeply nested in other components
     Technology.where('quantities ? :key', key: uid)
   end
 
-  # TODO: Needs .active
+  # TODO: Needs .active?
   # NOTE: will only find 1st-level parents, not all ancestors
   def super_components
     Component.find_by_sql(
@@ -81,7 +71,7 @@ class Component < ApplicationRecord
     )
   end
 
-  # TODO: Needs .active
+  # TODO: Needs .active?
   # NOTE: will only find 1st-level children, not all descendents
   def sub_components
     Component.find_by_sql(

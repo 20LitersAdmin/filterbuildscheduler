@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class Technology < ApplicationRecord
-  # TODO: Second deployment
   include Discard::Model
 
   # SCHEMA notes
@@ -10,7 +9,6 @@ class Technology < ApplicationRecord
 
   has_and_belongs_to_many :users
 
-  # TODO: Second deployment
   has_one_attached :image, dependent: :purge
   has_one_attached :display_image, dependent: :purge
   attr_accessor :remove_image, :remove_display_image
@@ -26,14 +24,9 @@ class Technology < ApplicationRecord
   has_many :components, through: :assemblies, source: :item, source_type: 'Component'
   has_many :parts, through: :assemblies, source: :item, source_type: 'Part'
 
-  # TODO: Second deployment
   monetize :price_cents, numericality: { greater_than_or_equal_to: 0 }
 
   validates_presence_of :name, :short_name
-
-  # TODO: Second deployment remove
-  # scope :kept, -> { all }
-  # scope :discarded, -> { none }
 
   # rails_admin scope "active" sounds better than "kept"
   scope :active, -> { kept }
@@ -87,7 +80,6 @@ class Technology < ApplicationRecord
     events.map(&:item_goal).sum
   end
 
-  # TODO: image needs to be adjusted
   def label_hash
     {
       name: name,
@@ -188,11 +180,6 @@ class Technology < ApplicationRecord
   def short_name_w_owner
     "#{short_name} (#{owner_acronym})"
   end
-
-  # TODO: delete after 1st migration
-  # def uid
-  #   "T#{id.to_s.rjust(3, '0')}"
-  # end
 
   private
 

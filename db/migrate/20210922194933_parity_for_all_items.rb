@@ -1,6 +1,7 @@
+# frozen_string_literal: true
+
 class ParityForAllItems < ActiveRecord::Migration[6.1]
   def change
-
     # Never trigger an analyzer when calling methods on ActiveStorage
     ActiveStorage::Blob::Analyzable.module_eval do
       def analyze_later; end
@@ -24,6 +25,5 @@ class ParityForAllItems < ActiveRecord::Migration[6.1]
 
     remove_column :locations, :photo_url, :string
     remove_column :technologies, :img_url, :string
-
   end
 end

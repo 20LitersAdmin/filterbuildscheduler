@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class Part < ApplicationRecord
-  # TODO: Second deployment
   include Discard::Model
 
   # SCHEMA notes
@@ -21,15 +20,10 @@ class Part < ApplicationRecord
 
   monetize :price_cents, allow_nil: true, numericality: { greater_than_or_equal_to: 0 }
 
-  # TODO: Second deployment (fails on migration)
   has_one_attached :image, dependent: :purge
   attr_accessor :remove_image
 
   validates_presence_of :name
-
-  # TODO: Second deployment remove
-  # scope :kept, -> { all }
-  # scope :discarded, -> { none }
 
   # rails_admin scope "active" sounds better than "kept"
   scope :active, -> { kept }
@@ -39,7 +33,6 @@ class Part < ApplicationRecord
   scope :made_from_materials, -> { where(made_from_materials: true) }
   scope :not_made_from_materials, -> { where(made_from_materials: false) }
 
-  # TODO: Second deploy
   scope :below_minimums, -> { where(below_minimum: true) }
 
   # Exists in ActiveStorage already
@@ -49,16 +42,9 @@ class Part < ApplicationRecord
   before_save :process_image, if: -> { attachment_changes.any? }
   after_save { image.purge if remove_image == '1' }
   after_save :check_uid
+
   # TODO: Second deployment (fails on migration)
-  # before_save :set_made_from_materials, :set_below_minimum
-
-  # TODO: TEMP merge function
-  def replace_with(part_id)
-    assemblies.update_all(item_id: part_id)
-    materials_parts.update_all(part_id: part_id) if made_from_materials?
-
-    self
-  end
+  before_save :set_made_from_materials, :set_below_minimum
 
   def self.search_name_and_uid(string)
     return [] if string.blank? || !string.is_a?(String)

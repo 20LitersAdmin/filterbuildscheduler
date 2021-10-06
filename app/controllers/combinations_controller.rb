@@ -5,7 +5,7 @@ class CombinationsController < ApplicationController
 
   def index
     authorize :combination, :index?
-    @techs = Technology.list_worthy.order(short_name: :asc)
+    @techs = Technology.kept.list_worthy.order(short_name: :asc)
   end
 
   def show
