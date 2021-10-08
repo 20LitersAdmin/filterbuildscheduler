@@ -1,0 +1,29 @@
+-# frozen_string_literal: true
+
+.col-xs-12
+  .row
+    .col-xs-12
+      = f.input :loose_count
+  .row
+    .col-xs-12.expectation
+      - if @count.user_id.present?
+        #expected_loose_count_parent.highlight.red.empty.float-left
+          Current:
+          %span#expected_loose_count= @count.loose_count
+      #previous_loose_count_parent.highlight.red.empty.float-right
+        Previous:
+        %span#previous_loose_count= item.loose_count
+  .row
+    .col-xs-8
+      = f.input :unopened_boxes_count, label: "Unopened boxes: (#{item.quantity_per_box} per box)"
+    .col-xs-4
+      %p.center (box count already submitted)
+  .row
+    .col-xs-12.right-align.expectation
+      - if @count.user_id.present?
+        #expected_box_count_parent.highlight.red.empty.float-left
+          Current:
+          %span#expected_box_count= @count.unopened_boxes_count
+      #previous_box_count_parent.highlight.red.empty.float-right
+        Previous:
+        %span#previous_box_count= item.box_count
