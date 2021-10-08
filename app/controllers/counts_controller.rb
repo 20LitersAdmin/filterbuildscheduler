@@ -36,7 +36,7 @@ class CountsController < ApplicationController
         @inventory,
         {
           count_id: @count.id,
-          html_slug: render_to_string(partial: 'counts/count', collection: @inventory.counts.sort_by { |c| [c.sort_by_user, - c.name] }),
+          html_slug: render_to_string(partial: 'counts/count', collection: @inventory.counts.sort_by { |c| [c.sort_by_status, - c.item.name] }),
           uncounted: "#{view_context.pluralize(@inventory.counts.uncounted.size, 'item')} uncounted."
         }
       )

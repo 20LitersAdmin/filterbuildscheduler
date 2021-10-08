@@ -38,9 +38,15 @@ module Itemable
   end
 
   def all_technologies_names
-    return [] if is_a?(Technology)
+    return short_name if is_a?(Technology)
 
     all_technologies.active&.pluck(:short_name)&.join(', ')
+  end
+
+  def all_technologies_ids
+    return id if is_a?(Technology)
+
+    all_technologies.active&.pluck(:id)&.join(',')
   end
 
   def label_hash

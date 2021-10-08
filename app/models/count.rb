@@ -22,40 +22,6 @@ class Count < ApplicationRecord
     item.quantity_per_box * unopened_boxes_count.to_i
   end
 
-  # TODO: fix or remove
-  # def can_produce_x_parent
-  #   return 0 if available.zero?
-
-  #   case type
-  #   when 'material'
-  #     # Materials are larger than parts (1 material makes many parts)
-  #     material.extrapolate_material_parts.any? ? available * material.extrapolate_material_parts.first.parts_per_material.to_i : available
-  #   when 'part'
-  #     part.extrapolate_component_parts.any? ? available / part.extrapolate_component_parts.first.parts_per_component.to_i : available
-  #   when 'component'
-  #     available / item.per_technology
-  #   end
-  # end
-
-  # TODO: fix or remove
-  # def can_produce_x_tech
-  #   available.zero? ? 0 : available / item.per_technology
-  # end
-
-  # def diff_from_previous(field)
-  #   # coerce nil to 0 if necessary with .to_i
-  #   case field
-  #   when 'loose'
-  #     loose_count.to_i - item.loose_count
-  #   when 'box'
-  #     unopened_boxes_count.to_i - item.box_count
-  #   when 'available'
-  #     available.to_i - item.available_count
-  #   else
-  #     0
-  #   end
-  # end
-
   def group_by_tech
     item.technologies.map(&:id).min || 999
   end
@@ -72,10 +38,18 @@ class Count < ApplicationRecord
   end
 
   def link_class
-    return 'blue' unless user_id.nil?
+    return 'blue' if user_id.present?
 
     return 'empty' if partial_box || partial_loose
 
     'yellow'
+  end
+
+  def sort_by_status
+    return 2 if user_id.present?
+
+    return 1 if partial_box || partial_loose
+
+    0
   end
 end

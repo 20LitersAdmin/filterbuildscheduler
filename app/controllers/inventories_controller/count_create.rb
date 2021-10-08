@@ -9,7 +9,7 @@ class InventoriesController
 
       item_uids = []
 
-      Technology.where.not(uid: @tech_uids_to_skip).each do |technology|
+      Technology.list_worthy.where.not(uid: @tech_uids_to_skip).each do |technology|
         item_uids << technology.uid
         item_uids << technology.quantities.keys
       end

@@ -1,7 +1,9 @@
 -# frozen_string_literal: true
+
+-# techs && status are used by inventories.js's filter functions
 :ruby
-  techs  = count.tech_ids
   item   = count.item
+  techs  = item.all_technologies_ids
   status = 'uncounted'
   status = 'counted' if count.user_id.present?
   status = 'partial' if (count.partial_box || count.partial_loose)
@@ -9,7 +11,7 @@
 .count-wrapper.col-lg-3.col-md-4.col-sm-6.col-xs-12{ id: "count_#{count.id}", data: { status: status, techs: techs } }
   .count-div
     %p.count-title
-      = count.name
+      = item.name
     .half.count-img{ style: "background-image: url('#{url_for item.picture}')" }
     .half
       %p.count-tech
@@ -17,7 +19,10 @@
           = item.uid
         %br/
         %strong.count-tech
-          For: #{item.all_technologies_names}
+          - if item.is_a? Technology
+            (complete)
+          - else
+            For: #{item.all_technologies_names}
       - if count.user_id.present?
         %p.current-count
           %strong Avail:
