@@ -50,7 +50,7 @@ class InventoriesController < ApplicationController
       @inventory.manual = true
     end
 
-    @technologies = Technology.active.list_worthy.order(:owner, :short_name)
+    @technologies = Technology.list_worthy.order(:owner, :short_name)
   end
 
   def create
@@ -84,7 +84,7 @@ class InventoriesController < ApplicationController
 
   def edit
     authorize @inventory = Inventory.find(params[:id])
-    @counts = @inventory.counts.sort_by { |c| [c.sort_by_user, - c.name] }
+    @counts = @inventory.counts.sort_by { |c| [c.sort_by_status, - c.item.name] }
     @uncounted = "#{view_context.pluralize(@inventory.counts.uncounted.size, 'item')} uncounted."
 
     @techs = Technology.list_worthy

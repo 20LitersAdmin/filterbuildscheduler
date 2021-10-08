@@ -104,6 +104,10 @@
 ### Current:
 1. Count records are temporary records, created when an inventory is created and destroyed after their meaningful values are transferred to their corresponding Materials, Parts, Components, and Technologies
 
+  1. `counts/_edit` is a shit show of nested ifs
+    - item.only_loose doesn't need "Submit Loose Count" button, only "Submit"
+    - when @count.partial_box? or @count.partial_loose? the opposite submit partial button shouldn't be visible
+
   3. When finalizing inventory (InventoriesController#update), CountTransfer runs
     - copies all counts.changed to their items
     - deletes all counts
@@ -120,7 +124,11 @@
 - ComponentsController#order && ComponentsController#order_low
   - from InventoriesController#order_all and InventoriesController#order
 
-- Nerf #cprice on all Items
+- What happens when a price is changed?
+  - Material
+  - Part
+  - Component
+  - Technology
 
 - Make sure `Part#not_made_from_materials` and `Material#all`price is being escalated to assemblies on save
   - Right now, saving an Assembly trigers PriceCalculationJob, but what if you change the price of a Part or Material? That needs to cascade up.

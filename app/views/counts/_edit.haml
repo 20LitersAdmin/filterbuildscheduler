@@ -1,5 +1,10 @@
 -# frozen_string_literal: true
-- item = @count.item
+:ruby
+ item = @count.item
+ # decide how to handle scenarios:
+ ## @count.partial_loose? - no 'Submit Box Count' needed
+ ## @count.partial_box?  - no 'Submit Loose Count' needed
+ ## item.only_loose? - no 'Submit Loose Count' needed
 
 #counts_edit.col-xs-12{ 'data-type': @inventory.type_for_params }
   .row
@@ -10,13 +15,17 @@
       = f.error_notification
       .col-xs-12
         .row
-          .col-xs-6
-            = f.input :loose_count
-          .col-xs-6
-            - if @count.partial_loose?
-              %h4.center Ready to Submit
-            - else
-              = f.button :submit, name: 'partial_loose', value: 'Submit Loose Count', class: 'btn blue fullwidth btn-partial'
+          - if item.only_loose?
+            .col-xs-12
+              = f.input :loose_count
+          - else
+            .col-xs-6
+              = f.input :loose_count
+            .col-xs-6
+              - if @count.partial_loose?
+                %h4.center Ready to Submit
+              - else
+                = f.button :submit, name: 'partial_loose', value: 'Submit Loose Count', class: 'btn blue fullwidth btn-partial'
         .row
           .col-xs-12.expectation
             #expected_loose_count_parent.highlight.red.empty.float-left
