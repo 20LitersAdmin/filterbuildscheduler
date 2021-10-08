@@ -19,7 +19,7 @@ module Itemable
   end
 
   def history_only(key)
-    history.map { |h| { h[0] => h[1][key] } }
+    history.map { |h| [h[0], h[1][key]] }
   end
 
   def history_series
