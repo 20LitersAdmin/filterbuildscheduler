@@ -10,14 +10,18 @@
           %thead
             %tr
               %th Date
+              %th.center-align Loose Count
+              %th.center-align Box Count
               %th.center-align Available
           %tbody
             - @item.history.reverse_each do |h|
               %tr
                 %td= human_date h[0]
-                %td.center-align= human_number h[1]
+                %td.center-align= h[1]['loose']
+                %td.center-align= h[1]['box']
+                %td.center-align= h[1]['available']
       .col-xs-6
-        = line_chart @item.history, curve: false, label: 'Avaliable', thousands: ',', xtitle: 'Time', ytitle: 'Available'
+        = line_chart @item.history_series, curve: false, label: 'Avaliable', thousands: ','
     - else
       .col-xs-12
         %p.center-align

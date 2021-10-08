@@ -2,17 +2,16 @@
 
 class Material < ApplicationRecord
   include Discard::Model
+  include Itemable
 
   # SCHEMA notes
-  # #history is a JSON store of historical inventory counts: { date.iso8601 => 99, date.iso8601 => 99 }
+  # #history is a JSON store of historical inventory counts: { date.iso8601 => { loose: 99, box: 99, available: 99 } }
   # #quantities is a JSON store of the total number (float) needed per technology: { technology.uid => 99, technology.uid => 99 }
 
   has_many :materials_parts, dependent: :destroy, inverse_of: :material
   has_many :parts, through: :materials_parts
   accepts_nested_attributes_for :materials_parts, allow_destroy: true
   belongs_to :supplier, optional: true
-
-  monetize :price_cents, allow_nil: true, numericality: { greater_than_or_equal_to: 0 }
 
   has_one_attached :image, dependent: :purge
   attr_accessor :remove_image
@@ -24,32 +23,11 @@ class Material < ApplicationRecord
   # rails_admin scope "active" sounds better than "kept"
   scope :active, -> { kept }
 
-  # Exists in ActiveStorage already
-  # scope :with_attached_image, -> { joins(:image_attachment) }
-  scope :without_attached_image, -> { where.missing(:image_attachment) }
-
   # TODO: Second deploy (fails on migration)
   before_save :set_below_minimum
   before_save :process_image, if: -> { attachment_changes.any? }
   after_save { image.purge if remove_image == '1' }
-  after_save :check_uid
-
-  def all_technologies
-    # .technologies finds direct relations through Assembly, but doesn't include technologies where this material may be deeply nested in components or made from a nested part
-    Technology.where('quantities ? :key', key: uid)
-  end
-
-  def label_hash
-    {
-      name: name,
-      description: description,
-      uid: uid,
-      technologies: technologies.active.pluck(:short_name),
-      quantity_per_box: quantity_per_box,
-      image: image,
-      only_loose: only_loose?
-    }
-  end
+  after_save :escalate_price, if: -> { saved_change_to_price_cents? }
 
   def on_order?
     last_ordered_at.present? && (last_received_at.nil? || last_ordered_at > last_received_at)
@@ -59,10 +37,6 @@ class Material < ApplicationRecord
     return ['N/A'] unless technologies.present?
 
     technologies.map(&:owner_acronym)
-  end
-
-  def picture
-    image.attached? ? image : 'http://placekitten.com/140/140'
   end
 
   def per_technology(technology)
@@ -107,7 +81,7 @@ class Material < ApplicationRecord
 
     monthly_rates = []
     all_technologies.each do |t|
-      monthly_rates << t.monthly_production_rate * t.quantity(self)
+      monthly_rates << t.monthly_production_rate * t.quantity(uid)
     end
 
     return available_count if monthly_rates.sum.zero?
@@ -141,7 +115,8 @@ class Material < ApplicationRecord
     self.below_minimum = available_count < minimum_on_hand
   end
 
-  def check_uid
-    update_columns(uid: "M#{id.to_s.rjust(3, '0')}") if uid.blank? || id != uid[1..].to_i
+  def escalate_price
+    # triggers MaterialsPart#calculate_price_for_part
+    materials_parts.each(&:save)
   end
 end

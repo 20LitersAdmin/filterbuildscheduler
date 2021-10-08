@@ -2,9 +2,10 @@
 
 class Technology < ApplicationRecord
   include Discard::Model
+  include Itemable
 
   # SCHEMA notes
-  # #history is a JSON store of historical inventory counts: { date.iso8601 => 99, date.iso8601 => 99 }
+  # #history is a JSON store of historical inventory counts: { date.iso8601 => { loose: 99, box: 99, available: 99 } }
   # #quantities is a JSON store of the total number (integer / float) needed of each item [Component, Part, Material]: { item.uid => 99, item.uid => 99 }
 
   has_and_belongs_to_many :users
@@ -16,7 +17,6 @@ class Technology < ApplicationRecord
   before_save :process_images, if: -> { attachment_changes.any? }
   after_save { image.purge if remove_image == '1' }
   after_save { display_image.purge if remove_display_image == '1' }
-  after_save :check_uid
 
   has_many :assemblies, as: :combination, dependent: :destroy, inverse_of: :combination
   accepts_nested_attributes_for :assemblies, allow_destroy: true
@@ -24,9 +24,11 @@ class Technology < ApplicationRecord
   has_many :components, through: :assemblies, source: :item, source_type: 'Component'
   has_many :parts, through: :assemblies, source: :item, source_type: 'Part'
 
-  monetize :price_cents, numericality: { greater_than_or_equal_to: 0 }
-
   validates_presence_of :name, :short_name
+
+  # Exists in ActiveStorage already
+  # scope :with_attached_image, -> { joins(:image_attachment) }
+  scope :without_attached_image, -> { where.missing(:image_attachment) }
 
   # rails_admin scope "active" sounds better than "kept"
   scope :active, -> { kept }
@@ -34,10 +36,6 @@ class Technology < ApplicationRecord
   scope :status_worthy, -> { where('monthly_production_rate > ?', 0).order(monthly_production_rate: 'desc') }
   scope :list_worthy, -> { where(list_worthy: true) }
   scope :finance_worthy, -> { where.not(price_cents: 0).order(:name) }
-
-  # Exists in ActiveStorage already
-  # scope :with_attached_image, -> { joins(:image_attachment) }
-  scope :without_attached_image, -> { where.missing(:image_attachment) }
 
   def all_components
     # .components will find 1st-level children but not all descendents
@@ -57,39 +55,10 @@ class Technology < ApplicationRecord
     Part.where(id: ary)
   end
 
-  def leaders
-    users.where(is_leader: true)
-  end
-
-  # TODO: delete this
-  def primary_component
-    # find the component related to this technology that represents the completed tech
-    components.where(completed_tech: true).first
-  end
-
-  # TODO: re-work this
-  def cprice
-    return Money.new(0) if primary_component.nil?
-
-    primary_component.price
-  end
-
   def event_tech_goals_within(num = 0)
     events = Event.future.within_days(num).where(technology: self)
 
     events.map(&:item_goal).sum
-  end
-
-  def label_hash
-    {
-      name: name,
-      description: 'Completed technology',
-      uid: uid,
-      technologies: [''],
-      quantity_per_box: quantity_per_box,
-      image: image,
-      only_loose: false
-    }
   end
 
   def materials
@@ -104,78 +73,74 @@ class Technology < ApplicationRecord
   end
 
   # TODO: re-work this
-  def produceable
-    inventory = Inventory.latest_completed
+  # def produceable
+  #   inventory = Inventory.latest_completed
 
-    # narrow the inventory counts down to just related to this technology
-    counts_aoh = []
-    inventory.counts.each do |c|
-      counts_aoh << { type: c.type, id: c.item.id, name: c.name, produce_tech: c.can_produce_x_tech, required: c.item.required?, available: c.available, makeable: 0, produceable: 0 } if c.item.technology == self
-    end
+  #   # narrow the inventory counts down to just related to this technology
+  #   counts_aoh = []
+  #   inventory.counts.each do |c|
+  #     counts_aoh << { type: c.type, id: c.item.id, name: c.name, produce_tech: c.can_produce_x_tech, required: c.item.required?, available: c.available, makeable: 0, produceable: 0 } if c.item.technology == self
+  #   end
 
-    mats_aoh = []
-    parts_aoh = []
-    comps_aoh = []
-    counts_aoh.each do |hsh|
-      case hsh[:type]
-      when 'material'
-        mats_aoh << { id: hsh[:id], available: hsh[:available], makeable: 0, produceable: 0 }
-      when 'part'
-        parts_aoh << { id: hsh[:id], available: hsh[:available], makeable: 0, produceable: 0 }
-      when 'component'
-        comps_aoh << { id: hsh[:id], available: hsh[:available], makeable: 0, produceable: 0 }
-      end
-    end
+  #   mats_aoh = []
+  #   parts_aoh = []
+  #   comps_aoh = []
+  #   counts_aoh.each do |hsh|
+  #     case hsh[:type]
+  #     when 'material'
+  #       mats_aoh << { id: hsh[:id], available: hsh[:available], makeable: 0, produceable: 0 }
+  #     when 'part'
+  #       parts_aoh << { id: hsh[:id], available: hsh[:available], makeable: 0, produceable: 0 }
+  #     when 'component'
+  #       comps_aoh << { id: hsh[:id], available: hsh[:available], makeable: 0, produceable: 0 }
+  #     end
+  #   end
 
-    # how many parts can be made from available materials?
-    mats_aoh.each do |mat|
-      parts_aoh.each do |part|
-        emp = ExtrapolateMaterialPart.where(material_id: mat[:id]).where(part_id: part[:id]).first
-        part[:makeable] = mat[:available] * emp.parts_per_material unless emp.nil?
-        part[:produceable] = part[:available] + part[:makeable]
-      end
-    end
+  #   # how many parts can be made from available materials?
+  #   mats_aoh.each do |mat|
+  #     parts_aoh.each do |part|
+  #       emp = ExtrapolateMaterialPart.where(material_id: mat[:id]).where(part_id: part[:id]).first
+  #       part[:makeable] = mat[:available] * emp.parts_per_material unless emp.nil?
+  #       part[:produceable] = part[:available] + part[:makeable]
+  #     end
+  #   end
 
-    # how many components can be made from available && makeable parts?
-    parts_aoh.each do |part|
-      comps_aoh.each do |comp|
-        ecp = ExtrapolateComponentPart.where(part_id: part[:id]).where(component_id: comp[:id]).first
-        comp[:makeable] = part[:produceable] / ecp.parts_per_component unless ecp.nil?
-        comp[:produceable] = comp[:available] + comp[:makeable]
-      end
-    end
+  #   # how many components can be made from available && makeable parts?
+  #   parts_aoh.each do |part|
+  #     comps_aoh.each do |comp|
+  #       ecp = ExtrapolateComponentPart.where(part_id: part[:id]).where(component_id: comp[:id]).first
+  #       comp[:makeable] = part[:produceable] / ecp.parts_per_component unless ecp.nil?
+  #       comp[:produceable] = comp[:available] + comp[:makeable]
+  #     end
+  #   end
 
-    # rebuild the counts_aoh with the new information && disregard the not required ones
-    tech_items_aoh = []
+  #   # rebuild the counts_aoh with the new information && disregard the not required ones
+  #   tech_items_aoh = []
 
-    counts_aoh.each do |count|
-      case count[:type]
-      when 'material'
-        count[:produceable] = count[:available]
-      when 'part'
-        parts_aoh.each do |part|
-          if count[:id] == part[:id]
-            count[:makeable] = part[:makeable]
-            count[:produceable] = part[:produceable]
-          end
-        end
-      when 'component'
-        comps_aoh.each do |comp|
-          if count[:id] == comp[:id]
-            count[:makeable] = comp[:makeable]
-            count[:produceable] = comp[:produceable]
-          end
-        end
-      end
-      tech_items_aoh << count if count[:required]
-    end
+  #   counts_aoh.each do |count|
+  #     case count[:type]
+  #     when 'material'
+  #       count[:produceable] = count[:available]
+  #     when 'part'
+  #       parts_aoh.each do |part|
+  #         if count[:id] == part[:id]
+  #           count[:makeable] = part[:makeable]
+  #           count[:produceable] = part[:produceable]
+  #         end
+  #       end
+  #     when 'component'
+  #       comps_aoh.each do |comp|
+  #         if count[:id] == comp[:id]
+  #           count[:makeable] = comp[:makeable]
+  #           count[:produceable] = comp[:produceable]
+  #         end
+  #       end
+  #     end
+  #     tech_items_aoh << count if count[:required]
+  #   end
 
-    tech_items_aoh.sort_by! { |hsh| hsh[:produceable] }
-  end
-
-  def quantity(item)
-    quantities[item.uid]
-  end
+  #   tech_items_aoh.sort_by! { |hsh| hsh[:produceable] }
+  # end
 
   def short_name_w_owner
     "#{short_name} (#{owner_acronym})"
@@ -207,9 +172,5 @@ class Technology < ApplicationRecord
 
       public_send(target).attach(io: File.open(processed_image.path), filename: image_name, content_type: 'image/png')
     end
-  end
-
-  def check_uid
-    update_columns(uid: "T#{id.to_s.rjust(3, '0')}") if uid.blank? || id != uid[1..].to_i
   end
 end

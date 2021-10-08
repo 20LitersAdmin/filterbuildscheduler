@@ -2,9 +2,10 @@
 
 class Part < ApplicationRecord
   include Discard::Model
+  include Itemable
 
   # SCHEMA notes
-  # #history is a JSON store of historical inventory counts: { date.iso8601 => 99, date.iso8601 => 99 }
+  # #history is a JSON store of historical inventory counts: { date.iso8601 => { loose: 99, box: 99, available: 99 } }
   # #quantities is a JSON store of the total number (integer) needed per technology: { technology.uid => 99, technology.uid => 99 }
 
   has_many :materials_parts, dependent: :destroy, inverse_of: :part
@@ -17,8 +18,6 @@ class Part < ApplicationRecord
   accepts_nested_attributes_for :assemblies, allow_destroy: true
 
   belongs_to :supplier, optional: true
-
-  monetize :price_cents, allow_nil: true, numericality: { greater_than_or_equal_to: 0 }
 
   has_one_attached :image, dependent: :purge
   attr_accessor :remove_image
@@ -39,13 +38,12 @@ class Part < ApplicationRecord
   # scope :with_attached_image, -> { joins(:image_attachment) }
   scope :without_attached_image, -> { where.missing(:image_attachment) }
 
+  before_save :set_made_from_materials, :set_below_minimum
   before_save :process_image, if: -> { attachment_changes.any? }
   after_save { image.purge if remove_image == '1' }
-  after_save :check_uid
+  after_save :recalculate_prices, if: -> { saved_change_to_price_cents? }
 
-  # TODO: Second deployment (fails on migration)
-  before_save :set_made_from_materials, :set_below_minimum
-
+  # Not in Itemable because it's unique to Component and Part
   def self.search_name_and_uid(string)
     return [] if string.blank? || !string.is_a?(String)
 
@@ -57,36 +55,6 @@ class Part < ApplicationRecord
     end
 
     Part.where('name ILIKE any ( array[?] )', ary).or(where('uid ILIKE any ( array[?] )', ary))
-  end
-
-  def all_technologies
-    # .technologies finds direct relations through Assembly, but doesn't include technologies where this part may be deeply nested in components
-    Technology.where('quantities ? :key', key: uid)
-  end
-
-  # TODO: fix this or un-use it
-  def cprice
-    return price unless (price.nil? || price.zero?) && made_from_materials?
-
-    emp = extrapolate_material_parts.first
-
-    return Money.new(0) if emp.nil?
-
-    emp.material.price / emp.parts_per_material
-  end
-
-  # TODO: image needs to be adjusted
-  # TODO: Needs technologies.active
-  def label_hash
-    {
-      name: name,
-      description: description,
-      uid: uid,
-      technologies: technologies.active.pluck(:short_name),
-      quantity_per_box: quantity_per_box,
-      image: image,
-      only_loose: only_loose?
-    }
   end
 
   def material
@@ -105,12 +73,13 @@ class Part < ApplicationRecord
     last_ordered_at.present? && (last_received_at.nil? || last_ordered_at > last_received_at)
   end
 
-  def owners
-    return ['N/A'] unless technologies.present?
+  # def owners
+  #   return ['N/A'] unless technologies.present?
 
-    all_technologies.map(&:owner_acronym)
-  end
+  #   all_technologies.map(&:owner_acronym)
+  # end
 
+  # TODO: replace with Itemable#quantity(item)
   def per_technology(technology)
     technology.quantities[uid]
   end
@@ -141,9 +110,10 @@ class Part < ApplicationRecord
     Assembly.none
   end
 
-  def technologies
-    Technology.where('quantities ? :key', key: uid)
-  end
+  # Handled by has_many relationship
+  # def technologies
+  #   Technology.where('quantities ? :key', key: uid)
+  # end
 
   def tech_names_short
     all_technologies.pluck(:short_name)
@@ -161,7 +131,7 @@ class Part < ApplicationRecord
 
     monthly_rates = []
     all_technologies.each do |t|
-      monthly_rates << t.monthly_production_rate * t.quantity(self)
+      monthly_rates << t.monthly_production_rate * t.quantity(uid)
     end
 
     return available_count if monthly_rates.sum.zero?
@@ -199,7 +169,7 @@ class Part < ApplicationRecord
     self.made_from_materials = materials.any?
   end
 
-  def check_uid
-    update_columns(uid: "P#{id.to_s.rjust(3, '0')}") if uid.blank? || id != uid[1..].to_i
+  def recalculate_prices
+    PriceCalculationJob.perform_later unless Delayed::Job.where(queue: 'price_calc').any?
   end
 end

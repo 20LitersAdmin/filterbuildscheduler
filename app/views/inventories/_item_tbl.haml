@@ -1,7 +1,7 @@
 -# frozen_string_literal: true
 %tr
   %td
-    = link_to item_tbl.name, history_inventories_path(item_class: item_tbl.class, item_id: item_tbl.id), remote: true, data: { target: '#item_history_modal' }
+    = link_to item_tbl.name, history_inventories_path(uid: item_tbl.uid), remote: true, data: { target: '#item_history_modal' }
   %td= item_tbl.uid
   %td
     = item_tbl.supplier&.name unless item_tbl.instance_of?(Component)

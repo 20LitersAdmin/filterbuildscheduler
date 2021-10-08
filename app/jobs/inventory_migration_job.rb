@@ -22,6 +22,7 @@ class InventoryMigrationJob < ApplicationJob
 
     delete_obsolete_items
     assign_uids_to_items
+    change_counts_to_polymorphic
     transfer_latest_count_values_to_items
     add_history_to_every_item
     turn_components_into_technologies_and_delete
@@ -96,26 +97,49 @@ class InventoryMigrationJob < ApplicationJob
     end
   end
 
+  def change_counts_to_polymorphic
+    puts 'transform counts to polymorphic'
+
+    Count.all.each do |count|
+      if count.part_id.present?
+        count.item_id = count.part_id
+        count.item_type = 'Part'
+      elsif count.material_id.present?
+        count.item_id = count.material_id
+        count.item_type = 'Material'
+      else
+        count.item_id = count.component_id
+        count.item_type = 'Component'
+      end
+      count.save
+    end
+  end
+
   def transfer_latest_count_values_to_items
     puts 'add counts from latest inventory'
-    Inventory.latest.counts.each do |c|
-      c.item.update_columns(
-        loose_count: c.loose_count,
-        box_count: c.unopened_boxes_count,
-        available_count: c.loose_count + (c.unopened_boxes_count * c.item.quantity_per_box)
+    Inventory.latest.counts.each do |count|
+      item = count.item
+
+      next unless item.present?
+
+      item.update_columns(
+        loose_count: count.loose_count,
+        box_count: count.unopened_boxes_count,
+        available_count: count.loose_count + (count.unopened_boxes_count * item.quantity_per_box)
       )
-      c.destroy
     end
   end
 
   def add_history_to_every_item
     puts 'add history to every item'
     Inventory.order(date: :desc, created_at: :desc).each do |i|
-      i.counts.each do |c|
-        item = c.item
-        item.history[i.date.iso8601] = c.available
+      i.counts.each do |count|
+        item = count.item
+        next unless item.present?
+
+        item.history[i.date.iso8601] = { loose: count.loose_count, box: count.unopened_boxes_count, available: count.available }
+
         item.save!
-        c.destroy
       end
     end
   end
@@ -141,8 +165,8 @@ class InventoryMigrationJob < ApplicationJob
   end
 
   def delete_counts
-    puts 'Delete any remaining counts'
-    Count.all.delete_all unless Count.all.size.zero?
+    puts 'Delete all counts'
+    Count.delete_all
     ActiveRecord::Base.connection.reset_pk_sequence!('counts')
   end
 

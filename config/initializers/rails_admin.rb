@@ -349,7 +349,7 @@ RailsAdmin.config do |config|
       end
 
       group 'History' do
-        field :history, :line_chart
+        field :history_series, :line_chart
       end
     end
 
@@ -485,7 +485,7 @@ RailsAdmin.config do |config|
       end
 
       group 'History' do
-        field :history, :line_chart
+        field :history_series, :line_chart
       end
     end
 
@@ -621,13 +621,13 @@ RailsAdmin.config do |config|
       end
       group 'Order Info' do
         field :last_ordered_at, :date
-        field :last_ordered_quantity
+        field :last_ordered_quantity, :delimited
         field :last_received_at, :date
-        field :last_received_quantity
+        field :last_received_quantity, :delimited
       end
 
       group 'History' do
-        field :history, :line_chart
+        field :history_series, :line_chart
       end
     end
 
@@ -681,14 +681,10 @@ RailsAdmin.config do |config|
       end
       group 'Order Info' do
         active false
-        field :last_ordered_at do
-          label 'Last ordered'
-        end
-        field :last_ordered_quantity
-        field :last_received_at do
-          label 'Last received'
-        end
-        field :last_received_quantity
+        field :last_ordered_at, :date
+        field :last_ordered_quantity, :delimited
+        field :last_received_at, :date
+        field :last_received_quantity, :delimited
       end
     end
   end
@@ -780,13 +776,13 @@ RailsAdmin.config do |config|
       end
       group 'Order Info' do
         field :last_ordered_at, :date
-        field :last_ordered_quantity
+        field :last_ordered_quantity, :delimited
         field :last_received_at, :date
-        field :last_received_quantity
+        field :last_received_quantity, :delimited
       end
 
       group 'History' do
-        field :history, :line_chart
+        field :history_series, :line_chart
       end
     end
 
@@ -842,14 +838,10 @@ RailsAdmin.config do |config|
       end
       group 'Order Info' do
         active false
-        field :last_ordered_at do
-          label 'Last ordered'
-        end
-        field :last_ordered_quantity
-        field :last_received_at do
-          label 'Last received'
-        end
-        field :last_received_quantity
+        field :last_ordered_at, :date
+        field :last_ordered_quantity, :delimited
+        field :last_received_at, :date
+        field :last_received_quantity, :delimited
       end
     end
   end

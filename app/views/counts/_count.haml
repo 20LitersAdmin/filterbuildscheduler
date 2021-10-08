@@ -1,6 +1,7 @@
 -# frozen_string_literal: true
 :ruby
   techs  = count.tech_ids
+  item   = count.item
   status = 'uncounted'
   status = 'counted' if count.user_id.present?
   status = 'partial' if (count.partial_box || count.partial_loose)
@@ -9,14 +10,14 @@
   .count-div
     %p.count-title
       = count.name
-    .half.count-img{ style: "background-image: url('#{count.item.picture}')" }
+    .half.count-img{ style: "background-image: url('#{url_for item.picture}')" }
     .half
       %p.count-tech
         %strong.count-uid
-          = count.item.uid
+          = item.uid
         %br/
         %strong.count-tech
-          For: #{count.tech_names_short}
+          For: #{item.all_technologies_names}
       - if count.user_id.present?
         %p.current-count
           %strong Avail:

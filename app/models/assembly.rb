@@ -35,23 +35,6 @@ class Assembly < ApplicationRecord
   scope :component_items, -> { where(item_type: 'Component') }
   scope :part_items, -> { where(item_type: 'Part') }
 
-  # TODO: temporary clean-up method
-  # remove duplicates where items exist under this Component AND under a subcomponent of this component
-  def remove_duplicates!
-    return false unless has_sub_components?
-
-    item_ids = []
-    sub_component_assemblies.each do |sca|
-      item_ids << sca.item.sub_assemblies.pluck(:item_id)
-    end
-
-    combination_delete = Assembly.where(combination: combination, item: item_ids.flatten)
-    item_delete = Assembly.where(combination: item, item: item_ids.flatten)
-
-    combination_delete.destroy_all
-    item_delete.destroy_all
-  end
-
   def combination_uid
     "#{combination_type[0]}#{combination_id.to_s.rjust(3, 0.to_s)}"
   end
@@ -113,7 +96,7 @@ class Assembly < ApplicationRecord
   end
 
   def recalculate_quantities_depths_prices
-    # TODO: Current: Run unless on exists
+    # TODO: Current: Run unless one exists
     # Better: If one exists, destroy it, then schedule a new one
     QuantityAndDepthCalculationJob.perform_later unless Delayed::Job.where(queue: 'quantity_calc').any?
     PriceCalculationJob.perform_later unless Delayed::Job.where(queue: 'price_calc').any?

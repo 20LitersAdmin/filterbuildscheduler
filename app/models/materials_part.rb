@@ -5,7 +5,7 @@ class MaterialsPart < ApplicationRecord
   belongs_to :part, inverse_of: :materials_parts
 
   validates :quantity, numericality: { greater_than: 0 }
-  before_save :calculate_price_for_part
+  after_save :calculate_price_for_part
   after_save :recalculate_technology_quantities
   after_destroy :recalculate_technology_quantities
 

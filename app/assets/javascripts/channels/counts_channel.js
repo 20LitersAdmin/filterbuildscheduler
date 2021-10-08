@@ -1,7 +1,7 @@
-var pathname = window.location.pathname
+var pathname = window.location.pathname;
 
-if (pathname.match(/^\/\w+\/\d+\/edit/) != null) {
-  var inventoryId = pathname.match(/\d+/)[0]
+if (pathname.match(/^\/inventories\/\d+\/edit/) != null) {
+  var inventoryId = pathname.match(/\d+/)[0];
 
   App.cable.subscriptions.create(
     {
@@ -26,11 +26,16 @@ if (pathname.match(/^\/\w+\/\d+\/edit/) != null) {
 
         // data["count_id"]
         // data["html_slug"]
-        var target = $('div.row#counts_row');
-        target.html(data["html_slug"]);
+        // data["uncounted"]
+        var slugTarget = $('div.row#counts_row');
+        slugTarget.html(data["html_slug"]);
+
+        var countTarget = $('p#uncounted_number');
+        countTarget.html(data["uncounted"]);
+
         console.log('[ActionCable] target updated');
       }
     }
   );
-}
+};
 

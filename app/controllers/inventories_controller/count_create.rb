@@ -20,11 +20,12 @@ class InventoriesController
     end
 
     def create_count(item)
+      # TODO: start with blank counts?
       Count.create(
         inventory_id: @inventory.id,
         item: item,
-        loose_count: item.loose_count,
-        unopened_boxes_count: item.box_count
+        loose_count: 0,
+        unopened_boxes_count: 0
       )
     end
   end

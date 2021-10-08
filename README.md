@@ -102,52 +102,24 @@
 
 
 ### Current:
-0. To figure out how to handle Inventory#create, I decided to purge all VWF stuff from our system, which led to me deciding to hand-code all Assemblies instead of relying on what's currently in Production.
-
-1. InventoryMigrationJob#manually_create_assemblies
-  - **DONE** SAM3
-  - **DONE** SAM3-M
-  - **DONE** Handpump
-  - RWHS
-  - SAM2 (wait for re-design?)
-
-### Next:
-0. Inventory#create: Don't run CountCreate job, just find a way to quickly display Items and link to a count#create form (instead of count#edit)
-
 1. Count records are temporary records, created when an inventory is created and destroyed after their meaningful values are transferred to their corresponding Materials, Parts, Components, and Technologies
-  1. **DONE** Counts are polymorphically joined to an item, including Technology
 
-    - forms, params, and controllers will need to be adjusted
-
-  2. **NOPE** Counts are created based on items, dynamically created when an inventory is created
-
-  3. Receive.new() function is handled by a job that runs after inventory is finalized
+  3. When finalizing inventory (InventoriesController#update), CountTransfer runs
+    - copies all counts.changed to their items
+    - deletes all counts
 
   4. Calculating count.extrapolated_count is depreciated
 
-  5. Count records can still track partial counts (loose items vs. boxed items), and record which User submitted the Count
-    - **DONE** but the 'partial' interface has a better UX
-    - remove all Count methods, scopes, and item relationships except:
-      - count.link_text
-      - count.link_class
-      - count.sort_by_user
-  6. **DONE** Count-related fields are added to Material, Part, Component, and Technology:
-    - **DONE** Three integer attributes for current counts:
-      - [ loose | box | available ]
-        - availabe == loose + (box * quantity_per_box)
-    - **DONE** One jsonb for history:
-      - { inventory_id: available }
-    - **DONE** One jsonb for quantities:
-      - { UID: quantity_per_technology}
-        - updated whenever an Assembly or MaterialsPart is saved/destroyed
-    - https://guides.rubyonrails.org/active_record_postgresql.html#json-and-jsonb
-  7. A job handles transferring count-related fields to it's related item, then deletes the Count record.
-    - The job runs `count.update_item_and_destroy!`
-    - The job runs after Inventory is marked completed via `Delayed::Job#perform_later`
-    - Should Counts persist for one cycle? Meaning, delete the `Inventory.former`'s counts when a new inventory is created?
+  5. Events create inventories when they have results. See:
+    - EventsController::CountPopulate
+    - EventsController::CreateInventory
+    - EventsController::SubtractSubsets
 
 
 ### Still to do:
+- ComponentsController#order && ComponentsController#order_low
+  - from InventoriesController#order_all and InventoriesController#order
+
 - Nerf #cprice on all Items
 
 - Make sure `Part#not_made_from_materials` and `Material#all`price is being escalated to assemblies on save
@@ -176,8 +148,6 @@
 
 ## After 1st deploy:
 - migrate the dB (which runs the necessary jobs)
-- un-comment:
-  - Part#before_saves
 
 
 ## Remind myself:
