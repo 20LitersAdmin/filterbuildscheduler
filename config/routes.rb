@@ -26,9 +26,6 @@ Rails.application.routes.draw do
     collection do
       post 'item_search'
     end
-    member do
-      get 'history'
-    end
     # standard routes for assemblies model
     # combination/:combination_uid/assemblies
     resources :assemblies

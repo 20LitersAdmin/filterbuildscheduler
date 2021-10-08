@@ -2,15 +2,16 @@
 
 class InventoriesController < ApplicationController
   def index
+    # NOTE: After creating an inventory, user is redirected to InventoriesController#index
+    # Then @latest is visible and user can edit the inventory.
     @latest = Inventory.latest
     authorize @latest
 
     @below_minimum = Part.below_minimums.any? || Material.below_minimums.any?
 
-    # TODO: Part.active instead of Part.all
-    components = Component.all
-    parts = Part.all
-    materials = Material.all
+    components = Component.active
+    parts = Part.active
+    materials = Material.active
 
     @items = [components, parts, materials].flatten
 
@@ -49,7 +50,7 @@ class InventoriesController < ApplicationController
       @inventory.manual = true
     end
 
-    @technologies = Technology.list_worthy.order(:owner, :short_name)
+    @technologies = Technology.active.list_worthy.order(:owner, :short_name)
   end
 
   def create
@@ -68,20 +69,14 @@ class InventoriesController < ApplicationController
         'unknown'
       end
 
-    # if @matching.present? && @matching.type_for_params == @type
-    #   # No two inventories of the same type on the same day
-    #   flash[:warning] = "A #{@type} inventory already exists for #{inventory_params[:date]}, please use that one."
-    #   return redirect_to inventories_path
-    # end
-
     authorize @inventory = Inventory.create(inventory_params)
     @inventory.save
 
     if @inventory.errors.any?
       flash[:warning] = @inventory.errors.first.join(': ')
     else
-      # technologies_param used to bypass techs
-      # CountCreate.new(@inventory.reload, technologies_params)
+      # technologies_param is used to bypass techs
+      CountCreate.new(@inventory.reload, technologies_params)
       flash[:success] = 'The inventory has been created.'
       redirect_to edit_inventory_path(@inventory)
     end
@@ -90,7 +85,7 @@ class InventoriesController < ApplicationController
   def edit
     authorize @inventory = Inventory.find(params[:id])
     @counts = @inventory.counts.sort_by { |c| [c.sort_by_user, - c.name] }
-    @uncounted = @inventory.counts.where(user_id: nil).count
+    @uncounted = "#{view_context.pluralize(@inventory.counts.uncounted.size, 'item')} uncounted."
 
     @techs = Technology.list_worthy
 
@@ -102,80 +97,80 @@ class InventoriesController < ApplicationController
 
     @inventory.update(inventory_params)
 
-    # set :last_received_at and :last_received_quantity on active counts
-    # early return: if @inventory.receiving?
-    Receive.new(@inventory) if @inventory.receiving?
+    CountTransfer.new(@inventory)
 
     InventoryMailer.delay.notify(@inventory, current_user) if @inventory.type_for_params == 'manual' || @inventory.has_items_below_minimum?
+
+    flash[:success] = 'Inventory complete! All counts have been transferred to their items.'
 
     redirect_to inventories_path
   end
 
-  def destroy
-    authorize @inventory = Inventory.find(params[:id])
-  end
+  # def destroy
+  #   authorize @inventory = Inventory.find(params[:id])
+  # end
 
-  def order
-    authorize Inventory
+  # def order
+  #   authorize Inventory
 
-    @selected_owner_acronym = params[:owner] if params[:owner].present?
-    @selected_owner = @selected_owner_acronym ? find_owner_from_acronym(@selected_owner_acronym) : nil
-    @technologies = @selected_owner ? Technology.status_worthy.where(owner: @selected_owner) : Technology.status_worthy
+  #   @selected_owner_acronym = params[:owner] if params[:owner].present?
+  #   @selected_owner = @selected_owner_acronym ? find_owner_from_acronym(@selected_owner_acronym) : nil
+  #   @technologies = @selected_owner ? Technology.status_worthy.where(owner: @selected_owner) : Technology.status_worthy
 
-    @owners_select = Technology.status_worthy.map { |t| [t.owner, t.owner_acronym] }.uniq
-    @technologies_select = @technologies.map { |t| [t.name, t.id] }
+  #   @owners_select = Technology.status_worthy.map { |t| [t.owner, t.owner_acronym] }.uniq
+  #   @technologies_select = @technologies.map { |t| [t.name, t.id] }
 
-    @selected_tech_id = @technologies.where(id: params[:tech])&.first&.id if params[:tech].present?
-    @selected_tech = @technologies.find(@selected_tech_id) if @selected_tech_id
+  #   @selected_tech_id = @technologies.where(id: params[:tech])&.first&.id if params[:tech].present?
+  #   @selected_tech = @technologies.find(@selected_tech_id) if @selected_tech_id
 
-    if @selected_tech_id
-      parts = Part.orderable.select { |part| part.reorder? && part.all_technologies.map(&:id).include?(@selected_tech_id) }
-      materials = Material.all.select { |m| m.reorder? && m.all_technologies.map(&:id).include?(@selected_tech_id) }
-    elsif @selected_owner_acronym
-      parts = Part.orderable.select { |part| part.reorder? && part.owner.include?(@selected_owner_acronym) }
-      materials = Material.all.select { |m| m.reorder? && m.owner.include?(@selected_owner_acronym) }
-    else
-      parts = Part.orderable.select(&:reorder?)
-      materials = Material.all.select(&:reorder?)
-    end
+  #   if @selected_tech_id
+  #     parts = Part.orderable.select { |part| part.reorder? && part.all_technologies.map(&:id).include?(@selected_tech_id) }
+  #     materials = Material.all.select { |m| m.reorder? && m.all_technologies.map(&:id).include?(@selected_tech_id) }
+  #   elsif @selected_owner_acronym
+  #     parts = Part.orderable.select { |part| part.reorder? && part.owner.include?(@selected_owner_acronym) }
+  #     materials = Material.all.select { |m| m.reorder? && m.owner.include?(@selected_owner_acronym) }
+  #   else
+  #     parts = Part.orderable.select(&:reorder?)
+  #     materials = Material.all.select(&:reorder?)
+  #   end
 
-    @items = [parts, materials].flatten
+  #   @items = [parts, materials].flatten
 
-    @order_counts = @items.count
-    @suppliers = [parts.map(&:supplier).uniq, materials.map(&:supplier).uniq].flatten.uniq.compact
+  #   @order_counts = @items.count
+  #   @suppliers = [parts.map(&:supplier).uniq, materials.map(&:supplier).uniq].flatten.uniq.compact
 
-    @items_w_no_supplier = @items.select { |item| item.supplier.nil? }
-  end
+  #   @items_w_no_supplier = @items.select { |item| item.supplier.nil? }
+  # end
 
-  def order_all
-    authorize Inventory
+  # def order_all
+  #   authorize Inventory
 
-    @selected_owner_acronym = params[:owner] if params[:owner].present?
-    @selected_owner = @selected_owner_acronym ? find_owner_from_acronym(@selected_owner_acronym) : nil
-    @technologies = @selected_owner ? Technology.status_worthy.where(owner: @selected_owner) : Technology.status_worthy
+  #   @selected_owner_acronym = params[:owner] if params[:owner].present?
+  #   @selected_owner = @selected_owner_acronym ? find_owner_from_acronym(@selected_owner_acronym) : nil
+  #   @technologies = @selected_owner ? Technology.status_worthy.where(owner: @selected_owner) : Technology.status_worthy
 
-    @owners_select = Technology.status_worthy.map { |t| [t.owner, t.owner_acronym] }.uniq
-    @technologies_select = @technologies.map { |t| [t.name, t.id] }
+  #   @owners_select = Technology.status_worthy.map { |t| [t.owner, t.owner_acronym] }.uniq
+  #   @technologies_select = @technologies.map { |t| [t.name, t.id] }
 
-    @selected_tech_id = @technologies.find(params[:tech]).id if params[:tech].present?
-    @selected_tech = @technologies.find(@selected_tech_id) if @selected_tech_id
+  #   @selected_tech_id = @technologies.find(params[:tech]).id if params[:tech].present?
+  #   @selected_tech = @technologies.find(@selected_tech_id) if @selected_tech_id
 
-    if @selected_tech_id
-      parts = Part.orderable.select { |part| part.technologies.map(&:id).include?(@selected_tech_id) }
-      materials = Material.all.select { |m| m.technologies.map(&:id).include?(@selected_tech_id) }
-    elsif @selected_owner_acronym
-      parts = Part.orderable.select { |part| part.owner.include?(@selected_owner_acronym) }
-      materials = Material.all.select { |m| m.owner.include?(@selected_owner_acronym) }
-    else
-      parts = Part.orderable
-      materials = Material.all
-    end
+  #   if @selected_tech_id
+  #     parts = Part.orderable.select { |part| part.technologies.map(&:id).include?(@selected_tech_id) }
+  #     materials = Material.all.select { |m| m.technologies.map(&:id).include?(@selected_tech_id) }
+  #   elsif @selected_owner_acronym
+  #     parts = Part.orderable.select { |part| part.owner.include?(@selected_owner_acronym) }
+  #     materials = Material.all.select { |m| m.owner.include?(@selected_owner_acronym) }
+  #   else
+  #     parts = Part.orderable
+  #     materials = Material.all
+  #   end
 
-    @items = [parts, materials].flatten
-    @suppliers = [parts.map(&:supplier).uniq, materials.map(&:supplier).uniq].flatten.uniq.compact
+  #   @items = [parts, materials].flatten
+  #   @suppliers = [parts.map(&:supplier).uniq, materials.map(&:supplier).uniq].flatten.uniq.compact
 
-    @items_w_no_supplier = @items.select { |item| item.supplier.nil? }
-  end
+  #   @items_w_no_supplier = @items.select { |item| item.supplier.nil? }
+  # end
 
   def status
     authorize @inventory = Inventory.latest_completed
@@ -199,7 +194,10 @@ class InventoriesController < ApplicationController
 
     case @scope
     when 'owner'
-      @owners = Technology.order(:owner).finance_worthy.map { |t| [t.owner, t.owner_acronym] }.uniq
+      @owners = Technology.order(:owner)
+                          .finance_worthy
+                          .map { |t| [t.owner, t.owner_acronym] }
+                          .uniq
     when 'technology'
       @technologies = Technology.order(:owner, :name).finance_worthy
     else # un-grouped
@@ -211,13 +209,13 @@ class InventoriesController < ApplicationController
   end
 
   def history
-    # item type
-    # item id
-    # return js.erb trigger for modal
-    @item = params[:item_class].constantize.find(params[:item_id])
-
     respond_to do |format|
-      format.js { render 'history.js.erb' }
+      format.js do
+        @item = params[:uid].objectify_uid if params[:uid].present?
+      end
+      format.html do
+        @inventories = Inventory.all.order(date: :desc)
+      end
     end
   end
 

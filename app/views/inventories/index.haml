@@ -2,6 +2,8 @@
 #inventory_index.container
   = render partial: 'shared/inventory_functions'
 
+  -# Note: After creating an inventory, user is redirected to InventoriesController#index
+  -# Then this div is visible and user can edit the inventory.
   - if @latest.counts.any?
     .inv-latest.row
       .col-xs-12
@@ -21,12 +23,14 @@
               = link_to 'Unlock', edit_inventory_path(@latest, unlock: 'true'), class: 'btn blue use-load-screen'
 
   .row
-    .col-xs-12
+    .col-xs-10
       %h2 Inventory Counts:
       %p
         %i Click on an item's name to see the count history
+    .col-xs-2
+      = link_to 'Inventory History', history_inventories_path, class: 'btn yellow'
     .col-xs-12
-      %table.table.table-striped.table-bordered.datatable-items
+      %table.table.table-striped.table-bordered.datatable
         %thead
           = render partial: 'item_tbl_head'
         %tbody

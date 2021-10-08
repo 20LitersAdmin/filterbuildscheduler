@@ -6,9 +6,10 @@ class PriceCalculationJob < ApplicationJob
   def perform(*_args)
     ActiveRecord::Base.logger.level = 1
 
-    puts "========================= Starting PriceCalculationJob ========================="
+    puts '========================= Starting PriceCalculationJob ========================='
 
     puts 'Setting Technology and Component prices to 0'
+    # skip callbacks to avoid an infinite loop of triggering this job
     Technology.update_all(price_cents: 0)
     Component.update_all(price_cents: 0)
 
@@ -21,10 +22,11 @@ class PriceCalculationJob < ApplicationJob
       a.reload
 
       c = a.combination
+      # skip callbacks to avoid an infinite loop of triggering this job
       c.update_columns(price_cents: c.price_cents + a.price_cents)
     end
 
-    puts "========================= FINISHED QuantityAndDepthCalculationJob ========================="
+    puts '========================= FINISHED QuantityAndDepthCalculationJob ========================='
 
     ActiveRecord::Base.logger.level = 0
   end

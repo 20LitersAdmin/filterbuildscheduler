@@ -7,17 +7,12 @@
     .col-xs-4.match-h2
       = link_to 'Back', inventories_path, class: 'btn yellow'
       %a#show_finalize_form.btn.blue{ href: '#' } Finalize
-      %p.right-align
-        = pluralize(@uncounted, 'item')
-        uncounted.
+      %p#uncounted_number.right-align= @uncounted
   .row.spacer-bottom
   #finalize_form.col-xs-12
     .row
       .col-sm-12.center-align
-        %h4 When all items have been counted and verified, click "Finalize Inventory" to mark the inventory complete, extrapolate parts from components, calculate values, and send notfications.
-        - if @uncounted.positive?
-          %p
-            There are still #{pluralize(@uncounted, 'item')} uncounted. Do you really want to proceed?
+        %h4 When all items have been counted and verified, click "Finalize Inventory" to mark the inventory complete, update all counted items, and send notfications.
       .col-sm-12.center-align
         = simple_form_for @inventory do |f|
           = f.input :completed_at, as: :hidden, input_html: { value: Time.now }
