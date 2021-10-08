@@ -21,7 +21,7 @@
                 %td.center-align= h[1]['box']
                 %td.center-align= h[1]['available']
       .col-xs-6
-        = line_chart @item.history_series, curve: false, label: 'Avaliable', thousands: ','
+        = line_chart @item.history_series, curve: false, label: 'Avaliable', thousands: ',', colors: ['#FCE000', '#9BB4C8', '#4A4A4A']
     - else
       .col-xs-12
         %p.center-align

@@ -30,8 +30,8 @@ if (pathname.match(/^\/inventories\/\d+\/edit/) != null) {
         var slugTarget = $('div.row#counts_row');
         slugTarget.html(data["html_slug"]);
 
-        var countTarget = $('p#uncounted_number');
-        countTarget.html(data["uncounted"]);
+        var countTargets = $('.uncounted_number');
+        countTargets.html(data["uncounted"]);
 
         console.log('[ActionCable] target updated');
       }

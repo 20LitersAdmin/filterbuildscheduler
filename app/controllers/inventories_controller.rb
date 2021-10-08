@@ -101,7 +101,7 @@ class InventoriesController < ApplicationController
 
     InventoryMailer.delay.notify(@inventory, current_user) if @inventory.type_for_params == 'manual' || @inventory.has_items_below_minimum?
 
-    flash[:success] = 'Inventory complete! All counts have been transferred to their items.'
+    flash[:success] = 'Inventory complete! All completed counts have been transferred to their items.'
 
     redirect_to inventories_path
   end
