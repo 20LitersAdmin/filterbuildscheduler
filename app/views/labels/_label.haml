@@ -27,7 +27,7 @@
   %tr
     %td.right-border
       %p
-        Qty/box
+      = 'Qty/box' unless label.only_loose?
     %td
       %p
         = number_with_delimiter(label.quantity_per_box) unless label.only_loose?

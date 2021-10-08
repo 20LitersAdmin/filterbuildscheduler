@@ -1,0 +1,15 @@
+-# frozen_string_literal: true
+
+.col-xs-12
+  .row
+    .col-xs-12
+      = f.input :loose_count
+  .row
+    .col-xs-12.expectation
+      - if @count.user_id.present?
+        #expected_loose_count_parent.highlight.red.empty.float-left
+          Current:
+          %span#expected_loose_count= @count.loose_count
+      #previous_loose_count_parent.highlight.red.empty.float-right
+        Previous:
+        %span#previous_loose_count= item.loose_count

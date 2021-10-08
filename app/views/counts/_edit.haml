@@ -1,10 +1,6 @@
 -# frozen_string_literal: true
-:ruby
- item = @count.item
- # decide how to handle scenarios:
- ## @count.partial_loose? - no 'Submit Box Count' needed
- ## @count.partial_box?  - no 'Submit Loose Count' needed
- ## item.only_loose? - no 'Submit Loose Count' needed
+
+- item = @count.item
 
 #counts_edit.col-xs-12{ 'data-type': @inventory.type_for_params }
   .row
@@ -13,44 +9,17 @@
   .row
     = simple_form_for [@inventory, @count], remote: true do |f|
       = f.error_notification
-      .col-xs-12
-        .row
-          - if item.only_loose?
-            .col-xs-12
-              = f.input :loose_count
-          - else
-            .col-xs-6
-              = f.input :loose_count
-            .col-xs-6
-              - if @count.partial_loose?
-                %h4.center Ready to Submit
-              - else
-                = f.button :submit, name: 'partial_loose', value: 'Submit Loose Count', class: 'btn blue fullwidth btn-partial'
-        .row
-          .col-xs-12.expectation
-            #expected_loose_count_parent.highlight.red.empty.float-left
-              Current:
-              %span#expected_loose_count= @count.loose_count
-            #previous_loose_count_parent.highlight.red.empty.float-right
-              Previous:
-              %span#previous_loose_count= item.loose_count
-        - unless item.only_loose?
-          .row
-            .col-xs-6
-              = f.input :unopened_boxes_count, label: "Unopened boxes: (#{item.quantity_per_box} per box)"
-            .col-xs-6
-              - if @count.partial_box?
-                %h4.center Ready to Submit
-              - else
-                = f.button :submit, name: 'partial_box', value: 'Submit Box Count', class: 'btn blue fullwidth btn-partial'
-          .row
-            .col-xs-12.right-align.expectation
-              #expected_box_count_parent.highlight.red.empty.float-left
-                Current:
-                %span#expected_box_count= @count.unopened_boxes_count
-              #previous_box_count_parent.highlight.red.empty.float-right
-                Previous:
-                %span#previous_box_count= item.box_count
+      - if item.only_loose?
+        = render partial: 'edit_only_loose', locals: { f: f, item: item }
+      - elsif @count.partial_loose?
+        = render partial: 'edit_partial_loose', locals: { f: f, item: item }
+      - elsif @count.partial_box?
+        = render partial: 'edit_partial_box', locals: { f: f, item: item }
+      - elsif @count.user_id.present?
+        = render partial: 'edit_counted', locals: { f: f, item: item }
+      - else # full form
+        = render partial: 'edit_uncounted', locals: { f: f, item: item }
+
       .col-xs-12
         = f.submit 'Submit', class: 'btn yellow fullwidth'
 

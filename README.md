@@ -104,10 +104,6 @@
 ### Current:
 1. Count records are temporary records, created when an inventory is created and destroyed after their meaningful values are transferred to their corresponding Materials, Parts, Components, and Technologies
 
-  1. `counts/_edit` is a shit show of nested ifs
-    - item.only_loose doesn't need "Submit Loose Count" button, only "Submit"
-    - when @count.partial_box? or @count.partial_loose? the opposite submit partial button shouldn't be visible
-
   3. When finalizing inventory (InventoriesController#update), CountTransfer runs
     - copies all counts.changed to their items
     - deletes all counts
