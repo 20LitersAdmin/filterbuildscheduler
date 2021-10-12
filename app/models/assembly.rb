@@ -20,7 +20,6 @@ class Assembly < ApplicationRecord
 
   validates_numericality_of :quantity, greater_than: 0
 
-  # TODO: Second deployment
   monetize :price_cents, allow_nil: true, numericality: { greater_than_or_equal_to: 0 }
 
   # ascending ensures that the "highest" nodes of the tree appear first
@@ -34,6 +33,46 @@ class Assembly < ApplicationRecord
   scope :component_combinations, -> { where(combination_type: 'Component') }
   scope :component_items, -> { where(item_type: 'Component') }
   scope :part_items, -> { where(item_type: 'Part') }
+
+  # TODO: trial code for Event#update performing logic
+  def assembly_map(goal, map = [])
+    # TODO: this is the starting idea for AssemblyService
+
+    # I envision: Assembly.find(9).assembly_map(46)
+    # [{ uid: "C031", provides: 45, remainder: 1}, uid: ["P072", "P069", "C030"], provides: 1, remainder: 0 ]
+
+    needed_quantity = goal * quantity
+    available_count = item.available_count
+    provide         = [needed_quantity, available_count].min / quantity
+    remainder       = goal - provide
+
+    map << { uid: item.uid, can_make: provide, remainder: remainder }
+
+    # passes to Itemable#assembly_map
+    item.assembly_map(remainder, map) if remainder.positive? && item.has_sub_assemblies?
+  end
+
+  # TODO: trial code for Event#update performing logic
+  def can_assemble?(integer)
+    # TODO: this is a starting idea for how to traverse down a level, then across that level before going down to the next level, trying to find open doors and dead ends.
+
+    # Assembly.find(9).can_assemble?(46) should eq yes
+    # because assembly.item.available_count == 45 and
+    # [["P072", 203], ["P069", 96], ["C030", 1]]
+
+    # can't assemble negative numbers or zero
+    return false unless integer.positive?
+
+    needed_quantity = integer * quantity
+
+    return true if item.available_count >= needed_quantity
+
+    if item_type == 'Component'
+      can_assemble_from_component?(needed_quantity)
+    else # item_type == 'Part'
+      can_assemble_from_part?(needed_quantity)
+    end
+  end
 
   def combination_uid
     "#{combination_type[0]}#{combination_id.to_s.rjust(3, 0.to_s)}"
@@ -100,5 +139,66 @@ class Assembly < ApplicationRecord
     # Better: If one exists, destroy it, then schedule a new one
     QuantityAndDepthCalculationJob.perform_later unless Delayed::Job.where(queue: 'quantity_calc').any?
     PriceCalculationJob.perform_later unless Delayed::Job.where(queue: 'price_calc').any?
+  end
+
+  # TODO: trial code for Event#update performing logic
+  def can_assemble_from_component?(integer)
+    # p "#{name}.can_assemble_from_component?"
+    # already determined we don't have enough with this item's available_count
+
+    # so need to step down one level and repeat
+    # if there is no down, we're done
+    return false if item.sub_assemblies.none?
+
+    # don't traverse all the way down one branch,
+    # traverse across the next level
+    results = []
+    subs_that_failed = []
+
+    item.sub_assemblies.each do |sub_assembly|
+      item = sub_assembly.item
+      quantity = sub_assembly.quantity
+      needed_quantity = integer * quantity
+
+      result = (item.available_count >= needed_quantity)
+      results << result
+
+      # subs are allowed to fail, it's only if they have sub-sub_assemblies that we care about it
+      subs_that_failed << [sub_assembly, needed_quantity] if !result && item.has_sub_assemblies?
+    end
+
+    # p "!results.uniq.include?(false): #{!results.uniq.include?(false)}"
+    # p "subs that failed: #{subs_that_failed}"
+
+    return !results.uniq.include?(false) if subs_that_failed.empty?
+
+    # one or more sub_assembly cannot assemble enough
+    @returns ||= []
+    subs_that_failed.each do |sub_a, needed_q|
+      # p "Failed sub: #{sub_a.name}; #{needed_q}"
+      # we already know this sub_a failed, but we haven't checked it's children
+      @returns << sub_a.can_assemble?(needed_q)
+    end
+
+    !@returns.uniq.include?(false)
+  end
+
+  # TODO: trial code for Event#update performing logic
+  def can_assemble_from_part?(integer)
+    # p "#{name}.can_assemble_from_part?"
+    # already determined we don't have enough with this item's available_count
+
+    # so if the part has no materials, we're done
+    return false unless item.made_from_materials?
+
+    # If the part is made from materials, we can check the material
+
+    # part has_many materials, but in reality it's only ever one record
+
+    # TODO: Part.has_one Material
+    mp = item.materials_parts.first
+
+    # returns true or false
+    (mp.material.available_count * mp.quantity) > integer
   end
 end

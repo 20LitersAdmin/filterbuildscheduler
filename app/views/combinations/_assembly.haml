@@ -26,6 +26,8 @@
     = human_number assembly.quantity
   %td.right-align{ style: highlight }
     = human_number item.available_count
+  %td.right-align
+    = human_number item.can_be_produced
 
 - if @show_sub_assemblies && item_type == 'Component' && item.sub_assemblies.any?
   = render partial: 'assembly', collection: item.sub_assemblies.ascending, locals: { nesting: nesting += 1 }

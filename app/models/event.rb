@@ -6,6 +6,7 @@ class Event < ApplicationRecord
 
   belongs_to :location
   belongs_to :technology
+  has_one :inventory
   has_many :registrations, dependent: :destroy
   accepts_nested_attributes_for :registrations
 
@@ -18,10 +19,6 @@ class Event < ApplicationRecord
   validate :dates_are_valid?
   validate :registrations_are_valid?
   validate :leaders_are_valid?
-
-  # TODO: Second deployment remove
-  # scope :kept, -> { all }
-  # scope :discarded, -> { none }
 
   # RailsAdmin "active" is better than "kept"
   scope :active, -> { kept }
@@ -109,6 +106,10 @@ class Event < ApplicationRecord
 
   def has_begun?
     start_time < Time.zone.now
+  end
+
+  def has_inventory?
+    inventory.present?
   end
 
   def incomplete?

@@ -4,6 +4,15 @@ class ImageSyncJob < ApplicationJob
   queue_as :image_sync
 
   def perform(*_args)
+    # Never trigger an analyzer when calling methods on ActiveStorage
+    ActiveStorage::Blob::Analyzable.module_eval do
+      def analyze_later; end
+
+      def analyzed?
+        true
+      end
+    end
+
     ActiveRecord::Base.logger.level = 1
 
     puts '========================= Starting ImageSyncJob ========================='

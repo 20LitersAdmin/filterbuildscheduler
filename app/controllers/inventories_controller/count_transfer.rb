@@ -25,8 +25,7 @@ class InventoriesController
       item.loose_count = count.loose_count
       item.box_count = count.unopened_boxes_count
       item.available_count = count.available
-      item.history[@inventory.date.iso8601] = { loose: count.loose_count, box: count.unopened_boxes_count, available: count.available }
-
+      item.set_history_from_curent_counts @inventory.date
       item.save
     end
 

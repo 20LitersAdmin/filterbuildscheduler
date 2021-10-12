@@ -15,6 +15,7 @@ class AddCountsToItemTables < ActiveRecord::Migration[6.1]
     add_column :parts,        :available_count,      :integer, default: 0
     add_column :parts,        :history,              :jsonb, null: false, default: {}
     add_column :parts,        :quantities,           :jsonb, null: false, default: {}
+    add_column :parts,        :can_be_produced,      :integer, default: 0
 
     add_column :components,   :uid,                  :string
     add_column :components,   :loose_count,          :integer, default: 0
@@ -22,6 +23,7 @@ class AddCountsToItemTables < ActiveRecord::Migration[6.1]
     add_column :components,   :available_count,      :integer, default: 0
     add_column :components,   :history,              :jsonb, null: false, default: {}
     add_column :components,   :quantities,           :jsonb, null: false, default: {}
+    add_column :components,   :can_be_produced,      :integer, default: 0
 
     # RubyMoney columns
     add_monetize :components, :price
@@ -34,6 +36,8 @@ class AddCountsToItemTables < ActiveRecord::Migration[6.1]
     add_column :technologies, :history,              :jsonb, null: false, default: {}
     add_column :technologies, :quantities,           :jsonb, null: false, default: {}
     add_column :technologies, :quantity_per_box,     :integer, default: 1
+    add_column :technologies, :can_be_produced,      :integer, default: 0
+
     # RubyMoney columns
     add_monetize :technologies, :price
 
