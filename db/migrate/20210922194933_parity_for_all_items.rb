@@ -2,17 +2,6 @@
 
 class ParityForAllItems < ActiveRecord::Migration[6.1]
   def change
-    # Never trigger an analyzer when calling methods on ActiveStorage
-    ActiveStorage::Blob::Analyzable.module_eval do
-      def analyze_later; end
-
-      def analyzed?
-        true
-      end
-    end
-
-    add_column :components, :minimum_on_hand, :integer, default: 0, null: false
-
     remove_column :components, :completed_tech, :boolean
     remove_column :components, :sample_size, :integer
     remove_column :components, :sample_weight, :float

@@ -8,15 +8,14 @@ class Part < ApplicationRecord
   # #history is a JSON store of historical inventory counts: { date.iso8601 => { loose: 99, box: 99, available: 99 } }
   # #quantities is a JSON store of the total number (integer) needed per technology: { technology.uid => 99, technology.uid => 99 }
 
-  has_many :materials_parts, dependent: :destroy, inverse_of: :part
-  has_many :materials, through: :materials_parts
-  accepts_nested_attributes_for :materials_parts, allow_destroy: true
+  alias_attribute :super_assemblies, :assemblies
 
   has_many :assemblies, as: :item, dependent: :destroy, inverse_of: :item
   has_many :components,   through: :assemblies, source: :combination, source_type: 'Component'
   has_many :technologies, through: :assemblies, source: :combination, source_type: 'Technology'
   accepts_nested_attributes_for :assemblies, allow_destroy: true
 
+  belongs_to :material, optional: true
   belongs_to :supplier, optional: true
 
   has_one_attached :image, dependent: :purge
@@ -29,19 +28,16 @@ class Part < ApplicationRecord
 
   scope :available, -> { where('available_count > 0') }
   scope :orderable, -> { where(made_from_materials: false) }
-  scope :made_from_materials, -> { where(made_from_materials: true) }
-  scope :not_made_from_materials, -> { where(made_from_materials: false) }
-
-  scope :below_minimums, -> { where(below_minimum: true) }
+  scope :made_from_material, -> { where(made_from_material: true) }
+  scope :not_made_from_material, -> { where(made_from_material: false) }
 
   # Exists in ActiveStorage already
   # scope :with_attached_image, -> { joins(:image_attachment) }
   scope :without_attached_image, -> { where.missing(:image_attachment) }
 
-  before_save :set_made_from_materials, :set_below_minimum
+  before_save :set_made_from_material
   before_save :process_image, if: -> { attachment_changes.any? }
   after_save { image.purge if remove_image == '1' }
-  after_save :recalculate_prices, if: -> { saved_change_to_price_cents? }
 
   # Not in Itemable because it's unique to Component and Part
   def self.search_name_and_uid(string)
@@ -57,27 +53,9 @@ class Part < ApplicationRecord
     Part.where('name ILIKE any ( array[?] )', ary).or(where('uid ILIKE any ( array[?] )', ary))
   end
 
-  def material
-    return Material.none unless made_from_materials?
-
-    materials.first
-  end
-
-  def quantity_from_material
-    return 0 unless materials.any?
-
-    materials_parts.first.quantity.to_f
-  end
-
   def on_order?
     last_ordered_at.present? && (last_received_at.nil? || last_ordered_at > last_received_at)
   end
-
-  # def owners
-  #   return ['N/A'] unless technologies.present?
-
-  #   all_technologies.map(&:owner_acronym)
-  # end
 
   # TODO: replace with Itemable#quantity(item)
   def per_technology(technology)
@@ -124,21 +102,6 @@ class Part < ApplicationRecord
     "#{uid}: #{name}"
   end
 
-  def weeks_to_out
-    # TODO: needs to simulate making more parts if part.made_from_materials?
-
-    return 0 if available_count.zero?
-
-    monthly_rates = []
-    all_technologies.each do |t|
-      monthly_rates << t.monthly_production_rate * t.quantity(uid)
-    end
-
-    return available_count if monthly_rates.sum.zero?
-
-    (available_count / (monthly_rates.sum / 4.0)).round(-1)
-  end
-
   private
 
   def process_image
@@ -161,15 +124,7 @@ class Part < ApplicationRecord
     image.attach(io: File.open(processed_image.path), filename: image_name, content_type: 'image/png')
   end
 
-  def set_below_minimum
-    self.below_minimum = available_count < minimum_on_hand
-  end
-
-  def set_made_from_materials
-    self.made_from_materials = materials.any?
-  end
-
-  def recalculate_prices
-    PriceCalculationJob.perform_later unless Delayed::Job.where(queue: 'price_calc').any?
+  def set_made_from_material
+    self.made_from_material = material.present?
   end
 end

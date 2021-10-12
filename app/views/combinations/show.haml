@@ -23,7 +23,7 @@
       %table.table.show_combination_tbl{ id: "show_combination_tbl_#{@combination.uid}" }
         %thead
           %tr
-            %th{ colspan: 9 } #{@combination.uid}: #{@combination.name} (#{@combination.available_count} available)
+            %th{ colspan: 9 } #{@combination.uid}: #{@combination.name} (#{@combination.available_count} available; #{@combination.can_be_produced} produceable)
             %th
               - if @combination.image.attached?
                 %img{ src: url_for(@combination.image), height: '60' }
@@ -31,6 +31,7 @@
               = humanized_money_with_symbol @combination.price
             %th.right-align # per
             %th.right-align avail.
+            %th.right-align produceable
         %tbody
           = render partial: 'assembly', collection: @assemblies, locals: { nesting: 0 }
 

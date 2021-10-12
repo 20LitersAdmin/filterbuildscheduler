@@ -71,8 +71,10 @@ ActiveRecord::Schema.define(version: 2021_09_22_194933) do
     t.integer "available_count", default: 0
     t.jsonb "history", default: {}, null: false
     t.jsonb "quantities", default: {}, null: false
+    t.integer "can_be_produced", default: 0
     t.integer "price_cents", default: 0, null: false
     t.string "price_currency", default: "USD", null: false
+    t.boolean "below_minimum", default: false, null: false
     t.integer "minimum_on_hand", default: 0, null: false
     t.index ["discarded_at"], name: "index_components_on_discarded_at"
   end
@@ -215,15 +217,6 @@ ActiveRecord::Schema.define(version: 2021_09_22_194933) do
     t.index ["supplier_id"], name: "index_materials_on_supplier_id"
   end
 
-  create_table "materials_parts", force: :cascade do |t|
-    t.bigint "material_id"
-    t.bigint "part_id"
-    t.decimal "quantity", precision: 8, scale: 4, default: "1.0", null: false
-    t.index ["material_id"], name: "index_materials_parts_on_material_id"
-    t.index ["part_id", "material_id"], name: "index_materials_parts_on_part_id_and_material_id", unique: true
-    t.index ["part_id"], name: "index_materials_parts_on_part_id"
-  end
-
   create_table "oauth_users", force: :cascade do |t|
     t.string "name"
     t.string "email"
@@ -258,7 +251,7 @@ ActiveRecord::Schema.define(version: 2021_09_22_194933) do
     t.integer "min_order", default: 1
     t.string "sku"
     t.float "weeks_to_deliver", default: 1.0
-    t.boolean "made_from_materials", default: false
+    t.boolean "made_from_material", default: false
     t.datetime "discarded_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -280,8 +273,12 @@ ActiveRecord::Schema.define(version: 2021_09_22_194933) do
     t.integer "available_count", default: 0
     t.jsonb "history", default: {}, null: false
     t.jsonb "quantities", default: {}, null: false
+    t.integer "can_be_produced", default: 0
+    t.bigint "material_id"
+    t.decimal "quantity_from_material", precision: 8, scale: 4
     t.boolean "below_minimum", default: false, null: false
     t.index ["discarded_at"], name: "index_parts_on_discarded_at"
+    t.index ["material_id"], name: "index_parts_on_material_id"
     t.index ["supplier_id"], name: "index_parts_on_supplier_id"
   end
 
@@ -350,8 +347,11 @@ ActiveRecord::Schema.define(version: 2021_09_22_194933) do
     t.jsonb "history", default: {}, null: false
     t.jsonb "quantities", default: {}, null: false
     t.integer "quantity_per_box", default: 1
+    t.integer "can_be_produced", default: 0
     t.integer "price_cents", default: 0, null: false
     t.string "price_currency", default: "USD", null: false
+    t.boolean "below_minimum", default: false, null: false
+    t.integer "minimum_on_hand", default: 0, null: false
     t.index ["discarded_at"], name: "index_technologies_on_discarded_at"
   end
 

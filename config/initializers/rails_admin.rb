@@ -287,6 +287,7 @@ RailsAdmin.config do |config|
       field :ideal_group_size
     end
 
+    # TODO: Technology.minimum_on_hand, Technology.below_minimum, Technology.can_be_produced
     show do
       group :default do
         field :uid
@@ -353,6 +354,7 @@ RailsAdmin.config do |config|
       end
     end
 
+    # TODO: Technology.minimum_on_hand, Technology.below_minimum, Technology.can_be_produced
     edit do
       group :default do
         field :uid do
@@ -453,6 +455,7 @@ RailsAdmin.config do |config|
       field :available_count
     end
 
+    # TODO: Component.minimum_on_hand, Component.below_minimum, Component.can_be_produced
     show do
       group :default do
         field :uid_and_name do
@@ -489,6 +492,7 @@ RailsAdmin.config do |config|
       end
     end
 
+    # TODO: Component.minimum_on_hand, Component.below_minimum, Component.can_be_produced
     edit do
       group :default do
         field :uid do
@@ -573,11 +577,12 @@ RailsAdmin.config do |config|
         label 'Low?'
         column_width 80
       end
-      field :made_from_materials, :false_is_invisible do
+      field :made_from_material, :false_is_invisible do
         column_width 80
       end
     end
 
+    # TODO: Part.material, Part.made_from_material, Part.can_be_produced
     show do
       group :default do
         field :uid_and_name do
@@ -618,6 +623,8 @@ RailsAdmin.config do |config|
         field :price, :money
         field :min_order, :delimited
         field :weeks_to_deliver
+        field :made_from_material
+        field :material
       end
       group 'Order Info' do
         field :last_ordered_at, :date
@@ -631,6 +638,7 @@ RailsAdmin.config do |config|
       end
     end
 
+    # TODO: Part.material, Part.made_from_material, Part.can_be_produced
     edit do
       group :default do
         field :uid do
@@ -643,7 +651,7 @@ RailsAdmin.config do |config|
         end
         field :comments
         field :description
-        field :made_from_materials
+        field :made_from_material
         field :materials_parts do
           label 'Made from this material:'
         end
@@ -733,6 +741,7 @@ RailsAdmin.config do |config|
       end
     end
 
+    # TODO: Material.parts, Material.can_be_produced
     show do
       group :default do
         field :uid_and_name do

@@ -34,13 +34,13 @@ class QuantityAndDepthCalculationJob < ApplicationJob
 
     # these arrays get populated via the assemblies_loop
     @component_ids = []
-    @part_ids_made_from_materials = []
+    @part_ids_made_from_material = []
 
     # this counter is used to set the Assembly#depth needed for accurate PriceCalculationJob results
     @counter = 0
     assemblies_loop(@technology.assemblies)
 
-    loop_parts_for_materials(@part_ids_made_from_materials.uniq)
+    loop_parts_for_materials(@part_ids_made_from_material.uniq)
 
     @technology.save
   end
@@ -54,7 +54,8 @@ class QuantityAndDepthCalculationJob < ApplicationJob
       insert_into_quantity(a)
 
       @component_ids << a.item_id if a.item_type == 'Component'
-      @part_ids_made_from_materials << a.item_id if a.item_type == 'Part' && a.item&.made_from_materials?
+
+      @part_ids_made_from_material << a.item_id if a.item_type == 'Part' && a.item&.made_from_material?
     end
 
     loop_components(@component_ids) if @component_ids.any?
@@ -71,7 +72,7 @@ class QuantityAndDepthCalculationJob < ApplicationJob
   def insert_into_item_quantities(uid, value)
     item = uid.objectify_uid
 
-    # safety incase uid is somehow not in parity with id
+    # safety in case uid is somehow not in parity with id
     return unless item.present?
 
     item.quantities[@technology.uid] = value
@@ -97,12 +98,12 @@ class QuantityAndDepthCalculationJob < ApplicationJob
 
       next if part.quantity_from_material.zero?
 
-      materials_per_technology = parts_per_technology / part.quantity_from_material
+      material_per_technology = parts_per_technology / part.quantity_from_material
 
       if @technology.quantities[part.material.uid].present?
-        @technology.quantities[part.material.uid] += materials_per_technology
+        @technology.quantities[part.material.uid] += material_per_technology
       else
-        @technology.quantities[part.material.uid] = materials_per_technology
+        @technology.quantities[part.material.uid] = material_per_technology
       end
     end
   end

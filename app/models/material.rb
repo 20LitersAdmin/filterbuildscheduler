@@ -8,9 +8,7 @@ class Material < ApplicationRecord
   # #history is a JSON store of historical inventory counts: { date.iso8601 => { loose: 99, box: 99, available: 99 } }
   # #quantities is a JSON store of the total number (float) needed per technology: { technology.uid => 99, technology.uid => 99 }
 
-  has_many :materials_parts, dependent: :destroy, inverse_of: :material
-  has_many :parts, through: :materials_parts
-  accepts_nested_attributes_for :materials_parts, allow_destroy: true
+  has_many :parts
   belongs_to :supplier, optional: true
 
   has_one_attached :image, dependent: :purge
@@ -18,13 +16,10 @@ class Material < ApplicationRecord
 
   validates_presence_of :name
 
-  scope :below_minimums, -> { where(below_minimum: true) }
-
   # rails_admin scope "active" sounds better than "kept"
   scope :active, -> { kept }
+  scope :with_parts, -> { joins(:parts).distinct }
 
-  # TODO: Second deploy (fails on migration)
-  before_save :set_below_minimum
   before_save :process_image, if: -> { attachment_changes.any? }
   after_save { image.purge if remove_image == '1' }
   after_save :escalate_price, if: -> { saved_change_to_price_cents? }
@@ -76,19 +71,6 @@ class Material < ApplicationRecord
     "#{uid}: #{name}"
   end
 
-  def weeks_to_out
-    return 0 if available_count.zero?
-
-    monthly_rates = []
-    all_technologies.each do |t|
-      monthly_rates << t.monthly_production_rate * t.quantity(uid)
-    end
-
-    return available_count if monthly_rates.sum.zero?
-
-    (available_count / (monthly_rates.sum / 4.0)).round(-1)
-  end
-
   private
 
   def process_image
@@ -111,12 +93,12 @@ class Material < ApplicationRecord
     image.attach(io: File.open(processed_image.path), filename: image_name, content_type: 'image/png')
   end
 
-  def set_below_minimum
-    self.below_minimum = available_count < minimum_on_hand
-  end
-
   def escalate_price
-    # triggers MaterialsPart#calculate_price_for_part
-    materials_parts.each(&:save)
+    return true unless parts.any?
+
+    parts.each do |part|
+      part_price = price_cents / part.quantity_from_material
+      part.update_columns(price_cents: part_price)
+    end
   end
 end

@@ -100,13 +100,21 @@
 * `Events#cancelled` - relies on `.only_deleted`
   - vs. `/admin/event&scope=discarded`
 
-
 ### Current:
 1. Count records are temporary records, created when an inventory is created and destroyed after their meaningful values are transferred to their corresponding Materials, Parts, Components, and Technologies
 
-  3. When finalizing inventory (InventoriesController#update), CountTransfer runs
+  3. **DONE** Manual inventories: When finalizing inventory (InventoriesController#update), CountTransfer runs
     - copies all counts.changed to their items
     - deletes all counts
+
+  3. Event-based inventory:
+    - updates item counts
+      - for just that technology
+      - down the tree to satisfy event.technologies_built && event.boxes_packed
+        - ***HERE***: ProduceableJob needs to be triggered after every Inventory is finalized (Inventory#update or Inventory after_update)
+        - now have Item#can_be_produced, which should help
+        - EventsController::AdjustItemCounts is an option
+        - AssemblyService is an option
 
   4. Calculating count.extrapolated_count is depreciated
 
@@ -114,7 +122,6 @@
     - EventsController::CountPopulate
     - EventsController::CreateInventory
     - EventsController::SubtractSubsets
-
 
 ### Still to do:
 - ComponentsController#order && ComponentsController#order_low
@@ -152,7 +159,16 @@
 
 ## After 1st deploy:
 - migrate the dB (which runs the necessary jobs)
+- remove extrap models
 
+### And also!
+1. Ability to pause / cancel registration emails
+  - Using a suppress_emails? field?
+  - `scope :pre_reminders, -> { where(reminder_sent_at: nil, suppress_reminder_emails: false) }`
+
+2. Part really only `has_one` material
+  - could add `material_id` and `quantity_from_material` to Part and eliminate MaterialsPart
+  - `Part.where(made_from_materials: true)` could calculate price based upon `#material` and `#quantity_from_material` on Material save
 
 ## Remind myself:
 3. `orphans = User.builders.left_outer_joins(:registrations).where(registrations: { id: nil })`

@@ -20,14 +20,9 @@ class CreateAssembliesJoinTable < ActiveRecord::Migration[6.1]
     add_index :assemblies, [:item_id, :item_type]
     add_index :assemblies, [:combination_id, :combination_type]
 
-    # simplify the join table beetween Materials and Parts
-    # to get `quantity`, call `part.quantity_from_material`
-    create_table :materials_parts do |t|
-      t.belongs_to :material
-      t.belongs_to :part
-      t.decimal :quantity, precision: 8, scale: 4, default: 1, null: false
-    end
-
-    add_index :materials_parts, [:part_id, :material_id], unique: true
+    # Part belongs_to Material
+    add_reference :parts, :material
+    rename_column :parts, :made_from_materials, :made_from_material
+    add_column :parts, :quantity_from_material, :decimal, precision: 8, scale: 4, default: nil
   end
 end

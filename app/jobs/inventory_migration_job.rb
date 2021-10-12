@@ -5,7 +5,7 @@ class InventoryMigrationJob < ApplicationJob
 
   # Migrations that run before:
   # AddCountsToItemTables
-  # CreateAssembliesJoinTable (also creates MaterialsPart)
+  # CreateAssembliesJoinTable (also add Material reference to Part)
   # ChangeFromParanoiaToDiscard
   # CreateActiveStorageTables
   # AddBelowMinimumBooleansToItems
@@ -28,7 +28,7 @@ class InventoryMigrationJob < ApplicationJob
     turn_components_into_technologies_and_delete
     delete_counts
     shorten_technology_names
-    create_materials_parts_from_extrap
+    migrate_extrap_mat_parts_to_parts
     delete_all_extraps
     manually_create_assemblies
 
@@ -182,28 +182,14 @@ class InventoryMigrationJob < ApplicationJob
     end
   end
 
-  def create_materials_parts_from_extrap
-    # TODO: Check for accuracy
-    #  MaterialsPart.all.map(&:name)
-    # ["M006::P067",
-    #  "M006::P068",
-    #  "M006::P069",
-    #  "M009::P071",
-    #  "M011::P108",
-    #  "M011::P109",
-    #  "M008::P083",
-    #  "M012::P110",
-    #  "M011::P158",
-    #  "M011::P107"]
-    puts 'Turn ExtrapolateMaterialParts into MaterialsParts'
+  def migrate_extrap_mat_parts_to_parts
+    puts 'Migrate ExtrapolateMaterialParts info onto Parts'
     ExtrapolateMaterialPart.all.each do |e|
-      mp = MaterialsPart.find_or_initialize_by(
-        part_id: e.part_id,
-        material_id: e.material_id
+      Part.find(e.part_id).update(
+        material_id: e.material_id,
+        quantity_from_material: e.parts_per_material,
+        made_from_material: true
       )
-
-      mp.quantity = e.parts_per_material
-      e.destroy if mp.save
     end
   end
 

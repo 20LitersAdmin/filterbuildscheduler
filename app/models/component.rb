@@ -31,9 +31,11 @@ class Component < ApplicationRecord
   # scope :with_attached_image, -> { joins(:image_attachment) }
   scope :without_attached_image, -> { where.missing(:image_attachment) }
 
+  # https://stackoverflow.com/questions/69545741/ruby-on-rails-scope-of-polymorphic-join-with-only-specified-type
+  # scope :with_only_parts, -> { joins(:parts).distinct }
+
   before_save :process_image, if: -> { attachment_changes.any? }
   after_save { image.purge if remove_image == '1' }
-  after_save :recalculate_prices, if: -> { saved_change_to_price_cents? }
   before_destroy :dependent_destroy_assemblies
 
   # Not in Itemable because it's unique to Component and Part
@@ -152,9 +154,5 @@ class Component < ApplicationRecord
     image_name = "#{uid}_#{Date.today.iso8601}.png"
 
     image.attach(io: File.open(processed_image.path), filename: image_name, content_type: 'image/png')
-  end
-
-  def recalculate_prices
-    PriceCalculationJob.perform_later unless Delayed::Job.where(queue: 'price_calc').any?
   end
 end
