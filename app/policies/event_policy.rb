@@ -13,15 +13,15 @@ class EventPolicy < ApplicationPolicy
   end
 
   def destroy?
-    user&.admin_or_leader?
+    create?
   end
 
   def update?
-    user&.admin_or_leader?
+    create?
   end
 
   def new?
-    user&.admin_or_leader?
+    create?
   end
 
   def show?
@@ -40,11 +40,11 @@ class EventPolicy < ApplicationPolicy
   end
 
   def edit?
-    user&.admin_or_leader?
+    create?
   end
 
   def cancelled?
-    user&.admin_or_leader?
+    create?
   end
 
   def closed?
@@ -52,31 +52,35 @@ class EventPolicy < ApplicationPolicy
   end
 
   def lead?
-    user&.admin_or_leader?
+    create?
   end
 
   def leaders?
-    user&.is_admin?
+    closed?
   end
 
   def leader_unregister?
-    user&.is_admin?
+    closed?
   end
 
   def leader_register?
-    user&.is_admin?
+    closed?
   end
 
   def restore?
-    user&.admin_or_leader?
+    create?
   end
 
   def messenger?
-    user&.admin_or_leader?
+    create?
   end
 
   def sender?
-    user&.admin_or_leader?
+    create?
+  end
+
+  def attendance?
+    create?
   end
 
   class Scope
@@ -94,6 +98,5 @@ class EventPolicy < ApplicationPolicy
         Event.non_private
       end
     end
-
   end
 end
