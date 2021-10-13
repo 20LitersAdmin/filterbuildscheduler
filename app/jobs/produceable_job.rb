@@ -3,6 +3,10 @@
 class ProduceableJob < ApplicationJob
   queue_as :produceable
 
+  # TODO: when to trigger this job?
+  # Before trying to subtract items
+  # After any inventory is created (also covers above scenario)
+
   def perform(*_args)
     ActiveRecord::Base.logger.level = 1
 

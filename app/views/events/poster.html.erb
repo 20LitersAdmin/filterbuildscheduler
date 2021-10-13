@@ -30,7 +30,7 @@
     </div>
 
     <div class="poster-third">
-      <img src="<%= @tech_img  %>" class="tech-img">
+      <%= image_tag @tech_img, class: 'tech-img' %>
     </div>
 
     <div class="poster-third">
@@ -71,7 +71,7 @@
     </div>
 
     <div class="poster-half">
-      <img src="<%= @location_img  %>" class="location-img">
+      <%= image_tag(@location_img, class: 'location-img') if @location_img.present? %>
     </div>
   </div>
 

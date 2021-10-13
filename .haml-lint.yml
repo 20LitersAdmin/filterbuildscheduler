@@ -7,6 +7,8 @@ linters:
     EnforcedStyle: 'id'
   InlineStyles:
     enabled: false
+  IdNames:
+    enabled: false
 
   RuboCop:
     ignored_cops:
@@ -15,3 +17,4 @@ linters:
       - Layout/TrailingEmptyLines
       - Lint/Void
       - Metrics/BlockLength
+      - Bundler/GemVersion

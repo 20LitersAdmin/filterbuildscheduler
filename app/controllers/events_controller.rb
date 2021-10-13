@@ -25,11 +25,13 @@ class EventsController < ApplicationController
 
     @registration.leader = (params[:leader].present? && current_user&.can_lead_event?(@event)) if @registration.new_record?
 
-    @tech_img = @event.technology.img_url if @event.technology&.img_url.present?
+    @tech_img = @event.technology.display_image
 
     @tech_info = @event.technology.info_url if @event.technology&.info_url.present?
 
-    @location_img = @event.location.photo_url if @event.location.photo_url.present?
+    @location = @event.location
+
+    @location_img = @event.location.image
 
     @show_edit = (current_user&.is_admin || @registration&.leader?)
 
@@ -76,11 +78,14 @@ class EventsController < ApplicationController
   end
 
   def update
+    byebug
+
     authorize @event = Event.find(params[:id])
 
     modified_params = event_params.dup
 
-    # huh?
+    # An event can be updated before the event, with no event report
+    # Or after the event, including an event report
     modified_params[:technologies_built] = @event.technologies_built || 0 if event_params[:technologies_built] == ''
 
     modified_params[:boxes_packed] = @event.boxes_packed || 0 if event_params[:boxes_packed] == ''
@@ -348,9 +353,9 @@ class EventsController < ApplicationController
   def poster
     @event = Event.find(params[:id])
     @technology = @event.technology
-    @tech_img = @technology.img_url
+    @tech_img = @technology.display_image
     @location = @event.location
-    @location_img = @location.photo_url
+    @location_img = @location.image
 
     @tech_blurb = @technology.description
 
