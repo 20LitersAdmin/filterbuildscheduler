@@ -2,6 +2,7 @@
 
 class EventsController < ApplicationController
   before_action :find_stale
+  before_action :set_event, only: %i[show edit update attendance poster replicate replicator restore leaders leader_unregister leader_register]
 
   def index
     our_events = policy_scope(Event)
@@ -20,7 +21,6 @@ class EventsController < ApplicationController
   end
 
   def show
-    authorize @event = Event.find(params[:id])
     @registration = @event.registrations.where(user: current_user).first_or_initialize
 
     @registration.leader = (params[:leader].present? && current_user&.can_lead_event?(@event)) if @registration.new_record?
@@ -68,8 +68,6 @@ class EventsController < ApplicationController
   end
 
   def edit
-    authorize @event = Event.find(params[:id])
-
     @show_report = current_user&.admin_or_leader? && @event.start_time < Time.now
 
     @too_old = (Date.today - @event.end_time.to_date).round > 14
@@ -80,19 +78,13 @@ class EventsController < ApplicationController
   def update
     byebug
 
-    authorize @event = Event.find(params[:id])
+    # HERE: Tell if event_params will have report fields:
+    # if @show_report && !@too_old
+    params_will_have_report_fields =
+      (current_user&.admin_or_leader? && @event.start_time < Time.now) &&
+      ((Date.today - @event.end_time.to_date).round < 14)
 
-    modified_params = event_params.dup
-
-    # An event can be updated before the event, with no event report
-    # Or after the event, including an event report
-    modified_params[:technologies_built] = @event.technologies_built || 0 if event_params[:technologies_built] == ''
-
-    modified_params[:boxes_packed] = @event.boxes_packed || 0 if event_params[:boxes_packed] == ''
-
-    modified_params[:item_goal] = @event.item_goal || 0 if event_params[:item_goal] == ''
-
-    @event.assign_attributes(modified_params)
+    # @event.assign_attributes(modified_params)
 
     @inventory_created = ''
     @admins_notified = ''
@@ -186,8 +178,6 @@ class EventsController < ApplicationController
   end
 
   def destroy
-    authorize @event = Event.find(params[:id])
-
     @event_id = @event.id
 
     @admins_notified = ''
@@ -211,7 +201,7 @@ class EventsController < ApplicationController
 
     end
 
-    if @event.destroy
+    if @event.discard
       flash[:success] = "Event cancelled. #{@admins_notified} #{@users_notified}"
       redirect_to root_path
     else
@@ -242,21 +232,18 @@ class EventsController < ApplicationController
       @events << e if e.needs_leaders?
     end
 
-    authorize @events.first if @events.any?
+    authorize Event
 
     @finder = 'lead'
   end
 
   def leaders
-    authorize @event = Event.find(params[:id])
-
     @leaders = User.leaders
     @already_registered_leaders = User.find(@event.registrations.registered_as_leader.pluck(:user_id))
     @remaining_leaders = @leaders - @already_registered_leaders
   end
 
   def leader_unregister
-    authorize @event = Event.find(params[:id])
     @registration = @event.registrations.registered_as_leader.where(user_id: params[:user_id]).first
 
     if @registration.blank?
@@ -270,7 +257,6 @@ class EventsController < ApplicationController
   end
 
   def leader_register
-    authorize @event = Event.find(params[:id])
     @registration = @event.registrations.where(user_id: params[:user_id]).first_or_initialize
 
     @registration.leader = true
@@ -283,7 +269,7 @@ class EventsController < ApplicationController
   end
 
   def restore
-    authorize @event = Event.only_deleted.find(params[:id])
+    authorize @event = Event.discarded.find(params[:id])
     if params[:recursive] == 'false'
       Event.restore(@event.id)
       flash[:success] = 'Event restored but not registrations.'
@@ -292,16 +278,10 @@ class EventsController < ApplicationController
       flash[:success] = 'Event and associated registrations restored.'
     end
 
-    if Event.only_deleted.exists?
-      redirect_to cancelled_events_path
-    else
-      redirect_to events_path
-    end
+    Event.discarded.exists? ? redirect_to(cancelled_events_path) : redirect_to(events_path)
   end
 
   def replicate
-    @event = Event.find(params[:id])
-
     @replicator = Replicator.new
   end
 
@@ -322,8 +302,6 @@ class EventsController < ApplicationController
   end
 
   def replicator
-    @event = Event.find(params[:id])
-
     replicator = Replicator.new(replicator_params)
 
     replicator.event_id = @event.id
@@ -341,9 +319,6 @@ class EventsController < ApplicationController
   end
 
   def attendance
-    @event = Event.find(params[:id])
-    authorize @event, :edit?
-
     @registrations = @event.registrations.where.not(leader: true).ordered_by_user_lname
 
     @print_blanks = @event.max_registrations - @event.total_registered + 5
@@ -351,7 +326,6 @@ class EventsController < ApplicationController
   end
 
   def poster
-    @event = Event.find(params[:id])
     @technology = @event.technology
     @tech_img = @technology.display_image
     @location = @event.location
@@ -403,5 +377,9 @@ class EventsController < ApplicationController
   def find_stale
     @cancelled_events = Event.where.not(discarded_at: nil)
     @closed_events = Event.closed
+  end
+
+  def set_event
+    authorize @event = Event.find(params[:id])
   end
 end
