@@ -1,0 +1,65 @@
+-# frozen_string_literal: true
+
+.col-md-6.col-md-offset-3.col-sm-8.col-sm-offset-2.event-form
+  = simple_form_for @event do |f|
+    = f.error_notification
+    = f.input :title
+    - if current_user.is_admin?
+      .row
+        .col-sm-9
+          = f.association :location
+        .col-sm-3
+          = link_to 'Add location', rails_admin.new_path(model_name: 'location'), class: 'btn yellow form-matcher float-right'
+    - else
+      = f.association :location
+    .row
+      .col-sm-6
+        = f.input :start_time, as: :string, input_html: { class: 'datetimepicker', value: time_for_form(f.object.start_time) }
+      .col-sm-6
+        = f.input :end_time, as: :string, input_html: { class: 'datetimepicker', value: time_for_form(f.object.end_time) }
+    = f.input :description, as: :text, input_html: { rows: 5 }
+    .row
+      .col-sm-6
+        = f.association :technology
+      .col-sm-6
+        = f.input :item_goal
+    .row
+      .col-sm-6
+        = f.input :min_leaders, label: 'Min. Leaders'
+      .col-sm-6
+        = f.input :max_leaders, label: 'Max. Leaders'
+    .row
+      .col-sm-6
+        = f.input :min_registrations, label: 'Min. Builders'
+      .col-sm-6
+        = f.input :max_registrations, label: 'Max. Builders'
+    .row
+      .col-sm-6
+        = f.input :is_private, label: 'Private Event'
+      .col-sm-6
+        %p If it's private, is there a contact person?
+    .row
+      .col-sm-6
+        = f.input :contact_name
+      .col-sm-6
+        = f.input :contact_email
+    - if @show_report
+      .row
+        %hr/
+      %h2 Report
+      = render partial: 'events/report_fields', locals: { f: f }
+    = f.submit 'Submit', class: 'btn yellow fullwidth'
+    - if @show_report && !@too_old
+      - if @event.registrations.count.positive? && @event.emails_sent == false
+        = f.button :submit, name: 'send_report', value: 'Submit & Email Results', class: 'btn blue fullwidth'
+      - if @event.emails_sent == true
+        %p.btn.blue.fullwidth (results already emailed)
+    - unless @event.new_record?
+      .row
+        .col-xs-4
+          = link_to 'Duplicate', new_event_path(source_event: @event.id), class: 'btn yellow fullwidth'
+        .col-xs-4
+          = link_to 'Replicate', replicate_event_path(@event), class: 'btn yellow fullwidth'
+        .col-xs-4
+          = link_to 'Cancel Event', event_path(@event), method: :delete, class: 'btn red fullwidth', data: { confirm: 'Are you sure you want to cancel the event? This has consequences.' }
+  = link_to 'Back', events_path, class: 'btn blue fullwidth'

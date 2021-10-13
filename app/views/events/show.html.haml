@@ -1,0 +1,92 @@
+-# frozen_string_literal: true
+
+.container.event-show
+  = render partial: 'shared/event_functions' if current_user&.admin_or_leader?
+
+  .page-header.row
+    %h1= @event.full_title
+    - if @event.is_private
+      %h4.center-align Private Event
+    - if @event.description.present?
+      .center-align.col-sm-8.col-sm-offset-2
+        = @event.description
+  .row
+    .col-md-6
+      %h2 Register
+      %h4 #{@event.total_registered}/#{@event.max_registrations} registered.
+      %p
+        - if @event.registrations_remaining.positive?
+          Room for #{pluralize(@event.registrations_remaining, 'more person')}.
+        - else
+          %strong Event is full. No more room for additional guests.
+      %p
+        %strong
+          - if @leaders.count.positive?
+            Event #{pluralize_without_count(@leaders.count, 'leader')}: #{@leaders.map { |r| r.user.fname }.join(', ')}
+      %hr/
+      - if @event.registrations_filled?
+        = render partial: 'events/registration_full'
+      - elsif current_user&.registered?(@event)
+        = render partial: 'events/registration_registered'
+      - elsif current_user
+        = render partial: 'events/registration_signedin'
+      - else # current_user == nil
+        = render partial: 'events/registration_anonymous'
+    .col-md-6
+      .row
+        %div{ class: (@tech_img.present? ? 'col-xs-8' : 'col-xs-12') }
+          - if @event.technology
+            %h2 The Filter
+            %h3= @event.technology.name
+          - else
+            %h2 The Age Limits
+          - if @event.technology.family_friendly
+            %h4 Family-friendly! Ages 4 - 104!
+          - else
+            %h4 Grown-up event
+            %i Ages 12+ for safety reasons
+        - if @tech_img.present?
+          .col-xs-4.tech-img-div
+            = image_tag @tech_img, class: 'tech-img'
+            = link_to('Learn more', @tech_info, target: '_blank', class: 'btn blue fullwidth') if @tech_info.present?
+      .row
+        .col-xs-12
+          %h2 The Details
+          %h4= @event.format_time_range
+        %div{ class: (@location_img.present? ? 'col-xs-8' : 'col-xs-12') }
+          %h4= @location.name
+          %div= @location.address1
+          - if @location.address2
+            %div= @location.address2
+          %div= @location.one_liner
+          - if @location.instructions
+            %div= @location.instructions
+          = link_to('Map', @location.map_url, class: 'btn blue fullwidth', target: '_blank') if @location.map_url.present?
+        - if @location_img.present?
+          .col-xs-4
+            %a{ data: { target: '#photoModal', toggle: 'modal' } }
+              = image_tag @location_img, class: 'location-img'
+            %a.btn.blue.fullwidth{ data: { target: '#photoModal', toggle: 'modal' } } Larger Image
+          - if @event.is_private && @event.contact_email.present?
+            .col-xs-12
+              %h2 Event contact:
+              %h4 #{@event.contact_name}: #{@event.contact_email}
+
+  - unless @event.in_the_past?
+    .row
+      .col-xs-12.center-align
+        = render partial: 'events/share'
+
+#waiverModal.modal.fade{ tabindex: '-1', role: 'dialog', aria: { labelledby: 'Liability Waiver & Media Release', hidden: 'true' } }
+  = render partial: 'users/user_waiver_form', locals: { show_accept_button: current_user ? !@registration.waiver_accepted? : true }
+
+#photoModal.modal.fade{ tabindex: '-1', role: 'dialog', aria: { labelledby: 'Larger Photo', hidden: 'true' } }
+  .modal-dialog.modal-lg{ role: 'document' }
+    .modal-content
+      .modal-header
+        %button.close{ type: 'button', 'data-dismiss': 'modal', 'aria-label': 'Close' }
+          %span{ 'aria-hidden': 'true' } &times;
+      .modal-body
+        = image_tag @location_img, class: 'location-img'
+      .modal-footer
+        %button.btn.yellow.fullwidth{ type: 'button', 'data-dismiss': 'modal', 'aria-label': 'Close' } Close
