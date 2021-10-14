@@ -22,6 +22,14 @@ class Count < ApplicationRecord
     item.quantity_per_box * unopened_boxes_count.to_i
   end
 
+  def history_hash
+    {
+      loose: loose_count,
+      box: unopened_boxes_count,
+      available: available
+    }
+  end
+
   def group_by_tech
     item.technologies.map(&:id).min || 999
   end

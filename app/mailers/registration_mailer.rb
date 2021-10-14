@@ -94,6 +94,8 @@ class RegistrationMailer < ApplicationMailer
   end
 
   def reminder(registration)
+    return if @recipient.email_opt_out
+
     @registration = registration
     @recipient = registration.user
     @event = registration.event
@@ -119,6 +121,8 @@ class RegistrationMailer < ApplicationMailer
   end
 
   def event_results(registration)
+    return if @recipient.email_opt_out
+
     @registration = registration
     @recipient = registration.user
     @event = registration.event

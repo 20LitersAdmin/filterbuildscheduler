@@ -3,16 +3,20 @@
 class ProduceableJob < ApplicationJob
   queue_as :produceable
 
+  after_perform :trigger_event_inventory
+
   # TODO: when to trigger this job?
   # Before trying to subtract items
   # After any inventory is created (also covers above scenario)
 
-  def perform(*_args)
+  def perform(event: nil)
     ActiveRecord::Base.logger.level = 1
 
     puts '========================= Starting ProduceableJob ========================='
 
-    # Definition: can_be_produced is the smallest of the available count of all children * quantity of children needed per parent
+    @event = event
+
+    # Definition: can_be_produced is the smallest of the available_count * quantity needed per parent of all children
 
     # item.available_count + item.can_be_produced indicates how many combination.can_be_prodced.
 
@@ -66,13 +70,17 @@ class ProduceableJob < ApplicationJob
 
     # division here because one or more item is always needed to make one combination
     produceable = (item.can_be_produced + item.available_count) / assembly.quantity
-    # NOTE: the above carries the :can_be_produced up from the bottom of the tree, whic always assumes all sub-items will be allocated to this combination, and will over-estimate what can actually be produced.
-
-    # the alternative is to do something like item.super_assemblies.pluck(:quantity).sum to get the total number needed across all assemblies and use that to allocate the item evenly, which will under-estimate what can be produced as it assumes that all assemblies must be produced equally regardless of combination or technology.
+    # NOTE: the above carries the :can_be_produced up from the bottom of the tree, whic always assumes all sub-items will be allocated to this combination, and will *over-estimate* what can actually be produced.
 
     # when current_produceable == nil: it hasn't been set yet
     # when current_produceable > produceable: it should be lowered
     # this ensures that can_be_produced is set to the minimum of child assemblies
     combination.update_columns(can_be_produced: produceable) if current_produceable.nil? || current_produceable > produceable
+  end
+
+  private
+
+  def trigger_event_inventory
+    EventInventoryJob.perform_later(@event) if @event
   end
 end
