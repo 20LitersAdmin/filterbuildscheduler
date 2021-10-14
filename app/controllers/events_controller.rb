@@ -76,98 +76,48 @@ class EventsController < ApplicationController
   end
 
   def update
-    byebug
+    # byebug
 
-    # HERE: Tell if event_params will have report fields:
-    # if @show_report && !@too_old
-    params_will_have_report_fields =
-      (current_user&.admin_or_leader? && @event.start_time < Time.now) &&
-      ((Date.today - @event.end_time.to_date).round < 14)
+    @event.assign_attributes(event_params)
 
-    # @event.assign_attributes(modified_params)
-
-    @inventory_created = ''
-    @admins_notified = ''
-    @users_notified = ''
-    @results_emails_sent = ''
-    # CREATE AN INVENTORY WHEN AN EVENT REPORT IS SUBMITTED UNDER CERTAIN CONDITIONS.
-    # Fields in question: technologies_built, boxes_packed
-    # Condition: This is the first time the event report is being submitted (@event.emails_sent == false)
-    # Conditions: They're not negative AND ( they're not both 0 OR they weren't zero but now they are. )
-    # ESCAPE CLAUSE: the event's technology doesn't have a primary_component
-
-    # Condition: Neither number is negative
-    @positive_numbers = false
-    @positive_numbers = true if @event.technologies_built >= 0 && @event.boxes_packed >= 0
-
-    # Condition: they're not both 0
-    @more_than_zero = (@event.technologies_built + @event.boxes_packed).positive?
-
-    # Condition: they weren't zero, but now they are:
-    @changed_to_zero = false
-    @changed_to_zero = true if @event.technologies_built_was != 0 && @event.technologies_built.zero?
-    @changed_to_zero = true if @event.boxes_packed_was != 0 && @event.boxes_packed.zero?
-
-    # combine conditions
-    if @positive_numbers && (@more_than_zero || @changed_to_zero) && @event.emails_sent == false
-
-      # determine the values to use when populating the count
-      @loose =
-        if event_params[:technologies_built] == ''
-          nil
-        elsif @event.technologies_built_changed?
-          @event.technologies_built - @event.technologies_built_was
-        else
-          @event.technologies_built
-        end
-
-      @box =
-        if event_params[:boxes_packed] == ''
-          nil
-        elsif @event.boxes_packed_changed?
-          @event.boxes_packed - @event.boxes_packed_was
-        else
-          @event.boxes_packed
-        end
-
-      # AdjustItemCounts.new(@event, @loose, @box) unless @event.inventory.present?
-      @inventory_created = 'Inventory created.'
-
-    end
-
-    if @event.start_time_was > Time.now && (@event.start_time_changed? || @event.end_time_changed? || @event.location_id_changed? || @event.technology_id_changed? || @event.is_private_changed?)
+    if @event.should_notify_admins?
       # Can't use delayed_job because ActiveModel::Dirty doesn't persist
       EventMailer.changed(@event, current_user).deliver_now
-      @admins_notified = 'Admins notified.'
-      if @event.registrations.exists? && (@event.start_time_changed? || @event.end_time_changed? || @event.location_id_changed? || @event.technology_id_changed?)
-        @event.registrations.each do |registration|
-          # Can't use delayed_job because ActiveModel::Dirty doesn't persist
-          RegistrationMailer.event_changed(registration, @event).deliver_now
-          @users_notified = 'All registered builders notified.'
-        end
-      end
+      admins_notified = 'Admins notified.'
     end
 
-    @send_results_emails = false
-    # CONDITIONS:
-    # This is the first time the event report is being submitted (emails_sent == false)
-    # The attendance is above 0
-    # There are registrations associated with the event
-    # The event generated some loose_count or unopened_boxes_count result
-    # The 'Submit Report & Email Results' button was pushed (as opposed to the 'Submit Report' button)
-    if @event.emails_sent == false && @event.attendance&.positive? && @event.registrations.count&.positive? && @more_than_zero && params[:send_report].present?
-      @send_results_emails = true
-      @event.emails_sent = true
-      @results_emails_sent = 'Attendees notified of results.'
+    if @event.should_notify_builders?
+      @event.registrations.each do |registration|
+        # Can't use delayed_job because ActiveModel::Dirty doesn't persist
+        RegistrationMailer.event_changed(registration, @event).deliver_now
+      end
+      users_notified = 'All registered builders notified.'
     end
+
+    if @event.should_send_results_emails? && params[:send_report].present?
+      send_results_emails = true
+      @event.emails_sent = true
+      results_emails_sent = 'Attendees notified of results.'
+    end
+
+    # set a variable now, while ActiveModel::Dirty can inspect *_changed?
+    # then trigger ProduceableJob after @event.save
+    create_inventory = true if @event.should_create_inventory?
 
     if @event.save
-      flash[:success] = "Event updated. #{@admins_notified} #{@users_notified} #{@results_emails_sent} #{@inventory_created}"
+      @event.reload
 
-      @event.registrations.where(attended: true).each do |r|
-        RegistrationMailer.delay.event_results(r) if @send_results_emails == true
-        KindfulClient.new.import_user_w_note(r)
+      ProduceableJob.perform_later(event: @event) if create_inventory
+
+      # Only trigger RegistrationMailer and KindfulClient if the event is actually complete.
+      if @event.complete?
+        @event.registrations.where(attended: true).each do |r|
+          RegistrationMailer.delay.event_results(r) if send_results_emails
+          KindfulClient.new.delay.import_user_w_note(r)
+        end
       end
+
+      flash[:success] = "Event updated. #{admins_notified} #{users_notified} #{results_emails_sent} #{inventory_created}"
 
       redirect_to event_path(@event)
     else
@@ -180,16 +130,17 @@ class EventsController < ApplicationController
   def destroy
     @event_id = @event.id
 
-    @admins_notified = ''
-    @users_notified = ''
-
     # send emails to registrations and leaders before cancelling
     if @event.start_time > Time.now
+      # TODO: with discard, can now send the event instead of the event_id
+
       # Send the Event ID instead of the record, since the recod gets pushed out of default scope on paranoid deletion.
       EventMailer.delay.cancelled(@event_id, current_user)
       @admins_notified = 'Admins notified.'
 
       if @event.registrations.exists?
+        # TODO: with discard, can now send the registrations instead of the registration_ids
+
         # Collect the registration IDs instead of the records, because the records get pushed out of default scope on paranoid deletion.
         @registration_ids = @event.registrations.map(&:id)
 
@@ -312,7 +263,7 @@ class EventsController < ApplicationController
       redirect_to root_path
     else
       flash[:warning] = replicator.errors.messages
-      @event = Event.find(params[:id])
+      # @event = Event.find(params[:id])
       @replicator = Replicator.new
       render :replicate
     end
@@ -380,6 +331,7 @@ class EventsController < ApplicationController
   end
 
   def set_event
-    authorize @event = Event.find(params[:id])
+    # TODO: this could be bad if navigating from one event directly to another event?
+    authorize @event ||= Event.find(params[:id])
   end
 end

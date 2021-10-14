@@ -120,6 +120,7 @@ class EventMailer < ApplicationMailer
     @user = initiator
     @recipients = User.notify.map(&:email)
     @subject = "[20 Liters] #{events.size} #{events.size > 1 ? 'events' : 'event'} were created as replicas"
+
     mail(to: @recipients, subject: @subject)
   end
 end

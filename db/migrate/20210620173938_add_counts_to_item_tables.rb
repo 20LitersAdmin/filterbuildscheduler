@@ -43,5 +43,8 @@ class AddCountsToItemTables < ActiveRecord::Migration[6.1]
 
     # count.item_type && count.item_id
     add_reference :counts, :item, polymorphic: true, index: true
+
+    # inventories save a history of which counts were submitted
+    add_column :inventories, :history, :jsonb, null: false, default: {}
   end
 end

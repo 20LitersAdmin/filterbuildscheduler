@@ -24,7 +24,7 @@ class InventoryMigrationJob < ApplicationJob
     assign_uids_to_items
     change_counts_to_polymorphic
     transfer_latest_count_values_to_items
-    add_history_to_every_item
+    add_history_to_every_item_and_inventory
     turn_components_into_technologies_and_delete
     delete_counts
     shorten_technology_names
@@ -130,17 +130,23 @@ class InventoryMigrationJob < ApplicationJob
     end
   end
 
-  def add_history_to_every_item
-    puts 'add history to every item'
+  def add_history_to_every_item_and_inventory
+    puts 'add history to every item and inventory'
     Inventory.order(date: :desc, created_at: :desc).each do |i|
       i.counts.each do |count|
         item = count.item
         next unless item.present?
 
-        item.history[i.date.iso8601] = { loose: count.loose_count, box: count.unopened_boxes_count, available: count.available }
+        history_hash = count.history_hash
+
+        item.history[i.date.iso8601] = history_hash
 
         item.save!
+
+        i.history[item.uid] = history_hash
       end
+
+      i.save!
     end
   end
 

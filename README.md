@@ -170,6 +170,8 @@
   - could add `material_id` and `quantity_from_material` to Part and eliminate MaterialsPart
   - `Part.where(made_from_materials: true)` could calculate price based upon `#material` and `#quantity_from_material` on Material save
 
+3. Simple-form client-side validations: https://jarlowrey.com/blog/simple-forms-client-validation-rails-5.html
+
 ## Remind myself:
 3. `orphans = User.builders.left_outer_joins(:registrations).where(registrations: { id: nil })`
 

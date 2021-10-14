@@ -56,8 +56,6 @@ class InventoriesController < ApplicationController
   def create
     @date = inventory_params[:date]
 
-    # @matching = Inventory.where(date: Date.parse(@date)).latest
-
     @type =
       if inventory_params[:receiving] == 'true'
         'receiving'
@@ -75,8 +73,8 @@ class InventoriesController < ApplicationController
     if @inventory.errors.any?
       flash[:warning] = @inventory.errors.first.join(': ')
     else
-      # technologies_param is used to bypass techs
-      CountCreate.new(@inventory.reload, technologies_params)
+      # technologies_param is used to bypass some techs and skip making counts
+      CountCreateJob.perform_now(@inventory.reload, technologies_params)
       flash[:success] = 'The inventory has been created.'
       redirect_to edit_inventory_path(@inventory)
     end
@@ -97,7 +95,7 @@ class InventoriesController < ApplicationController
 
     @inventory.update(inventory_params)
 
-    CountTransfer.new(@inventory)
+    CountTransferJob.perform_later(@inventory)
 
     InventoryMailer.delay.notify(@inventory, current_user) if @inventory.type_for_params == 'manual' || @inventory.has_items_below_minimum?
 

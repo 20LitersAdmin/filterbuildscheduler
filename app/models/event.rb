@@ -15,7 +15,9 @@ class Event < ApplicationRecord
 
   validates :start_time, :end_time, :title, :min_leaders, :max_leaders, :min_registrations, :max_registrations, :location_id, presence: true
   validates :min_registrations, :max_registrations, :min_leaders, :max_leaders, numericality: { only_integer: true, greater_than: 0 }
-  validates :technologies_built, :boxes_packed, presence: true, numericality: { greater_than_or_equal_to: 0 }
+
+  validates :technologies_built, :boxes_packed, :attendance, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
+
   validate :dates_are_valid?
   validate :registrations_are_valid?
   validate :leaders_are_valid?
@@ -41,7 +43,7 @@ class Event < ApplicationRecord
   end
 
   def complete?
-    attendance.present? && start_time < Time.zone.now
+    attendance.positive? && start_time < Time.zone.now
   end
 
   def dates_are_valid?
@@ -110,6 +112,20 @@ class Event < ApplicationRecord
 
   def has_inventory?
     inventory.present?
+  end
+
+  def important_fields_for_admins_changed?
+    start_time_changed? ||
+      end_time_change? ||
+      location_id_changed? ||
+      technology_id_changed? ||
+      is_private_changed?
+  end
+
+  def important_fields_for_builders_changed?
+    start_time_changed? ||
+      end_time_change? ||
+      location_id_changed?
   end
 
   def incomplete?
@@ -261,6 +277,34 @@ class Event < ApplicationRecord
     technology_results * technology.liters_per_day
   end
 
+  def should_notify_admins?
+    start_time_was > Time.now &&
+      important_fields_for_admins_changed?
+  end
+
+  def should_notify_builders?
+    registrations.exists? &&
+      important_fields_for_builders_changed?
+  end
+
+  def should_create_inventory?
+    return false if inventory.present?
+
+    # edge case:
+    # The event has been updated before, with report fields, but for some reason an inventory doesn't exist (maybe it was deleted?), and results fields were set to positive
+    # now results fields are being changed, so check to make sure they aren't being zero-ed out
+
+    (technologies_built_changed? || boxes_packed_changed?) &&
+      (technologies_built.positive? || boxes_packed.positive?)
+  end
+
+  def should_send_results_emails?
+    !emails_sent? &&
+      attendance.positive? &&
+      registrations.size.positive? &&
+      (technologies_built.positive? || boxes_packed.positive?)
+  end
+
   def technology
     return unless technology_id.present?
 
@@ -314,6 +358,7 @@ class Event < ApplicationRecord
 
   private
 
+  # TODO: currently unused.
   def convert_hour(hour)
     _quotient, modulus = hour.divmod(12)
     (modulus.zero? ? 12 : modulus).to_s
