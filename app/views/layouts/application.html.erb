@@ -10,17 +10,6 @@
     })(window,document,'script','dataLayer','GTM-5HMCMHD');</script>
     <!-- end Google Tag Manager -->
 
-    <!-- Global site tag (gtag.js) - Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-QG8X17G0WC"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-
-      gtag('config', 'G-QG8X17G0WC');
-    </script>
-    <!-- end Google Analytics -->
-
     <% if content_for? :fb_og %>
       <%= yield :fb_og %>
     <% end %>
@@ -47,6 +36,11 @@
   </head>
 
   <body class="twentyliters" data-controller="<%= controller.controller_name %>" data-action="<%= controller.action_name %>">
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5HMCMHD"
+    height="0" width="0" style="display:none;visibility:hidden;"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
+
     <%= render partial: 'layouts/navbar' %>
     <div id="load_screen" class="container fa-5x">
       <i class="fa fa-spinner fa-pulse" id="load_image"></i>
