@@ -20,7 +20,6 @@
             Do you wish to proceed?
       .col-sm-12.center-align
         = simple_form_for @inventory do |f|
-          = f.input :completed_at, as: :hidden, input_html: { value: Time.now }
           = f.submit 'Finalize Inventory', class: 'btn yellow'
           %a#hide_finalize_form.btn.blue{ href: '#' } Cancel
   #filter_div.col-xs-12.center

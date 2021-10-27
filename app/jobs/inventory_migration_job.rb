@@ -35,11 +35,15 @@ class InventoryMigrationJob < ApplicationJob
     puts '========================= FINISHED InventoryMigrationJob ========================='
 
     ActiveRecord::Base.logger.level = 0
+
     # Calculate quantities of all components, parts and materials on every Technology, calculate depths for all Assemblies
     QuantityAndDepthCalculationJob.perform_now
 
     # Calculate all prices
     PriceCalculationJob.perform_now
+
+    # calculate Produceable for all items
+    ProduceableJob.perform_now
   end
 
   def delete_obsolete_items

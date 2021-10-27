@@ -3,18 +3,20 @@
 class ProduceableJob < ApplicationJob
   queue_as :produceable
 
-  after_perform :trigger_event_inventory
+  # TODO: this feels like bad chaining
+  # after_perform :trigger_event_inventory
 
   # TODO: when to trigger this job?
   # Before trying to subtract items
   # After any inventory is created (also covers above scenario)
 
-  def perform(event: nil)
+  def perform
     ActiveRecord::Base.logger.level = 1
 
     puts '========================= Starting ProduceableJob ========================='
 
-    @event = event
+    # TODO: this feels like bad chaining
+    # @event = event
 
     # Definition: can_be_produced is the smallest of the available_count * quantity needed per parent of all children
 
@@ -43,9 +45,6 @@ class ProduceableJob < ApplicationJob
     puts 'set remaining part\'s produceable value to 0'
     Part.kept.not_made_from_material.update_all(can_be_produced: 0)
 
-    # TODO: ideal way:
-    # Component.with_only_parts
-
     # Assembly.part_items + Assembly.component_items == Assembly.all
 
     puts 'loop over all Assembly.part_items'
@@ -68,7 +67,7 @@ class ProduceableJob < ApplicationJob
     current_produceable = combination.can_be_produced
     item = assembly.item
 
-    # division here because one or more item is always needed to make one combination
+    # division here because one or more item(s) is always needed to make one combination
     produceable = (item.can_be_produced + item.available_count) / assembly.quantity
     # NOTE: the above carries the :can_be_produced up from the bottom of the tree, whic always assumes all sub-items will be allocated to this combination, and will *over-estimate* what can actually be produced.
 
@@ -78,9 +77,10 @@ class ProduceableJob < ApplicationJob
     combination.update_columns(can_be_produced: produceable) if current_produceable.nil? || current_produceable > produceable
   end
 
-  private
+  # private
 
-  def trigger_event_inventory
-    EventInventoryJob.perform_later(@event) if @event
-  end
+  # TODO: this feels like bad chaining
+  # def trigger_event_inventory
+  #   EventInventoryJob.perform_later(@event) if @event
+  # end
 end

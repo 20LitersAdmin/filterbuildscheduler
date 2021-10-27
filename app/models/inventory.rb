@@ -13,6 +13,8 @@ class Inventory < ApplicationRecord
 
   validates :date, presence: true
 
+  after_update :transfer_counts, :run_produceable_job
+
   def self.last
     if Inventory.latest.id == Inventory.all.to_a[-1].id
       super
@@ -75,13 +77,17 @@ class Inventory < ApplicationRecord
   end
 
   def count_summary
-    if receiving
-      item_count.to_s + ' of ' + counts.count.to_s + ' items received.'
-    elsif shipping
-      item_count.to_s + ' of ' + counts.count.to_s + ' items shipped.'
-    else
-      item_count.to_s + ' of ' + counts.count.to_s + ' items counted.'
-    end
+    summary = "#{item_count} of #{counts.count} items "
+    summary +=
+      if receiving
+        'received.'
+      elsif shipping
+        'shipped.'
+      else
+        'counted.'
+      end
+
+    summary
   end
 
   def primary_counts
@@ -92,6 +98,16 @@ class Inventory < ApplicationRecord
   end
 
   def technologies
-    # inventory#new form field
+    # inventory#new form field for bypassing technologies
+  end
+
+  private
+
+  def run_produceable_job
+    ProduceableJob.perform_later unless Delayed::Job.where(queue: 'produceable').any?
+  end
+
+  def transfer_counts
+    CountTransferJob.perform_later(self) unless Delayed::Job.where(queue: 'count_transfer').any?
   end
 end

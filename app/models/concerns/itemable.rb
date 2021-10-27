@@ -55,7 +55,6 @@ module Itemable
   def has_sub_assemblies?
     return false if is_a?(Material)
 
-    # TODO: Part.has_one Material
     return made_from_material? if is_a?(Part)
 
     # technology.assemblies

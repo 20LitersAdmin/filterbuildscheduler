@@ -15,8 +15,8 @@ class Assembly < ApplicationRecord
   belongs_to :item, polymorphic: true
 
   before_save :calculate_price
-  after_save :recalculate_quantities_depths_prices
-  after_destroy :recalculate_quantities_depths_prices
+  after_save :update_items_via_jobs
+  after_destroy :update_items_via_jobs
 
   validates_numericality_of :quantity, greater_than: 0
 
@@ -134,11 +134,14 @@ class Assembly < ApplicationRecord
     self.price_cents = item.price_cents * quantity
   end
 
-  def recalculate_quantities_depths_prices
+  def update_items_via_jobs
     # TODO: Current: Run unless one exists
     # Better: If one exists, destroy it, then schedule a new one
     QuantityAndDepthCalculationJob.perform_later unless Delayed::Job.where(queue: 'quantity_calc').any?
+
     PriceCalculationJob.perform_later unless Delayed::Job.where(queue: 'price_calc').any?
+
+    ProduceableJob.perform_later unless Delayed::Job.where(queue: 'produceable').any?
   end
 
   # TODO: trial code for Event#update performing logic

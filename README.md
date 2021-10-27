@@ -95,6 +95,10 @@
 * status_inventories_path
 * financials_inventories_path
 * Inventory#show - is it worth having?
+  - probably, with @inventory.history loop
+* Inventory#edit when @inventory.counts.zero?
+  - maybe redirect to Inventory#show?
+
 * Inventories#status - still relies on counts && primary components
 * `/admin/event&scope=closed` vs. `/events/closed`
 * `Events#cancelled` - relies on `.only_deleted`
@@ -124,6 +128,12 @@
     - EventsController::SubtractSubsets
 
 ### Still to do:
+- You can NO LONGER "unlock" an inventory because there are no count records left
+
+- Inventories#index -> Inventories#History has @item.history_series kickchart, which lays available, box, and loose on the same axis. Should probably not be.
+  - Three separate charts, maybe?
+  - Three separate axes, but might be confusing: https://www.chartjs.org/docs/latest/axes/
+
 - ComponentsController#order && ComponentsController#order_low
   - from InventoriesController#order_all and InventoriesController#order
 

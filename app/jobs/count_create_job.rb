@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 class CountCreateJob < ApplicationJob
+  queue_as :count_create
+
+  # called by InventoriesController#create with #perform_now
+
   def perform(inventory, technologies_params = [])
     @inventory = inventory
 

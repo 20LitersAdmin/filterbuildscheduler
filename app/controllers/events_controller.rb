@@ -76,8 +76,6 @@ class EventsController < ApplicationController
   end
 
   def update
-    # byebug
-
     @event.assign_attributes(event_params)
 
     if @event.should_notify_admins?
@@ -101,20 +99,20 @@ class EventsController < ApplicationController
     end
 
     # set a variable now, while ActiveModel::Dirty can inspect *_changed?
-    # then trigger ProduceableJob after @event.save
+    # then trigger EventInventoryJob after @event.save
     create_inventory = true if @event.should_create_inventory?
 
     if @event.save
       @event.reload
 
-      ProduceableJob.perform_later(event: @event) if create_inventory
-
-      # Only trigger RegistrationMailer and KindfulClient if the event is actually complete.
+      # Only trigger stuff if the event is actually complete.
       if @event.complete?
         @event.registrations.where(attended: true).each do |r|
           RegistrationMailer.delay.event_results(r) if send_results_emails
           KindfulClient.new.delay.import_user_w_note(r)
         end
+
+        EventInventoryJob.perform_later(@event) if create_inventory
       end
 
       flash[:success] = "Event updated. #{admins_notified} #{users_notified} #{results_emails_sent} #{inventory_created}"

@@ -19,24 +19,6 @@ class InventoriesController < ApplicationController
     # @date = params[:date]&.to_date || Date.today
   end
 
-  def show
-    authorize @inventory = Inventory.find(params[:id])
-    @counts = @inventory.counts.sort_by { |c| - c.name }
-
-    if @inventory.type_for_params == 'manual'
-      # show only what's ready for shipping
-      @primary_components = Component.where(completed_tech: true).map(&:id)
-      @primary_component_counts = @inventory.counts.where(component_id: @primary_components).sort_by { |c| - c.name }
-    else
-      # show only what's changed
-      @diff_counts = @inventory.counts.where.not(user_id: nil).sort_by { |c| - c.name }
-    end
-
-    @event = Event.find(@inventory.event_id) if @inventory.type_for_params == 'event'
-
-    @latest = Inventory.latest_completed
-  end
-
   def new
     authorize @inventory = Inventory.new
     # What kind of inventory to make?
@@ -81,21 +63,20 @@ class InventoriesController < ApplicationController
   end
 
   def edit
+    # This View is where inventory counting gets performed
+
     authorize @inventory = Inventory.find(params[:id])
     @counts = @inventory.counts.sort_by { |c| [c.sort_by_status, - c.item.name] }
     @uncounted = "#{view_context.pluralize(@inventory.counts.uncounted.size, 'item')} uncounted."
 
     @techs = Technology.list_worthy
-
-    @inventory.update_column(:completed_at, nil) if params[:unlock] == 'true'
   end
 
   def update
     authorize @inventory = Inventory.find(params[:id])
 
+    @inventory.completed_at = Time.now.localtime
     @inventory.update(inventory_params)
-
-    CountTransferJob.perform_later(@inventory)
 
     InventoryMailer.delay.notify(@inventory, current_user) if @inventory.type_for_params == 'manual' || @inventory.has_items_below_minimum?
 
@@ -103,6 +84,24 @@ class InventoriesController < ApplicationController
 
     redirect_to inventories_path
   end
+
+  # def show
+  #   authorize @inventory = Inventory.find(params[:id])
+  #   @counts = @inventory.counts.sort_by { |c| - c.name }
+
+  #   if @inventory.type_for_params == 'manual'
+  #     # show only what's ready for shipping
+  #     @primary_components = Component.where(completed_tech: true).map(&:id)
+  #     @primary_component_counts = @inventory.counts.where(component_id: @primary_components).sort_by { |c| - c.name }
+  #   else
+  #     # show only what's changed
+  #     @diff_counts = @inventory.counts.where.not(user_id: nil).sort_by { |c| - c.name }
+  #   end
+
+  #   @event = Event.find(@inventory.event_id) if @inventory.type_for_params == 'event'
+
+  #   @latest = Inventory.latest_completed
+  # end
 
   # def destroy
   #   authorize @inventory = Inventory.find(params[:id])

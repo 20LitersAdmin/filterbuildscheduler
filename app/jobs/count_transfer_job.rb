@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 class CountTransferJob < ApplicationJob
+  queue_as :count_transfer
+
+  # called by Inventory#after_update callback
+
   def perform(inventory)
     @inventory = inventory
     @receiving = @inventory.receiving?
