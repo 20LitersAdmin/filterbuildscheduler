@@ -25,7 +25,7 @@ class CountsController < ApplicationController
     @count.user_id = current_user.id
 
     # CountUpdate: validates for errors, saves if no errors
-    # for partials, the other value is set to 0
+    # for partial submissions ("loose count" / "box count"), the other value is set to 0
 
     CountUpdate.new(@count, count_params, button)
 

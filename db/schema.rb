@@ -167,6 +167,7 @@ ActiveRecord::Schema.define(version: 2021_09_22_194933) do
     t.date "date", null: false
     t.datetime "completed_at"
     t.datetime "report_sent_at"
+    t.jsonb "history", default: {}, null: false
     t.index ["event_id"], name: "index_inventories_on_event_id"
   end
 
