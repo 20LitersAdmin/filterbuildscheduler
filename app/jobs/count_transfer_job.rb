@@ -31,7 +31,7 @@ class CountTransferJob < ApplicationJob
     item.loose_count = count.loose_count
     item.box_count = count.unopened_boxes_count
     item.available_count = count.available
-    item.set_history_from_curent_counts @inventory.date
+    item.set_history_from_current_counts(@inventory.date)
     item.save
 
     @inventory.history[item.uid] = count.history_hash
@@ -45,7 +45,7 @@ class CountTransferJob < ApplicationJob
     item.box_count += count.unopened_boxes_count
     item.available_count += count.available
 
-    item.set_history_from_curent_counts @inventory.date
+    item.set_history_from_current_counts(@inventory.date)
 
     if @receiving
       item.last_received_at = Time.now.localtime

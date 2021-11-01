@@ -9,8 +9,6 @@ class Count < ApplicationRecord
 
   validates_presence_of :inventory_id
 
-  # TODO: un-use
-  scope :not_components, -> { where(component_id: nil) }
   scope :changed, -> { where.not(user_id: nil) }
   scope :uncounted, -> { where(user_id: nil) }
 

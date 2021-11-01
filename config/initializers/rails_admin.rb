@@ -57,7 +57,6 @@ RailsAdmin.config do |config|
 
   # Hide but don't exclude models which are needed as associations
   invisible_models = %w[
-    MaterialsPart
     Registration
   ].freeze
 
@@ -455,7 +454,6 @@ RailsAdmin.config do |config|
       field :available_count
     end
 
-    # TODO: Component.minimum_on_hand, Component.below_minimum, Component.can_be_produced
     show do
       group :default do
         field :uid_and_name do
@@ -484,6 +482,12 @@ RailsAdmin.config do |config|
             !bindings[:object].only_loose?
           end
         end
+        field :below_minimum, :true_is_bad_false_is_good
+        field :minimum_on_hand
+        field :can_be_produced, :delimited do
+          help 'Calculated can be produced from sub items'
+          read_only true
+        end
         field :discarded_at, :date
       end
 
@@ -492,7 +496,6 @@ RailsAdmin.config do |config|
       end
     end
 
-    # TODO: Component.minimum_on_hand, Component.below_minimum, Component.can_be_produced
     edit do
       group :default do
         field :uid do
@@ -507,6 +510,10 @@ RailsAdmin.config do |config|
         field :description
         field :price, :money do
           help 'Calcuated from parts and materials'
+          read_only true
+        end
+        field :discarded_at do
+          help 'Discarding hides this component from use'
           read_only true
         end
       end
@@ -527,8 +534,12 @@ RailsAdmin.config do |config|
           help 'Calculated total available'
           read_only true
         end
-        field :discarded_at do
-          help 'Discarding hides this component from use'
+        field :minimum_on_hand
+        field :below_minimum, :true_is_bad_false_is_good do
+          read_only true
+        end
+        field :can_be_produced, :delimited do
+          help 'Calculated can be produced from sub items'
           read_only true
         end
       end
@@ -582,7 +593,6 @@ RailsAdmin.config do |config|
       end
     end
 
-    # TODO: Part.material, Part.made_from_material, Part.can_be_produced
     show do
       group :default do
         field :uid_and_name do
@@ -612,6 +622,10 @@ RailsAdmin.config do |config|
         end
         field :minimum_on_hand, :delimited
         field :below_minimum
+        field :can_be_produced, :delimited do
+          help 'Calculated can be produced from sub items'
+          read_only true
+        end
         field :discarded_at, :date
       end
       group 'Supplier Info' do
@@ -625,6 +639,7 @@ RailsAdmin.config do |config|
         field :weeks_to_deliver
         field :made_from_material
         field :material
+        field :quantity_from_material
       end
       group 'Order Info' do
         field :last_ordered_at, :date
@@ -638,7 +653,6 @@ RailsAdmin.config do |config|
       end
     end
 
-    # TODO: Part.material, Part.made_from_material, Part.can_be_produced
     edit do
       group :default do
         field :uid do
@@ -652,8 +666,17 @@ RailsAdmin.config do |config|
         field :comments
         field :description
         field :made_from_material
-        field :materials_parts do
+        field :material do
           label 'Made from this material:'
+        end
+        field :quantity_from_material
+        field :can_be_produced, :delimited do
+          help 'Calculated can be produced from sub items'
+          read_only true
+        end
+        field :discarded_at do
+          help 'Discarding hides this part from use'
+          read_only true
         end
       end
       group 'Inventory Info' do
@@ -667,14 +690,10 @@ RailsAdmin.config do |config|
         field :box_count do
           help 'Current box count'
         end
+        field :minimum_on_hand
         field :quantity_per_box
         field :available_count, :delimited do
           help 'Calculated total available'
-          read_only true
-        end
-        field :minimum_on_hand
-        field :discarded_at do
-          help 'Discarding hides this part from use'
           read_only true
         end
       end
@@ -741,7 +760,6 @@ RailsAdmin.config do |config|
       end
     end
 
-    # TODO: Material.parts, Material.can_be_produced
     show do
       group :default do
         field :uid_and_name do
@@ -750,6 +768,7 @@ RailsAdmin.config do |config|
         field :image, :active_storage
         field :comments
         field :description
+        field :parts
       end
       group 'Inventory Info' do
         field :available_count, :delimited
@@ -807,8 +826,12 @@ RailsAdmin.config do |config|
         end
         field :comments
         field :description
-        field :materials_parts do
+        field :parts do
           label 'Makes these parts:'
+        end
+        field :discarded_at do
+          help 'Discarding hides this material from use'
+          read_only true
         end
       end
       group 'Inventory Info' do
@@ -829,10 +852,6 @@ RailsAdmin.config do |config|
         end
         field :minimum_on_hand
         field :below_minimum do
-          read_only true
-        end
-        field :discarded_at do
-          help 'Discarding hides this material from use'
           read_only true
         end
       end

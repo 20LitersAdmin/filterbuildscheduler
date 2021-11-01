@@ -3,12 +3,10 @@
 class ProduceableJob < ApplicationJob
   queue_as :produceable
 
-  # TODO: this feels like bad chaining
-  # after_perform :trigger_event_inventory
-
-  # TODO: when to trigger this job?
-  # Before trying to subtract items
-  # After any inventory is created (also covers above scenario)
+  # NOTE: This job is fired from:
+  # Inventory#after_update
+  # Itemable#after_update
+  # Assembly#after_save && #after_destroy
 
   def perform
     ActiveRecord::Base.logger.level = 1
@@ -37,7 +35,7 @@ class ProduceableJob < ApplicationJob
         produceable = (m.available_count * pa.quantity_from_material)
 
         # skip callbacks for speed and to avoid triggering another job
-        pa.update_columns(can_be_produced: produceable)
+        pa.update_columns(can_be_produced: produceable.to_i)
       end
     end
 

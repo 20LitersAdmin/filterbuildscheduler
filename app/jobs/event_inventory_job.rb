@@ -17,27 +17,28 @@ class EventInventoryJob < ApplicationJob
 
     @inventory = @event.create_inventory(date: Date.today)
 
-    technology_has_sufficient_loose_count = @technology.loose_count > @produced_and_boxed
-
     # Option 1: There were enough existing @technology loose items, they were just boxed, nothing had to be produced
-
+    technology_has_sufficient_loose_count = @technology.loose_count > @produced_and_boxed
     create_technology_count_only if technology_has_sufficient_loose_count
+
     # sloppy early return
     return true if technology_has_sufficient_loose_count
 
     # @technology couldn't handle it alone, time to rely on the tree
-    set_remainder_and_technology
 
+    create_technology_count
     # @remainder is set and represents what we still need to "produce" from sub items
+    # A count is created for Technology that results in @technology.loose_count == @loose_created && @technology.box_count += @box_created
 
-    # when assembly.item is a Component, put it here for the next iteration of the loop
-    @component_ids = []
-    @part_ids_made_from_material = []
+    @combination_uids_and_remainders = []
 
-    loop_assemblies(@technology)
+    remainder = @produced_total - @technology.loose_count
+    loop_assemblies(@technology, remainder)
+
+    @combination_uids_and_remainders
 
     # run @inventory.update to trigger CountTransfer job:
-    @inventory.update(completed_at: Time.now)
+    # @inventory.update(completed_at: Time.now)
   end
 
   def create_count(item, loose_count, box_count)
@@ -51,52 +52,94 @@ class EventInventoryJob < ApplicationJob
     )
   end
 
+  def create_technology_count
+    # we assume that previous @technology.loose_count were used towards @produced_total, but were insufficient to fully satisfy @produced_total.
+    #
+    # we assume that the @event.technologies_built is now the new value for @technology.loose_count
+    change_to_loose = @loose_created - @technology.loose_count
+    create_count(@technology, change_to_loose, @box_created)
+  end
+
   def create_technology_count_only
     # we assume that the @event.boxes_packed are all new and added to the existing total
     #   @technology.box_count += @box_created
     # we assume that previous @technology.loose_count were used to achieve @box_created and any remainder are added with what loose items were produced
     #   @technology.loose_count = (@technology.loose_count - @produced_and_boxed) + @loose_created
 
-    new_loose_count = @technology.loose_count - @produced_and_boxed + @loose_created
+    # KEEP IN MIND: the count values should not be the new values, but instead the amount to add or subtract from the item
+
+    new_loose_count = @loose_created - @produced_and_boxed
     create_count(@technology, new_loose_count, @box_created)
   end
 
-  def loop_assemblies(combination)
+  def item_can_satisfy_remainder
+    # 1. item_can_satisfy_remainder: (item.available_count / assembly.quantity) >= @remainder
+
+    if @item.loose_count >= @to_remove
+      # There are enough loose items, no boxes need to be opened
+      create_count(@item, -@to_remove, 0)
+    else
+      item_quantity_per_box = @item.quantity_per_box
+      # There aren't enough loose items, need to open boxes
+
+      # calculate number of boxes that need to be opened
+      needed_from_boxed = @to_remove - @item.loose_count
+      boxes_to_open = (needed_from_boxed / item_quantity_per_box.to_f).ceil
+
+      # determine how this will change the loose count
+      change_to_loose = (boxes_to_open * quantity_per_box) - @to_remove
+
+      create_count(@item, change_to_loose, -boxes_to_open)
+
+      # no need to traverse down any farther
+    end
+  end
+
+  def item_has_sub_assemblies
+    # 2. item_insufficient_but_has_sub_assemblies: (item.available_count / assembly.quantity) < @remainder && item.has_sub_assemblies?
+
+    # Save the item UID for another loop down
+    remainder = @to_remove - @item.available_count
+    @combination_uids_and_remainders << { @item.uid => remainder }
+  end
+
+  def item_insufficient
+    # 3. item_insufficient_and_has_no_sub_assemblies: (item.available_count / assemblies.quantity) < @remainder && !item.has_sub_assemblies?
+    # - the item quantities are zeroed out and there's nothing else to do.
+
+    # zero out the item counts, everything was used
+    create_count(@item, -@item.loose_count, -@item.box_count)
+  end
+
+  def loop_assemblies(combination, remainder)
     # Use a collection to step down one level, then across the tree (across first, down second)
     # instead of just looping inside a loop, which traverses down all the way first (down first, across second)
 
     assemblies = Assembly.where(combination: combination)
 
     assemblies.each do |assembly|
-      item = assembly.item
+      @item = assembly.item
+      @quantity_per_assembly = assembly.quantity
 
-      # TODO: HERE
+      @to_remove = remainder * @quantity_per_assembly
+
       # Three options:
       # 1. item_can_satisfy_remainder: (item.available_count / assembly.quantity) >= @remainder
-      #   a. (item.loose_count / assembly.quantity) >= @remainder
-      #     - create_count(item, -(@remainder * assembly.quantity), 0)
-      #
-      #   b. (item.loose_count / assembly.quantity) < @remainder
-      #     - calculate number of boxes that need to be opened
-      #     - calculate new loose_count (after "opening" boxes), will be [plus the opened boxes quantity, minus the (@remainder * assembly.quantity)]
-      #     - create_count(item, new_loose_count, number_of_boxes_opened_as_negative)
-      #
       # 2. item_insufficient_but_has_sub_assemblies: (item.available_count / assembly.quantity) < @remainder && item.has_sub_assemblies?
-      # Save the IDs for future traversal across
-      # @component_ids << assembly.item_id if assembly.item_type == 'Component'
-
-      # @part_ids_made_from_material << assembly.item_id if assembly.item_type == 'Part' && item.made_from_material?
-
       # 3. item_insufficient_and_has_no_sub_assemblies: (item.available_count / assemblies.quantity) < @remainder && !item.has_sub_assemblies?
+
+      if @item.available_count >= @to_remove
+        item_can_satisfy_remainder
+      else
+        # creates a count that zeros out the @item.loose_count and @item.box_count
+        item_insufficient
+
+        # prepares for next level of tree traversal
+        item_has_sub_assemblies if @item.has_sub_assemblies?
+      end
+
+      # ensure the wrong value doesn't get carried through
+      @to_remove = 0
     end
-  end
-
-  def set_remainder_and_technology
-    # we assume that previous @technology.loose_count were used towards @produced_and_boxed, but were insufficient to fully satisfy @produced_and_boxed, bringing @technology.loose_count to 0 and leaving us with a remainder
-    @remainder = @produced_and_boxed - @technology.loose_count
-
-    # we assume that the @event.technologies_built is now the new value for @technology.loose_count
-
-    create_count(@technology, @loose_created, @box_created)
   end
 end

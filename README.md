@@ -130,6 +130,9 @@
 ### Still to do:
 - You can NO LONGER "unlock" an inventory because there are no count records left
 
+- Item#produceable: what is it's value?
+  - For Filter Build leaders to know what *should* be produceable based upon inventory
+
 - Inventories#index -> Inventories#History has @item.history_series kickchart, which lays available, box, and loose on the same axis. Should probably not be.
   - Three separate charts, maybe?
   - Three separate axes, but might be confusing: https://www.chartjs.org/docs/latest/axes/
