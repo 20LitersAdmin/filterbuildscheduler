@@ -253,14 +253,16 @@ class InventoryMigrationJob < ApplicationJob
         combination_type: 'Technology',
         item_id: 86,
         item_type: 'Part',
-        quantity: 2
+        quantity: 2,
+        affects_price_only: true
       },
       {
         combination_id: 3,
         combination_type: 'Technology',
         item_id: 85,
         item_type: 'Part',
-        quantity: 2
+        quantity: 2,
+        affects_price_only: true
       },
       {
         combination_id: 3,
@@ -540,14 +542,16 @@ class InventoryMigrationJob < ApplicationJob
           combination_type: 'Technology',
           item_id: 86,
           item_type: 'Part',
-          quantity: 2
+          quantity: 2,
+          affects_price_only: true
         },
         {
           combination_id: 10,
           combination_type: 'Technology',
           item_id: 85,
           item_type: 'Part',
-          quantity: 2
+          quantity: 2,
+          affects_price_only: true
         },
         {
           combination_id: 10,
@@ -741,6 +745,7 @@ class InventoryMigrationJob < ApplicationJob
       ]
     )
 
+    # TODO: build assemblies for T007: SAM2
     puts 'TODO: build assemblies for T007: SAM2'
   end
 end

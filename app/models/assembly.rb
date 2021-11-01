@@ -29,6 +29,8 @@ class Assembly < ApplicationRecord
 
   scope :ordered, -> { order(:item_type, :item_id) }
 
+  scope :without_price_only, -> { where(affects_price_only: false) }
+
   scope :technology_combinations, -> { where(combination_type: 'Technology') }
   scope :component_combinations, -> { where(combination_type: 'Component') }
   scope :component_items, -> { where(item_type: 'Component') }

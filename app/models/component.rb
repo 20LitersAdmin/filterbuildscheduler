@@ -3,14 +3,12 @@
 class Component < ApplicationRecord
   include Discard::Model
   include Itemable
-
-  # assembly_path wants to call @item.assemblies regardless of whether the @item
-  # is a Technology or Component
-  alias_attribute :assemblies, :sub_assemblies
-
   # SCHEMA notes
   # #history is a JSON store of historical inventory counts: { date.iso8601 => { loose: 99, box: 99, available: 99 } }
   # #quantities is a JSON store of the total number (integer) needed per technology: { technology.uid => 99, technology.uid => 99 }
+
+  # assembly_path wants to call @item.assemblies regardless of whether the @item is a Technology or Component
+  alias_attribute :assemblies, :sub_assemblies
 
   has_many :super_assemblies, -> { where item_type: 'Component' }, class_name: 'Assembly', foreign_key: :item_id
   has_many :sub_assemblies, -> { where combination_type: 'Component' }, class_name: 'Assembly', foreign_key: :combination_id
