@@ -46,12 +46,12 @@ class ProduceableJob < ApplicationJob
     # Assembly.part_items + Assembly.component_items == Assembly.all
 
     puts 'loop over all Assembly.part_items'
-    Assembly.part_items.each do |a|
+    Assembly.without_price_only.part_items.each do |a|
       calculate_for_combination(a)
     end
 
     puts 'loop over all Assembly.component_items'
-    Assembly.component_items.each do |a|
+    Assembly.without_price_only.component_items.each do |a|
       calculate_for_combination(a)
     end
 

@@ -8,13 +8,14 @@ class CreateAssembliesJoinTable < ActiveRecord::Migration[6.1]
     # quantity: number of items per combination
     # priority: makes Assemblies orderable via item_type: { 'Component' => 0, 'Part' => 1 }
     create_table :assemblies do |t|
-      t.bigint   :combination_id,   null: false
-      t.string   :combination_type, null: false
-      t.bigint   :item_id,          null: false
-      t.string   :item_type,        null: false
-      t.integer  :quantity,         null: false, default: 1
+      t.bigint   :combination_id,     null: false
+      t.string   :combination_type,   null: false
+      t.bigint   :item_id,            null: false
+      t.string   :item_type,          null: false
+      t.integer  :quantity,           null: false, default: 1
       t.monetize :price
       t.integer  :depth
+      t.boolean  :affects_price_only, null: false, default: false
     end
 
     add_index :assemblies, [:item_id, :item_type]
