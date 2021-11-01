@@ -27,9 +27,12 @@ class Part < ApplicationRecord
   scope :active, -> { kept }
 
   scope :available, -> { where('available_count > 0') }
-  scope :orderable, -> { where(made_from_materials: false) }
   scope :made_from_material, -> { where(made_from_material: true) }
   scope :not_made_from_material, -> { where(made_from_material: false) }
+
+  class << self
+    alias orderable not_made_from_material
+  end
 
   # Exists in ActiveStorage already
   # scope :with_attached_image, -> { joins(:image_attachment) }
@@ -76,7 +79,7 @@ class Part < ApplicationRecord
   end
 
   def supplier_and_sku
-    return '' if made_from_materials?
+    return '' if made_from_material?
 
     return supplier.name unless order_url.present?
 

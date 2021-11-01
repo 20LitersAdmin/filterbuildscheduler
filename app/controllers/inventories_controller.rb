@@ -76,7 +76,11 @@ class InventoriesController < ApplicationController
     authorize @inventory = Inventory.find(params[:id])
 
     @inventory.completed_at = Time.now.localtime
-    @inventory.update(inventory_params)
+
+    # Inventory#after_update triggers:
+    # ProduceableJob
+    # CountTransferJob
+    @inventory.save
 
     InventoryMailer.delay.notify(@inventory, current_user) if @inventory.type_for_params == 'manual' || @inventory.has_items_below_minimum?
 
@@ -169,13 +173,13 @@ class InventoriesController < ApplicationController
   #   @items_w_no_supplier = @items.select { |item| item.supplier.nil? }
   # end
 
-  def status
-    authorize @inventory = Inventory.latest_completed
+  # def status
+  #   authorize @inventory = Inventory.latest_completed
 
-    @techs = Technology.status_worthy
+  #   @techs = Technology.status_worthy
 
-    @finder = 'status'
-  end
+  #   @finder = 'status'
+  # end
 
   def paper
     @print_navbar = true
@@ -183,27 +187,27 @@ class InventoriesController < ApplicationController
     @counts = @inventory.counts.sort_by { |c| [c.group_by_tech, c.name] }
   end
 
-  def financials
-    authorize @latest = Inventory.latest_completed
-    @counts = @latest.counts
+  # def financials
+  #   authorize @latest = Inventory.latest_completed
+  #   @counts = @latest.counts
 
-    @scope = params[:group]
+  #   @scope = params[:group]
 
-    case @scope
-    when 'owner'
-      @owners = Technology.order(:owner)
-                          .finance_worthy
-                          .map { |t| [t.owner, t.owner_acronym] }
-                          .uniq
-    when 'technology'
-      @technologies = Technology.order(:owner, :name).finance_worthy
-    else # un-grouped
-      @built_counts = @counts.joins(:component).where('components.completed_tech = ?', true)
-      @val_unbuilt = @counts.where(component_id: nil).map(&:avail_value).sum
-      @val_built = @built_counts.map(&:avail_value).sum
-      @val_ttl = @val_built + @val_unbuilt
-    end
-  end
+  #   case @scope
+  #   when 'owner'
+  #     @owners = Technology.order(:owner)
+  #                         .finance_worthy
+  #                         .map { |t| [t.owner, t.owner_acronym] }
+  #                         .uniq
+  #   when 'technology'
+  #     @technologies = Technology.order(:owner, :name).finance_worthy
+  #   else # un-grouped
+  #     @built_counts = @counts.joins(:component).where('components.completed_tech = ?', true)
+  #     @val_unbuilt = @counts.where(component_id: nil).map(&:avail_value).sum
+  #     @val_built = @built_counts.map(&:avail_value).sum
+  #     @val_ttl = @val_built + @val_unbuilt
+  #   end
+  # end
 
   def history
     respond_to do |format|
@@ -217,29 +221,6 @@ class InventoriesController < ApplicationController
   end
 
   private
-
-  def inventory_params
-    params.require(:inventory).permit :date,
-                                      :reported,
-                                      :receiving,
-                                      :shipping,
-                                      :manual,
-                                      :deleted_at,
-                                      :event_id,
-                                      :completed_at,
-                                      counts_attributes:
-                                        %i[
-                                          id
-                                          user_id
-                                          inventory_id
-                                          component_id
-                                          part_id
-                                          material_id
-                                          loose_count
-                                          unopened_boxes_count
-                                          deleted_at
-                                        ]
-  end
 
   def technologies_params
     params.require(:inventory).permit technologies: []

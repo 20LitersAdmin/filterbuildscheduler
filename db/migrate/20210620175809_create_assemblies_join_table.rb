@@ -23,6 +23,6 @@ class CreateAssembliesJoinTable < ActiveRecord::Migration[6.1]
     # Part belongs_to Material
     add_reference :parts, :material
     rename_column :parts, :made_from_materials, :made_from_material
-    add_column :parts, :quantity_from_material, :decimal, precision: 8, scale: 4, default: nil
+    add_column :parts, :quantity_from_material, :float, precision: 8, scale: 4, default: nil
   end
 end

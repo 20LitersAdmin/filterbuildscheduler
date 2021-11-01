@@ -19,14 +19,17 @@ module Itemable
     scope :below_minimums, -> { where(below_minimum: true) }
 
     before_save :set_below_minimum
-    before_save :update_available, if: -> { will_save_change_to_loose_count? || will_save_change_to_box_count? }
+
+    before_save :update_available, if: -> { will_save_change_to_loose_count? || will_save_change_to_box_count? || will_save_change_to_quantity_per_box? }
 
     # TODO: do this here?
     # before_destroy :dependent_destroy_assemblies
 
     after_save :check_uid
 
-    after_save :recalculate_prices, if: :saved_change_to_price_cents?
+    after_save :recalculate_prices, if: -> { saved_change_to_price_cents? }
+
+    after_update :run_produceable_job, if: -> { saved_change_to_loose_count? || saved_change_to_box_count? || saved_change_to_quantity_per_box? }
   end
 
   def all_technologies
@@ -121,7 +124,10 @@ module Itemable
   end
 
   def update_available
-    # TODO: set can_be_produced here as well? Or trigger ProduceableJob?
     self.available_count = (box_count * quantity_per_box) + loose_count
+  end
+
+  def run_produceable_job
+    ProduceableJob.perform_later unless Delayed::Job.where(queue: 'produceable').any?
   end
 end
