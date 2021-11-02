@@ -4,6 +4,9 @@ class KindfulClient
   include HTTParty
   attr_accessor :results, :env
 
+  # NOTE: If Kindful is still changing the names of campaigns on import, try match_by: { campaign: 'name' }
+  # and remove campaign_id and fund_id and fund_name values
+
   def initialize(env: Rails.env.production? ? 'production' : 'sandbox')
     @query_token = ''
     @results = []
@@ -78,25 +81,27 @@ class KindfulClient
   # body methods
 
   def contact(user)
+    group_name = 'Vol: Filter Builder'
+
     {
-      'data_format': 'contact',
-      'action_type': 'update',
-      'data_type': 'json',
-      'match_by': {
-        'contact': 'first_name_last_name_email',
-        'group': 'name'
+      data_format: 'contact',
+      action_type: 'update',
+      data_type: 'json',
+      match_by: {
+        contact: 'first_name_last_name_email',
+        group: 'name'
       },
-      'groups': ['Vol: Filter Builder'],
-      'data': [
+      groups: [group_name],
+      data: [
         {
-          'id': user.id.to_s,
-          'first_name': user.fname,
-          'last_name': user.lname,
-          'email': user.email,
-          'primary_phone': user.phone,
-          'email_opt_in': user.email_opt_in,
-          'country': 'US',
-          'Volunteer: Filter Builders': 'yes'
+          id: user.id.to_s,
+          first_name: user.fname,
+          last_name: user.lname,
+          email: user.email,
+          primary_phone: user.phone,
+          email_opt_in: user.email_opt_in,
+          country: 'US',
+          group_name => 'yes'
         }
       ]
     }.to_json
@@ -105,30 +110,32 @@ class KindfulClient
   def company_w_email_note(email_address, email, direction, company_name)
     # direction: 'Received Email' || 'Sent Email'
     {
-      'data_format': 'contact_with_note',
-      'action_type': 'update',
-      'data_type': 'json',
-      'match_by': {
-        'contact': 'company_name_email',
-        'campaign': 'id',
-        'fund': 'id'
+      data_format: 'contact_with_note',
+      action_type: 'update',
+      data_type: 'json',
+      match_by: {
+        contact: 'company_name_email',
+        campaign: 'id',
+        fund: 'id'
       },
-      'data': [
+      data: [
         {
-          'id': email.id.to_s,
-          'company_name': company_name,
-          'email': email_address,
-          'country': 'US',
-          'note_id': email.message_id.to_s,
-          'note_time': email.datetime,
-          'note_subject': email.subject,
-          'note_body': email.body,
-          'message_body': email.snippet,
-          'note_type': direction,
-          'note_sender_name': email.oauth_user.name,
-          'note_sender_email': email.oauth_user.email,
-          'campaign_id': '247247',
-          'fund_id': '25946'
+          id: email.id.to_s,
+          company_name: company_name,
+          email: email_address,
+          country: 'US',
+          note_id: email.message_id.to_s,
+          note_time: email.datetime,
+          note_subject: email.subject,
+          note_body: email.body,
+          message_body: email.snippet,
+          note_type: direction,
+          note_sender_name: email.oauth_user.name,
+          note_sender_email: email.oauth_user.email,
+          campaign_id: '247247',
+          campaign_name: 'General',
+          fund_id: '25946',
+          fund_name: 'Contributions 40100'
         }
       ]
     }.to_json
@@ -137,29 +144,31 @@ class KindfulClient
   def contact_w_email_note(email_address, email, direction)
     # direction: 'Received Email' || 'Sent Email'
     {
-      'data_format': 'contact_with_note',
-      'action_type': 'update',
-      'data_type': 'json',
-      'match_by': {
-        'contact': 'email',
-        'campaign': 'id',
-        'fund': 'id'
+      data_format: 'contact_with_note',
+      action_type: 'update',
+      data_type: 'json',
+      match_by: {
+        contact: 'email',
+        campaign: 'id',
+        fund: 'id'
       },
-      'data': [
+      data: [
         {
-          'id': email.id.to_s,
-          'email': email_address,
-          'country': 'US',
-          'note_id': email.message_id.to_s,
-          'note_time': email.datetime,
-          'note_subject': email.subject,
-          'note_body': email.body,
-          'message_body': email.snippet,
-          'note_type': direction,
-          'note_sender_name': email.oauth_user.name,
-          'note_sender_email': email.oauth_user.email,
-          'campaign_id': '247247',
-          'fund_id': '25946'
+          id: email.id.to_s,
+          email: email_address,
+          country: 'US',
+          note_id: email.message_id.to_s,
+          note_time: email.datetime,
+          note_subject: email.subject,
+          note_body: email.body,
+          message_body: email.snippet,
+          note_type: direction,
+          note_sender_name: email.oauth_user.name,
+          note_sender_email: email.oauth_user.email,
+          campaign_id: '247247',
+          campaign_name: 'General',
+          fund_id: '25946',
+          fund_name: 'Contributions 40100'
         }
       ]
     }.to_json
@@ -173,29 +182,31 @@ class KindfulClient
     subject = "[Filter Build] #{role} #{registration.event.title} #{guests}"
 
     {
-      'data_format': 'contact_with_note',
-      'action_type': 'update',
-      'data_type': 'json',
-      'match_by': {
-        'contact': 'first_name_last_name_email',
-        'campaign': 'id',
-        'fund': 'id'
+      data_format: 'contact_with_note',
+      action_type: 'update',
+      data_type: 'json',
+      match_by: {
+        contact: 'first_name_last_name_email',
+        campaign: 'id',
+        fund: 'id'
       },
-      'data': [
+      data: [
         {
-          'id': registration.user.id.to_s,
-          'first_name': registration.user.fname,
-          'last_name': registration.user.lname,
-          'email': registration.user.email,
-          'primary_phone': registration.user.phone,
-          'email_opt_in': registration.user.email_opt_in,
-          'country': 'US',
-          'note_id': registration.id.to_s,
-          'note_time': registration.event.end_time.to_s,
-          'note_subject': subject,
-          'note_type': 'Event',
-          'campaign_id': '338482',
-          'fund_id': '25946'
+          id: registration.user.id.to_s,
+          first_name: registration.user.fname,
+          last_name: registration.user.lname,
+          email: registration.user.email,
+          primary_phone: registration.user.phone,
+          email_opt_in: registration.user.email_opt_in,
+          country: 'US',
+          note_id: registration.id.to_s,
+          note_time: registration.event.end_time.to_s,
+          note_subject: subject,
+          note_type: 'Event',
+          campaign_id: '338482',
+          campaign_name: 'Filter Builds',
+          fund_id: '25946',
+          fund_name: 'Contributions 40100'
         }
       ]
     }.to_json
@@ -203,35 +214,37 @@ class KindfulClient
 
   def contact_w_transaction(opts)
     {
-      'data_format': 'contact_with_transaction',
-      'action_type': 'create',
-      'data_type': 'json',
-      'match_by': {
-        'contact': 'first_name_last_name_email',
-        'campaign': 'id',
-        'fund': 'id'
+      data_format: 'contact_with_transaction',
+      action_type: 'create',
+      data_type: 'json',
+      match_by: {
+        contact: 'first_name_last_name_email',
+        campaign: 'id',
+        fund: 'id'
       },
-      'data': [
+      data: [
         {
-          'first_name': opts[:metadata][:first_name],
-          'last_name': opts[:metadata][:last_name],
-          'email': opts[:metadata][:email],
-          'addr1': opts[:metadata][:line1],
-          'addr2': opts[:metadata][:line2],
-          'city': opts[:metadata][:city],
-          'state': opts[:metadata][:state],
-          'postal': opts[:metadata][:zipcode],
-          'country': opts[:metadata][:country],
-          'amount_in_cents': opts[:amount],
-          'currency': 'usd',
-          'transaction_time': opts[:created],
-          'campaign_id': '270572',
-          'fund_id': '27452',
-          'acknowledged': 'false',
-          'transaction_note': opts[:metadata][:campaign_name],
-          'stripe_charge_id': opts[:id],
-          'transaction_type': opts[:source][:funding],
-          'card_type': opts[:source][:brand]
+          first_name: opts[:metadata][:first_name],
+          last_name: opts[:metadata][:last_name],
+          email: opts[:metadata][:email],
+          addr1: opts[:metadata][:line1],
+          addr2: opts[:metadata][:line2],
+          city: opts[:metadata][:city],
+          state: opts[:metadata][:state],
+          postal: opts[:metadata][:zipcode],
+          country: opts[:metadata][:country],
+          amount_in_cents: opts[:amount],
+          currency: 'usd',
+          transaction_time: opts[:created],
+          campaign_id: '270572',
+          campaign_name: 'CauseVox Transactions',
+          fund_id: '27452',
+          fund_name: 'Special Events 40400',
+          acknowledged: 'false',
+          transaction_note: opts[:metadata][:campaign_name],
+          stripe_charge_id: opts[:id],
+          transaction_type: opts[:source][:funding],
+          card_type: opts[:source][:brand]
          }
       ]
     }.to_json
@@ -239,20 +252,20 @@ class KindfulClient
 
   def organizations_query
     {
-      'query':
+      query:
         [
           {
-            'or':
+            or:
               [
-                { 'by_group_id': '22330' },
-                { 'by_group_id': '28657' },
-                { 'by_group_id': '28658' },
-                { 'by_group_id': '17846' }
+                { by_group_id: '22330' },
+                { by_group_id: '28657' },
+                { by_group_id: '28658' },
+                { by_group_id: '17846' }
               ]
           },
-          { 'has_email': 'Yes' }
+          { has_email: 'Yes' }
         ],
-      'columns': { 'contact': %w[company_name email donor_type] }
+      columns: { contact: %w[company_name email donor_type] }
     }.to_json
   end
 
