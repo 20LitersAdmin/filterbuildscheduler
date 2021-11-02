@@ -52,6 +52,7 @@ ActiveRecord::Schema.define(version: 2021_09_22_194933) do
     t.integer "price_cents", default: 0, null: false
     t.string "price_currency", default: "USD", null: false
     t.integer "depth"
+    t.boolean "affects_price_only", default: false, null: false
     t.index ["combination_id", "combination_type"], name: "index_assemblies_on_combination_id_and_combination_type"
     t.index ["item_id", "item_type"], name: "index_assemblies_on_item_id_and_item_type"
   end
@@ -276,7 +277,7 @@ ActiveRecord::Schema.define(version: 2021_09_22_194933) do
     t.jsonb "quantities", default: {}, null: false
     t.integer "can_be_produced", default: 0
     t.bigint "material_id"
-    t.decimal "quantity_from_material", precision: 8, scale: 4
+    t.float "quantity_from_material"
     t.boolean "below_minimum", default: false, null: false
     t.index ["discarded_at"], name: "index_parts_on_discarded_at"
     t.index ["material_id"], name: "index_parts_on_material_id"

@@ -9,11 +9,12 @@ class InventoriesController < ApplicationController
 
     @below_minimum = Part.below_minimums.any? || Material.below_minimums.any?
 
+    technologies = Technology.active.list_worthy
     components = Component.active
     parts = Part.active
     materials = Material.active
 
-    @items = [components, parts, materials].flatten
+    @items = [technologies, components, parts, materials].flatten
 
     # TODO: Allow for a snapshot date??
     # @date = params[:date]&.to_date || Date.today

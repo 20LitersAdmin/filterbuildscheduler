@@ -146,6 +146,13 @@
   - Component
   - Technology
 
+- **DONE** Some items are necessary for price, but not for assembly:
+  - 5-gal bucket & lid affect the price of the SAM3, but not the ability to assemble SAM3s
+  - Maybe Assembly needs a way to identify whether it should be considered for:
+    - ProduceableJob (shouldn't be considered when calculating "can_be_produced" value)
+    - EventInventoryJob (shouldn't be affected by )
+    - PriceCalculationJob (should be considered when calculating "price")
+
 - Make sure `Part#not_made_from_materials` and `Material#all`price is being escalated to assemblies on save
   - Right now, saving an Assembly trigers PriceCalculationJob, but what if you change the price of a Part or Material? That needs to cascade up.
   - Assemblies have a price (item.price * quantity)
