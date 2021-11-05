@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class InventoriesController < ApplicationController
+  before_action :set_inventory, only: %i[show edit update]
   def index
     # NOTE: After creating an inventory, user is redirected to InventoriesController#index
     # Then @latest is visible and user can edit the inventory.
@@ -15,9 +16,6 @@ class InventoriesController < ApplicationController
     materials = Material.active
 
     @items = [technologies, components, parts, materials].flatten
-
-    # TODO: Allow for a snapshot date??
-    # @date = params[:date]&.to_date || Date.today
   end
 
   def new
@@ -64,9 +62,10 @@ class InventoriesController < ApplicationController
   end
 
   def edit
-    # This View is where inventory counting gets performed
+    # This view is where inventory counting gets performed
 
-    authorize @inventory = Inventory.find(params[:id])
+    redirect_to inventory_path(@inventory) && return if @inventory.counts.none?
+
     @counts = @inventory.counts.sort_by { |c| [c.sort_by_status, - c.item.name] }
     @uncounted = "#{view_context.pluralize(@inventory.counts.uncounted.size, 'item')} uncounted."
 
@@ -90,6 +89,10 @@ class InventoriesController < ApplicationController
     redirect_to inventories_path
   end
 
+  def show
+    # TODO: Here
+  end
+
   # def show
   #   authorize @inventory = Inventory.find(params[:id])
   #   @counts = @inventory.counts.sort_by { |c| - c.name }
@@ -106,10 +109,6 @@ class InventoriesController < ApplicationController
   #   @event = Event.find(@inventory.event_id) if @inventory.type_for_params == 'event'
 
   #   @latest = Inventory.latest_completed
-  # end
-
-  # def destroy
-  #   authorize @inventory = Inventory.find(params[:id])
   # end
 
   # def order
@@ -183,34 +182,17 @@ class InventoriesController < ApplicationController
   # end
 
   def paper
+    # TODO: Move to CombinationsController?
+    # because it's a collection of items now, not counts
     @print_navbar = true
     authorize @inventory = Inventory.latest
     @counts = @inventory.counts.sort_by { |c| [c.group_by_tech, c.name] }
   end
 
-  # def financials
-  #   authorize @latest = Inventory.latest_completed
-  #   @counts = @latest.counts
-
-  #   @scope = params[:group]
-
-  #   case @scope
-  #   when 'owner'
-  #     @owners = Technology.order(:owner)
-  #                         .finance_worthy
-  #                         .map { |t| [t.owner, t.owner_acronym] }
-  #                         .uniq
-  #   when 'technology'
-  #     @technologies = Technology.order(:owner, :name).finance_worthy
-  #   else # un-grouped
-  #     @built_counts = @counts.joins(:component).where('components.completed_tech = ?', true)
-  #     @val_unbuilt = @counts.where(component_id: nil).map(&:avail_value).sum
-  #     @val_built = @built_counts.map(&:avail_value).sum
-  #     @val_ttl = @val_built + @val_unbuilt
-  #   end
-  # end
-
   def history
+    # TODO: have "undo" button, maybe just for most recent? Or just for @inventory.event_based?
+    # Does "undo" call @inventory.destroy, using #destroy action?
+
     respond_to do |format|
       format.js do
         @item = params[:uid].objectify_uid if params[:uid].present?
@@ -223,15 +205,19 @@ class InventoriesController < ApplicationController
 
   private
 
-  def technologies_params
-    params.require(:inventory).permit technologies: []
+  def find_owner_from_acronym(owner)
+    Technology.status_worthy.map { |t| [t.owner_acronym, t.owner] }.uniq.to_h[owner]
   end
 
   def history_params
     params.permit(:item_class, :item_id)
   end
 
-  def find_owner_from_acronym(owner)
-    Technology.status_worthy.map { |t| [t.owner_acronym, t.owner] }.uniq.to_h[owner]
+  def set_inventory
+    authorize @inventory = Inventory.find(params[:id])
+  end
+
+  def technologies_params
+    params.require(:inventory).permit technologies: []
   end
 end

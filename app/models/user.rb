@@ -159,7 +159,7 @@ class User < ApplicationRecord
                    .order('events.start_time DESC')
                    .first
                    .event
-                   .name
+                   .full_title_w_year
     else
       'No Event'
     end

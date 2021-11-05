@@ -37,8 +37,6 @@ class EventsController < ApplicationController
 
     @leaders = @event.registrations.registered_as_leader
 
-    @finder = 'show'
-
     @user = current_user || User.new
   end
 
@@ -50,14 +48,10 @@ class EventsController < ApplicationController
       @indicator = 'duplicate'
       authorize @event = Event.find(params[:source_event]).dup
     end
-
-    @finder = 'new'
   end
 
   def create
     authorize @event = Event.new(event_params)
-
-    @finder = 'new'
     if @event.save
       flash[:success] = 'The event has been created.'
       EventMailer.delay.created(@event, current_user)
@@ -71,8 +65,6 @@ class EventsController < ApplicationController
     @show_report = current_user&.admin_or_leader? && @event.start_time < Time.now
 
     @too_old = (Date.today - @event.end_time.to_date).round > 14
-
-    @finder = 'edit'
   end
 
   def update
@@ -162,15 +154,11 @@ class EventsController < ApplicationController
   def cancelled
     authorize @cancelled_events
     @user = current_user
-
-    @finder = 'cancelled'
   end
 
   def closed
     authorize @closed_events
     @user = current_user
-
-    @finder = 'closed'
   end
 
   def lead
@@ -182,8 +170,6 @@ class EventsController < ApplicationController
     end
 
     authorize Event
-
-    @finder = 'lead'
   end
 
   def leaders

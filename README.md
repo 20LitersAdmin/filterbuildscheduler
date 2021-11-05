@@ -20,11 +20,6 @@
 ### Nerfed pages:
 * status_inventories_path
 * financials_inventories_path
-* Inventory#show - is it worth having?
-  - probably, with @inventory.history loop
-  - AND ability to "undo" an inventory (e.g. an Event inventory that just makes everything suck)
-* Inventory#edit when @inventory.counts.zero?
-  - maybe redirect to Inventory#show?
 * Inventory#index when the latest inventory has counts
   - Remove "View" button (as there is no Inventor#show), or make Admin only if "undo"
 
@@ -34,9 +29,14 @@
   - vs. `/admin/event&scope=discarded`
 
 ### Current:
+* InventoriesController#paper - should probably be CombinationsController instead
+  - because it's a collection of items now, not counts
+* You can NO LONGER "unlock" an inventory because there are no count records left
+* Inventory#show - is it worth having?
+  - probably, with @inventory.history loop
+  - AND ability to "undo" an inventory (e.g. an Event inventory that just makes everything suck)
 
 ### Still to do:
-- You can NO LONGER "unlock" an inventory because there are no count records left
 
 - Item#produceable: what is it's value?
   - For Filter Build leaders to know what *should* be produceable based upon inventory
