@@ -12,11 +12,11 @@ class InventoryPolicy < ApplicationPolicy
     user&.can_do_inventory?
   end
 
-  def create?
+  def new?
     index?
   end
 
-  def new?
+  def create?
     index?
   end
 
@@ -24,11 +24,11 @@ class InventoryPolicy < ApplicationPolicy
     index?
   end
 
-  def show?
+  def update?
     index?
   end
 
-  def update?
+  def show?
     index?
   end
 
@@ -36,28 +36,23 @@ class InventoryPolicy < ApplicationPolicy
     user&.is_admin?
   end
 
-  def order?
-    index?
-  end
+  # def order?
+  #   index?
+  # end
 
-  def order_all?
-    index?
-  end
+  # def order_all?
+  #   index?
+  # end
 
-  def status?
-    index?
-  end
+  # def status?
+  #   index?
+  # end
 
   def paper?
     index?
   end
 
-  def labels?
-    index?
-  end
-
-  def financials?
-    index?
-  end
+  # def financials?
+  #   index?
+  # end
 end
-
