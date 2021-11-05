@@ -14,13 +14,18 @@ class CountTransferJob < ApplicationJob
         transfer_manual_count(count)
       end
     else
-      @inventory.counts.changed.each do |count|
+      counts = @inventory.event_based? ? @inventory.counts : @inventory.counts.changed
+      counts.each do |count|
         transfer_auto_count(count)
       end
     end
 
+    byebug
+
     # save the history
     @inventory.save
+
+    byebug
 
     @inventory.counts.destroy_all
   end
