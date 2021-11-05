@@ -4,21 +4,34 @@ class EventInventoryJob < ApplicationJob
   queue_as :event_inventory
 
   def perform(event)
-    # ProduceableJob is run by Inventory#after_udate callback
+    # ProduceableJob sets all item.can_be_produced values, and is run by Inventory#after_update callback
     # so we can assume item.can_be_produced is accurate from the latest inventory
 
-    @event          = event
-    @loose_created  = @event.technologies_built
-    @box_created    = @event.boxes_packed
-    @technology     = event.technology
+    # TESTING / TRACING: allow @tracker to store { UID -> { remove: amt_to_remove, available: @item.available_count, has_subs: @item.has_sub_assemblies? } }
+    # @tracker = []
 
-    @produced_and_boxed = (@box_created * @technology_quantity_per_box)
+    @event         = event
+    @loose_created = @event.technologies_built
+    @box_created   = @event.boxes_packed
+
+    # escape clause to ensure some result from event
+    return false unless @loose_created.positive? || @box_created.positive?
+
+    # Event#has_one Inventory, so escape if it's already been performed.
+    return false if @event.inventory.present?
+
+    @technology         = event.technology
+    @produced_and_boxed = @box_created * @technology.quantity_per_box
     @produced_total     = @produced_and_boxed + @loose_created
 
     @inventory = @event.create_inventory(date: Date.today)
 
-    # Option 1: There were enough existing @technology loose items, they were just boxed, nothing had to be produced
-    technology_has_sufficient_loose_count = @technology.loose_count > @produced_and_boxed
+    # @tracker << { @technology.uid => { produced_and_boxed: @produced_and_boxed, produced_total: @produced_total, loose: @technology.loose_count, has_subs: true } }
+
+    # If boxes were packed and there were enough @technology loose items,
+    # we assume the loose items were just boxed, nothing had to be produced
+    technology_has_sufficient_loose_count = @box_created.positive? && (@technology.loose_count > @produced_and_boxed)
+
     create_technology_count_only if technology_has_sufficient_loose_count
 
     # sloppy early return
@@ -33,7 +46,7 @@ class EventInventoryJob < ApplicationJob
     loop_assemblies(@technology, @technology_remainder)
 
     # run @inventory.update to trigger CountTransfer job:
-    # @inventory.update(completed_at: Time.now)
+    @inventory.update(completed_at: Time.now)
   end
 
   def create_count(item, loose_count, box_count)
@@ -52,6 +65,8 @@ class EventInventoryJob < ApplicationJob
     #
     # we assume that the @event.technologies_built is now the new value for @technology.loose_count
     change_to_loose = @loose_created - @technology.loose_count
+
+    # KEEP IN MIND: the count values should not be the new values, but instead the amount to add or subtract from the item
     create_count(@technology, change_to_loose, @box_created)
   end
 
@@ -60,10 +75,9 @@ class EventInventoryJob < ApplicationJob
     #   @technology.box_count += @box_created
     # we assume that previous @technology.loose_count were used to achieve @box_created and any remainder are added with what loose items were produced
     #   @technology.loose_count = (@technology.loose_count - @produced_and_boxed) + @loose_created
+    new_loose_count = @loose_created - @produced_and_boxed
 
     # KEEP IN MIND: the count values should not be the new values, but instead the amount to add or subtract from the item
-
-    new_loose_count = @loose_created - @produced_and_boxed
     create_count(@technology, new_loose_count, @box_created)
   end
 
@@ -83,7 +97,7 @@ class EventInventoryJob < ApplicationJob
       boxes_to_open = (needed_from_boxed / item_quantity_per_box.to_f).ceil
 
       # determine how this will change the loose count
-      change_to_loose = (boxes_to_open * quantity_per_box) - amt_to_remove
+      change_to_loose = (boxes_to_open * item_quantity_per_box) - amt_to_remove
 
       create_count(@item, change_to_loose, -boxes_to_open)
 
@@ -92,16 +106,21 @@ class EventInventoryJob < ApplicationJob
   end
 
   def item_has_sub_assemblies(amt_to_remove)
-    # 2. item_insufficient (but has_sub_assemblies)
+    # 3. item_insufficient (but has_sub_assemblies)
     # - a count was already created by #item_insufficient to zero out the counts
     # - set a new remainder and traverse down
 
     remainder = amt_to_remove - @item.available_count
-    loop_assemblies(combination, remainder)
+
+    if @item.is_a?(Part)
+      produce_from_material(@item, remainder)
+    else
+      loop_assemblies(@item, remainder)
+    end
   end
 
   def item_insufficient
-    # 3. item_insufficient (and has_no_sub_assemblies)
+    # 2. item_insufficient (and has_no_sub_assemblies)
     # - the item quantities are zeroed out and there's nothing else to do.
 
     # zero out the item counts, everything was used
@@ -115,13 +134,14 @@ class EventInventoryJob < ApplicationJob
       @item = assembly.item
       quantity_per_assembly = assembly.quantity
 
-      # or is it better to rely on @item.quantities[@technology.uid]
       to_remove = remainder * quantity_per_assembly
 
+      # @tracker << { @item.uid => { remove: to_remove, available: @item.available_count, has_subs: @item.has_sub_assemblies?, quantity_per_assembly: quantity_per_assembly } }
+
       # Three scenarios:
-      # 1. item_can_satisfy_remainder: (item.available_count / assembly.quantity) >= @remainder
-      # 2. item_insufficient (but has_sub_assemblies): (item.available_count / assembly.quantity) < @remainder && item.has_sub_assemblies?
-      # 3. item_insufficient (and_has_no_sub_assemblies): (item.available_count / assemblies.quantity) < @remainder && !item.has_sub_assemblies?
+      # 1. item_can_satisfy_remainder
+      # 2. item_insufficient (and has_no_sub_assemblies)
+      # 3. item_insufficient (but has_sub_assemblies)
 
       if @item.available_count >= to_remove
         item_can_satisfy_remainder(to_remove)
@@ -130,8 +150,56 @@ class EventInventoryJob < ApplicationJob
         item_insufficient
 
         # prepares for next level of tree traversal
-        item_has_sub_assemblies if @item.has_sub_assemblies?
+        item_has_sub_assemblies(to_remove) if @item.has_sub_assemblies?
       end
+    end
+  end
+
+  def material_can_satisfy_remainder(part, parts_needed)
+    # Assume whole materials are used, which can lead to the part count needing to be adjusted upwards to compensate for the material producing more parts than are needed to satisfy the remainder
+    material = part.material
+    part_quantity_from_material = part.quantity_from_material
+    material_needed = (parts_needed / part_quantity_from_material).ceil
+    material_loose = material.loose_count
+
+    if material_loose >= material_needed
+      # there are enough loose materials, no boxes need to be opened
+      create_count(material, -material_needed, 0)
+    else
+      material_needed_from_boxed = material_needed - material_loose
+      material_quantity_per_box = material.quantity_per_box
+      boxes_to_open = (material_needed_from_boxed / material_quantity_per_box.to_f).ceil
+
+      # determine how this will change the material loose count
+      change_to_material_loose = (boxes_to_open * material_quantity_per_box) - material_needed
+
+      create_count(material, change_to_material_loose, -boxes_to_open)
+    end
+
+    parts_produced = material_needed * part_quantity_from_material
+
+    # @tracker << { material.uid => { remove: material_needed, available: material.available_count, has_subs: false, quantity_per_material: part_quantity_from_material } }
+
+    return unless parts_produced > parts_needed
+
+    # add extra parts produced from material to the part's count
+    count = @inventory.counts.where(item: part).first
+    count.loose_count += parts_produced - parts_needed
+    count.save
+  end
+
+  def produce_from_material(part, remainder)
+    # material might actually add back to the part count
+    material = part.material
+    parts_produceable = material.available_count * part.quantity_from_material
+
+    if parts_produceable >= remainder
+      # send part because part has_one material, but material has_many parts
+      # otherwise, we couldn't re-locate the part with confidence
+      material_can_satisfy_remainder(part, remainder)
+    else
+      # zero out material, nothing else can be done
+      create_count(material, -material.loose_count, -material.box_count)
     end
   end
 end

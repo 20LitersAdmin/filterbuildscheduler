@@ -51,10 +51,6 @@ module Itemable
     all_technologies.active&.pluck(:id)&.join(',')
   end
 
-  # def produceable(goal)
-  #   return available_count unless has_sub_assemblies?
-  # end
-
   def has_sub_assemblies?
     return false if is_a?(Material)
 

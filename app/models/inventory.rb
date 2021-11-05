@@ -30,42 +30,22 @@ class Inventory < ApplicationRecord
     end
   end
 
-  def name
-    date.strftime('%-m/%-d/%y') + ': ' + type
+  def count_summary
+    summary = "#{item_count} of #{counts.count} items "
+    summary +=
+      if receiving?
+        'received.'
+      elsif shipping?
+        'shipped.'
+      else
+        'counted.'
+      end
+
+    summary
   end
 
-  def name_title
-    date.strftime('%m-%d-%y') + ' ' + type
-  end
-
-  def type
-    if event_id.present?
-      type = 'Event Based'
-    elsif receiving
-      type = 'Items Received'
-    elsif shipping
-      type = 'Items Shipped'
-    elsif manual
-      type = 'Manual Inventory'
-    else
-      type = 'Unknown'
-    end
-    type
-  end
-
-  def type_for_params
-    if receiving
-      type = 'receiving'
-    elsif shipping
-      type = 'shipping'
-    elsif manual
-      type = 'manual'
-    elsif event_id.present?
-      type = 'event'
-    else
-      type = 'unknown'
-    end
-    type
+  def event_based?
+    event_id.present?
   end
 
   def has_items_below_minimum?
@@ -76,18 +56,12 @@ class Inventory < ApplicationRecord
     counts.where.not(user_id: nil).count
   end
 
-  def count_summary
-    summary = "#{item_count} of #{counts.count} items "
-    summary +=
-      if receiving
-        'received.'
-      elsif shipping
-        'shipped.'
-      else
-        'counted.'
-      end
+  def name
+    date.strftime('%-m/%-d/%y') + ': ' + type
+  end
 
-    summary
+  def name_title
+    date.strftime('%m-%d-%y') + ' ' + type
   end
 
   def primary_counts
@@ -99,6 +73,34 @@ class Inventory < ApplicationRecord
 
   def technologies
     # inventory#new form field for bypassing technologies
+  end
+
+  def type
+    if event_id.present?
+      'Event Based'
+    elsif receiving
+      'Items Received'
+    elsif shipping
+      'Items Shipped'
+    elsif manual
+      'Manual Inventory'
+    else
+      'Unknown'
+    end
+  end
+
+  def type_for_params
+    if receiving
+      'receiving'
+    elsif shipping
+      'shipping'
+    elsif manual
+      'manual'
+    elsif event_id.present?
+      'event'
+    else
+      'unknown'
+    end
   end
 
   private
