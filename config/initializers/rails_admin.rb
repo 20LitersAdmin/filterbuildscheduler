@@ -316,7 +316,10 @@ RailsAdmin.config do |config|
       group 'Images and Descriptions' do
         field :image, :active_storage
         field :display_image, :active_storage
-        field :description
+        field :public_description
+        field :description do
+          label 'Inventory description'
+        end
         field :comments
       end
 
@@ -373,6 +376,9 @@ RailsAdmin.config do |config|
 
       group 'Inventory info' do
         active false
+        field :description do
+          label 'Inventory description'
+        end
         field :available_count, :delimited do
           help 'Calculated total available'
           read_only true
@@ -407,7 +413,7 @@ RailsAdmin.config do |config|
 
       group 'More details' do
         active false
-        field :description
+        field :public_description
         field :comments
         field :price, :money do
           read_only true

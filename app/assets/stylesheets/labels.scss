@@ -57,61 +57,58 @@ table#avery8163 {
   }
 
   tbody {
-    .label-row {
+    tr.label-row {
+      // TODO: I think this is failing
       height: 2in;
     }
+  }
+}
 
-    .right-border {
-      height: 0.22in;
-    }
 
-    .item-label {
-      border: 1px solid gray;
-      margin: -1px;
-      table-layout: fixed;
-      width: 100%;
-      text-align: center;
+// _label partial
+.label-flex {
+  aspect-ratio: 2/1;
+  padding: 1%;
+  border: 1px solid black;
+  border-radius: 8px;
 
-      .td-img {
-        width: 50%;
-        height: 2in;
-        max-height: 2in;
-        overflow: hidden;
-        img {
-          width: 1.75in;
-          max-width: 1.75in;
-          max-height: 1.75in;
-        }
-      }
+  .half {
+    width: 50%;
+    height: 100%;
+    float: left;
+    overflow: hidden;
 
-      p {
-        padding: 0px;
-        margin: 0 0 0 0;
-      }
+    &.img {
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+      list-style-position: inside;
 
-      .td-name {
-        width: 50%;
-        height: 0.75in;
-        max-height: 0.5in;
-        font-weight: bold;
-        font-size: 1.25em;
-      }
-
-      .td-desc {
-        height: 0.5in;
-        max-height: 0.5in;
-      }
-
-      .td-tech-names {
-        overflow: hidden;
-        // TODO: does commenting this out wreck the spacing on print?
-        // white-space: nowrap;
-
-        .tiny {
-          font-size: 0.8em;
-        }
+      img {
+        // this image is only for print
+        display: none;
       }
     }
+  }
+
+  p {
+    text-align: center;
+    margin-bottom: 2px;
+  }
+
+  p.title {
+    padding: 6px 0;
+    font-weight: bold;
+    font-size: 1.25em;
+    height: 35%;
+    overflow: hidden;
+  }
+
+  p.bold {
+    font-size: 1.25em;
+    font-weight: 900;
+    color: #fff;
+    background-color: black;
   }
 }
 
@@ -126,11 +123,18 @@ table#avery8163 {
     }
 
     tbody .item-label {
-      border: 0px solid white;
+      // border: 0px solid white;
+    }
+
+    .label-flex {
+     // border: 0px solid white;
+     .img {
+      img {
+        display: inline;
+        max-height: 1.9in;
+      }
+     }
     }
   }
 }
 
-// table td {
-//   border: 1px solid gray;
-// }

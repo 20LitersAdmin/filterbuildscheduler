@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_09_22_194933) do
+ActiveRecord::Schema.define(version: 2021_11_05_203814) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -323,7 +323,7 @@ ActiveRecord::Schema.define(version: 2021_09_22_194933) do
 
   create_table "technologies", force: :cascade do |t|
     t.string "name", null: false
-    t.text "description"
+    t.text "public_description"
     t.integer "ideal_build_length"
     t.integer "ideal_group_size"
     t.integer "ideal_leaders"
@@ -354,6 +354,7 @@ ActiveRecord::Schema.define(version: 2021_09_22_194933) do
     t.string "price_currency", default: "USD", null: false
     t.boolean "below_minimum", default: false, null: false
     t.integer "minimum_on_hand", default: 0, null: false
+    t.text "description"
     t.index ["discarded_at"], name: "index_technologies_on_discarded_at"
   end
 

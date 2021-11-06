@@ -38,6 +38,7 @@
           - if @event.technology
             %h2 The Filter
             %h3= @event.technology.name
+            %p= @event.technology.public_description
           - else
             %h2 The Age Limits
           - if @event.technology.family_friendly

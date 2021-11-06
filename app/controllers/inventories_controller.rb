@@ -182,11 +182,14 @@ class InventoriesController < ApplicationController
   # end
 
   def paper
-    # TODO: Move to CombinationsController?
-    # because it's a collection of items now, not counts
     @print_navbar = true
-    authorize @inventory = Inventory.latest
-    @counts = @inventory.counts.sort_by { |c| [c.group_by_tech, c.name] }
+
+    technologies = Technology.active.list_worthy
+    components = Component.active
+    parts = Part.active
+    materials = Material.active
+
+    @items = [technologies, components, parts, materials].flatten
   end
 
   def history

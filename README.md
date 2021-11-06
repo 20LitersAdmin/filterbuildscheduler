@@ -16,6 +16,16 @@
     * rails_admin [interface for management](https://github.com/sferik/rails_admin/wiki/ActiveStorage)
   - **DONE** Images are automatically migrated via `ImageSyncJob.perform_now`
 
+### Current:
+* InventoriesController#paper - working on a fluid, reusable label that prints correctly (currently too tall?)
+* You can NO LONGER "unlock" an inventory because there are no count records left
+* Inventory#show - is it worth having?
+  - probably, with @inventory.history loop
+  - AND ability to "undo" an inventory (e.g. an Event inventory that just makes everything suck)
+* Technology#description is now for Inventory, Technology#public_description is now for Events
+  - already changed for EventsController#show, but anywhere else?
+
+
 
 ### Nerfed pages:
 * status_inventories_path
@@ -27,14 +37,6 @@
 * `/admin/event&scope=closed` vs. `/events/closed`
 * `Events#cancelled` - relies on `.only_deleted`
   - vs. `/admin/event&scope=discarded`
-
-### Current:
-* InventoriesController#paper - should probably be CombinationsController instead
-  - because it's a collection of items now, not counts
-* You can NO LONGER "unlock" an inventory because there are no count records left
-* Inventory#show - is it worth having?
-  - probably, with @inventory.history loop
-  - AND ability to "undo" an inventory (e.g. an Event inventory that just makes everything suck)
 
 ### Still to do:
 
