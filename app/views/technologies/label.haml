@@ -5,28 +5,14 @@
     %li Print from Google Chrome
     %li Under "More Settings", set Margins to "None"
     %li Use Avery 8136 labels (4"x2", 10 per page), lay face-up in Operations Xerox 7120
-#paper_labels
-  %table#avery8163
-    %thead
-      %tr
-        %td.spacer-gutter &nbsp
-        %td.spacer-label &nbsp
-        %td.spacer-center &nbsp
-        %td.spacer-label &nbsp
-        %td.spacer-gutter &nbsp
-    %tfoot
-      %tr
-        %td{ colspan: 5 }
-    %tbody
-      - 5.times do
-        %tr.label-row
-          %td
-          / Left gutter
-          %td
-            = render partial: @label
-          %td
-          / Middle gutter
-          %td
-            = render partial: @label
-          %td
-          / Right gutter
+.labels_page
+  .top-gutter
+  - 5.times do
+    .left-gutter
+    .label-4x2
+      = render partial: @label
+    .center-gutter
+    .label-4x2
+      = render partial: @label
+    .right-gutter
+  .bottom-gutter
