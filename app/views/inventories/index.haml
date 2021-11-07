@@ -2,8 +2,10 @@
 #inventory_index.container
   = render partial: 'shared/inventory_functions'
 
-  -# Note: After creating an inventory, user is redirected to InventoriesController#index
-  -# Then this div is visible and user can edit the inventory.
+  -#
+    After creating an inventory, user is redirected to InventoriesController#index
+    Then this div is visible and user can edit the inventory.
+
   - if @latest.counts.any?
     .inv-latest.row
       .col-xs-12

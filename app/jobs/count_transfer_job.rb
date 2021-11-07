@@ -20,12 +20,8 @@ class CountTransferJob < ApplicationJob
       end
     end
 
-    byebug
-
     # save the history
     @inventory.save
-
-    byebug
 
     @inventory.counts.destroy_all
   end
@@ -36,10 +32,10 @@ class CountTransferJob < ApplicationJob
     item.loose_count = count.loose_count
     item.box_count = count.unopened_boxes_count
     item.available_count = count.available
-    item.set_history_from_current_counts(@inventory.date)
+    item.history[@inventory.date.iso8601] = count.history_hash_for_item
     item.save
 
-    @inventory.history[item.uid] = count.history_hash
+    @inventory.history[item.uid] = count.history_hash_for_inventory
   end
 
   def transfer_auto_count(count)
@@ -50,7 +46,7 @@ class CountTransferJob < ApplicationJob
     item.box_count += count.unopened_boxes_count
     item.available_count += count.available
 
-    item.set_history_from_current_counts(@inventory.date)
+    item.history[@inventory.date.iso8601] = count.history_hash_for_item
 
     if @receiving
       item.last_received_at = Time.now.localtime
@@ -59,6 +55,6 @@ class CountTransferJob < ApplicationJob
 
     item.save
 
-    @inventory.history[item.uid] = count.history_hash
+    @inventory.history[item.uid] = count.history_hash_for_inventory
   end
 end

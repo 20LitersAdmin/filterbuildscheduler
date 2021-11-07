@@ -17,15 +17,12 @@
   - **DONE** Images are automatically migrated via `ImageSyncJob.perform_now`
 
 ### Current:
-* InventoriesController#paper - working on a fluid, reusable label that prints correctly (currently too tall?)
 * You can NO LONGER "unlock" an inventory because there are no count records left
-* Inventory#show - is it worth having?
-  - probably, with @inventory.history loop
-  - AND ability to "undo" an inventory (e.g. an Event inventory that just makes everything suck)
+  - InventoriesController#update, right?
 * Technology#description is now for Inventory, Technology#public_description is now for Events
   - already changed for EventsController#show, but anywhere else?
 
-
+* I kinda hate paper.haml, maybe re-do with `display: grid`;
 
 ### Nerfed pages:
 * status_inventories_path

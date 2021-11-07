@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
 class InventoriesController < ApplicationController
-  before_action :set_inventory, only: %i[show edit update]
+  before_action :set_inventory, only: %i[show edit update destroy]
+
   def index
     # NOTE: After creating an inventory, user is redirected to InventoriesController#index
     # Then @latest is visible and user can edit the inventory.
@@ -90,7 +91,15 @@ class InventoriesController < ApplicationController
   end
 
   def show
-    # TODO: Here
+    # arrive here via #history, not #index
+  end
+
+  def destroy
+    # from #show, clicking 'Delete this Inventory Record'
+    @inventory.destroy
+
+    flash[:success] = 'Inventory record deleted.'
+    redirect_to history_inventories_path
   end
 
   # def show

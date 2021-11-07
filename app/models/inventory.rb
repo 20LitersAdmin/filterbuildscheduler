@@ -15,21 +15,6 @@ class Inventory < ApplicationRecord
 
   after_update :transfer_counts, :run_produceable_job
 
-  def self.last
-    if Inventory.latest.id == Inventory.all.to_a[-1].id
-      super
-    else
-      puts 'HEY! --> `.last` is not reliable if you want the "most recent inventory performed".', 'Did you mean to use `.latest?` (Yn)'
-      input = gets.strip
-
-      if %w[Y y].include? input
-        Inventory.latest
-      else
-        super
-      end
-    end
-  end
-
   def count_summary
     summary = "#{item_count} of #{counts.count} items "
     summary +=
@@ -56,12 +41,16 @@ class Inventory < ApplicationRecord
     counts.where.not(user_id: nil).count
   end
 
+  def latest?
+    Inventory.latest.id == id
+  end
+
   def name
-    date.strftime('%-m/%-d/%y') + ': ' + type
+    "#{date.strftime('%-m/%-d/%y')}: #{type}"
   end
 
   def name_title
-    date.strftime('%m-%d-%y') + ' ' + type
+    "#{date.strftime('%m-%d-%y')}: #{type}"
   end
 
   def primary_counts

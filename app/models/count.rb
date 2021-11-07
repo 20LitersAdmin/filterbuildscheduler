@@ -20,8 +20,20 @@ class Count < ApplicationRecord
     item.quantity_per_box * unopened_boxes_count.to_i
   end
 
-  def history_hash
+  def history_hash_for_inventory
+    # storing the item_name prevents having to load the item (via uid.objectify_uid) when viewing inventory history
     {
+      item_name: item.name,
+      loose: loose_count,
+      box: unopened_boxes_count,
+      available: available
+    }
+  end
+
+  def history_hash_for_item
+    # storing the inv_type prevents having to load the inventory when viewing item history
+    {
+      inv_type: inventory.type,
       loose: loose_count,
       box: unopened_boxes_count,
       available: available
