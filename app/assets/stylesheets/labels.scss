@@ -13,64 +13,50 @@
 
 // `/label/:uid`
 // TODO: where is #inventory_labels
-#inventory_labels, #paper_labels {
+.labels_page {
   width: 8.5in;
-  margin-right: auto;
-  margin-left: auto;
+  margin: 0;
+  display: grid;
+  // left gutter | label | center gutter | label | right gutter
+  grid-template-columns: 0.155in 4in 0.19in 4in 0.155in;
+  // top gutter | labels x 5 | bottom gutter
+  grid-template-rows: 0.5in repeat(5, 2in) 0.5in;
+  gap: 0;
 
-  .border {
-    border: 1px solid gray;
+  .top-gutter {
+    grid-column: 1 / 6;
+    grid-row: 1;
   }
 
-  .bold {
-    font-weight: bold;
+  .bottom-gutter {
+    grid-column: 1 / 6;
+    grid-row: 7;
+    page-break-after: always;
   }
 
-  .right-border {
-    border-right: 2px solid gray;
-    text-align: right;
-    padding-right: 6px;
-    margin-right: -2px;
-  }
-}
-
-table#avery8163 {
-  table-layout: fixed;
-  width: 100%;
-
-  thead, tfoot {
-    td {
-      height: .5in;
-    }
-
-    .spacer-gutter {
-      width: 0.155in;
-    }
-
-    .spacer-center {
-      width: 0.19in;
-    }
-
-    .spacer-label {
-      width: 4in;
-    }
+  .left-gutter {
+    grid-column-start: 1;
   }
 
-  tbody {
-    tr.label-row {
-      // TODO: I think this is failing
-      height: 2in;
-    }
+  .center-gutter {
+    grid-column-start: 3;
+  }
+
+  .right-gutter {
+    grid-column-start: 5;
+  }
+
+  // can't use .label because of Bootstrap
+  .label-4x2 {
+    outline: 1px dotted;
+    text-align: center;
   }
 }
-
 
 // _label partial
 .label-flex {
   aspect-ratio: 2/1;
   padding: 1%;
-  border: 1px solid black;
-  border-radius: 8px;
 
   .half {
     width: 50%;
@@ -113,21 +99,12 @@ table#avery8163 {
 }
 
 @media print {
-  table#avery8163 {
-    thead {
-      display: table-header-group;
-    }
-
-    tfoot {
-      display: table-footer-group;
-    }
-
-    tbody .item-label {
-      // border: 0px solid white;
+  .labels_page {
+    .label-4x2 {
+      outline: none;
     }
 
     .label-flex {
-     // border: 0px solid white;
      .img {
       img {
         display: inline;
