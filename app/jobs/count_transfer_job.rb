@@ -29,6 +29,9 @@ class CountTransferJob < ApplicationJob
   def transfer_manual_count(count)
     # manual inventories override current item counts
     item = count.item
+
+    return false unless item.present?
+
     item.loose_count = count.loose_count
     item.box_count = count.unopened_boxes_count
     item.available_count = count.available
@@ -41,6 +44,8 @@ class CountTransferJob < ApplicationJob
   def transfer_auto_count(count)
     # shipping, receiving and event inventories need to combine their counts with current item counts
     item = count.item
+
+    return false unless item.present?
 
     item.loose_count += count.loose_count
     item.box_count += count.unopened_boxes_count

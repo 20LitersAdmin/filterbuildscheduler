@@ -24,6 +24,7 @@
       %thead
         %tr
           %th Item UID
+          %th Item name
           %th Loose count
           %th Box count
           %th
@@ -40,7 +41,7 @@
                 = link_to hist[0], rails_admin.show_path(model_name: uid_eval[0], id: uid_eval[0])
               - else
                 = hist[0]
-            %td= human_number hist[1]['item_name']
+            %td= hist[1]['item_name']
             %td= human_number hist[1]['loose']
             %td= human_number hist[1]['box']
             %td= human_number hist[1]['available']
