@@ -136,6 +136,9 @@ class InventoryMigrationJob < ApplicationJob
 
   def add_history_to_every_item_and_inventory
     puts 'add history to every item and inventory'
+
+    # can't use CountTransferJob for this because it destroys counts afterwards
+    # and this job still needs them for a bit
     Inventory.order(date: :desc, created_at: :desc).each do |i|
       i.counts.each do |count|
         item = count.item

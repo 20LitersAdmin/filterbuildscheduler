@@ -68,11 +68,11 @@ class Inventory < ApplicationRecord
     if event_id.present?
       'Event Based'
     elsif receiving
-      'Items Received'
+      'Receiving'
     elsif shipping
-      'Items Shipped'
+      'Shipping'
     elsif manual
-      'Manual Inventory'
+      'Manual'
     else
       'Unknown'
     end
