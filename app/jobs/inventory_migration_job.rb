@@ -141,13 +141,11 @@ class InventoryMigrationJob < ApplicationJob
         item = count.item
         next unless item.present?
 
-        history_hash = count.history_hash
-
-        item.history[i.date.iso8601] = history_hash
+        item.history[i.date.iso8601] = count.history_hash_for_item
 
         item.save!
 
-        i.history[item.uid] = history_hash
+        i.history[item.uid] = count.history_hash_for_inventory
       end
 
       i.save!

@@ -97,14 +97,6 @@ module Itemable
     quantities[item_uid]
   end
 
-  def set_history_from_current_counts(date = Date.today)
-    history[date.iso8601] = {
-      loose: loose_count,
-      box: box_count,
-      available: available_count
-    }
-  end
-
   private
 
   def check_uid

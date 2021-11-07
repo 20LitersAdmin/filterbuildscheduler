@@ -273,4 +273,14 @@ $(document).on("turbolinks:load", function(){
       { "orderDataType": "dom-checkbox", "orderSequence": [ "desc" ] }
     ]
   });
+
+  $('.datatable-inventory-search').DataTable({
+    retrieve: true,
+    order: [],
+    paging: false,
+    responsive: true,
+    autoWidth: false,
+    info: false,
+    dom: "ft"
+  });
 });
