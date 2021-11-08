@@ -34,11 +34,13 @@
               Total adjustment
       %tbody
         - @inventory.history.each do |hist|
+          -# - item = hist[0].objectify_uid
           %tr
             %td
               - if current_user.is_admin?
                 - uid_eval = hist[0].evaluate_uid
-                = link_to hist[0], rails_admin.show_path(model_name: uid_eval[0], id: uid_eval[0])
+                -# NOTE: this could fail because the item could have been deleted
+                = link_to hist[0], rails_admin.show_path(model_name: uid_eval[0], id: uid_eval[1])
               - else
                 = hist[0]
             %td= hist[1]['item_name']

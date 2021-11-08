@@ -266,7 +266,7 @@ class EventsController < ApplicationController
     @location = @event.location
     @location_img = @location.image
 
-    @tech_blurb = @technology.description
+    @tech_blurb = @technology.public_description
 
     @child_statement_email =
       if @technology.family_friendly
