@@ -17,15 +17,12 @@
   - **DONE** Images are automatically migrated via `ImageSyncJob.perform_now`
 
 ### Current:
-* I kinda hate paper.haml, maybe re-do with `display: grid`;
-  - works, but no images
-  - and now labels won't print images????
+* InventoriesController#order_all
+* InventoriesController#order
 
 ### Nerfed pages:
 * status_inventories_path
 * financials_inventories_path
-* Inventory#index when the latest inventory has counts
-  - Remove "View" button (as there is no Inventor#show), or make Admin only if "undo"
 
 * Inventories#status - still relies on counts && primary components
 * `/admin/event&scope=closed` vs. `/events/closed`
@@ -33,26 +30,10 @@
   - vs. `/admin/event&scope=discarded`
 
 ### Still to do:
+- easy-print report for setup crew:
+  - every component and their subs w/ current counts
 
-- Item#produceable: what is it's value?
-  - For Filter Build leaders to know what *should* be produceable based upon inventory
-
-- Inventories#index -> Inventories#History has @item.history_series kickchart, which lays available, box, and loose on the same axis. Should probably not be.
-  - Three separate charts, maybe?
-  - Three separate axes, but might be confusing: https://www.chartjs.org/docs/latest/axes/
-
-- ComponentsController#order && ComponentsController#order_low
-  - from InventoriesController#order_all and InventoriesController#order
-
-- What happens when a price is changed?
-  - Material
-  - Part
-  - Component
-  - Technology
-
-- Make sure `Part#not_made_from_materials` and `Material#all`price is being escalated to assemblies on save
-  - Right now, saving an Assembly trigers PriceCalculationJob, but what if you change the price of a Part or Material? That needs to cascade up.
-  - Assemblies have a price (item.price * quantity)
+- PriceCalculationJob: Make sure `Part#made_from_material` gets their prices set before looping over assemblies.
 
 - `Component#weeks_to_out` should traverse downward
   - Or YAGNI weeks_to_out all together
@@ -71,6 +52,10 @@
   - Using a suppress_emails? field?
   - `scope :pre_reminders, -> { where(reminder_sent_at: nil, suppress_reminder_emails: false) }`
 
+2. Inventories#index -> Inventories#History has @item.history_series kickchart, which lays available, box, and loose on the same axis. Should probably not be.
+  - Three separate charts, maybe?
+  - Three separate axes, but might be confusing: https://www.chartjs.org/docs/latest/axes/
+
 3. Simple-form client-side validations: https://jarlowrey.com/blog/simple-forms-client-validation-rails-5.html
 - yeah, but for what forms? Inventory? Event creation?
 
@@ -79,7 +64,7 @@
 - remove extrap models
 
 ## Remind myself:
-3. `orphans = User.builders.left_outer_joins(:registrations).where(registrations: { id: nil })`
+`orphans = User.builders.left_outer_joins(:registrations).where(registrations: { id: nil })`
 
 # Never trigger an analyzer when calling methods on ActiveStorage
 # ActiveStorage::Blob::Analyzable.module_eval do

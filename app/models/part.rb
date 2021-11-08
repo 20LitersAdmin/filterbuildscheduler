@@ -129,5 +129,8 @@ class Part < ApplicationRecord
 
   def set_made_from_material
     self.made_from_material = material.present?
+
+    # PriceCalculationJob will skip this part because of a divide by zero error if it is zero
+    self.quantity_from_material = 1.0 if quantity_from_material.zero?
   end
 end

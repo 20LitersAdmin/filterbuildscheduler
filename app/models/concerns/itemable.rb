@@ -3,6 +3,7 @@
 module Itemable
   extend ActiveSupport::Concern
 
+  # Items are: Technology, Component, Part, Material
   # Things Items have uniquely in common:
   # UIDs
   # Assemblies (except Technology can only be combination; Part can only be item)
