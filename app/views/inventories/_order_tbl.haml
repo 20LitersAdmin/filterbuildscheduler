@@ -1,6 +1,7 @@
 -# frozen_string_literal: true
-- too_late = order_tbl.weeks_to_deliver > order_tbl.weeks_to_out
-%tr{ id: order_tbl.id }
+- tech_names_and_quantities = order_tbl.quantities_with_tech_names_short
+
+%tr{ id: order_tbl.uid }
   %td
     - if current_user.is_admin?
       = link_to order_tbl.name, rails_admin.edit_path(model_name: order_tbl.model_name.name, id: order_tbl.id), target: '_blank'
@@ -8,28 +9,19 @@
       = order_tbl.name
   %td
     = order_tbl.uid
-  %td.small-text
-    - order_tbl.tech_names_short.each do |t|
-      = t
-      %br
-  %td.small-text
-    - order_tbl.per_technologies.each do |f|
-      = human_float(f)
+  %td
+    - tech_names_and_quantities.each do |ary|
+      #{ary[0]} (#{ary[1]} per)
       %br
   - if @locator == 'item'
     %td.item-supplier.small-text
-      - if supplier = order_tbl.supplier
+      - if (supplier = order_tbl.supplier)
         = link_to supplier.name, rails_admin.edit_path(model_name: supplier.model_name.name, id: supplier.id)
-      - elsif order_tbl.made_from_materials?
-        %i material
-        = icon('fa question-circle', class: 'light-blue', data: { toggle: 'tooltip', placement: 'right' }, title: "Made from #{order_tbl.materials.first.name}: #{order_tbl.materials.first.supplier&.name}")
-  %td{ class: "center-align #{'too-late' if too_late}" }
+  %td.center-align
     = human_number(order_tbl.available_count)
-  %td{ class: "center-align #{'too-late' if too_late}" }
+  %td.center-align
     = human_number(order_tbl.minimum_on_hand)
-  %td{ class: "center-align #{'too-late' if too_late}" }
-    = human_float(order_tbl.weeks_to_out)
-  %td{ class: "center-align #{'too-late' if too_late}" }
+  %td.center-align
     = human_float(order_tbl.weeks_to_deliver)
   %td.item-cost.right-align
     $
@@ -37,6 +29,9 @@
   %td.ordered-last
     - if order_tbl.last_ordered_at.present?
       #{human_date(order_tbl.last_ordered_at)}: #{human_number(order_tbl.last_ordered_quantity)}
+      - if order_tbl.on_order?
+        %br
+          %i Not yet received.
     - else
       n/a
   %td.min-order

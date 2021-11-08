@@ -3,12 +3,13 @@
 #inventory_order
   #sticky.row
     .col-xs-12.col-sm-10
-      %h2#title Order any item:
+      %h2#title
+        #{@items.count} items need to be ordered #{'for' if @selected_tech} #{@selected_tech&.name}:
     .col-xs-12.col-sm-2.right-align.match-h2
-      = link_to 'Only Low', order_inventories_path, class: 'btn empty use-load-screen'
+      = link_to 'View All', order_all_inventories_path, class: 'btn empty use-load-screen'
     = render partial: 'order_admin_div'
   .row.spacer-bottom.spacer-top.well
-    = form_tag order_all_inventories_path, method: 'get', class: 'form-inline', enforce_utf8: false do
+    = form_tag order_inventories_path, method: 'get', class: 'form-inline', enforce_utf8: false do
       .col-xs-12.col-sm-6.form-group
         %label{ for: 'tech' } Technology:
         = select_tag 'tech', options_for_select(@technologies_select, @selected_tech_id), { id: 'tech', class: 'form-control', include_blank: true }
@@ -23,5 +24,4 @@
     #order_supplier_div.col-xs-12
       - @locator = 'supplier'
       = render partial: 'order_supplier', collection: @suppliers, locals: { items: @items }
-      - if @items_w_no_supplier.any?
-        = render partial: 'order_supplier', object: Supplier.new, locals: { items: @items_w_no_supplier }
+      = render partial: 'order_supplier', object: Supplier.new, locals: { items: @items_w_no_supplier } if @items_w_no_supplier.any?

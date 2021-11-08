@@ -78,8 +78,8 @@ Rails.application.routes.draw do
     collection do
       # get 'financials'
       get 'history'
-      # get 'order'
-      # get 'order_all'
+      get 'order_all'
+      get 'order'
       get 'paper'
       get 'status'
     end
