@@ -98,6 +98,16 @@ module Itemable
     quantities[item_uid]
   end
 
+  def quantities_with_tech_names_short
+    ary = []
+
+    quantities.each do |k, v|
+      ary << [k.objectify_uid.short_name, v]
+    end
+
+    ary
+  end
+
   private
 
   def check_uid

@@ -1,0 +1,32 @@
+-# frozen_string_literal: true
+
+:ruby
+  if order_supplier.id.nil?
+    @id = 0
+    @h2 = 'Items without a supplier:'
+    @supplier_items = @items_w_no_supplier.dup
+  else
+    @id = order_supplier.id
+    @h2 = order_supplier.name
+    @supplier_items = order_supplier.related_items(items)
+  end
+
+.row{ id: "order_supplier_row_#{@id}" }
+  .col-xs-8
+    %h4= @h2
+  - if @supplier_items.count > 1
+    .col-xs-4.right-align
+      %a.btn.blue.btn-check{ href: '#', id: "check_#{@id}" }
+        %span.fa-stack
+          = icon('fa', 'check', class: 'fa-stack-1x')
+          = icon('far', 'square', class: 'fa-stack-2x')
+        %span.btn-text this
+      %a.btn.blue.btn-check{ href: '#', id: "uncheck_#{@id}" }
+        %span.fa-stack
+          = icon('fa', 'square', class: 'fa-stack-1x')
+          = icon('far', 'square', class: 'fa-stack-2x')
+        %span.btn-text this
+  .col-xs-12
+    %table.table.table-striped.table-bordered.datatable-order-supplier{ id: "order_supplier_tbl_#{@id}" }
+      %thead= render partial: 'order_tbl_head'
+      %tbody= render partial: 'order_tbl', collection: @supplier_items

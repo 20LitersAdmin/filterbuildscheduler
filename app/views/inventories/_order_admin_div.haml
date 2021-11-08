@@ -1,0 +1,22 @@
+-# frozen_string_literal: true
+
+.col-xs-12.admin-div
+  .col-xs-6
+    %p.title
+      Total: $
+      %span#item_ttl 0.00
+      %span#supplier_ttl 0.00
+  .col-xs-3.right-align
+    = link_to 'By Item', '#', class: 'btn yellow match-title', id: 'item_btn'
+    = link_to 'By Supplier', '#', class: 'btn yellow match-title', id: 'supplier_btn'
+  .col-xs-3.right-align
+    %a#check_all.btn.blue.btn-check{:href => '#'}
+      %span.fa-stack
+        = icon('fa', 'check', class: 'fa-stack-1x')
+        = icon('far', 'square', class: 'fa-stack-2x')
+      %span.btn-text all
+    %a#uncheck_all.btn.blue.btn-check{:href => '#'}
+      %span.fa-stack
+        = icon('fa', 'square', class: 'fa-stack-1x')
+        = icon('far', 'square', class: 'fa-stack-2x')
+      %span.btn-text all

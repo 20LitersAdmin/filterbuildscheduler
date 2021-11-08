@@ -36,17 +36,17 @@ class InventoryPolicy < ApplicationPolicy
     user&.is_admin?
   end
 
-  # def order?
-  #   index?
-  # end
+  def order?
+    index?
+  end
 
-  # def order_all?
-  #   index?
-  # end
+  def order_all?
+    index?
+  end
 
-  # def status?
-  #   index?
-  # end
+  def status?
+    index?
+  end
 
   def paper?
     index?

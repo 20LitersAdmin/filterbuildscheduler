@@ -201,7 +201,7 @@ function reformat(source) {
   $(document).on("click", ".btn-check", function() {
     var idStr = $(this).attr("id");
     var split = idStr.split("_");
-    // Some combo of ["check", "all"] and ["uncheck", "id"]
+    // ["check" || "uncheck", "all" || "id"]
     toggleCheck(split[0],split[1]);
     event.preventDefault();
   });
