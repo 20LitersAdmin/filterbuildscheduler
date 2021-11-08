@@ -74,8 +74,7 @@ class InventoriesController < ApplicationController
   end
 
   def update
-    authorize @inventory = Inventory.find(params[:id])
-
+    # @inventory only gets updated once, on complete, no incremental updates
     @inventory.completed_at = Time.now.localtime
 
     # Inventory#after_update triggers:
@@ -101,24 +100,6 @@ class InventoriesController < ApplicationController
     flash[:success] = 'Inventory record deleted.'
     redirect_to history_inventories_path
   end
-
-  # def show
-  #   authorize @inventory = Inventory.find(params[:id])
-  #   @counts = @inventory.counts.sort_by { |c| - c.name }
-
-  #   if @inventory.type_for_params == 'manual'
-  #     # show only what's ready for shipping
-  #     @primary_components = Component.where(completed_tech: true).map(&:id)
-  #     @primary_component_counts = @inventory.counts.where(component_id: @primary_components).sort_by { |c| - c.name }
-  #   else
-  #     # show only what's changed
-  #     @diff_counts = @inventory.counts.where.not(user_id: nil).sort_by { |c| - c.name }
-  #   end
-
-  #   @event = Event.find(@inventory.event_id) if @inventory.type_for_params == 'event'
-
-  #   @latest = Inventory.latest_completed
-  # end
 
   # def order
   #   authorize Inventory
@@ -218,7 +199,9 @@ class InventoriesController < ApplicationController
   private
 
   def find_owner_from_acronym(owner)
-    Technology.status_worthy.map { |t| [t.owner_acronym, t.owner] }.uniq.to_h[owner]
+    Technology.status_worthy
+              .map { |t| [t.owner_acronym, t.owner] }
+              .uniq.to_h[owner]
   end
 
   def history_params

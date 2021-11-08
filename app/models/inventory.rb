@@ -95,10 +95,14 @@ class Inventory < ApplicationRecord
   private
 
   def run_produceable_job
+    return unless completed_at.present?
+
     ProduceableJob.perform_later unless Delayed::Job.where(queue: 'produceable').any?
   end
 
   def transfer_counts
+    return unless completed_at.present?
+
     CountTransferJob.perform_later(self) unless Delayed::Job.where(queue: 'count_transfer').any?
   end
 end

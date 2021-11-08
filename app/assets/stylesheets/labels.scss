@@ -12,7 +12,6 @@
 }
 
 // `/label/:uid`
-// TODO: where is #inventory_labels
 .labels_page {
   width: 8.5in;
   margin: 0;
@@ -103,14 +102,14 @@
     .label-4x2 {
       outline: none;
     }
+  }
 
-    .label-flex {
-     .img {
+  .label-flex {
+    .img {
       img {
-        display: inline;
+        display: inline !important;
         max-height: 1.9in;
       }
-     }
     }
   }
 }

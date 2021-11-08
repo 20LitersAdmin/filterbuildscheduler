@@ -17,12 +17,9 @@
   - **DONE** Images are automatically migrated via `ImageSyncJob.perform_now`
 
 ### Current:
-* You can NO LONGER "unlock" an inventory because there are no count records left
-  - InventoriesController#update, right?
-* Technology#description is now for Inventory, Technology#public_description is now for Events
-  - already changed for EventsController#show, but anywhere else?
-
 * I kinda hate paper.haml, maybe re-do with `display: grid`;
+  - works, but no images
+  - and now labels won't print images????
 
 ### Nerfed pages:
 * status_inventories_path

@@ -46,14 +46,14 @@ Rails.application.routes.draw do
     end
     member do
       get 'attendance'
-      get 'replicate'
-      get 'replicate_occurrences'
-      put 'replicator'
-      get 'restore'
       get 'leaders'
       get 'leader_unregister'
       get 'leader_register'
       get 'poster'
+      get 'replicate'
+      get 'replicate_occurrences'
+      put 'replicator'
+      get 'restore'
     end
     resources :registrations do
       collection do

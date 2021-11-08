@@ -6,6 +6,19 @@ class EventPolicy < ApplicationPolicy
   def initialize(user, event)
     @user = user
     @event = event
+    super
+  end
+
+  def attendance?
+    create?
+  end
+
+  def cancelled?
+    create?
+  end
+
+  def closed?
+    user&.is_admin?
   end
 
   def create?
@@ -16,39 +29,8 @@ class EventPolicy < ApplicationPolicy
     create?
   end
 
-  def update?
-    create?
-  end
-
-  def new?
-    create?
-  end
-
-  def show?
-    if event.in_the_past?
-      if user&.is_admin?
-        true
-      elsif user&.is_leader? && user&.leading?(event)
-        # only show it if the leader led the event
-        true
-      else # anonymous users and builders can't see past events
-        false
-      end
-    else # future events can always be seen by everyone
-      true
-    end
-  end
-
   def edit?
     create?
-  end
-
-  def cancelled?
-    create?
-  end
-
-  def closed?
-    user&.is_admin?
   end
 
   def lead?
@@ -67,11 +49,19 @@ class EventPolicy < ApplicationPolicy
     closed?
   end
 
-  def restore?
+  def messenger?
     create?
   end
 
-  def messenger?
+  def new?
+    create?
+  end
+
+  def poster?
+    show?
+  end
+
+  def restore?
     create?
   end
 
@@ -79,7 +69,22 @@ class EventPolicy < ApplicationPolicy
     create?
   end
 
-  def attendance?
+  def show?
+    if event.in_the_past?
+      if user&.is_admin? ||
+         (user&.is_leader? && user&.leading?(event))
+
+        # only show it if the leader led the event
+        true
+      else # anonymous users and builders can't see past events
+        false
+      end
+    else # future events can always be seen by everyone
+      true
+    end
+  end
+
+  def update?
     create?
   end
 
