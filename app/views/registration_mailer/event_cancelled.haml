@@ -1,0 +1,26 @@
+-# frozen_string_literal: true
+
+.whole{ style: 'position: relative; min-height: 1px; padding-left: 15px; padding-right: 15px; float: left; width: 100%;' }
+  %p Hello #{@recipient.fname},
+  %h3{ style: 'margin-bottom: 6px' }
+    %strong Unfortunately, this filter build was cancelled:
+.whole{ style: 'position: relative; min-height: 1px; float: left; width: 100%; margin: auto 16px;' }
+  %h3{ style: 'margin-bottom: 6px;' }= @event.format_time_range
+  %h4{ style: 'margin: 6px auto;' }= @event.title
+  %p
+    %strong Location:
+    %br/
+    = @location.name
+    %br/
+    = @location.address1
+    %br/
+    - if @location.address2
+      = @location.address2
+      %br/
+    #{@location.city}, #{@location.state} #{@location.zip}
+.whole{ style: 'position: relative; min-height: 1px; padding-left: 15px; padding-right: 15px; float: left; width: 100%;' }
+  - if @registration.guests_registered&.positive?
+    %p
+      You registered to bring #{pluralize(@registration.guests_registered, 'guest')}. Please share this information with them.
+  %p If you want to register for a different build, please visit the site:
+  = link_to 'Go to make.20liters.org', 'https://make.20liters.org', class: 'btn yellow', target: '_blank', style: 'display: inline-block; margin-bottom: 0; font-weight: normal; text-align: center; vertical-align: middle; border: 1px solid transparent; white-space: nowrap; padding: 6px 12px; font-size: 14px; text-decoration: none; color: #4a4a4a; background-color: #fce000; border-color: ##fcc900;'

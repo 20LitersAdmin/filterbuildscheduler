@@ -1,0 +1,49 @@
+-# frozen_string_literal: true
+
+.row
+  .whole{ style: 'position: relative; min-height: 1px; padding-left: 15px; padding-right: 15px; float: left; width: 100%;' }
+    %h2
+      A filter build event was changed by #{@user.name}
+    - if @registered_users_notified
+      %p The system sent emails to everyone who was registered, informing them of these changes.
+  .whole{ style: 'position: relative; min-height: 1px; padding-left: 15px; padding-right: 15px; float: left; width: 100%;' }
+    %h3{ style: 'margin-bottom: 6px' }
+      %strong Here are the changes:
+  .whole{ style: 'position: relative; min-height: 1px; padding-left: 15px; padding-right: 15px; float: left; width: 100%;' }
+    - if @start_time || @end_time
+      %h4 The time was changed:
+      %p
+        Original: #{format_changed_time_range(@event.start_time_was, @event.end_time_was)}
+      %p
+        Now: #{format_changed_time_range(@event.start_time, @event.end_time)}
+  .whole{ style: 'position: relative; min-height: 1px; padding-left: 15px; padding-right: 15px; float: left; width: 100%;' }
+    - if @location_id
+      %h4 The location was changed:
+      %p
+        Original: #{@location_was.name}
+      %p
+        Now: #{@location.name}
+  .whole{ style: 'position: relative; min-height: 1px; padding-left: 15px; padding-right: 15px; float: left; width: 100%;' }
+    - if @technology_id
+      %h4 The Technology was changed:
+      %p
+        Original: #{@technology_was.name}
+      %p
+        Now: #{@technology.name}
+  .whole{ style: 'position: relative; min-height: 1px; padding-left: 15px; padding-right: 15px; float: left; width: 100%;' }
+    - if @is_private
+      %p
+        %strong The event type was changed:
+        = privacy_case(@is_private)
+.row
+  .whole{ style: 'position: relative; min-height: 1px; padding-left: 15px; padding-right: 15px; float: left; width: 100%;' }
+    %h4 Was this a mistake?
+  .whole{ style: 'position: relative; min-height: 1px; padding-left: 15px; padding-right: 15px; float: left; width: 50%; text-align: center;' }
+    = link_to 'Go to changed filter build', event_url(@event), class: 'btn blue', target: '_blank', style: 'display: inline-block; margin-bottom: 0; font-weight: normal; text-align: center; vertical-align: middle; border: 1px solid transparent; white-space: nowrap; padding: 6px 12px; font-size: 14px; text-decoration: none; color: #4a4a4a; background-color: #9bb4c8; border-color: #91a0c8;'
+.row
+  .whole{ style: 'position: relative; min-height: 1px; padding-left: 15px; padding-right: 15px; float: left; width: 100%;' }
+    %p While we can't delete the old calendar appointment for you, we have created a new one.
+    %p Use the link below to add this event to your Google calendar.
+    %p Use the attached iCal for other calendar types.
+  .whole{ style: 'position: relative; min-height: 1px; padding-left: 15px; padding-right: 15px; float: left; width: 50%; text-align: center;' }
+    = link_to 'Add to my Google Calendar', url_for_event_gcal, class: 'btn yellow', target: '_blank', style: 'display: inline-block; margin-bottom: 0; font-weight: normal; text-align: center; vertical-align: middle; border: 1px solid transparent; white-space: nowrap; padding: 6px 12px; font-size: 14px; text-decoration: none; color: #4a4a4a; background-color: #fce000; border-color: ##fcc900;'

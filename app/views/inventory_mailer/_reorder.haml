@@ -1,0 +1,11 @@
+-# frozen_string_literal: true
+
+%tr
+  %td= reorder.name
+  %td{ style: 'text-align: right;' }
+    = number_with_delimiter(reorder.available_count, delimiter: ',')
+  %td{ style: 'text-align: right;' }
+    = number_with_delimiter(reorder.minimum_on_hand, delimiter: ',')
+  %td{ style: 'text-align: right;' }
+    = number_with_delimiter(reorder.weeks_to_deliver, delimiter: ',')
+

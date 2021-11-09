@@ -17,7 +17,7 @@ module Itemable
   included do
     monetize :price_cents, allow_nil: true, numericality: { greater_than_or_equal_to: 0 }
 
-    scope :below_minimums, -> { where(below_minimum: true) }
+    scope :below_minimums, -> { kept.where(below_minimum: true) }
 
     before_save :set_below_minimum
 

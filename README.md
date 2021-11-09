@@ -17,14 +17,16 @@
   - **DONE** Images are automatically migrated via `ImageSyncJob.perform_now`
 
 ### Current:
-* InventoriesController#order_all
-* InventoriesController#order
+* Itemable things need `.kept` in lots of places
+* links to Photo: in .text.erb mailers
+* Start searching for # TODO:
+* Run & fix tests
 
 ### Nerfed pages:
-* status_inventories_path
-* financials_inventories_path
+* `_*_functions` - how many can be removed?
+  - Leaders should be able to get to `/events/lead` without having to visit `rails_admin`
+  - Scheduler should be able to get to `/leaders` and `/events/lead` without having to visit `rails_admin`
 
-* Inventories#status - still relies on counts && primary components
 * `/admin/event&scope=closed` vs. `/events/closed`
 * `Events#cancelled` - relies on `.only_deleted`
   - vs. `/admin/event&scope=discarded`
@@ -33,17 +35,9 @@
 - easy-print report for setup crew:
   - every component and their subs w/ current counts
 
-- PriceCalculationJob: Make sure `Part#made_from_material` gets their prices set before looping over assemblies.
-
-- `Component#weeks_to_out` should traverse downward
-  - Or YAGNI weeks_to_out all together
-
-- remove `_event_functions.html.erb` && calls to this partial
-  - Leaders should be able to get to `/events/lead` without having to visit `rails_admin`
-  - Scheduler should be able to get to `/leaders` and `/events/lead` without having to visit `rails_admin`
-
-- probably a few `event.img_url` hanging out there as well
-- technology.description being used for label? Should be one text field for EventsController#show and one for labels
+- Weeks_to_out
+  - `Component#weeks_to_out` should traverse downward
+    - Or YAGNI weeks_to_out all together
 
 - is Oauth Email syncing causing the R14 Memory Quota Exceeded issue?
 
@@ -65,12 +59,3 @@
 
 ## Remind myself:
 `orphans = User.builders.left_outer_joins(:registrations).where(registrations: { id: nil })`
-
-# Never trigger an analyzer when calling methods on ActiveStorage
-# ActiveStorage::Blob::Analyzable.module_eval do
-#   def analyze_later; end
-
-#   def analyzed?
-#     true
-#   end
-# end

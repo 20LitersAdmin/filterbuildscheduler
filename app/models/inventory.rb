@@ -53,13 +53,6 @@ class Inventory < ApplicationRecord
     "#{date.strftime('%m-%d-%y')}: #{type}"
   end
 
-  def primary_counts
-    # find the components that represent completed technologies
-    @primary_comp_ids = Component.where(completed_tech: true).map(&:id)
-    # get the count records of these components
-    counts.where(component_id: @primary_comp_ids)
-  end
-
   def technologies
     # inventory#new form field for bypassing technologies
   end
@@ -75,6 +68,18 @@ class Inventory < ApplicationRecord
       'Manual'
     else
       'Unknown'
+    end
+  end
+
+  def verb_past_tense
+    if event_id.present?
+      'adjusted after an event'
+    elsif receiving
+      'received'
+    elsif shipping
+      'shipped'
+    else
+      'counted'
     end
   end
 

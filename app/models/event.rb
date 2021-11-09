@@ -25,14 +25,17 @@ class Event < ApplicationRecord
   # RailsAdmin "active" is better than "kept"
   scope :active, -> { kept }
 
-  scope :non_private,   -> { where(is_private: false) }
-  scope :pre_reminders, -> { where(reminder_sent_at: nil) }
-  scope :future,        -> { where('end_time > ?', Time.now).order(start_time: :asc) }
-  scope :within_days,   ->(num) { where('start_time <= ?', Time.now + num.days) }
-  scope :past,          -> { where('end_time <= ?', Time.now).order(start_time: :desc) }
-  scope :needs_report,  -> { where('start_time <= ?', Time.now).where(attendance: 0).order(start_time: :desc) }
   scope :closed,        -> { where('start_time <= ?', Time.now).order(start_time: :desc) }
+  scope :complete,      -> { past.where('attendance != 0 OR technologies_built != 0 OR boxes_packed != 0') }
+  scope :future,        -> { where('end_time > ?', Time.now).order(start_time: :asc) }
   scope :needs_leaders, -> { future.select('events.*').joins('LEFT OUTER JOIN registrations ON (registrations.event_id = events.id)').having('count(registrations.leader IS TRUE) < events.max_leaders').group('events.id') }
+  scope :needs_report,  -> { where('start_time <= ?', Time.now).where(attendance: 0).order(start_time: :desc) }
+  scope :non_private,   -> { where(is_private: false) }
+  scope :past,          -> { where('end_time <= ?', Time.now).order(start_time: :desc) }
+  scope :pre_reminders, -> { where(reminder_sent_at: nil) }
+  scope :with_attendance, -> { where.not(attendance: 0) }
+  scope :with_results,    -> { where('technologies_built != ? OR boxes_packed != ?', 0, 0) }
+  scope :within_days,   ->(num) { where('start_time <= ?', Time.now + num.days) }
 
   def builders_attended
     attendance - leaders_attended
@@ -43,7 +46,9 @@ class Event < ApplicationRecord
   end
 
   def complete?
-    attendance.positive? && start_time < Time.zone.now
+    return false unless start_time < Time.zone.now
+
+    attendance.positive? || (boxes_packed.positive? || technologies_built.positive?)
   end
 
   def dates_are_valid?
@@ -203,6 +208,8 @@ class Event < ApplicationRecord
   end
 
   def needs_report?
+    # TODO: this is unnecessary
+    # just use #incomplete?
     attendance.zero?
   end
 
@@ -302,7 +309,7 @@ class Event < ApplicationRecord
     !emails_sent? &&
       attendance.positive? &&
       registrations.size.positive? &&
-      (technologies_built.positive? || boxes_packed.positive?)
+      technology_results.positive?
   end
 
   def technology
@@ -312,12 +319,12 @@ class Event < ApplicationRecord
   end
 
   def technology_results
-    return 0 if incomplete? || !technology.primary_component.present?
+    return 0 if incomplete?
 
-    (boxes_packed * technology.primary_component.quantity_per_box) + technologies_built
+    (boxes_packed * technology.quantity_per_box) + technologies_built
   end
 
-  # pass total_registered('only_deleted') to get access to registrations.only_deleted
+  # TODO: only_deleted switch
   def total_registered(scope = '')
     if scope == 'only_deleted'
       registrations.only_deleted.exists? ? registrations.only_deleted.map(&:guests_registered).sum + non_leaders_registered('only_deleted').count : 0
@@ -326,6 +333,7 @@ class Event < ApplicationRecord
     end
   end
 
+  # TODO: only_deleted switch
   def total_registered_w_leaders(scope = '')
     if scope == 'only_deleted'
       registrations.only_deleted.exists? ? registrations.only_deleted.map(&:guests_registered).sum + registrations.only_deleted.count : 0

@@ -11,8 +11,6 @@ class RegistrationMailer < ApplicationMailer
     @event = @registration.event
     @location = @event.location
     @technology = @event.technology
-    @summary = '[20 Liters] Filter Build: ' + @event.technology.name
-    @attachment_title = '20Liters_filterbuild_' + @event.start_time.strftime('%Y%m%dT%H%M') + '.ical'
 
     if @event.leaders_registered.count == 1
       @leader_count_text = 'Your leader is:'
@@ -20,16 +18,10 @@ class RegistrationMailer < ApplicationMailer
       @leader_count_text = 'Your leaders are:'
     end
 
-    if @recipient.encrypted_password.blank?
-      @token = Devise.token_generator.generate(User, :reset_password_token)
-      @recipient.reset_password_token = @token[1]
-      @token = @token[0]
-      @recipient.reset_password_sent_at = Time.now.utc
-      @recipient.save
-    end
-
+    @summary = "[20 Liters] Filter Build: #{@event.technology.name}"
     @description = render partial: 'details.text'
     @details = @description.gsub("\n", '%0A').gsub(' ', '%20')
+    @attachment_title = "20Liters_filterbuild_#{@event.start_time.strftime('%Y%m%dT%H%M')}.ical"
 
     cal = Icalendar::Calendar.new
     cal.event do |e|
@@ -51,21 +43,13 @@ class RegistrationMailer < ApplicationMailer
     @registration = registration
     @recipient = registration.user
     @event = event
-    @summary = '[20 Liters] Filter Build: ' + @event.technology.name
-    @attachment_title = '20Liters_filterbuild_' + @event.start_time.strftime('%Y%m%dT%H%M') + '.ical'
+    @summary = "[20 Liters] Filter Build: #{@event.technology.name}"
+    @attachment_title = "20Liters_filterbuild_#{@event.start_time.strftime('%Y%m%dT%H%M')}.ical"
 
     if @event.leaders_registered.count == 1
       @leader_count_text = 'Your leader is:'
     elsif @event.leaders_registered.count > 1
       @leader_count_text = 'Your leaders are:'
-    end
-
-    if @recipient.encrypted_password.blank?
-      @token = Devise.token_generator.generate(User, :reset_password_token)
-      @recipient.reset_password_token = @token[1]
-      @token = @token[0]
-      @recipient.reset_password_sent_at = Time.now.utc
-      @recipient.save
     end
 
     @event.changes.each_pair { |k, v| instance_variable_set("@#{k}", v) }
@@ -94,10 +78,11 @@ class RegistrationMailer < ApplicationMailer
   end
 
   def reminder(registration)
-    return if @recipient.email_opt_out
-
     @registration = registration
     @recipient = registration.user
+
+    return if @recipient.email_opt_out
+
     @event = registration.event
     @location = @event.location
     @technology = @event.technology
@@ -121,21 +106,14 @@ class RegistrationMailer < ApplicationMailer
   end
 
   def event_results(registration)
-    return if @recipient.email_opt_out
-
     @registration = registration
     @recipient = registration.user
+
+    return if @recipient.email_opt_out
+
     @event = registration.event
     @location = @event.location
     @technology = @event.technology
-
-    if @recipient.encrypted_password.blank?
-      @token = Devise.token_generator.generate(User, :reset_password_token)
-      @recipient.reset_password_token = @token[1]
-      @token_send = @token[0]
-      @recipient.reset_password_sent_at = Time.now.utc
-      @recipient.save
-    end
 
     mail(to: @recipient.email, subject: '[20 Liters] Results from the filter build!')
   end

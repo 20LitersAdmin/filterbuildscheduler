@@ -3,26 +3,21 @@ Hello <%= @recipient.fname %>,
 Thanks for registering to build filters with 20 Liters. We're glad you've signed up!
 
 <% if !@registration.guests_registered.nil? && @registration.guests_registered > 0 %>
-  You registered to bring <%= pluralize(@registration.guests_registered, 'guest') %>. Please share this information with them.
+You registered to bring <%= pluralize(@registration.guests_registered, 'guest') %>. Please share this information with them.
 <% end %>
----------------------
+
 Here are the details:
 <%= render partial: 'details' %>
-
 
 Calendars:
 ----------
 use the link to add this to your Google Calendar. Use the attached iCal for other calendar types.
 <%= url_for_registration_gcal %>
 
-** Have a Question? ** Just reply to this email.
-------------------------------------------------
 
 ** Need to change or cancel your registration? ** No worries, just use this link:
 -------------------------------------------------
 <%= edit_event_registration_url(@event, @registration, user_token: @recipient.authentication_token, user_email: @recipient.email ) %>
 
-<% if @token %>
-  If you plan to build often, you might want to save time by logging in. You can finish setting up your account here:
-  <%= edit_password_url(@recipient, reset_password_token: @token) %>
-<% end %>
+------------------------------------------------
+** Have a Question? ** Just reply to this email.
