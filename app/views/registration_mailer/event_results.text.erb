@@ -1,0 +1,27 @@
+Hello <%= @recipient.fname %>,
+
+Thanks for coming to the filter build on <%= @event.format_date_only %>!
+
+We built <%= pluralize(@event.technology_results, @technology.name) %>!
+These filters will make dirty water clean for <%= pluralize(number_with_delimiter(@event.results_people, delimiter: ','), 'people') %> and produce <%= pluralize(number_with_delimiter(@event.results_liters_per_day, delimiter: ','), 'liter') %> of clean water every day for at least <%= pluralize(number_with_delimiter(@event.results_timespan, delimiter: ','), 'year') %>
+
+By volunteering your time to build filters, you helped make them more affordable to people who need access to clean water. And access to clean water has the power to change everything for vulnerable families. Starting with improving health, saving and earning more money, and keeping kids healthy enough to attend school more often.
+
+Thanks for providing life, health and prosperity to people you'll probably never meet in this lifetime.
+
+<% if @registration.guests_attended&.positive? %>
+You brought <%= pluralize(@registration.guests_attended, 'guest') %>. Please share these results with them.
+<% end -%>
+
+* Want to do it again? *
+Check out more builds or request a custom event online:
+https://make.20liters.org
+
+== One more thing! ==
+You've already shown a desire to make dirty water clean. We share your passion.
+With just $100, 20 Liters can make dirty water clean for a family for the next decade.
+
+That's just $10 per year.
+Can you take the next step to put a filter to use - making clean water a reality for someone who needs it?
+
+Please give today: https://give.20liters.org/?campaign=338482

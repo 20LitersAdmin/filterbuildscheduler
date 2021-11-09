@@ -2,7 +2,7 @@
 
 class InventoriesController < ApplicationController
   before_action :set_inventory, only: %i[show edit update destroy]
-  before_action :authorize_inventory, only: %i[status order order_all]
+  before_action :authorize_inventory, only: %i[order order_all]
 
   def index
     # NOTE: After creating an inventory, user is redirected to InventoriesController#index
@@ -83,7 +83,7 @@ class InventoriesController < ApplicationController
     # CountTransferJob
     @inventory.save
 
-    InventoryMailer.delay.notify(@inventory, current_user) if @inventory.type_for_params == 'manual' || @inventory.has_items_below_minimum?
+    InventoryMailer.delay.notify(@inventory, current_user) if @inventory.has_items_below_minimum?
 
     flash[:success] = 'Inventory complete! All completed counts have been transferred to their items.'
 

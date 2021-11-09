@@ -1,0 +1,10 @@
+-# frozen_string_literal: true
+
+.whole{ style: 'position: relative; min-height: 1px; padding-left: 15px; padding-right: 15px; float: left; width: 100%;' }
+  %h3
+    A filter build event has been replicated #{pluralize(@events.size, 'time')} by #{@user.name}:
+.whole{ style: 'position: relative; min-height: 1px; padding-left: 15px; padding-right: 15px; float: left; width: 100%;' }
+  = render partial: 'replica', locals: { event: @events.first, location: @events.first.location }
+.whole{ style: 'position: relative; min-height: 1px; padding-left: 15px; padding-right: 15px; float: left; width: 100%;' }
+  %p It was replicated to these dates:
+  = render partial: 'instance', collection: @events

@@ -15,16 +15,24 @@ Location:
 <% if @location.map_url %>
 Map: <%= @location.map_url %>
 <% end %>
-
-<% if @location.photo_url %>
-Photo: <%= @location.photo_url %>
+<% if @location.image %>
+Photo: <%= event_url(@event) %>
 <% end %>
+
 
 <% if @location.instructions.present? %>
 Instructions:
 -------------
 <%= @location.instructions %>
 <% end %>
+
+
+** PLEASE WEAR A MASK. **
+-------------------------
+A facemask must be worn to participate in this event.
+Masks that cover the nose and mouth must be worn the whole time. A mask will be provided if you don't bring one.
+
+You must wear a mask even if you have been vaccinated.
 
 <% if @event.description.present? %>
 Additional Event Details:
@@ -39,6 +47,7 @@ What to expect:
 * Childcare is not provided, <%= child_statement_email(@technology) %>
 
 What to bring:
+* A facemask that covers your nose and mouth
 * A water bottle is a good idea
 * Comfortable, close-toed shoes
 * A desire to help the 383 million people without access to clean water

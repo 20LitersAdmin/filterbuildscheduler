@@ -3,8 +3,6 @@
   %button#hide_admin.close{ type: 'button' }
     %span{ 'aria-hidden' => 'true' } ×
   %p Available functions:
-  = link_to 'Tech Status', status_inventories_path, class: 'btn blue use-load-screen'
-  = link_to 'Financials', financials_inventories_path, class: 'btn empty use-load-screen' if current_user&.can_do_inventory?
   = link_to 'Labels', labels_path, class: 'btn yellow'
   = link_to 'Order Items', order_all_inventories_path, class: 'btn empty use-load-screen'
   = link_to('Items Below Minimum!', order_inventories_path, class: 'btn blue use-load-screen') if @below_minimum

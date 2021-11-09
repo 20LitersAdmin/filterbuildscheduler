@@ -44,10 +44,6 @@ class InventoryPolicy < ApplicationPolicy
     index?
   end
 
-  def status?
-    index?
-  end
-
   def paper?
     index?
   end

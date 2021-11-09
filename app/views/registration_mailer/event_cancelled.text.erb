@@ -1,0 +1,22 @@
+Hello <%= @recipient.fname %>,
+
+Unfortunately, this filter build was cancelled:
+<%= @event.format_time_range %>
+<%= @event.title %>
+
+Location:
+<%= @location.name %>
+<%= @location.address1 %>
+<% if @location.address2 %>
+<%= @location.address2 %>
+<% end %>
+<%= @location.city %>, <%= @location.state %> <%= @location.zip %>
+
+<% if @registration.guests_registered&.positive? %>
+You registered to bring <%= pluralize(@registration.guests_registered, 'guest') %>.
+Please share this information with them.
+<% end %>
+
+If you want to register for a different build, please visit the site:
+
+https://make.20liters.org
