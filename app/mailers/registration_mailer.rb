@@ -96,11 +96,11 @@ class RegistrationMailer < ApplicationMailer
     mail(to: @recipient.email, subject: "[20 Liters] Reminder: Filter build on #{@event.mailer_time}")
   end
 
-  def event_cancelled(registration_id)
-    @registration = Registration.find(registration_id)
+  def event_cancelled(registration)
+    @registration = registration
     @recipient = @registration.user
-    @event = Event.find(@registration.event_id)
-    @location = Location.find(@event.location_id)
+    @event = @registration.event
+    @location = @event.location
 
     mail(to: @recipient.email, subject: '[20 Liters] NOTICE: Build Event Cancelled')
   end

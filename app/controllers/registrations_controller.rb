@@ -5,7 +5,7 @@ class RegistrationsController < ApplicationController
   before_action :find_registration, only: %i[edit update destroy reconfirm]
 
   def index
-    authorize @registrations = @event.registrations.non_leader
+    authorize @registrations = @event.registrations.builders
     @leaders = @event.registrations.leaders
   end
 
@@ -203,7 +203,7 @@ class RegistrationsController < ApplicationController
   end
 
   def find_registration
-    @registration = Registration.active.find(params[:id])
+    @registration = Registration.find(params[:id])
   end
 
   def authenticate_user_from_token!

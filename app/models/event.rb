@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class Event < ApplicationRecord
-  # TODO: second deploy enable
   include Discard::Model
 
   belongs_to :location
@@ -34,15 +33,21 @@ class Event < ApplicationRecord
   scope :past,            -> { kept.where('end_time <= ?', Time.now).order(start_time: :desc) }
   scope :pre_reminders,   -> { kept.where(reminder_sent_at: nil) }
   scope :with_attendance, -> { kept.where.not(attendance: 0) }
-  scope :with_results,    -> { kept.where('technologies_built != ? OR boxes_packed != ?', 0, 0) }
+  scope :with_results,    -> { kept.where('technologies_built != 0 OR boxes_packed != 0') }
   scope :within_days,     ->(num) { kept.where('start_time <= ?', Time.now + num.days) }
 
+  # TODO: this should be removed in favor of number_of_builders_attended
   def builders_attended
-    attendance - leaders_attended
+    attendance - number_of_leaders_attended
   end
 
   def builders_hours
     builders_attended * length
+  end
+
+  # TODO: replace non_leaders_registered with this
+  def builders_registered
+    registrations.builders
   end
 
   def complete?
@@ -153,6 +158,7 @@ class Event < ApplicationRecord
     errors.add(:max_leaders, 'there are more registered leaders than the event max leaders') if leaders_registered.count > max_leaders
   end
 
+  # TODO: this should be deleted in favor of number_of_leaders_attended
   def leaders_attended
     registrations.leaders.attended.size
   end
@@ -207,19 +213,30 @@ class Event < ApplicationRecord
     end
   end
 
+  # TODO: this is unnecessary
+  # just use #incomplete?
   def needs_report?
-    # TODO: this is unnecessary
-    # just use #incomplete?
     attendance.zero?
   end
 
-  # TODO: remove only_deleted
-  def non_leaders_registered(scope = '')
-    if scope == 'only_deleted'
-      registrations.only_deleted.non_leader
-    else
-      registrations.non_leader
-    end
+  # TODO: this is new and should be used to calculate remaining space
+  def number_of_builders_and_guests_registered
+    builders = registrations.builders.size
+    guests = registrations.pluck(:guests_registered).sum
+
+    builders + guests
+  end
+
+  def number_of_builders_attended
+    attendance - number_of_leaders_attended
+  end
+
+  def number_of_leaders_attended
+    registrations.leaders.attended.size
+  end
+
+  def number_of_leaders_registered
+    registrations.leaders.size
   end
 
   def number_registered
@@ -240,14 +257,6 @@ class Event < ApplicationRecord
     else
       leaders_registered.count < min_leaders
     end
-  end
-
-  def registrations_are_valid?
-    return if min_registrations.nil? || max_registrations.nil?
-
-    errors.add(:max_registrations, 'must be greater than min registrations') if min_registrations > max_registrations
-
-    errors.add(:max_registrations, 'there are more registered attendees than the event max registrations') if total_registered > max_registrations
   end
 
   def registrations_filled?(scope = '')
@@ -312,12 +321,6 @@ class Event < ApplicationRecord
       technology_results.positive?
   end
 
-  def technology
-    return unless technology_id.present?
-
-    Technology.find(technology_id)
-  end
-
   def technology_results
     return 0 if incomplete?
 
@@ -327,9 +330,9 @@ class Event < ApplicationRecord
   # TODO: only_deleted switch
   def total_registered(scope = '')
     if scope == 'only_deleted'
-      registrations.only_deleted.exists? ? registrations.only_deleted.map(&:guests_registered).sum + non_leaders_registered('only_deleted').count : 0
+      registrations.only_deleted.exists? ? registrations.only_deleted.map(&:guests_registered).sum + builders_registered.count : 0
     else
-      registrations.exists? ? registrations.map(&:guests_registered).sum + non_leaders_registered.count : 0
+      registrations.exists? ? registrations.map(&:guests_registered).sum + builders_registered.count : 0
     end
   end
 
@@ -366,9 +369,11 @@ class Event < ApplicationRecord
 
   private
 
-  # TODO: currently unused.
-  def convert_hour(hour)
-    _quotient, modulus = hour.divmod(12)
-    (modulus.zero? ? 12 : modulus).to_s
+  def registrations_are_valid?
+    return if min_registrations.nil? || max_registrations.nil?
+
+    errors.add(:max_registrations, 'must be greater than min registrations') if min_registrations > max_registrations
+
+    errors.add(:max_registrations, 'there are more registered attendees than the event max registrations') if total_registered > max_registrations
   end
 end

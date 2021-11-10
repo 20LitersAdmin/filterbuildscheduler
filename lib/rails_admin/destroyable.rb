@@ -13,8 +13,8 @@ module RailsAdmin
           object = bindings[:object]
           # Object's class must include Discard::Model and object must be discarded
           # ALSO
-          # Object must be a User, and not an an Admin User OR
-          # Object must not be a User
+          # Object must be a User, and not an an Admin User (can't destroy an admin)
+          # OR Object must not be a User
           (
             object.class.include?(Discard::Model) && object.discarded?
           ) && (
@@ -42,7 +42,7 @@ module RailsAdmin
         register_instance_option :controller do
           proc do
             @object.destroy
-            flash[:success] = t('admin.flash.successful', name: @model_config.label, action: t('admin.actions.destroy.done'))
+            flash[:success] = t('admin.flash.successful', name: @model_config.label, action: t('admin.actions.destroyable.done'))
             redirect_to request.referrer
           end
         end

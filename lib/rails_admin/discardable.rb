@@ -12,10 +12,16 @@ module RailsAdmin
         register_instance_option :visible? do
           object = bindings[:object]
 
-          # if Object is a User, it can't be an Admin User
-          # if Object is not a User, it's class must include Discard::Model
-          (object.instance_of?(User) && !object.is_admin?) ||
-            (!object.instance_of?(User) && object.class.include?(Discard::Model))
+          # Object's class must include Discard::Model and object must be kept
+          # ALSO
+          # Object must be a User, and not an an Admin User (can't destroy an admin)
+          # OR Object must not be a User
+
+          (object.class.include?(Discard::Model) && object.kept?) &&
+            (
+              (object.instance_of?(User) && !object.is_admin?) ||
+                !object.instance_of?(User)
+            )
         end
 
         register_instance_option :member do
@@ -36,9 +42,8 @@ module RailsAdmin
 
         register_instance_option :controller do
           proc do
-            # TODO: Second deploy
             @object.discard
-            flash[:success] = t('admin.flash.successful', name: @model_config.label, action: t('admin.actions.discard.done'))
+            flash[:success] = t('admin.flash.successful', name: @model_config.label, action: t('admin.actions.discardable.done'))
             redirect_to request.referrer
           end
         end
