@@ -236,7 +236,7 @@ RailsAdmin.config do |config|
   config.model 'Event' do
     weight 1
     list do
-      scopes %i[needs_leaders future past needs_report discarded]
+      scopes %i[needs_leaders future needs_report closed discarded]
       sort_by :start_time
       field :title
       field :format_date_w_year do

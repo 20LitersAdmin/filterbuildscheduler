@@ -6,16 +6,24 @@
   %p Available functions:
   - if @event&.persisted?
     = link_to 'Edit', edit_event_path(@event), class: 'btn empty width188 use-load-screen' if action_name != 'edit'
+
     = link_to 'Replicate', replicate_event_path(@event), class: 'btn blue' if current_user.is_admin?
+
     = link_to 'Print Attendance List', attendance_event_path(@event), class: 'btn yellow use-load-screen'
+
     = link_to 'Manage Builders', event_registrations_path(@event), class: 'btn blue use-load-screen'
+
   = link_to 'New Build', new_event_path, class: 'btn empty use-load-screen' if action_name != 'new'
+
   = link_to 'Lead a Build', lead_events_path, class: 'btn yellow use-load-screen' if action_name != 'lead'
   - if current_user.is_admin? && action_name != 'leaders'
+
     = link_to 'Contact Leaders', leaders_path, class: 'btn yellow use-load-screen'
   - if current_user&.is_admin? && action_name != 'communication'
+
     = link_to 'User Comm. Prefs', users_communication_path, class: 'btn yellow use-load-screen'
   - if current_user&.is_admin? && @closed_events&.present? && action_name != 'closed'
+
     = link_to 'Closed Events', closed_events_path, class: 'btn blue use-load-screen'
   - if @cancelled_events&.exists? && action_name != 'cancelled'
     = link_to 'Cancelled Events', cancelled_events_path, class: 'btn red use-load-screen'

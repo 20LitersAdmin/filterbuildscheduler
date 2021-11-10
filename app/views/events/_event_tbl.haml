@@ -1,0 +1,30 @@
+-# frozen_string_literal: true
+
+:ruby
+  leaders = source == 'closed' ? event_tbl.number_of_leaders_attended : event_tbl.number_of_leaders_registered
+
+  builders = source == 'closed' ? event_tbl.number_of_builders_attended : event_tbl.number_of_builders_and_guests_registered
+
+  edit_link = source == 'closed' ? link_to(event_tbl.title, edit_event_path(event_tbl)) : link_to(event_tbl.title, rails_admin.show_path(model_name: 'event', id: event_tbl.id))
+
+%tr
+  %td
+    = edit_link
+    - if event_tbl.needs_report? && source == 'closed'
+      %span{ style: 'font-style: italic;' } (no report)
+  %td{ "data-sort" => event_tbl.start_time.strftime("%Y%m%d%H%M%s") }
+    = event_tbl.format_time_range
+  %td
+    = event_tbl.technology.short_name
+  - if source == 'closed'
+    %td.right-align
+      = number_with_delimiter(event_tbl.technologies_built, delimiter: ',') unless event_tbl.needs_report?
+    %td.right-align
+      = number_with_delimiter(event_tbl.boxes_packed, delimiter: ',') unless event_tbl.needs_report?
+  %td.right-align
+    = number_with_delimiter(leaders, delimiter: ',') unless event_tbl.needs_report? && source == 'closed'
+  %td.right-align
+    = number_with_delimiter(builders, delimiter: ',') unless event_tbl.needs_report? && source == 'closed'
+  - if source == 'closed'
+    %td.right-align
+      = human_float(event_tbl.volunteer_hours, 2) unless event_tbl.needs_report?

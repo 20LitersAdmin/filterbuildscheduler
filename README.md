@@ -17,10 +17,31 @@
   - **DONE** Images are automatically migrated via `ImageSyncJob.perform_now`
 
 ### Current:
+
+* Actually, should Registrations be Discardable?
+  - Event is cancelled (discarded)
+    - should discard Registrations as well
+  - Event is restored
+    - should restore Registrations as well
+  - Event is destroyed for real via `rails_admin`
+  - Event
+  - Registrations should delete by default as a user action
+    - Registration is cancelled (deleted) via user: using email link with email and token
+    - Registration is cancelled (deleted) via admin: via event/:id/registrations
+
+
+* Events#closed should be replaced by `/admin/event?model_name=event&scope=closed`
+* Events#cancelled should be replaced by `/admin/event?model_name=event&scope=discarded`
+
 * Itemable things need `.kept` in lots of places
+  - Checked all controllers
 * `.restore` => `.undiscard`
 * Start searching for # TODO:
 * Run & fix tests
+
+* `registration.non_leaders` => `registration.builders`
+* `registration.non_leaders_registered()` => `registration.builders_registered`
+
 
 ### Nerfed pages:
 * `_*_functions` - how many can be removed?
@@ -28,9 +49,6 @@
   - Scheduler should be able to get to `/leaders` and `/events/lead` without having to visit `rails_admin`
   - Data Manager should be able to get to `users/communications` VIA `rails_admin`
 
-* `/admin/event&scope=closed` vs. `/events/closed`
-* `Events#cancelled` - relies on `.only_deleted`
-  - vs. `/admin/event&scope=discarded`
 
 ### Still to do:
 - easy-print report for setup crew:

@@ -19,6 +19,31 @@ module RailsAdmin
 
         register_instance_option :controller do
           proc do
+            scheduler_links = {
+              title: 'Scheduler Links',
+              base_uri: '/',
+              links: [
+                { name: 'View Filter Build Events', link: 'events' },
+                { name: 'Contact Leaders', link: 'leaders' },
+                { name: 'Assign Leaders', link: 'events/lead' }
+              ]
+            }
+            leader_links = {
+              title: 'Build Leader Links',
+              base_uri: '/',
+              links: [
+                { name: 'View Filter Build Events', link: 'events' },
+                { name: 'Sign Up To Lead', link: 'events/lead' }
+              ]
+            }
+            data_manager_links = {
+              title: 'Data Manager Links',
+              base_uri: '/',
+              links: [
+                { name: 'View Filter Build Events', link: 'events' },
+                { name: 'Manage Builder Communication Preferences', link: 'users/communication' }
+              ]
+            }
             event_management = {
               title: 'Event Management',
               base_uri: '/',
@@ -27,8 +52,9 @@ module RailsAdmin
                 { name: 'Contact Leaders', link: 'leaders' },
                 { name: 'Assign Leaders', link: 'events/lead' },
                 { name: 'Manage Builder Communication Preferences', link: 'users/communication' },
-                { name: 'Closed Events', link: 'admin/event&scope=closed' },
-                { name: 'Cancelled Events', link: 'admin/event&scope=discarded' }
+                { name: 'Closed Events', link: 'admin/event?model_name=event&scope=closed' },
+                { name: 'Cancelled Events', link: 'admin/event?model_name=event&scope=discarded' },
+                { name: 'Reports', link: '/reports' }
               ]
             }
 
@@ -57,7 +83,6 @@ module RailsAdmin
 
             technology_management[:links] << { name: 'Items Below Minimum!', link: 'inventories/order' } if Part.below_minimums.any? || Material.below_minimums.any?
 
-            # TODO: Doesn't migrate to VWF
             email_management = {
               title: 'Email Sync System',
               base_uri: '/',
@@ -72,6 +97,9 @@ module RailsAdmin
             }
 
             @management_instances = [
+              scheduler_links,
+              leader_links,
+              data_manager_links,
               event_management,
               user_management,
               technology_management,

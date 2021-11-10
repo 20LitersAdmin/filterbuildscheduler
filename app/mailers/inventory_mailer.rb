@@ -7,12 +7,11 @@ class InventoryMailer < ApplicationMailer
   def notify(inventory, user)
     @inventory = inventory
     @user = user
-    @recipients = User.notify_inventory.map(&:email)
+    @recipients = User.active.notify_inventory.map(&:email)
 
     parts = Part.below_minimums
     materials = Material.below_minimums
     @items_below_minimum = [parts, materials].flatten
-
 
     mail(to: @recipients, subject: '[20 Liters] Finalized Inventory Available')
   end

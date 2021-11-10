@@ -22,7 +22,7 @@ class RegistrationMailerPreview < ActionMailer::Preview
   def event_cancelled
     reg = Registration.last
     reg.update_columns(guests_registered: 2)
-    RegistrationMailer.event_cancelled(reg.id)
+    RegistrationMailer.event_cancelled(reg)
   end
 
   def event_results

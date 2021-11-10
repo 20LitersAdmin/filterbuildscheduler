@@ -29,7 +29,7 @@ module RailsAdmin
         register_instance_option :controller do
           proc do
             @object.undiscard
-            flash[:success] = t('admin.flash.successful', name: @model_config.label, action: t('admin.actions.restore.done'))
+            flash[:success] = t('admin.flash.successful', name: @model_config.label, action: t('admin.actions.restorable.done'))
             redirect_to request.referrer
           end
         end

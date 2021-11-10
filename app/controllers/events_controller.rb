@@ -118,24 +118,14 @@ class EventsController < ApplicationController
   end
 
   def destroy
-    @event_id = @event.id
-
     # send emails to registrations and leaders before cancelling
     if @event.start_time > Time.now
-      # TODO: with discard, can now send the event instead of the event_id
-
-      # Send the Event ID instead of the record, since the recod gets pushed out of default scope on paranoid deletion.
-      EventMailer.delay.cancelled(@event_id, current_user)
+      EventMailer.delay.cancelled(@event, current_user)
       @admins_notified = 'Admins notified.'
 
       if @event.registrations.exists?
-        # TODO: with discard, can now send the registrations instead of the registration_ids
-
-        # Collect the registration IDs instead of the records, because the records get pushed out of default scope on paranoid deletion.
-        @registration_ids = @event.registrations.map(&:id)
-
-        @registration_ids.each do |registration_id|
-          RegistrationMailer.delay.event_cancelled(registration_id)
+        @event.registrations.each do |registration|
+          RegistrationMailer.delay.event_cancelled(registration, event)
         end
         @users_notified = 'All registered builders notified.'
       end
@@ -310,7 +300,7 @@ class EventsController < ApplicationController
   end
 
   def find_stale
-    @cancelled_events = Event.where.not(discarded_at: nil)
+    @cancelled_events = Event.discarded
     @closed_events = Event.closed
   end
 
