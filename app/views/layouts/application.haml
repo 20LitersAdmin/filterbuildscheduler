@@ -1,0 +1,55 @@
+-# frozen_string_literal: true
+
+!!!
+%html
+  %head
+    %meta{ content: 'width=device-width, initial-scale=1', name: 'viewport' }
+    / Google Tag Manager
+    :javascript
+      (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+          new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+          j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+          'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+          })(window,document,'script','dataLayer','GTM-5HMCMHD');
+    / end Google Tag Manager
+
+    = yield :fb_og if content_for? :fb_og
+    = render partial: 'layouts/icons'
+    %link{ href: 'https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css', rel: 'stylesheet', type: 'text/css' }/
+    - if params[:controller] == 'inventories'
+      %title
+        Make [20 Liters] #{@inventory.name_title}
+    - else
+      %title Make [20 Liters]
+    = csrf_meta_tags
+    = stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload'
+    = javascript_include_tag 'application', 'data-turbolinks-track': 'reload'
+    = action_cable_meta_tag
+    / dataTables Buttons & Responsive CDNs
+    %link{ href: 'https://cdn.datatables.net/v/bs/jszip-2.5.0/dt-1.10.16/b-1.4.2/b-colvis-1.4.2/b-html5-1.4.2/b-print-1.4.2/r-2.2.0/datatables.min.css', rel: 'stylesheet', type: 'text/css' }/
+    %script{ src: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.32/pdfmake.min.js', type: 'text/javascript' }
+    %script{ src: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.32/vfs_fonts.js', type: 'text/javascript' }
+    %script{ src: 'https://cdn.datatables.net/v/bs/jszip-2.5.0/dt-1.10.16/b-1.4.2/b-colvis-1.4.2/b-html5-1.4.2/b-print-1.4.2/r-2.2.0/datatables.min.js', type: 'text/javascript' }
+  %body.twentyliters{ 'data-action' => controller.action_name, 'data-controller' => controller.controller_name, 'data-site' => '20liters-make' }
+
+    / Google Tag Manager (noscript)
+    %noscript
+      %iframe{ height: '0', src: 'https://www.googletagmanager.com/ns.html?id=GTM-5HMCMHD', style: 'display:none;visibility:hidden;', width: '0' }
+    / End Google Tag Manager (noscript)
+
+    = render partial: 'layouts/navbar'
+    #load_screen.container.fa-5x
+      %i#load_image.fas.fa-spinner.fa-pulse
+
+    = render partial: 'shared/hero' if current_page?('/events') || current_page?(root_url)
+
+    - if controller_name == 'inventories'
+      .container-full.main
+    - else
+      .container.main
+
+      = flash_messages
+      .row
+        = yield
+
+    = render partial: 'layouts/footer'

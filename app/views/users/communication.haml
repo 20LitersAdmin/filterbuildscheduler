@@ -1,0 +1,18 @@
+-# frozen_string_literal: true
+
+.container.user-communication
+  = render partial: 'shared/event_functions'
+  .users-comm
+    .row
+      .col-xs-12
+        %h3 Communication Preferences for Builders
+    .row
+      .col-xs-12
+        %table#user_comm_table.table.table-striped.datatable-paging-users
+          %thead
+            %tr
+              %th First Name
+              %th Last Name
+              %th Email
+              %th.center Opt Out
+          %tbody= render partial: 'comm_tbl', collection: @users

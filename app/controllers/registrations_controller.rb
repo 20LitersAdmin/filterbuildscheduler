@@ -7,7 +7,6 @@ class RegistrationsController < ApplicationController
   def index
     authorize @registrations = @event.registrations.non_leader
     @leaders = @event.registrations.leaders
-    @deleted = @event.registrations.only_deleted
   end
 
   def new

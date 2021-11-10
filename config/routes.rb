@@ -14,6 +14,7 @@ Rails.application.routes.draw do
   get 'users/:id/availability', to: 'users#availability', as: 'user_availability'
   get 'users/:id/admin_password_reset', to: 'users#admin_password_reset', as: 'user_admin_password_reset'
   get 'users/:id/leader_type', to: 'users#leader_type', as: 'user_leader_type'
+  patch 'users/:id/comm_update', to: 'users#comm_update', as: 'user_comm_update'
   get :waiver, controller: :application
 
   get 'info', to: 'pages#info', as: 'info'
@@ -57,7 +58,6 @@ Rails.application.routes.draw do
     end
     resources :registrations do
       collection do
-        get 'restore'
         get 'messenger'
         post 'sender'
         get 'reconfirms'
