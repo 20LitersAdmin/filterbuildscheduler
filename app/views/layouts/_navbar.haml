@@ -15,6 +15,7 @@
         %ul.nav.navbar-nav.navbar-right
           %li
             = link_to 'Home', root_path, class: 'use-load-screen'
+          %li= link_to 'Admin', '/admin' if current_user.admin_or_leader?
           %li
             %a#print_btn{ alt: 'Print', href: 'javascript:window.print()' }
               = icon('fa', 'print')
@@ -24,9 +25,7 @@
           %li= link_to 'Builds', root_path if !current_page?('/events') && !current_page?(root_url)
 
           %li= link_to 'Info', info_path if !current_page?('/info') && !current_user&.is_admin?
-
-          %li= link_to 'Inventory', inventories_path, class: 'use-load-screen' if current_user&.can_do_inventory?
-          %li= link_to 'Admin', '/admin', class: 'use-load-screen' if current_user.admin_or_leader?
+          %li= link_to 'Admin', '/admin' if current_user.admin_or_leader?
           %li= link_to 'My Account', show_user_path(current_user), class: 'use-load-screen' if current_user
           %li= link_to 'Sign Out', destroy_user_session_path, method: :delete if current_user
           %li= link_to 'Sign In', user_session_path unless current_user

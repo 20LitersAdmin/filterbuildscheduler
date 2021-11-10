@@ -13,14 +13,6 @@ class EventPolicy < ApplicationPolicy
     create?
   end
 
-  def cancelled?
-    create?
-  end
-
-  def closed?
-    user&.is_admin?
-  end
-
   def create?
     user&.admin_or_leader?
   end
@@ -59,14 +51,6 @@ class EventPolicy < ApplicationPolicy
 
   def poster?
     show?
-  end
-
-  def restore?
-    create?
-  end
-
-  def sender?
-    create?
   end
 
   def show?

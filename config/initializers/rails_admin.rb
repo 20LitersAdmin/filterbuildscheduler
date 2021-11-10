@@ -202,6 +202,12 @@ RailsAdmin.config do |config|
         field :send_inventory_emails do
           help 'Will get an email everytime an inventory is complete'
         end
+        field :is_scheduler do
+          help 'Schedules Build Leaders for Events'
+        end
+        field :is_data_manager do
+          help 'Adds Event Reports and manages User Communication Preferences'
+        end
         field :is_admin do
           help 'Full access to all system functions. Admins can\'t be discarded or deleted.'
           read_only do

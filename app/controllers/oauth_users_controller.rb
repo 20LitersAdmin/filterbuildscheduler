@@ -47,6 +47,10 @@ class OauthUsersController < ApplicationController
   end
 
   def update
+    # from #manual:
+    #   can submit :manual_query
+    # from #status
+    #   can submit :sync_emails
     @oauth_user.update(oauth_user_params)
 
     if oauth_user_params[:manual_query].present?

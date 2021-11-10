@@ -90,10 +90,12 @@
   }
 
   p.bold {
+    width: 98%;
+    margin-left: 1%;
+    marign-right: 1%;
     font-size: 1.25em;
     font-weight: 900;
-    color: #fff;
-    background-color: black;
+    outline: 1px solid black;
   }
 }
 

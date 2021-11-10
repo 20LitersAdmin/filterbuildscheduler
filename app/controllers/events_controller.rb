@@ -141,16 +141,6 @@ class EventsController < ApplicationController
     end
   end
 
-  def cancelled
-    authorize @cancelled_events
-    @user = current_user
-  end
-
-  def closed
-    authorize @closed_events
-    @user = current_user
-  end
-
   def lead
     @user = current_user
     @events = []
@@ -191,19 +181,6 @@ class EventsController < ApplicationController
 
     flash[:success] = "Registered #{@registration.user.name}."
     redirect_to leaders_event_path(@event)
-  end
-
-  def restore
-    authorize @event = Event.discarded.find(params[:id])
-    if params[:recursive] == 'false'
-      Event.restore(@event.id)
-      flash[:success] = 'Event restored but not registrations.'
-    else
-      Event.restore(@event.id, recursive: true)
-      flash[:success] = 'Event and associated registrations restored.'
-    end
-
-    Event.discarded.exists? ? redirect_to(cancelled_events_path) : redirect_to(events_path)
   end
 
   def replicate

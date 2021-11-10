@@ -2,11 +2,12 @@
 
 class OauthUserPolicy < ApplicationPolicy
   def in?
-    user&.is_admin?
+    # TODO: users must be oauth_admin to hit this link, but no CRUD for User#is_oauth_admin in RailsAdmin atm.
+    user&.is_oauth_admin?
   end
 
   def index?
-    user&.is_admin?
+    in?
   end
 
   def callback?

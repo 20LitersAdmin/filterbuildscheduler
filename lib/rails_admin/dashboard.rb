@@ -23,9 +23,8 @@ module RailsAdmin
               title: 'Scheduler Links',
               base_uri: '/',
               links: [
-                { name: 'View Filter Build Events', link: 'events' },
-                { name: 'Contact Leaders', link: 'leaders' },
-                { name: 'Assign Leaders', link: 'events/lead' }
+                { name: 'Builds that Need Leaders', link: 'events/lead' },
+                { name: 'Contact Leaders', link: 'leaders' }
               ]
             }
             leader_links = {
@@ -41,7 +40,20 @@ module RailsAdmin
               base_uri: '/',
               links: [
                 { name: 'View Filter Build Events', link: 'events' },
+                { name: 'Events Needing Reports', link: 'admin/event?model_name=event&scope=needs_report' },
                 { name: 'Manage Builder Communication Preferences', link: 'users/communication' }
+              ]
+            }
+            inventory_links = {
+              title: 'Inventory Links',
+              base_uri: '/',
+              links: [
+                { name: 'Inventory Counts', link: 'inventories' },
+                { name: 'New Inventory', link: 'inventories/new?type=manual' },
+                { name: 'Receive Supplies', link: 'inventories/new?type=receiving' },
+                { name: 'Ship Supplies', link: 'inventories/new?type=shipping' },
+                { name: 'Print Inventory', link: 'inventories/paper' },
+                { name: 'Print Labels', link: 'labels' }
               ]
             }
             event_management = {
@@ -49,18 +61,15 @@ module RailsAdmin
               base_uri: '/',
               links: [
                 { name: 'Create new build event', link: 'events/new' },
-                { name: 'Contact Leaders', link: 'leaders' },
-                { name: 'Assign Leaders', link: 'events/lead' },
-                { name: 'Manage Builder Communication Preferences', link: 'users/communication' },
                 { name: 'Closed Events', link: 'admin/event?model_name=event&scope=closed' },
                 { name: 'Cancelled Events', link: 'admin/event?model_name=event&scope=discarded' },
-                { name: 'Reports', link: '/reports' }
+                { name: 'Reports', link: 'reports' }
               ]
             }
 
             user_management = {
               title: 'User Management',
-              base_uri: 'admin/user?model_name=user&scope=',
+              base_uri: '/admin/user?model_name=user&scope=',
               links: [
                 { name: 'Build Leaders', link: 'leaders' },
                 { name: 'Builders', link: 'builders' },
@@ -75,9 +84,9 @@ module RailsAdmin
               links: [
                 { name: 'Edit/Update Technologies', link: 'admin/technology' },
                 { name: 'Manage Assemblies', link: 'combinations' },
-                { name: 'Labels', link: 'labels' },
-                { name: 'Order Items', link: 'inventories/order_all' },
-                { name: 'Donation List', link: 'donation_list' }
+                { name: 'Print Labels', link: 'labels' },
+                { name: 'Donation List', link: 'donation_list' },
+                { name: 'Order Items', link: 'inventories/order_all' }
               ]
             }
 
@@ -88,7 +97,6 @@ module RailsAdmin
               base_uri: '/',
               links: [
                 { name: 'Oauth User List', link: 'auth' },
-                { name: 'Manage Oauth Users', link: 'admin/oauth_user' },
                 { name: 'Sign in link', link: 'auth/in' },
                 { name: 'Sign out link', link: 'auth/out' },
                 { name: 'Stored emails', link: 'admin/email' },
@@ -96,15 +104,47 @@ module RailsAdmin
               ]
             }
 
-            @management_instances = [
-              scheduler_links,
-              leader_links,
-              data_manager_links,
-              event_management,
-              user_management,
-              technology_management,
-              email_management
-            ]
+            # add specific blocks based upon permissions
+            # using current_user variable
+            # options:
+            # scheduler_links,
+            # leader_links,
+            # data_manager_links,
+            # inventory_links,
+            # event_management,
+            # technology_management,
+            # user_management,
+            # email_management
+
+            instances = []
+
+            if current_user.is_admin?
+              # assign everything
+              instances = [
+                scheduler_links,
+                leader_links,
+                data_manager_links,
+                inventory_links,
+                event_management,
+                technology_management,
+                user_management
+              ]
+            else
+              # assign based upon role
+              instances << scheduler_links if current_user.is_scheduler?
+
+              instances << data_manager_links if current_user.is_data_manager?
+
+              instances << leader_links if current_user.is_leader?
+
+              instances << inventory_links if current_user.does_inventory
+
+            end
+
+            # Special case:
+            instances << email_management if current_user.is_oauth_admin?
+
+            @management_instances = instances.flatten.uniq
 
             render action: @action.template_name, status: 200
           end
