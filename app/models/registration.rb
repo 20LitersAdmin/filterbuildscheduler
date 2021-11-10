@@ -1,25 +1,14 @@
 # frozen_string_literal: true
 
 class Registration < ApplicationRecord
-  # TODO: second deploy enable
-  include Discard::Model
-
   belongs_to :user
   belongs_to :event
   attr_accessor :accept_waiver
 
   validates :guests_registered, :guests_attended, numericality: { only_integer: true, greater_than_or_equal_to: 0 }, presence: true
 
-  # TODO: Second deployment remove
-  # scope :kept, -> { all }
-  # scope :discarded, -> { none }
-
-  # TODO: un-use, duplicate of .leaders
-  scope :registered_as_leader, -> { where(leader: true) }
   scope :non_leader, -> { where(leader: false) }
   scope :ordered_by_user_lname, -> { includes(:user).order('users.lname') }
-  # RailsAdmin "active" sounds better than "kept"
-  scope :active, -> { kept }
 
   scope :attended, -> { where(attended: true) }
   scope :leaders, -> { where(leader: true) }

@@ -103,7 +103,7 @@ class InventoriesController < ApplicationController
   end
 
   def order
-    @technologies = Technology.status_worthy
+    @technologies = Technology.list_worthy
 
     @technologies_select = @technologies.map { |t| [t.name, t.id] }
 
@@ -127,7 +127,7 @@ class InventoriesController < ApplicationController
   end
 
   def order_all
-    @technologies = Technology.status_worthy
+    @technologies = Technology.list_worthy
 
     @technologies_select = @technologies.map { |t| [t.name, t.id] }
 
@@ -138,10 +138,10 @@ class InventoriesController < ApplicationController
       @selected_tech_uid = @selected_tech.uid
 
       parts = Part.orderable.select { |part| part.quantities.keys.include?(@selected_tech_uid) }
-      materials = Material.all.select { |m| m.quantities.keys.include?(@selected_tech_uid) }
+      materials = Material.kept.select { |m| m.quantities.keys.include?(@selected_tech_uid) }
     else
-      parts = Part.orderable
-      materials = Material.all
+      parts = Part.active.orderable
+      materials = Material.active
     end
 
     @items = [parts, materials].flatten

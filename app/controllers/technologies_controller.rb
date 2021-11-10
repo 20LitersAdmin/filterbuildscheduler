@@ -15,15 +15,15 @@ class TechnologiesController < ApplicationController
     # TODO: Part.kept; Material.kept
     @items = []
     if tech_id_ary.any?
-      @selected_technologies = Technology.where(id: tech_id_ary)
+      @selected_technologies = Technology.active.where(id: tech_id_ary)
       @selected_technologies.each do |technology|
-        @items << technology.parts.joins(:supplier).pluck(:uid, :name, :'suppliers.name', :sku, :quantities, :price_cents)
-        @items << technology.materials.joins(:supplier).pluck(:uid, :name, :'suppliers.name', :sku, :quantities, :price_cents)
+        @items << technology.parts.active.joins(:supplier).pluck(:uid, :name, :'suppliers.name', :sku, :quantities, :price_cents)
+        @items << technology.materials.active.joins(:supplier).pluck(:uid, :name, :'suppliers.name', :sku, :quantities, :price_cents)
       end
     else
       @selected_technologies = Technology.list_worthy
       @items << Part.not_made_from_materials.joins(:supplier).pluck(:uid, :name, :'suppliers.name', :sku, :quantities, :price_cents)
-      @items << Material.all.joins(:supplier).pluck(:uid, :name, :'suppliers.name', :sku, :quantities, :price_cents)
+      @items << Material.active.joins(:supplier).pluck(:uid, :name, :'suppliers.name', :sku, :quantities, :price_cents)
     end
     @items.flatten!(1)
   end
@@ -39,14 +39,13 @@ class TechnologiesController < ApplicationController
 
   def labels
     authorize Technology
-    # get 'labels', to: 'technologies#labels', as: 'labels'
     # page to select multiple items to print individual lables
 
     # TODO: Technology.kept.list_worthy; Component.kept etc.
     @technologies = Technology.list_worthy.pluck(:uid, :name)
-    @components =   Component.all.order(:name).pluck(:uid, :name)
-    @parts =        Part.all.order(:name).pluck(:uid, :name)
-    @materials =    Material.all.order(:name).pluck(:uid, :name)
+    @components =   Component.active.order(:name).pluck(:uid, :name)
+    @parts =        Part.active.order(:name).pluck(:uid, :name)
+    @materials =    Material.active.order(:name).pluck(:uid, :name)
   end
 
   def labels_select
@@ -70,7 +69,7 @@ class TechnologiesController < ApplicationController
   private
 
   def broad_set_params
-    # used for labels_select and donation_lis
+    # used for labels_select and donation_list
     params.except(
       :authenticity_token,
       :action,

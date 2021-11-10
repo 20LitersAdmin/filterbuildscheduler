@@ -35,7 +35,7 @@ class EventsController < ApplicationController
 
     @show_edit = (current_user&.is_admin || @registration&.leader?)
 
-    @leaders = @event.registrations.registered_as_leader
+    @leaders = @event.registrations.leaders
 
     @user = current_user || User.new
   end
@@ -174,12 +174,12 @@ class EventsController < ApplicationController
 
   def leaders
     @leaders = User.leaders
-    @already_registered_leaders = User.find(@event.registrations.registered_as_leader.pluck(:user_id))
+    @already_registered_leaders = User.find(@event.registrations.leaders.pluck(:user_id))
     @remaining_leaders = @leaders - @already_registered_leaders
   end
 
   def leader_unregister
-    @registration = @event.registrations.registered_as_leader.where(user_id: params[:user_id]).first
+    @registration = @event.registrations.leaders.where(user_id: params[:user_id]).first
 
     if @registration.blank?
       flash[:error] = 'Oops, something went wrong.'

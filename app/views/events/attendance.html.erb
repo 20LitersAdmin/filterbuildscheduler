@@ -11,7 +11,7 @@
       <% end %>
       <% if @event.leaders_registered.count.positive? %>
          |
-        <%= "#{ pluralize_without_count(@event.registrations.where(leader: true).count, 'Leader') }: " + @event.registrations.registered_as_leader.map { |r| r.user.name }.join(', ') %>
+        <%= "#{ pluralize_without_count(@event.registrations.where(leader: true).count, 'Leader') }: " + @event.registrations.leaders.map { |r| r.user.name }.join(', ') %>
       <% end %>
     </h4>
   </div>

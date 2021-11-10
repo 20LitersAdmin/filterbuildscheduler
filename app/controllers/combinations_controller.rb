@@ -52,7 +52,7 @@ class CombinationsController < ApplicationController
 
     # prevent the current Component from being returned
     # to prevent an Assembly where the combination and the item are the same thing
-    components = @combination.instance_of?(Component) ? Component.where.not(id: @combination.id) : Component
+    components = @combination.instance_of?(Component) ? Component.kept.where.not(id: @combination.id) : Component.kept
 
     # look in Components first (smaller)
     @collection << components.search_name_and_uid(terms).order(:uid, :name).pluck(:id, :uid, :name)

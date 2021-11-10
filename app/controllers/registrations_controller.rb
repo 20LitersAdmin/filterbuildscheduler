@@ -6,7 +6,7 @@ class RegistrationsController < ApplicationController
 
   def index
     authorize @registrations = @event.registrations.non_leader
-    @leaders = @event.registrations.registered_as_leader
+    @leaders = @event.registrations.leaders
     @deleted = @event.registrations.only_deleted
   end
 
@@ -47,7 +47,7 @@ class RegistrationsController < ApplicationController
     # A user who exists but isn't signed in shouldn't be able to register for an event more than once.
     if @duplicate_registration_risk
       registration = Registration.where(event: @event, user: @user)
-      @user.errors.add(:email, 'This email address has already registered for this event.') if registration.exists?
+      @user.errors.add(:email, 'This email address has already registered for this event.') if registration.any?
     end
 
     @user.errors.add(:fname, 'This user isn\'t qualified to lead this event.') if registration_params[:leader] == '1' && !@leader
@@ -109,7 +109,9 @@ class RegistrationsController < ApplicationController
     @user.update(email_opt_out: user_params[:email_opt_out]) if ActiveModel::Type::Boolean.new.cast(user_params[:email_opt_out]) != @user.email_opt_out
 
     if @registration.errors.any?
-      flash[:danger] = @registration.errors.map { |_k, v| v }.join(', ')
+      flash[:danger] = @registration.errors
+                                    .map { |_k, v| v }
+                                    .join(', ')
       render 'edit'
     else
       @registration.update(registration_params)
@@ -198,11 +200,11 @@ class RegistrationsController < ApplicationController
   end
 
   def find_event
-    @event = Event.find(params[:event_id])
+    @event = Event.active.find(params[:event_id])
   end
 
   def find_registration
-    @registration = Registration.find(params[:id])
+    @registration = Registration.active.find(params[:id])
   end
 
   def authenticate_user_from_token!
@@ -214,7 +216,7 @@ class RegistrationsController < ApplicationController
   end
 
   def find_or_initialize_user(data)
-    user = User.find_or_initialize_by(email: data[:email])
+    user = User.active.find_or_initialize_by(email: data[:email])
     user.fname ||= data[:fname]
     user.lname ||= data[:lname]
     user.phone ||= data[:phone]
@@ -226,11 +228,11 @@ class RegistrationsController < ApplicationController
   end
 
   def find_or_initialize_registration(user, event)
-    # check for a deleted record before creating a new one.
+    # check for a discarded record before creating a new one.
     registration_check = Registration.where(user: user, event: event)
     if registration_check.exists?
       registration = registration_check.first
-      registration.restore
+      registration.undiscard
     else
       registration = Registration.new(event: event, user: user)
     end
