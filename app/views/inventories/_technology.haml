@@ -7,4 +7,6 @@
           = technology.short_name_w_owner
     .panel-body
       - if technology.image.attached?
-        = image_tag technology.image, alt: technology.name, class: ''
+        = image_tag technology.image, alt: technology.name
+      - elsif technology.display_image.attached?
+        = image_tag technology.display_image, alt: technology.name

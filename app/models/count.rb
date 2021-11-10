@@ -40,10 +40,6 @@ class Count < ApplicationRecord
     }
   end
 
-  def group_by_tech
-    item.technologies.map(&:id).min || 999
-  end
-
   def link_text
     # return the correct link text for inventory/:id/edit
     return 'Edit' unless user_id.nil?

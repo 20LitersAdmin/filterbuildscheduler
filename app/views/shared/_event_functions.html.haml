@@ -22,8 +22,3 @@
   - if current_user&.is_admin? && action_name != 'communication'
 
     = link_to 'User Comm. Prefs', users_communication_path, class: 'btn yellow use-load-screen'
-  - if current_user&.is_admin? && @closed_events&.present? && action_name != 'closed'
-
-    = link_to 'Closed Events', closed_events_path, class: 'btn blue use-load-screen'
-  - if @cancelled_events&.exists? && action_name != 'cancelled'
-    = link_to 'Cancelled Events', cancelled_events_path, class: 'btn red use-load-screen'

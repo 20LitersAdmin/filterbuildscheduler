@@ -16,11 +16,7 @@
     = yield :fb_og if content_for? :fb_og
     = render partial: 'layouts/icons'
     %link{ href: 'https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css', rel: 'stylesheet', type: 'text/css' }/
-    - if params[:controller] == 'inventories'
-      %title
-        Make [20 Liters] #{@inventory.name_title}
-    - else
-      %title Make [20 Liters]
+    %title Make [20 Liters]
     = csrf_meta_tags
     = stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload'
     = javascript_include_tag 'application', 'data-turbolinks-track': 'reload'
@@ -43,11 +39,8 @@
 
     = render partial: 'shared/hero' if current_page?('/events') || current_page?(root_url)
 
-    - if controller_name == 'inventories'
-      .container-full.main
-    - else
-      .container.main
-
+    - container_class = controller_name == 'inventories' ? 'container-full' : 'container'
+    %div{ class: "#{container_class} main" }
       = flash_messages
       .row
         = yield

@@ -1,22 +1,9 @@
 # README
 ## Slim Down Inventory project
+* Remove `_event_functions` and use RailsAdmin blocks instead
 
-5. Count records can still track partial counts (loose items vs. boxed items), and record which User submitted the Count
-  - **DONE** but the 'partial' interface has a better UX
-  - remove all Count methods, scopes, and item relationships except:
-    - `count.link_text`
-    - `count.link_class`
-    - `count.sort_by_user`
-
-4. Images use an online cloud for storage
-  - **DONE** An S3 bucket exists for storing item images
-  - **DONE** Technologies have 2 images: one for displays, one for inventory
-  - **DONE** Locations have an image
-  - Images can be managed through the admin view
-    * rails_admin [interface for management](https://github.com/sferik/rails_admin/wiki/ActiveStorage)
-  - **DONE** Images are automatically migrated via `ImageSyncJob.perform_now`
-
-### Current:
+* RailsAdmin Dashboard.rb - customize dashboard to user permissions
+  - need to login as a new user with each permission set to check
 
 * Actually, should Registrations be Discardable?
   - Event is cancelled (discarded)
@@ -29,10 +16,6 @@
     - Registration is cancelled (deleted) via user: using email link with email and token
     - Registration is cancelled (deleted) via admin: via event/:id/registrations
 
-
-* Events#closed should be replaced by `/admin/event?model_name=event&scope=closed`
-* Events#cancelled should be replaced by `/admin/event?model_name=event&scope=discarded`
-
 * Itemable things need `.kept` in lots of places
   - Checked all controllers
 * `.restore` => `.undiscard`
@@ -41,6 +24,15 @@
 
 * `registration.non_leaders` => `registration.builders`
 * `registration.non_leaders_registered()` => `registration.builders_registered`
+
+* OauthUsers is currently excluded in RailsAdmin
+  - Created/Updated by OauthUser#from_omniauth(auth)
+  - Update #sync_emails vai #status to #update
+  - Destroy: impossible ATM
+
+* Emails model is currently excluded in RailsAdmin
+  - Created by GmailClient -> Email.from_gmail()
+  - Destroy stale via EmailSyncJob -> Email.stale.destroy_all
 
 
 ### Nerfed pages:

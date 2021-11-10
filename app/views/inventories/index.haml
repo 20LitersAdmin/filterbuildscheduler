@@ -1,7 +1,5 @@
 -# frozen_string_literal: true
-#inventory_index.container
-  = render partial: 'shared/inventory_functions'
-
+#inventory_index.col-xs-12
   -#
     After creating an inventory, user is redirected to InventoriesController#index
     Then this div is visible and user can edit the inventory.
@@ -10,17 +8,17 @@
     .inv-latest.row
       .col-xs-12
         %h2 Current Inventory:
-        .row
-          .inventory.col-sm-4.col-md-3
+        .row.well
+          .col-xs-6.col-sm-4
             %h4= @latest.name
+          .col-xs-6.col-sm-4
             %p= @latest.count_summary
             %p
               - if @latest.completed_at.present?
                 %strong FINALIZED
                 &nbsp;
-            = link_to 'View', inventory_path(@latest), class: 'btn yellow use-load-screen'
-            - if !@latest.completed_at.present?
-              = link_to 'Edit', edit_inventory_path(@latest), class: 'btn blue use-load-screen'
+          .col-xs-6.col-sm-4
+            = link_to 'Edit', edit_inventory_path(@latest), class: 'btn blue full-width use-load-screen'
 
   .row
     .col-xs-10

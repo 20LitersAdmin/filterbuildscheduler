@@ -41,8 +41,6 @@ Rails.application.routes.draw do
 
   resources :events do
     collection do
-      get 'cancelled'
-      get 'closed'
       get 'lead'
     end
     member do
@@ -54,7 +52,6 @@ Rails.application.routes.draw do
       get 'replicate'
       get 'replicate_occurrences'
       put 'replicator'
-      get 'restore'
     end
     resources :registrations do
       collection do
@@ -86,8 +83,8 @@ Rails.application.routes.draw do
   end
 
   get '/auth',                    to: 'oauth_users#index', as: :auth_index
-  get '/auth/:provider/callback', to: 'oauth_users#callback'
   get '/auth/in',                 to: 'oauth_users#in', as: :auth_in
+  get '/auth/:provider/callback', to: 'oauth_users#callback'
   get '/auth/out',                to: 'oauth_users#out', as: :auth_out
   get '/auth/failure',            to: 'oauth_users#failure'
   get '/auth/:id/status',         to: 'oauth_users#status', as: :auth_status

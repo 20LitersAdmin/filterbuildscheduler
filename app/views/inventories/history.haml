@@ -1,20 +1,19 @@
 -# frozen_string_literal: true
 
-.row
-  .col-xs-10
-    %h2 Inventory History
-  .col-xs-2
-    = link_to 'Back', inventories_path, class: 'btn yellow'
-  .col-xs-12.col-sm-8.col-sm-offset-2.col-md-6.col-md-offset-3
-    %table.table.table-striped.datatable-search
-      %thead
+.col-xs-10
+  %h2 Inventory History
+.col-xs-2
+  = link_to 'Back', inventories_path, class: 'btn yellow'
+.col-xs-12.col-sm-8.col-sm-offset-2.col-md-6.col-md-offset-3
+  %table.table.table-striped.datatable-search
+    %thead
+      %tr
+        %th Inventory
+        %th.center-align Items counted
+    %tbody
+      - @inventories.each do |inventory|
         %tr
-          %th Inventory
-          %th.center-align Items counted
-      %tbody
-        - @inventories.each do |inventory|
-          %tr
-            %td{ 'data-sort': inventory.date.iso8601 }
-              %strong= link_to inventory.name, inventory_path(inventory)
-            %td.center-align= human_number inventory.history.size
+          %td{ 'data-sort': inventory.date.iso8601 }
+            %strong= link_to inventory.name, inventory_path(inventory)
+          %td.center-align= human_number inventory.history.size
 

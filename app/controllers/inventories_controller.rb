@@ -185,6 +185,16 @@ class InventoriesController < ApplicationController
     params.permit(:item_class, :item_id)
   end
 
+  def inventory_params
+    params.require(:inventory).permit :date,
+                                      :reported,
+                                      :receiving,
+                                      :shipping,
+                                      :manual,
+                                      :event_id,
+                                      :completed_at
+  end
+
   def set_inventory
     authorize @inventory = Inventory.find(params[:id])
   end

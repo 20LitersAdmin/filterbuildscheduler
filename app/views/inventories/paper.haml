@@ -1,4 +1,6 @@
 -# frozen_string_literal: true
+.col-xs-12.no-print
+  = link_to 'Back', '/admin', class: 'btn yellow float-right'
 - @items.in_groups_of(5, false) do |batch|
   .inventory_paper
     = render partial: 'item_paper', collection: batch

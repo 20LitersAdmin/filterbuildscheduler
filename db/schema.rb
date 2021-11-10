@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_11_05_203814) do
+ActiveRecord::Schema.define(version: 2021_11_10_182021) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -395,6 +395,9 @@ ActiveRecord::Schema.define(version: 2021_11_05_203814) do
     t.boolean "available_after_hours", default: false, null: false
     t.integer "leader_type"
     t.string "leader_notes"
+    t.boolean "is_scheduler", default: false
+    t.boolean "is_data_manager", default: false
+    t.boolean "is_oauth_admin", default: false
     t.index ["authentication_token"], name: "index_users_on_authentication_token", unique: true
     t.index ["discarded_at"], name: "index_users_on_discarded_at"
     t.index ["email"], name: "index_users_on_email", unique: true
