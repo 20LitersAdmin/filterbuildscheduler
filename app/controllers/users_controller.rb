@@ -7,21 +7,25 @@ class UsersController < ApplicationController
     flash[:warning] = 'You haven\'t set your password yet, please do so now.' if @user.has_no_password
 
     @leading_events = @user.registrations
+                           .active
                            .where(leader: true)
                            .joins(:event)
                            .where('events.end_time > ?', Time.now)
                            .map(&:event)
     @attending_events = @user.registrations
+                             .active
                              .where(leader: false)
                              .joins(:event)
                              .where('events.end_time > ?', Time.now)
                              .map(&:event)
     @lead_events = @user.registrations
+                        .active
                         .where(leader: true)
                         .joins(:event)
                         .where('events.end_time < ?', Time.now)
                         .map(&:event)
     @attended_events = @user.registrations
+                            .active
                             .where(leader: false)
                             .joins(:event)
                             .where('events.end_time < ?', Time.now)
@@ -71,25 +75,21 @@ class UsersController < ApplicationController
   end
 
   def communication
-    # filter out users with no registrations by joining
+    # filter out users with no registrations by joining :registrations
     authorize @users = User.builders.joins(:registrations).group('users.id').order('users.created_at DESC')
 
     @cancelled_events = Event.discarded
     @closed_events = Event.closed
-
-    @finder = 'communication'
   end
 
   def comm_complete
     @user_ids = params[:user_ids]
 
-    if @user_ids.present?
-      User.find(@user_ids).each do |u|
-        u.email_opt_out = true
-        u.save
-      end
-    end
+    byebug
 
+    User.where(id: @user_ids).update_all(email_opt_out: true) if @user_ids.present?
+
+    flash[:success] = 'Communication prefernces updated!'
     redirect_to users_communication_path
   end
 
@@ -107,7 +107,6 @@ class UsersController < ApplicationController
       @technologies << [tech.short_name, tech.id]
     end
 
-    @finder = 'leaders'
     @cancelled_events = Event.discarded
     @closed_events = Event.closed
   end

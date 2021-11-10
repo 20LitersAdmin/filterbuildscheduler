@@ -25,17 +25,17 @@ class Event < ApplicationRecord
   # RailsAdmin "active" is better than "kept"
   scope :active, -> { kept }
 
-  scope :closed,        -> { where('start_time <= ?', Time.now).order(start_time: :desc) }
-  scope :complete,      -> { past.where('attendance != 0 OR technologies_built != 0 OR boxes_packed != 0') }
-  scope :future,        -> { where('end_time > ?', Time.now).order(start_time: :asc) }
-  scope :needs_leaders, -> { future.select('events.*').joins('LEFT OUTER JOIN registrations ON (registrations.event_id = events.id)').having('count(registrations.leader IS TRUE) < events.max_leaders').group('events.id') }
-  scope :needs_report,  -> { where('start_time <= ?', Time.now).where(attendance: 0).order(start_time: :desc) }
-  scope :non_private,   -> { where(is_private: false) }
-  scope :past,          -> { where('end_time <= ?', Time.now).order(start_time: :desc) }
-  scope :pre_reminders, -> { where(reminder_sent_at: nil) }
-  scope :with_attendance, -> { where.not(attendance: 0) }
-  scope :with_results,    -> { where('technologies_built != ? OR boxes_packed != ?', 0, 0) }
-  scope :within_days,   ->(num) { where('start_time <= ?', Time.now + num.days) }
+  scope :closed,          -> { kept.where('start_time <= ?', Time.now).order(start_time: :desc) }
+  scope :complete,        -> { past.where('attendance != 0 OR technologies_built != 0 OR boxes_packed != 0') }
+  scope :future,          -> { kept.where('end_time > ?', Time.now).order(start_time: :asc) }
+  scope :needs_leaders,   -> { future.select('events.*').joins('LEFT OUTER JOIN registrations ON (registrations.event_id = events.id)').having('count(registrations.leader IS TRUE) < events.max_leaders').group('events.id') }
+  scope :needs_report,    -> { kept.where('start_time <= ?', Time.now).where(attendance: 0).order(start_time: :desc) }
+  scope :non_private,     -> { kept.where(is_private: false) }
+  scope :past,            -> { kept.where('end_time <= ?', Time.now).order(start_time: :desc) }
+  scope :pre_reminders,   -> { kept.where(reminder_sent_at: nil) }
+  scope :with_attendance, -> { kept.where.not(attendance: 0) }
+  scope :with_results,    -> { kept.where('technologies_built != ? OR boxes_packed != ?', 0, 0) }
+  scope :within_days,     ->(num) { kept.where('start_time <= ?', Time.now + num.days) }
 
   def builders_attended
     attendance - leaders_attended

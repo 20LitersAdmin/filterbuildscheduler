@@ -99,7 +99,7 @@ class AssembliesController < ApplicationController
   def set_combination
     # we're mimicing the standard structure, but
     # we're actually passing the `:uid` in place of the `:id`
-    # so we can objectify the string to get the @item
+    # so we can objectify the string to get the @combination
     @combination = params[:combination_uid].objectify_uid
 
     return if @combination.present? && [Technology, Component].include?(@combination.class)

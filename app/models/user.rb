@@ -37,11 +37,10 @@ class User < ApplicationRecord
   scope :leaders,               -> { kept.where(is_leader: true) }
   scope :inventoryists,         -> { kept.where(does_inventory: true) }
   scope :admins,                -> { kept.where(is_admin: true) }
-  scope :notify,                -> { where(send_notification_emails: true) }
-  scope :notify_inventory,      -> { where(send_inventory_emails: true) }
+  scope :notify,                -> { kept.where(send_notification_emails: true) }
+  scope :notify_inventory,      -> { kept.where(send_inventory_emails: true) }
   scope :builders,              -> { kept.where(is_admin: false, is_leader: false, does_inventory: false, send_notification_emails: false, send_inventory_emails: false) }
-  scope :non_builders,          -> { where(is_admin: true).or(where(is_leader: true)).or(where(does_inventory: true)).or(where(send_notification_emails: true)).or(where(send_inventory_emails: true)) }
-  scope :for_monthly_report,    -> { builders.where(email_opt_out: false).where('created_at >= ?', Date.today.beginning_of_month) }
+  scope :non_builders,          -> { kept.where('is_admin = TRUE OR is_leader = TRUE OR does_inventory = TRUE OR send_notification_emails = TRUE OR send_inventory_emails = TRUE') }
   scope :with_registrations,    -> { joins(:registrations).uniq }
   scope :without_registrations, -> { left_outer_joins(:registrations).where(registrations: { id: nil }) }
 
@@ -151,18 +150,6 @@ class User < ApplicationRecord
 
   def has_password
     encrypted_password.present?
-  end
-
-  def latest_event
-    if registrations.count.positive?
-      registrations.includes(:event)
-                   .order('events.start_time DESC')
-                   .first
-                   .event
-                   .full_title_w_year
-    else
-      'No Event'
-    end
   end
 
   def leading?(event)

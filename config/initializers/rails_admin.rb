@@ -46,7 +46,6 @@ RailsAdmin.config do |config|
     Inventory
     OauthUser
     Organization
-    Registration
   ].freeze
 
   excluded_models.each do |excluded_model|

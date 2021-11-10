@@ -1,0 +1,7 @@
+-# frozen_string_literal: true
+
+%tr
+  %td= comm_tbl.fname
+  %td= link_to comm_tbl.lname, rails_admin.edit_path(model_name: 'user', id: comm_tbl.id), class: 'use-load-screen'
+  %td= comm_tbl.email
+  %td.center= check_box_tag "user_#{comm_tbl.id}_communication", comm_tbl.id, comm_tbl.email_opt_out

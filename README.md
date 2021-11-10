@@ -18,7 +18,7 @@
 
 ### Current:
 * Itemable things need `.kept` in lots of places
-* links to Photo: in .text.erb mailers
+* `.restore` => `.undiscard`
 * Start searching for # TODO:
 * Run & fix tests
 
@@ -56,6 +56,7 @@
 ## After 1st deploy:
 - migrate the dB (which runs the necessary jobs)
 - remove extrap models
+- remove MaterialsPart
 
 ## Remind myself:
 `orphans = User.builders.left_outer_joins(:registrations).where(registrations: { id: nil })`

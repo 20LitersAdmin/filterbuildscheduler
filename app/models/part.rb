@@ -26,9 +26,9 @@ class Part < ApplicationRecord
   # rails_admin scope "active" sounds better than "kept"
   scope :active, -> { kept }
 
-  scope :available, -> { where('available_count > 0') }
-  scope :made_from_material, -> { where(made_from_material: true) }
-  scope :not_made_from_material, -> { where(made_from_material: false) }
+  scope :available, -> { kept.where('available_count > 0') }
+  scope :made_from_material, -> { kept.where(made_from_material: true) }
+  scope :not_made_from_material, -> { kept.where(made_from_material: false) }
 
   class << self
     alias orderable not_made_from_material
