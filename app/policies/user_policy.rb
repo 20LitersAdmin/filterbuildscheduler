@@ -18,6 +18,10 @@ class UserPolicy < ApplicationPolicy
     delete?
   end
 
+  def comm_update?
+    delete?
+  end
+
   def leaders?
     delete?
   end

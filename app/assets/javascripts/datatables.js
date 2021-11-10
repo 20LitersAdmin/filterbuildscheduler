@@ -74,6 +74,28 @@ $(document).on("turbolinks:load", function(){
     }
   });
 
+  $('.datatable-paging-users').DataTable({
+    order: false,
+    lengthMenu: [[50, 100, 200, 500, -1], [50, 100, 200, 500, "All"] ],
+    pageLength: 50,
+    responsive: true,
+    autoWidth: false,
+    info: false,
+    dom:
+      "<'col-xs-4 no-overflow no-print'l>"+
+      "<'col-xs-8 no-overflow no-print'f>"+
+      "t"+
+      "<'col-xs-8 no-print'p>",
+    language: {
+      paginate: {
+        first: "&#8676",
+        previous: "&#8592",
+        next: "&#8594",
+        last: "&#8677"
+      }
+    }
+  });
+
   $('.datatable-slim').DataTable({
     retrieve: true,
     order: [[0, "asc"]],

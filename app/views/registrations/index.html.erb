@@ -12,9 +12,6 @@
     <% end %>
     <%= link_to "Send Message", messenger_event_registrations_path(@event), class: "btn blue" %>
   <% end %>
-  <% if @deleted.count > 0 %>
-    <%= link_to "Restore deleted", restore_event_registrations_path(@event), class: "btn red" %>
-  <% end %>
   <%= link_to "Back to event", event_path(@event), class: "btn empty pull-right"  %>
 </div>
 <% if @leaders  %>

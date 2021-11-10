@@ -26,6 +26,7 @@
 * `_*_functions` - how many can be removed?
   - Leaders should be able to get to `/events/lead` without having to visit `rails_admin`
   - Scheduler should be able to get to `/leaders` and `/events/lead` without having to visit `rails_admin`
+  - Data Manager should be able to get to `users/communications` VIA `rails_admin`
 
 * `/admin/event&scope=closed` vs. `/events/closed`
 * `Events#cancelled` - relies on `.only_deleted`

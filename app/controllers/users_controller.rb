@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class UsersController < ApplicationController
-  before_action :find_and_authorize_user, only: %i[show edit update delete availability leader_type edit_leader_notes]
+  before_action :find_and_authorize_user, only: %i[show edit update delete availability leader_type edit_leader_notes comm_update]
 
   def show
     flash[:warning] = 'You haven\'t set your password yet, please do so now.' if @user.has_no_password
@@ -82,15 +82,16 @@ class UsersController < ApplicationController
     @closed_events = Event.closed
   end
 
-  def comm_complete
-    @user_ids = params[:user_ids]
+  def comm_update
+    # When being unchecked, no param is submitted
+    # When being checked, param is submitted as "1"
+    # #<ActionController::Parameters {"email_opt_out"=>"true" ...
+    box_was_checked = params[:email_opt_out].present?
 
-    byebug
+    # update @user.email_opt_out unless they already match
+    @user.update_columns(email_opt_out: box_was_checked) unless box_was_checked == @user.email_opt_out?
 
-    User.where(id: @user_ids).update_all(email_opt_out: true) if @user_ids.present?
-
-    flash[:success] = 'Communication prefernces updated!'
-    redirect_to users_communication_path
+    head :ok
   end
 
   def leaders
