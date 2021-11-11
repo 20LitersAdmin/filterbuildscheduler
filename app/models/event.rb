@@ -27,7 +27,17 @@ class Event < ApplicationRecord
   scope :closed,          -> { kept.where('start_time <= ?', Time.now).order(start_time: :desc) }
   scope :complete,        -> { past.where('attendance != 0 OR technologies_built != 0 OR boxes_packed != 0') }
   scope :future,          -> { kept.where('end_time > ?', Time.now).order(start_time: :asc) }
-  scope :needs_leaders,   -> { future.select('events.*').joins('LEFT OUTER JOIN registrations ON (registrations.event_id = events.id)').having('count(registrations.leader IS TRUE) < events.max_leaders').group('events.id') }
+  scope :needs_leaders,   -> {
+    select('events.*')
+      .left_joins(:registrations)
+      .where('events.end_time > ?', Time.now)
+      .where('registrations.leader = TRUE')
+      .having('COUNT(registrations.id) < events.max_leaders')
+      .group('events.id')
+  }
+  # OLD scope :needs_leaers
+  # select('events.*').joins('LEFT OUTER JOIN registrations ON (registrations.event_id = events.id)').having('count(registrations.leader IS TRUE) < events.max_leaders').group('events.id')
+
   scope :needs_report,    -> { kept.where('start_time <= ?', Time.now).where(attendance: 0).order(start_time: :desc) }
   scope :non_private,     -> { kept.where(is_private: false) }
   scope :past,            -> { kept.where('end_time <= ?', Time.now).order(start_time: :desc) }
@@ -48,6 +58,10 @@ class Event < ApplicationRecord
   # TODO: replace non_leaders_registered with this
   def builders_registered
     registrations.builders
+  end
+
+  def builders_have_vs_total
+    "#{number_of_builders_and_guests_registered} of #{max_registrations}"
   end
 
   def complete?

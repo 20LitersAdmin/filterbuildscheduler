@@ -72,7 +72,10 @@ RailsAdmin.config do |config|
   config.current_user_method(&:current_user)
 
   config.authorize_with do |_controller|
-    redirect_to main_app.root_path unless current_user&.is_admin?
+    unless current_user&.admin_or_leader?
+      flash[:error] = 'You don\'t have permission to visit the Admin dashboard.'
+      redirect_to main_app.root_path
+    end
   end
 
   config.model 'User' do
@@ -242,7 +245,7 @@ RailsAdmin.config do |config|
   config.model 'Event' do
     weight 1
     list do
-      scopes %i[needs_leaders future needs_report closed discarded]
+      scopes %i[all needs_leaders future needs_report closed discarded]
       sort_by :start_time
       field :title
       field :format_date_w_year do
@@ -258,7 +261,11 @@ RailsAdmin.config do |config|
         column_width 80
       end
       field :leaders_have_vs_needed do
-        label 'Leaders Registered'
+        label 'Leaders'
+        column_width 80
+      end
+      field :builders_have_vs_total do
+        label 'Builders'
         column_width 80
       end
       field :leaders_names_full do

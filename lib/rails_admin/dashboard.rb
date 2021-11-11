@@ -140,6 +140,7 @@ module RailsAdmin
 
               instances << inventory_links if current_user.does_inventory
 
+              instances << event_management if current_user.can_edit_events?
             end
 
             # Special case:
