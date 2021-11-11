@@ -1,8 +1,9 @@
 -# frozen_string_literal: true
 
 .container.event-show
-  = render partial: 'shared/event_functions' if current_user&.admin_or_leader?
-
+  - if current_user&.can_edit_events?
+    .row
+      = link_to 'Edit', edit_event_path(@event), class: 'float-right btn yellow'
   .page-header.row
     %h1= @event.full_title
     - if @event.is_private

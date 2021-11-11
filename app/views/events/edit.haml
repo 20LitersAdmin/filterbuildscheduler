@@ -1,9 +1,10 @@
 -# frozen_string_literal: true
 
 .container.event-edit
-  = render partial: 'shared/event_functions'
-  .page-header
-    %h1= @event.title
+  .row
+    = link_to 'Show', event_path(@event), class: 'float-right btn yellow'
+  .page-header.row
+    %h1.center-align= @event.title
     - if @event.is_private
       %h4.center-align Private Event
   - if @event.registrations.exists? && !@event.in_the_past?

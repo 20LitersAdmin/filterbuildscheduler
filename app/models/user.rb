@@ -87,16 +87,29 @@ class User < ApplicationRecord
 
   def available_events
     if admin_or_leader?
-      Event.all
+      Event.kept
     else
       # finds public events OR events the user has registered for
-      Event.distinct.joins('LEFT JOIN registrations ON registrations.event_id = events.id')
+      Event.kept.distinct.joins('LEFT JOIN registrations ON registrations.event_id = events.id')
            .where('is_private = false OR registrations.user_id = ?', id)
     end
   end
 
   def can_do_inventory?
-    does_inventory? || admin_or_leader? || send_inventory_emails?
+    does_inventory? ||
+      admin_or_leader? ||
+      send_inventory_emails?
+  end
+
+  def can_edit_events?
+    is_admin? ||
+      is_leader? ||
+      is_scheduler? ||
+      is_data_manager?
+  end
+
+  def can_manage_leaders?
+    is_admin? || is_scheduler?
   end
 
   def can_lead_event?(event)
