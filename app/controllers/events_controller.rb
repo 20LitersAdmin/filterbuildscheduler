@@ -68,6 +68,11 @@ class EventsController < ApplicationController
   def update
     @event.assign_attributes(event_params)
 
+    admins_notified = nil
+    users_notified = nil
+    results_emails_sent = nil
+    inventory_created = nil
+
     if @event.should_notify_admins?
       # Can't use delayed_job because ActiveModel::Dirty doesn't persist
       EventMailer.changed(@event, current_user).deliver_now
@@ -103,6 +108,8 @@ class EventsController < ApplicationController
         end
 
         EventInventoryJob.perform_later(@event) if create_inventory
+
+        inventory_created = 'Inventory created. ' if create_inventory
       end
 
       flash[:success] = "Event updated. #{admins_notified} #{users_notified} #{results_emails_sent} #{inventory_created}"
@@ -116,22 +123,26 @@ class EventsController < ApplicationController
   end
 
   def destroy
+
+    admins_notified = nil
+    users_notified = nil
+
     # send emails to registrations and leaders before cancelling
     if @event.start_time > Time.now
       EventMailer.delay.cancelled(@event, current_user)
-      @admins_notified = 'Admins notified.'
+      admins_notified = 'Admins notified.'
 
       if @event.registrations.exists?
         @event.registrations.each do |registration|
           RegistrationMailer.delay.event_cancelled(registration, event)
         end
-        @users_notified = 'All registered builders notified.'
+        users_notified = 'All registered builders notified.'
       end
 
     end
 
     if @event.discard
-      flash[:success] = "Event cancelled. #{@admins_notified} #{@users_notified}"
+      flash[:success] = "Event cancelled. #{admins_notified} #{users_notified}"
       redirect_to root_path
     else
       flash[:warning] = @event.errors.first.join(': ')
