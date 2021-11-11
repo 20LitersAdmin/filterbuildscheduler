@@ -24,7 +24,8 @@ module RailsAdmin
               base_uri: '/',
               links: [
                 { name: 'Builds that Need Leaders', link: 'events/lead' },
-                { name: 'Contact Leaders', link: 'leaders' }
+                { name: 'Contact Leaders', link: 'leaders' },
+                { name: 'View Filter Build Events', link: 'events' }
               ]
             }
             leader_links = {
@@ -63,7 +64,7 @@ module RailsAdmin
                 { name: 'Create new build event', link: 'events/new' },
                 { name: 'Closed Events', link: 'admin/event?model_name=event&scope=closed' },
                 { name: 'Cancelled Events', link: 'admin/event?model_name=event&scope=discarded' },
-                { name: 'Reports', link: 'reports' }
+                { name: 'Reports', link: 'report' }
               ]
             }
 

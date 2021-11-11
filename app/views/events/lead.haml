@@ -1,0 +1,21 @@
+-# frozen_string_literal: true
+
+.container.event-lead
+  .event-container
+    %h2.heading Builds that need leaders
+    - if @events.any?
+      %table#events_leaders_table.table.table-striped.datatable-search
+        %thead
+          %tr
+            %th{ 'data-priority' => '1' }
+            %th{ 'data-priority' => '1' } Event
+            %th{ 'data-priority' => '1' } Tech
+            %th{ 'data-priority' => '1' } Date
+            %th{ 'data-priority' => '1' } Time
+            %th{ 'data-priority' => '1' } Location
+            %th Builders
+            %th Leaders
+            %th Still Need
+        %tbody= render partial: 'table', collection: @events
+    - else
+      %h4 All events have leaders!

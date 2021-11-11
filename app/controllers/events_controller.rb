@@ -9,8 +9,6 @@ class EventsController < ApplicationController
     @events = our_events.future
     @user = current_user
 
-    @past_events = our_events.needs_report if @user&.admin_or_leader?
-
     begin
       liters_tracker = LitersTrackerClient.new
       @progress_date = liters_tracker.as_of_date

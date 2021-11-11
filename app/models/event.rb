@@ -293,6 +293,14 @@ class Event < ApplicationRecord
     technology_results * technology.liters_per_day
   end
 
+  def results_liters_per_year
+    results_liters_per_day * 365
+  end
+
+  def results_liters_lifespan
+    results_liters_per_year * 10
+  end
+
   def should_notify_admins?
     start_time_was > Time.now &&
       important_fields_for_admins_changed?

@@ -1,0 +1,41 @@
+-# frozen_string_literal: true
+
+.container.event-leaders
+  .row
+    .col-sm-8
+      %h1
+        Leaders for #{@event.full_title}
+    .col-sm-4
+      = link_to 'Go to event', event_path(@event), class: 'btn empty pull-right'
+  .row
+    .col-xs-12
+      %h4
+        Technology: #{@event.technology.name}
+  .row
+    .col-xs-12
+      %h2 Registered leaders:
+    .col-xs-12
+      %table#leaders_tbl.datatable.table.table-striped.table-bordered
+        %thead
+          %tr
+            %th Name
+            %th Email
+            %th Phone
+            %th Qualified
+            %th Leader Type
+            %th
+        %tbody= render partial: 'leader', collection: @already_registered_leaders, locals: { already: true }
+  .row
+    .col-xs-12
+      %h2 Other leaders:
+    .col-xs-12
+      %table#other_leaders_tbl.datatable.table.table-striped.table-bordered
+        %thead
+          %tr
+            %th Name
+            %th Email
+            %th Phone
+            %th Qualified
+            %th Leader Type
+            %th
+        %tbody= render partial: 'leader', collection: @remaining_leaders, locals: { already: false }

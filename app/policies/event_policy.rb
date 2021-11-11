@@ -14,7 +14,7 @@ class EventPolicy < ApplicationPolicy
   end
 
   def create?
-    user&.admin_or_leader?
+    user&.can_edit_events?
   end
 
   def destroy?
@@ -26,19 +26,19 @@ class EventPolicy < ApplicationPolicy
   end
 
   def lead?
-    create?
+    attendance?
   end
 
   def leaders?
-    closed?
+    user&.can_manage_leaders?
   end
 
   def leader_unregister?
-    closed?
+    leaders?
   end
 
   def leader_register?
-    closed?
+    leaders?
   end
 
   def messenger?
@@ -55,15 +55,17 @@ class EventPolicy < ApplicationPolicy
 
   def show?
     if event.in_the_past?
-      if user&.is_admin? ||
+      if user&.can_edit_events? ||
          (user&.is_leader? && user&.leading?(event))
 
         # only show it if the leader led the event
         true
-      else # anonymous users and builders can't see past events
+      else
+        # anonymous users and builders can't see past events
         false
       end
-    else # future events can always be seen by everyone
+    else
+      # future events can always be seen by everyone
       true
     end
   end
