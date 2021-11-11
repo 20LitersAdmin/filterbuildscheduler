@@ -30,13 +30,9 @@ class Event < ApplicationRecord
   scope :needs_leaders,   -> {
     select('events.*')
       .left_joins(:registrations)
-      .where('events.end_time > ?', Time.now)
-      .where('registrations.leader = TRUE')
-      .having('COUNT(registrations.id) < events.max_leaders')
-      .group('events.id')
+      .having('count(registrations.leader IS TRUE) < events.max_leaders')
+      .group('events.id').future
   }
-  # OLD scope :needs_leaers
-  # select('events.*').joins('LEFT OUTER JOIN registrations ON (registrations.event_id = events.id)').having('count(registrations.leader IS TRUE) < events.max_leaders').group('events.id')
 
   scope :needs_report,    -> { kept.where('start_time <= ?', Time.now).where(attendance: 0).order(start_time: :desc) }
   scope :non_private,     -> { kept.where(is_private: false) }
