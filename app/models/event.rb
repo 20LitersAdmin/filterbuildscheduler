@@ -140,7 +140,7 @@ class Event < ApplicationRecord
 
   def important_fields_for_admins_changed?
     start_time_changed? ||
-      end_time_change? ||
+      end_time_changed? ||
       location_id_changed? ||
       technology_id_changed? ||
       is_private_changed?
@@ -148,7 +148,7 @@ class Event < ApplicationRecord
 
   def important_fields_for_builders_changed?
     start_time_changed? ||
-      end_time_change? ||
+      end_time_changed? ||
       location_id_changed?
   end
 
