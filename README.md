@@ -1,10 +1,5 @@
 # README
 ## Slim Down Inventory project
-* Remove `_event_functions` and use RailsAdmin blocks instead
-
-* RailsAdmin Dashboard.rb - customize dashboard to user permissions
-  - need to login as a new user with each permission set to check
-
 * Actually, should Registrations be Discardable?
   - Event is cancelled (discarded)
     - should discard Registrations as well

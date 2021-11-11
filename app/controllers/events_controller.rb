@@ -123,7 +123,6 @@ class EventsController < ApplicationController
   end
 
   def destroy
-
     admins_notified = nil
     users_notified = nil
 
