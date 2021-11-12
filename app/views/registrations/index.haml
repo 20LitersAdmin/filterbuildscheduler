@@ -50,7 +50,10 @@
 
     - if @discarded_registrations.any?
       .col-xs-12
-        %h3 Discarded registrations:
+        %h3
+          Discarded registrations:
+          %span
+            = link_to 'Restore All', restore_all_event_registrations_path(@event), class: 'btn blue'
         %table#discarded_tbl.datatable-slim.table.table-striped.table-bordered
           %thead
             %tr

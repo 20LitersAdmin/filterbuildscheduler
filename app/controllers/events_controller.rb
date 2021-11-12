@@ -39,6 +39,9 @@ class EventsController < ApplicationController
   end
 
   def new
+    @locations = Location.active.order(:name)
+    @technologies = Technology.list_worthy.order(:id).map { |t| ["#{t.name} (#{t.short_name})", t.id] }
+
     if params[:source_event].blank?
       @indicator = 'new'
       authorize @event = Event.new
@@ -55,6 +58,8 @@ class EventsController < ApplicationController
       EventMailer.delay.created(@event, current_user)
       redirect_to action: :index
     else
+      @locations = Location.active.order(:name)
+      @technologies = Technology.list_worthy.order(:id).map { |t| ["#{t.name} (#{t.short_name})", t.id] }
       render 'new'
     end
   end

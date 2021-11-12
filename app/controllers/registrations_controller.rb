@@ -5,11 +5,11 @@ class RegistrationsController < ApplicationController
   before_action :find_and_authorize_registration, only: %i[edit update destroy reconfirm restore]
 
   def index
-    authorize @registrations = @event.registrations&.active&.builders
-    @leaders = @event.registrations&.active&.leaders
+    authorize @registrations = @event.registrations.active.builders
+    @leaders = @event.registrations.active.leaders
 
-    # includes leaders & builders
-    @discarded_registrations = @event.registrations&.discarded
+    # includes leaders and builders
+    @discarded_registrations = @event.registrations.discarded
   end
 
   def new
