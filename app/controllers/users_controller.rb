@@ -6,26 +6,29 @@ class UsersController < ApplicationController
   def show
     flash[:warning] = 'You haven\'t set your password yet, please do so now.' if @user.has_no_password
 
-    # TODO: registrations.active if Registration#Discardable
     @leading_events = @user.registrations
+                           .kept
                            .where(leader: true)
                            .joins(:event)
                            .where('events.end_time > ?', Time.now)
                            .map(&:event)
-    # TODO: registrations.active if Registration#Discardable
+
     @attending_events = @user.registrations
+                             .kept
                              .where(leader: false)
                              .joins(:event)
                              .where('events.end_time > ?', Time.now)
                              .map(&:event)
-    # TODO: registrations.active if Registration#Discardable
+
     @lead_events = @user.registrations
+                        .kept
                         .where(leader: true)
                         .joins(:event)
                         .where('events.end_time < ?', Time.now)
                         .map(&:event)
-    # TODO: registrations.active if Registration#Discardable
+
     @attended_events = @user.registrations
+                            .kept
                             .where(leader: false)
                             .joins(:event)
                             .where('events.end_time < ?', Time.now)

@@ -31,7 +31,7 @@ $(document).on('turbolinks:load', function() {
       success: function(response) {
         ajaxSpinner.hide();
 
-        if (response.length != 0) {
+        if (response.length != 0 && response[0] != undefined) {
           console.log(response);
           var itemLang = ((response.length > 1) ? 'items' : 'item');
 
@@ -61,9 +61,14 @@ $(document).on('turbolinks:load', function() {
         };
       },
       error: function(response) {
+        // Controller returns :unprocessable_entity on empty strings
         ajaxSpinner.hide();
-
-        console.log(response);
+        if (response["responseText"]) {
+          console.log(response["responseText"]);
+        } else {
+          console.log('Unknown error.');
+          console.log(response);
+        }
       }
     });
   });

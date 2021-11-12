@@ -289,6 +289,7 @@ RailsAdmin.config do |config|
       scopes %i[active discarded]
       sort_by :name
       field :name
+      field :short_name
       field :owner
       field :price, :money do
         formatted_value { bindings[:object].price }

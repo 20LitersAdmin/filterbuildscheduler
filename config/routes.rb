@@ -45,13 +45,14 @@ Rails.application.routes.draw do
     end
     member do
       get 'attendance'
-      get 'leaders'
-      get 'leader_unregister'
       get 'leader_register'
+      get 'leader_unregister'
+      get 'leaders'
       get 'poster'
       get 'replicate'
-      get 'replicate_occurrences'
       put 'replicator'
+      # TODO: I think this is unnecessary
+      # get 'replicate_occurrences'
     end
     resources :registrations do
       collection do

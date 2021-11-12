@@ -11,10 +11,6 @@ class Location < ApplicationRecord
 
   validates :name, :address1, :city, :state, :zip, presence: true
 
-  # TODO: Second deployment remove
-  # scope :kept, -> { all }
-  # scope :discarded, -> { none }
-
   # rails_admin scope "active" sounds better than "kept"
   scope :active, -> { kept }
 

@@ -11,10 +11,6 @@ class Supplier < ApplicationRecord
   validate :valid_url?
   validates :email, :poc_email, format: { with: /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\z/i }, allow_blank: true
 
-  # TODO: Second deployment remove
-  # scope :kept, -> { all }
-  # scope :discarded, -> { none }
-
   # rails_admin scope "active" sounds better than "kept"
   scope :active, -> { kept }
 

@@ -84,9 +84,6 @@ class Technology < ApplicationRecord
   end
 
   def process_images
-    # TODO: need to distringuish btw `image` and `display_image`.
-    # hoping `attachment_changes['image'].attachable` and `attachment_changes['display_image'].attachable` will differentiate
-
     attachment_changes.each do |ac|
       target = ac[0]
       file = attachment_changes[target].attachable

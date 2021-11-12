@@ -13,9 +13,6 @@ class ProduceableJob < ApplicationJob
 
     puts '========================= Starting ProduceableJob ========================='
 
-    # TODO: this feels like bad chaining
-    # @event = event
-
     # Definition: can_be_produced is the smallest of the available_count * quantity needed per parent of all children
 
     # item.available_count + item.can_be_produced indicates how many combination.can_be_prodced.
@@ -74,11 +71,4 @@ class ProduceableJob < ApplicationJob
     # this ensures that can_be_produced is set to the minimum of child assemblies
     combination.update_columns(can_be_produced: produceable) if current_produceable.nil? || current_produceable > produceable
   end
-
-  # private
-
-  # TODO: this feels like bad chaining
-  # def trigger_event_inventory
-  #   EventInventoryJob.perform_later(@event) if @event
-  # end
 end

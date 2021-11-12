@@ -27,10 +27,6 @@ class User < ApplicationRecord
   validates_confirmation_of :password
   before_save :ensure_authentication_token, :check_phone_format
 
-  # TODO: Second deployment
-  # scope :kept, -> { all }
-  # scope :discarded, -> { none }
-
   # rails_admin scope "active" sounds better than "kept"
   scope :active, -> { kept }
 

@@ -48,6 +48,8 @@ class CombinationsController < ApplicationController
 
     terms = item_search_params[:terms]
 
+    return render(json: 'blank search', status: :unprocessable_entity) unless terms.present?
+
     @collection = []
 
     # prevent the current Component from being returned
@@ -55,12 +57,12 @@ class CombinationsController < ApplicationController
     components = @combination.instance_of?(Component) ? Component.kept.where.not(id: @combination.id) : Component.kept
 
     # look in Components first (smaller)
-    @collection << components.search_name_and_uid(terms).order(:uid, :name).pluck(:id, :uid, :name)
+    @collection << components.search_name_and_uid(terms)&.order(:uid, :name)&.pluck(:id, :uid, :name)
 
     # look in Parts second
-    @collection << Part.search_name_and_uid(terms).order(:uid, :name).pluck(:id, :uid, :name)
+    @collection << Part.search_name_and_uid(terms)&.order(:uid, :name)&.pluck(:id, :uid, :name)
 
-    render json: @collection.flatten(1)
+    render json: @collection&.flatten(1)
   end
 
   private
@@ -71,7 +73,7 @@ class CombinationsController < ApplicationController
     return if @combination.present? && [Technology, Component].include?(@combination.class)
 
     flash[:alert] = 'Please check UID and try again. Must be a Technology or Component'
-    # TODO: Where is the best place to return the browser to if the UID fails && reqest.referrer is blank?
+
     redirect_to request.referrer || rails_admin.dashboard_path
   end
 

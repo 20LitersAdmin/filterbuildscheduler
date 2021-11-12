@@ -49,7 +49,7 @@ class AssembliesController < ApplicationController
       @msg_type = 'danger'
     end
 
-    # TODO: Can just redirect_to edit_combination_path(@combination.uid)
+    # NOTE: Can just redirect_to edit_combination_path(@combination.uid)
     # Or can <%= j render 'assembly_edit', collection: @assembly %>
     respond_to do |format|
       format.js do
@@ -101,7 +101,6 @@ class AssembliesController < ApplicationController
     return if @combination.present? && [Technology, Component].include?(@combination.class)
 
     flash[:alert] = 'Please check UID and try again. Must be a Technology or Component'
-    # TODO: Where is the best place to return the browser to if the UID fails && reqest.referrer is blank?
     redirect_to request.referrer || rails_admin.dashboard_path
   end
 
