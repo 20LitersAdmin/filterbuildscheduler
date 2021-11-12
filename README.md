@@ -1,10 +1,6 @@
 # README
 ## Slim Down Inventory project
 
-* RegistrationsController#index -> discarded registrations needs a `restore_all` link to EventsController#restore_all
-
-* Check RegistrationsController#index when there are none (safe method chains, are they necessary?)
-
 * Itemable things need `.kept` in lots of places
   - Checked all controllers
   - Check all models

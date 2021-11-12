@@ -7,7 +7,7 @@
     - if current_user.is_admin?
       .row
         .col-sm-9
-          = f.association :location
+          = f.association :location, collection: @locations
         .col-sm-3
           = link_to 'Add location', rails_admin.new_path(model_name: 'location'), class: 'btn yellow form-matcher float-right'
     - else
@@ -20,7 +20,7 @@
     = f.input :description, as: :text, input_html: { rows: 5 }
     .row
       .col-sm-6
-        = f.association :technology
+        = f.association :technology, collection: @technologies
       .col-sm-6
         = f.input :item_goal
     .row
