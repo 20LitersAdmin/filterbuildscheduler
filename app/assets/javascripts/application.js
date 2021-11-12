@@ -24,8 +24,8 @@
 //= require turbolinks
 //= require chartkick
 //= require Chart.bundle
-//= require_tree ./channels
-//= require_tree .
+//= require_directory ./controllers
+//= require_tree ./rails_admin
 
 function controllerMatches(controllers_ary) {
   var controller = $('body').data('controller');

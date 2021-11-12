@@ -83,8 +83,8 @@ class Replicator
     ary = []
 
     occurrences.times do |idx|
-      starting = start_time + idx.send(interval.to_sym)
-      ending = end_time + idx.send(interval.to_sym)
+      starting = start_time + idx.public_send(interval.to_sym)
+      ending = end_time + idx.public_send(interval.to_sym)
 
       # handle the edge cases of recurrences that span daylight savings time changes
       unless starting.localtime.hour == start_time.localtime.hour
@@ -101,10 +101,10 @@ class Replicator
   end
 
   def morph_params
-    self.start_time = Time.parse(start_time).utc if start_time.class == String
-    self.end_time = Time.parse(end_time).utc if end_time.class == String
-    self.occurrences = self.occurrences.to_i if occurrences.class == String
-    self.replicate_leaders = ActiveModel::Type::Boolean.new.cast(self.replicate_leaders) if replicate_leaders.class == String
+    self.start_time = Time.parse(start_time).utc if start_time.instance_of?(String)
+    self.end_time = Time.parse(end_time).utc if end_time.instance_of?(String)
+    self.occurrences = self.occurrences.to_i if occurrences.instance_of?(String)
+    self.replicate_leaders = ActiveModel::Type::Boolean.new.cast(self.replicate_leaders) if replicate_leaders.instance_of?(String)
     self.interval = frequency == 'monthly' ? 'months' : 'weeks'
     self
   end
@@ -115,6 +115,6 @@ class Replicator
     errors.add(:event_id, :invalid, message: 'must be present') if self.event_id.blank?
     errors.add(:start_time, :invalid, message: 'must be present') if self.start_time.blank?
     errors.add(:end_time, :invalid, message: 'must be present') if self.end_time.blank?
-    errors.add(:replicate_leaders, :invalid, message: 'must be boolean') unless [true, false].include?(self.replicate_leaders)
+    errors.add(:replicate_leaders, :invalid, message: 'must be true or false') unless [true, false].include?(self.replicate_leaders)
   end
 end

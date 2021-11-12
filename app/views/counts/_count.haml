@@ -6,7 +6,7 @@
   techs  = item.all_technologies_ids
   status = 'uncounted'
   status = 'counted' if count.user_id.present?
-  status = 'partial' if (count.partial_box || count.partial_loose)
+  status = 'partial' if count.partial_box || count.partial_loose
 
 .count-wrapper.col-lg-3.col-md-4.col-sm-6.col-xs-12{ id: "count_#{count.id}", data: { status: status, techs: techs } }
   .count-div

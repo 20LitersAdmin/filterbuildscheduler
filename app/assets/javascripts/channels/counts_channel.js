@@ -38,4 +38,3 @@ if (pathname.match(/^\/inventories\/\d+\/edit/) != null) {
     }
   );
 };
-

@@ -36,46 +36,6 @@ class Assembly < ApplicationRecord
   scope :component_items, -> { where(item_type: 'Component') }
   scope :part_items, -> { where(item_type: 'Part') }
 
-  # TODO: trial code for Event#update performing logic
-  def assembly_map(goal, map = [])
-    # TODO: this is the starting idea for AssemblyService
-
-    # I envision: Assembly.find(9).assembly_map(46)
-    # [{ uid: "C031", provides: 45, remainder: 1}, uid: ["P072", "P069", "C030"], provides: 1, remainder: 0 ]
-
-    needed_quantity = goal * quantity
-    available_count = item.available_count
-    provide         = [needed_quantity, available_count].min / quantity
-    remainder       = goal - provide
-
-    map << { uid: item.uid, can_make: provide, remainder: remainder }
-
-    # passes to Itemable#assembly_map
-    item.assembly_map(remainder, map) if remainder.positive? && item.has_sub_assemblies?
-  end
-
-  # TODO: trial code for Event#update performing logic
-  def can_assemble?(integer)
-    # TODO: this is a starting idea for how to traverse down a level, then across that level before going down to the next level, trying to find open doors and dead ends.
-
-    # Assembly.find(9).can_assemble?(46) should eq yes
-    # because assembly.item.available_count == 45 and
-    # [["P072", 203], ["P069", 96], ["C030", 1]]
-
-    # can't assemble negative numbers or zero
-    return false unless integer.positive?
-
-    needed_quantity = integer * quantity
-
-    return true if item.available_count >= needed_quantity
-
-    if item_type == 'Component'
-      can_assemble_from_component?(needed_quantity)
-    else # item_type == 'Part'
-      can_assemble_from_part?(needed_quantity)
-    end
-  end
-
   def combination_uid
     "#{combination_type[0]}#{combination_id.to_s.rjust(3, 0.to_s)}"
   end

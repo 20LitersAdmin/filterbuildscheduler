@@ -31,7 +31,7 @@ class Material < ApplicationRecord
   def owners
     return ['N/A'] unless technologies.present?
 
-    technologies.map(&:owner_acronym)
+    technologies.kept.map(&:owner_acronym)
   end
 
   def per_technology(technology)
@@ -39,7 +39,7 @@ class Material < ApplicationRecord
   end
 
   def per_technologies
-    technologies.map { |t| t.quantities[uid] }
+    technologies.kept.map { |t| t.quantities[uid] }
   end
 
   def reorder?
@@ -63,6 +63,7 @@ class Material < ApplicationRecord
   end
 
   def tech_names_short
+    # Itemable#all_technologies
     all_technologies.pluck(:short_name)
   end
 

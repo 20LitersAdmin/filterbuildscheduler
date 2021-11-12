@@ -167,7 +167,8 @@ class InventoriesController < ApplicationController
 
     respond_to do |format|
       format.js do
-        @item = params[:uid].objectify_uid if params[:uid].present?
+        @item = params[:uid].presence&.objectify_uid
+        render 'history', layout: 'blank'
       end
       format.html do
         @inventories = Inventory.all.order(date: :desc)

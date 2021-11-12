@@ -170,7 +170,7 @@ class User < ApplicationRecord
   end
 
   def leading?(event)
-    Registration.where(user: self, event: event, leader: true).present?
+    Registration.kept.where(user: self, event: event, leader: true).present?
   end
 
   def name

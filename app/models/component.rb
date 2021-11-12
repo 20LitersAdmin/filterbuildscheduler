@@ -47,13 +47,13 @@ class Component < ApplicationRecord
       ary << "%#{arg}%"
     end
 
-    Component.where('name ILIKE any ( array[?] )', ary).or(where('uid ILIKE any ( array[?] )', ary))
+    Component.kept.where('name ILIKE any ( array[?] )', ary).or(where('uid ILIKE any ( array[?] )', ary))
   end
 
   # TODO: Needs .active?
   # NOTE: will only find 1st-level parents, not all ancestors
   def super_components
-    Component.find_by_sql(
+    Component.kept.find_by_sql(
       "SELECT * FROM components
       INNER JOIN assemblies
       ON assemblies.combination_id = components.id
@@ -66,7 +66,7 @@ class Component < ApplicationRecord
   # TODO: Needs .active?
   # NOTE: will only find 1st-level children, not all descendents
   def sub_components
-    Component.find_by_sql(
+    Component.kept.find_by_sql(
       "SELECT * FROM components
       INNER JOIN assemblies
       ON assemblies.item_id = components.id
@@ -75,47 +75,6 @@ class Component < ApplicationRecord
       AND assemblies.combination_id = #{id}"
     )
   end
-
-  # TODO: replace this with price_cents
-  # def cprice
-  #   ary = []
-  #   extrapolate_component_parts.each do |ecp|
-  #     next if ecp&.part.nil?
-
-  #     if ecp.part.made_from_materials? && ecp.part.price_cents.zero? && ecp.part.extrapolate_material_parts.any?
-  #       emp = ecp.part.extrapolate_material_parts.first
-
-  #       ary << emp.part_price * ecp.parts_per_component.to_i
-  #     else
-  #       ary << ecp.part_price * ecp.parts_per_component.to_i
-  #     end
-  #   end
-  #   ary.sum
-  # end
-
-
-  # TODO: un-use this
-  # def required?
-  #   if extrapolate_technology_components.any?
-  #     extrapolate_technology_components.first.required?
-  #   else
-  #     false
-  #   end
-  # end
-
-  # TODO: un-use this
-  # def technology
-  #   technologies.first
-  # end
-
-  # TODO: un-use this
-  # def total
-  #   if latest_count
-  #     latest_count.total
-  #   else
-  #     0
-  #   end
-  # end
 
   # Rails Admin virtual
   def uid_and_name

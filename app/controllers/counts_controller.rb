@@ -6,7 +6,7 @@ class CountsController < ApplicationController
 
   def edit
     respond_to do |format|
-      format.js
+      format.js { render 'edit', layout: 'blank' }
     end
   end
 
@@ -47,7 +47,7 @@ class CountsController < ApplicationController
           redirect_to edit_inventory_path(@inventory)
         end
 
-        format.js { render 'update' }
+        format.js { render 'update', layout: 'blank' }
       end
     end
   end
