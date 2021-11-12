@@ -19,7 +19,7 @@ class EventsController < ApplicationController
   end
 
   def show
-    @registration = @event.registrations.where(user: current_user).first_or_initialize
+    @registration = @event.registrations.active.where(user: current_user).first_or_initialize
 
     @registration.leader = (params[:leader].present? && current_user&.can_lead_event?(@event)) if @registration.new_record?
 
@@ -134,6 +134,7 @@ class EventsController < ApplicationController
       if @event.registrations.exists?
         @event.registrations.each do |registration|
           RegistrationMailer.delay.event_cancelled(registration, event)
+          registration.discard
         end
         users_notified = 'All registered builders notified.'
       end
@@ -151,27 +152,24 @@ class EventsController < ApplicationController
 
   def lead
     @user = current_user
-    @events = []
-
-    Event.future.each do |e|
-      @events << e if e.needs_leaders?
-    end
+    @events = Event.needs_leaders
 
     authorize Event
   end
 
   def leaders
     @leaders = User.leaders
-    @already_registered_leaders = User.find(@event.registrations.leaders.pluck(:user_id))
+    @already_registered_leaders = User.find(@event.registrations.active.leaders.pluck(:user_id))
     @remaining_leaders = @leaders - @already_registered_leaders
   end
 
   def leader_unregister
-    @registration = @event.registrations.leaders.where(user_id: params[:user_id]).first
+    @registration = @event.registrations.active.leaders.where(user_id: params[:user_id]).first
 
     if @registration.blank?
       flash[:error] = 'Oops, something went wrong.'
     else
+      # actually delete, not discard
       @registration.delete
       flash[:success] = "#{@registration.user.name} was unregistered."
     end
@@ -183,7 +181,7 @@ class EventsController < ApplicationController
     @registration = @event.registrations.where(user_id: params[:user_id]).first_or_initialize
 
     @registration.leader = true
-    @registration.restore if @registration.deleted?
+    @registration.undiscard if @registration.discarded?
     @registration.save
     RegistrationMailer.created(@registration).deliver_now
 
@@ -229,10 +227,12 @@ class EventsController < ApplicationController
   end
 
   def attendance
-    @registrations = @event.registrations.where.not(leader: true).ordered_by_user_lname
+    @registrations = @event.registrations.active.builders.ordered_by_user_lname
 
     @print_blanks = @event.max_registrations - @event.total_registered + 5
     @print_navbar = true
+
+    @discarded_registrations = @event.registrations.discarded.builders.ordered_by_user_lname
   end
 
   def poster

@@ -1,0 +1,62 @@
+-# frozen_string_literal: true
+
+.container.registrations-index
+  .row
+    .col-xs-12
+      %h1.center-align #{@event.full_title} Registrations
+      - if @event.is_private
+        %h4.center-align Private Event
+    .col-xs-12
+      = link_to 'Print Sign-in Sheet', attendance_event_path(@event), class: 'btn blue'
+      = link_to 'Register Builder', new_event_registration_path(@event), class: 'btn yellow'
+      = link_to 'Register Leader', leaders_event_path(@event), class: 'btn blue'
+      - if @registrations.count.positive?
+        - unless @event.in_the_past?
+          = link_to 'Resend All Confirmations', reconfirms_event_registrations_path(@event), class: 'btn empty', data: { confirm: 'Are you sure you want to resend ALL email confirmations?' }
+        = link_to 'Send Message', messenger_event_registrations_path(@event), class: 'btn blue'
+      = link_to 'Edit Event', edit_event_path(@event), class: 'btn empty pull-right'
+    - if @leaders.any?
+      .col-xs-12
+        %h3 Leaders registered:
+        %table#leaders_tbl.datatable-slim.table.table-striped.table-bordered
+          %thead
+            %tr
+              %th Name
+              %th Email
+              %th Registered at
+              %th Guests
+              %th
+          %tbody= render partial: 'registration', collection: @leaders
+    - else
+      .col-xs-12
+        %h3
+          No leaders registered.
+          %span= link_to 'Register Leader', leaders_event_path(@event), class: 'btn blue'
+    - if @registrations.any?
+      .col-xs-12
+        %h3 Builders registered:
+        %table#builders_tbl.datatable.table.table-striped.table-bordered
+          %thead
+            %tr
+              %th Name
+              %th Email
+              %th Registered at
+              %th Guests
+              %th
+          %tbody= render partial: 'registration', collection: @registrations
+    - else
+      .col-xs-12
+        %h3 No registrations found.
+
+    - if @discarded_registrations.any?
+      .col-xs-12
+        %h3 Discarded registrations:
+        %table#discarded_tbl.datatable-slim.table.table-striped.table-bordered
+          %thead
+            %tr
+              %th Name & role
+              %th Email
+              %th Registered at
+              %th Guests
+              %th
+          %tbody= render partial: 'registration', collection: @discarded_registrations

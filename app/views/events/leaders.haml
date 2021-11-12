@@ -2,15 +2,13 @@
 
 .container.event-leaders
   .row
-    .col-sm-8
-      %h1
-        Leaders for #{@event.full_title}
-    .col-sm-4
-      = link_to 'Go to event', event_path(@event), class: 'btn empty pull-right'
-  .row
     .col-xs-12
-      %h4
+      %h1.center-align
+        #{@event.full_title} Leaders
+      %h4.center-align
         Technology: #{@event.technology.name}
+    .col-xs-12
+      = link_to 'Go to event', edit_event_path(@event), class: 'btn empty pull-right'
   .row
     .col-xs-12
       %h2 Registered leaders:

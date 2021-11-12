@@ -1,0 +1,22 @@
+-# frozen_string_literal: true
+
+.emphasis-div-narrow
+  %h3 You're Registered!
+  %p
+    = current_user.name
+    | #{current_user.email}
+  %p
+    You registered on #{@registration.created_at.strftime('%-m/%-d/%Y')} and are bringing #{pluralize(@registration.guests_registered, 'guest')}.
+  - if @registration.leader?
+    %div
+      %p#leader_self_note
+        - if @event.registrations.where(leader: true).count == 1
+          You are the only leader currently registered.
+        - else
+          You are one of #{pluralize(@event.registrations.where(leader: true).count, 'leader')} for this event.
+  %h5
+    Review the
+    %a.waiver_click{ data: { target: '#waiverModal', toggle: 'modal' } } Waiver and Release
+    (accepted on #{current_user.signed_waiver_on.strftime('%-m/%-d/%Y')})
+= link_to 'Change/Cancel Registration', edit_event_registration_path(@event, @registration), class: 'btn red fullwidth'
+= link_to('Not you? Sign Out', destroy_user_session_path, method: :delete, class: 'btn empty fullwidth')

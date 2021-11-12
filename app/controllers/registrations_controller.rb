@@ -2,11 +2,14 @@
 
 class RegistrationsController < ApplicationController
   before_action :find_event
-  before_action :find_registration, only: %i[edit update destroy reconfirm]
+  before_action :find_and_authorize_registration, only: %i[edit update destroy reconfirm restore]
 
   def index
-    authorize @registrations = @event.registrations.builders
-    @leaders = @event.registrations.leaders
+    authorize @registrations = @event.registrations&.active&.builders
+    @leaders = @event.registrations&.active&.leaders
+
+    # includes leaders & builders
+    @discarded_registrations = @event.registrations&.discarded
   end
 
   def new
@@ -51,18 +54,19 @@ class RegistrationsController < ApplicationController
 
     @user.errors.add(:fname, 'This user isn\'t qualified to lead this event.') if registration_params[:leader] == '1' && !@leader
 
-    @registration.errors.add(:accept_waiver, 'You must review and sign the Liability Waiver first') if waiver_accepted == '0'
+    @registration.errors.add(:accept_waiver, 'You must review and sign the Liability Waiver first') if waiver_accepted == '0' && @user.signed_waiver_on.blank?
 
-    # count up the totals and validate
-    @registration.errors.add(:guests_registered, "You can only bring up to #{@event.registrations_remaining - 1} guests at this event.") if @event.max_registrations < (@event.total_registered + params[:registration][:guests_registered].to_i + 1)
+    @registration.errors.add(:guests_registered, "There is only room for #{[@event.registrations_remaining - 1, 0].max} additional guests at this event.") if @event.registrations_would_overflow?(@registration)
 
-    if @registration.errors.blank? && @user.save && @registration.save
+    # @registration.save doesn't fail with manually added errors.
+    if @registration.errors.none? && @user.save
+      @registration.save
       sign_in(@user) unless current_user
 
       # don't send emails for past events.
-      RegistrationMailer.delay.created(@registration) if @event.start_time > Time.now
+      RegistrationMailer.delay.created(@registration) if @event.in_the_future?
 
-      @user.update!(signed_waiver_on: Time.now) unless @registration.waiver_accepted?
+      @user.update_columns(signed_waiver_on: Date.today) if @user.signed_waiver_on.blank? && waiver_accepted == '1'
       flash[:success] = 'Registration successful!'
 
       if params[:registration][:form_source] == 'admin'
@@ -76,8 +80,11 @@ class RegistrationsController < ApplicationController
       end
     else
       # errors found
-      flash[:danger] = @registration.errors.messages.map { |_k, v| v }.join(', ')
-      flash[:danger] += @user.errors.messages.map { |k, v| "#{User.human_attribute_name(k)} #{v.join(', ')}" }.join(' | ')
+      flash[:danger] = @registration.errors.messages.map { |_k, v| v }
+                                    .join(', ')
+      flash[:danger] += @user.errors.messages.map { |k, v| "#{User.human_attribute_name(k)} #{v.join(', ')}" }
+                             .join(' | ')
+
       if params[:registration][:form_source] == 'admin'
         render 'new'
       else
@@ -87,46 +94,56 @@ class RegistrationsController < ApplicationController
   end
 
   def edit
-    authorize @registration
-
     @user = @registration.user
 
     @btn_admin = params[:admin] == 'true'
   end
 
   def update
-    authorize @registration
-
     @user = @registration.user
 
-    if @registration.event.registrations_filled?
-      guests = registration_params[:guests_registered].present? ? registration_params[:guests_registered].to_i : 0
-      new_max = @registration.event.total_registered + guests + 1
-      @registration.event.update(max_registrations: new_max)
+    authenticate_user_from_token! if params[:user_token].present?
+
+    @registration.assign_attributes(registration_params)
+
+    if @event.registrations_would_overflow?(@registration)
+
+      # Admins can override @event.max_registrations
+      if registration_params[:form_source] == 'admin'
+        guests = registration_params[:guests_registered].presence&.to_i || 0
+
+        # since @registration is being updated, we need to ignore any previous @registration.guests_registered value
+        new_max = @event.total_registered_without(@registration) + guests + 1
+
+        @event.update_columns(max_registrations: new_max)
+      else
+        # since @registration is being updated, we need to ignore any previous @registration.guests_registered value
+        @registration.errors.add(:guests_registered, "There is only room for #{[@event.registrations_remaining_without(@registration) - 1, 0].max} additional guests at this event.")
+      end
     end
 
     @user.update(email_opt_out: user_params[:email_opt_out]) if ActiveModel::Type::Boolean.new.cast(user_params[:email_opt_out]) != @user.email_opt_out
 
-    if @registration.errors.any?
-      flash[:danger] = @registration.errors
-                                    .map { |_k, v| v }
-                                    .join(', ')
-      render 'edit'
-    else
-      @registration.update(registration_params)
+    # @registration.update(registration_params) doesn't fail with manually added errors.
+    if @registration.errors.none?
+      @registration.save
       if params[:registration][:form_source] == 'admin'
         redirect_to event_registrations_path(@registration.event)
       else
         redirect_to event_path(@registration.event)
       end
+    else
+      flash[:danger] = @registration.errors
+                                    .map { |_k, v| v }
+                                    .join(', ')
+      render 'edit'
     end
   end
 
   def destroy
-    authorize @registration
-    @registration.delete
+    @registration.discard
     if params[:admin] == 'true'
-      flash[:warning] = 'Registration deleted.'
+      flash[:warning] = 'Registration discarded, but can be restored.'
       redirect_to event_registrations_path(@registration.event)
     else
       flash[:warning] = 'You are no longer registered.'
@@ -135,14 +152,18 @@ class RegistrationsController < ApplicationController
   end
 
   def restore
-    @count = @event.registrations.only_deleted.count
+    @registration.undiscard
 
-    @event.registrations.only_deleted.each do |r|
-      r.restore
-      r.save
-    end
+    flash[:success] = 'Registration restored!'
+    redirect_to event_registrations_path(@event)
+  end
 
-    flash[:success] = "#{view_context.pluralize(@count, 'deleted registration')} restored!"
+  def restore_all
+    @count = @event.registrations.discarded.count
+
+    @event.registrations.discarded.each(&:undiscard)
+
+    flash[:success] = "#{view_context.pluralize(@count, 'discarded registration')} restored!"
     redirect_to event_registrations_path(@event)
   end
 
@@ -183,27 +204,31 @@ class RegistrationsController < ApplicationController
   private
 
   def user_params
-    params[:registration].require(:user).permit(:fname,
-                                                :lname,
-                                                :email,
-                                                :phone,
-                                                :email_opt_out)
+    params[:registration].require(:user).permit(
+      :fname,
+      :lname,
+      :email,
+      :phone,
+      :email_opt_out
+    )
   end
 
   def registration_params
-    params.require(:registration).permit(:event_id,
-                                         :user_id,
-                                         :leader,
-                                         :guests_registered,
-                                         :accommodations)
+    params.require(:registration).permit(
+      :event_id,
+      :user_id,
+      :leader,
+      :guests_registered,
+      :accommodations
+    )
   end
 
   def find_event
     @event = Event.active.find(params[:event_id])
   end
 
-  def find_registration
-    @registration = Registration.find(params[:id])
+  def find_and_authorize_registration
+    authorize @registration = Registration.find(params[:id])
   end
 
   def authenticate_user_from_token!
@@ -215,7 +240,7 @@ class RegistrationsController < ApplicationController
   end
 
   def find_or_initialize_user(data)
-    user = User.active.find_or_initialize_by(email: data[:email])
+    user = User.find_or_initialize_by(email: data[:email])
     user.fname ||= data[:fname]
     user.lname ||= data[:lname]
     user.phone ||= data[:phone]

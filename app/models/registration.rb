@@ -1,11 +1,16 @@
 # frozen_string_literal: true
 
 class Registration < ApplicationRecord
+  include Discard::Model
+
   belongs_to :user
   belongs_to :event
   attr_accessor :accept_waiver
 
   validates :guests_registered, :guests_attended, numericality: { only_integer: true, greater_than_or_equal_to: 0 }, presence: true
+
+  # RailsAdmin "active" is better than "kept"
+  scope :active, -> { kept }
 
   scope :attended,              -> { where(attended: true) }
 
@@ -23,8 +28,8 @@ class Registration < ApplicationRecord
     created_at.strftime('%-m/%-d/%Y %H:%M')
   end
 
-  def waiver_accepted?
-    user.signed_waiver_on?
+  def role
+    leader? ? 'leader' : 'builder'
   end
 
   def total_registered
@@ -35,5 +40,10 @@ class Registration < ApplicationRecord
     return 0 unless attended?
 
     guests_attended + 1
+  end
+
+  # RegistrationsController line 69
+  def waiver_accepted?
+    user.signed_waiver_on?
   end
 end

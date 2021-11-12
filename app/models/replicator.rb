@@ -70,13 +70,13 @@ class Replicator
 
     events = Event.where(id: new_event_ids)
 
-    # EventMailer.delay.replicated(events, initiator)
-    EventMailer.replicated(events, initiator).deliver_now
+    EventMailer.delay.replicated(events, initiator)
+    # EventMailer.replicated(events, initiator).deliver_now
 
     true
   end
 
-  # called by events_controller#replicate_occurences
+  # called by EventsController#replicate_occurences
   def date_array
     self.interval = frequency == 'monthly' ? 'months' : 'weeks'
 

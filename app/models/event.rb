@@ -53,7 +53,7 @@ class Event < ApplicationRecord
 
   # TODO: replace non_leaders_registered with this
   def builders_registered
-    registrations.builders
+    registrations.kept.builders
   end
 
   def builders_have_vs_total
@@ -170,7 +170,7 @@ class Event < ApplicationRecord
 
   # TODO: this should be deleted in favor of number_of_leaders_attended
   def leaders_attended
-    registrations.leaders.attended.size
+    registrations.kept.leaders.attended.size
   end
 
   def leaders_have_vs_needed
@@ -180,7 +180,7 @@ class Event < ApplicationRecord
   def leaders_names
     return unless leaders_registered.present?
 
-    registrations.leaders
+    registrations.kept.leaders
                  .map { |r| r.user.fname }
                  .join(', ')
   end
@@ -188,18 +188,14 @@ class Event < ApplicationRecord
   def leaders_names_full
     return unless leaders_registered.present?
 
-    registrations.leaders
+    registrations.kept.leaders
                  .map { |r| r.user.name }
                  .join(', ')
   end
 
   # TODO: remove only_deleted
-  def leaders_registered(scope = '')
-    if scope == 'only_deleted'
-      registrations.only_deleted.leaders
-    else
-      registrations.leaders
-    end
+  def leaders_registered
+    registrations.kept.leaders
   end
 
   def leaders_hours
@@ -215,26 +211,12 @@ class Event < ApplicationRecord
   end
 
   # TODO: remove only_deleted
-  def needs_leaders?(scope = '')
-    if scope == 'only_deleted'
-      leaders_registered('only_deleted').count < max_leaders
-    else
-      leaders_registered.count < max_leaders
-    end
+  def needs_leaders?
+    leaders_registered.count < max_leaders
   end
 
-  # TODO: this is unnecessary
-  # just use #incomplete?
   def needs_report?
     attendance.zero?
-  end
-
-  # TODO: this is new and should be used to calculate remaining space
-  def number_of_builders_and_guests_registered
-    builders = registrations.builders.size
-    guests = registrations.pluck(:guests_registered).sum
-
-    builders + guests
   end
 
   def number_of_builders_attended
@@ -242,11 +224,11 @@ class Event < ApplicationRecord
   end
 
   def number_of_leaders_attended
-    registrations.leaders.attended.size
+    registrations.kept.leaders.attended.size
   end
 
   def number_of_leaders_registered
-    registrations.leaders.size
+    registrations.kept.leaders.size
   end
 
   def number_registered
@@ -261,28 +243,28 @@ class Event < ApplicationRecord
     end
   end
 
-  def really_needs_leaders?(scope = '')
-    if scope == 'only_deleted'
-      leaders_registered('only_deleted').count < min_leaders
-    else
-      leaders_registered.count < min_leaders
-    end
+  def really_needs_leaders?
+    leaders_registered.count < min_leaders
   end
 
-  def registrations_filled?(scope = '')
-    if scope == 'only_deleted'
-      total_registered('only_deleted') >= max_registrations
-    else
-      total_registered >= max_registrations
-    end
+  def registrations_filled?
+    total_registered >= max_registrations
   end
 
-  def registrations_remaining(scope = '')
-    if scope == 'only_deleted'
-      max_registrations - total_registered('only_deleted')
-    else
-      max_registrations - total_registered
-    end
+  def registrations_remaining
+    return max_registrations if registrations.empty?
+
+    max_registrations - total_registered
+  end
+
+  def registrations_remaining_without(registration)
+    return max_registrations if registrations.kept.empty?
+
+    max_registrations - total_registered_without(registration)
+  end
+
+  def registrations_would_overflow?(registration)
+    (registration.guests_registered + 1) > registrations_remaining_without(registration)
   end
 
   def results_people
@@ -317,7 +299,7 @@ class Event < ApplicationRecord
   end
 
   def should_notify_builders?
-    registrations.exists? &&
+    registrations.kept.any? &&
       important_fields_for_builders_changed?
   end
 
@@ -335,7 +317,7 @@ class Event < ApplicationRecord
   def should_send_results_emails?
     !emails_sent? &&
       attendance.positive? &&
-      registrations.size.positive? &&
+      registrations.kept.any? &&
       technology_results.positive?
   end
 
@@ -345,44 +327,34 @@ class Event < ApplicationRecord
     (boxes_packed * technology.quantity_per_box) + technologies_built
   end
 
-  # TODO: only_deleted switch
-  def total_registered(scope = '')
-    if scope == 'only_deleted'
-      registrations.only_deleted.exists? ? registrations.only_deleted.map(&:guests_registered).sum + builders_registered.count : 0
-    else
-      registrations.exists? ? registrations.map(&:guests_registered).sum + builders_registered.count : 0
-    end
+  def total_registered
+    return 0 if registrations.kept.empty?
+
+    registrations.kept.sum(:guests_registered) + builders_registered.count
   end
 
-  # TODO: only_deleted switch
-  def total_registered_w_leaders(scope = '')
-    if scope == 'only_deleted'
-      registrations.only_deleted.exists? ? registrations.only_deleted.map(&:guests_registered).sum + registrations.only_deleted.count : 0
-    else
-      registrations.exists? ? registrations.map(&:guests_registered).sum + registrations.count : 0
-    end
+  def total_registered_w_leaders
+    return 0 if registrations.kept.empty?
+
+    registrations.kept.sum(:guests_registered) + registrations.count
+  end
+
+  def total_registered_without(registration)
+    return 0 if registrations.kept.empty?
+
+    registrations.kept.where.not(id: registration.id).sum(:guests_registered) + builders_registered.count
   end
 
   def volunteer_hours
     length * attendance
   end
 
-  # TODO: only_deleted switch
-  def you_are_attendee(user, scope = '')
-    if scope == 'only_deleted'
-      ' (including you)' if user && registrations.only_deleted.where(user_id: user.id).where(leader: false).present?
-    else
-      ' (including you)' if user && registrations.where(user_id: user.id).where(leader: false).present?
-    end
+  def you_are_attendee(user)
+    ' (including you)' if user && registrations.where(user_id: user.id).where(leader: false).present?
   end
 
-  # TODO: only_deleted switch
-  def you_are_leader(user, scope = '')
-    if scope == 'only_deleted'
-      ' (including you)' if user&.is_leader && registrations.only_deleted.where(user_id: user.id).where(leader: true).present?
-    else
-      ' (including you)' if user&.is_leader && registrations.where(user_id: user.id).where(leader: true).present?
-    end
+  def you_are_leader(user)
+    ' (including you)' if user&.is_leader && registrations.where(user_id: user.id).where(leader: true).present?
   end
 
   private
