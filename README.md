@@ -1,18 +1,14 @@
 # README
 ## Slim Down Inventory project
-* Actually, should Registrations be Discardable?
-  - Event is cancelled (discarded)
-    - should discard Registrations as well
-  - Event is restored
-    - should restore Registrations as well
-  - Event is destroyed for real via `rails_admin`
-  - Event
-  - Registrations should delete by default as a user action
-    - Registration is cancelled (deleted) via user: using email link with email and token
-    - Registration is cancelled (deleted) via admin: via event/:id/registrations
+
+* RegistrationsController#index -> discarded registrations needs a `restore_all` link to EventsController#restore_all
+
+* Check RegistrationsController#index when there are none (safe method chains, are they necessary?)
 
 * Itemable things need `.kept` in lots of places
   - Checked all controllers
+  - Check all models
+  - Check views
 * `.restore` => `.undiscard`
 * Start searching for # TODO:
 * Run & fix tests
@@ -28,7 +24,7 @@
 * Emails model is currently excluded in RailsAdmin
   - Created by GmailClient -> Email.from_gmail()
   - Destroy stale via EmailSyncJob -> Email.stale.destroy_all
-
+  - Manual destroy: impossible ATM
 
 ### Nerfed pages:
 * `_*_functions` - how many can be removed?

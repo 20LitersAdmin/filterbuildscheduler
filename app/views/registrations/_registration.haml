@@ -1,0 +1,21 @@
+-# frozen_string_literal: true
+
+- user = registration.user
+- discarded = registration.discarded?
+
+%tr
+  - if discarded
+    %td #{user.name} (#{registration.role})
+  - else
+    %td= user.name
+  %td= user.email
+  %td= registration.human_date
+  %td= registration.guests_registered
+  %td
+    = link_to 'Edit', edit_event_registration_path(@event, registration, admin: true), class: 'btn blue'
+    - if discarded
+      = link_to 'Restore', restore_event_registration_path(@event, registration), class: 'btn yellow'
+    - else
+      = link_to 'Discard', event_registration_path(@event, registration, admin: true), method: :delete, class: 'btn red'
+    - if @event.in_the_future? && !discarded
+      = link_to 'Resend Email', reconfirm_event_registration_path(@event, registration), class: 'btn empty'

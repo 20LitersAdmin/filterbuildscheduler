@@ -22,6 +22,18 @@ module RailsAdmin
           true
         end
 
+        register_instance_option :route_fragment do
+          'restore'
+        end
+
+        register_instance_option :http_methods do
+          %i[get restore]
+        end
+
+        register_instance_option :authorization_key do
+          :restore
+        end
+
         register_instance_option :link_icon do
           'icon-circle-arrow-up'
         end

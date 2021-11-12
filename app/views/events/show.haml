@@ -25,10 +25,10 @@
           - if @leaders.count.positive?
             Event #{pluralize_without_count(@leaders.count, 'leader')}: #{@leaders.map { |r| r.user.fname }.join(', ')}
       %hr/
-      - if @event.registrations_filled?
-        = render partial: 'events/registration_full'
-      - elsif current_user&.registered?(@event)
+      - if current_user&.registered?(@event)
         = render partial: 'events/registration_registered'
+      - elsif @event.registrations_filled?
+        = render partial: 'events/registration_full'
       - elsif current_user
         = render partial: 'events/registration_signedin'
       - else # current_user == nil

@@ -2,11 +2,15 @@
 
 .container.event-edit
   .row
-    = link_to 'Show', event_path(@event), class: 'float-right btn yellow'
-  .page-header.row
-    %h1.center-align= @event.title
-    - if @event.is_private
-      %h4.center-align Private Event
+    .col-xs-12
+      %h1.center-align= @event.title
+      - if @event.is_private
+        %h4.center-align Private Event
+  .row
+    .col-xs-12
+      = link_to 'Print Sign-in Sheet', attendance_event_path(@event), class: 'btn blue'
+      = link_to 'Manage Builders', event_registrations_path(@event), class: 'btn yellow'
+      = link_to 'Show Event', event_path(@event), class: 'btn empty pull-right'
   - if @event.registrations.exists? && !@event.in_the_past?
     .event-edit-warning
       %h4.center-align.alert.danger

@@ -4,6 +4,7 @@ class RegistrationPolicy < ApplicationPolicy
   attr_reader :user, :registration
 
   def initialize(user, registration)
+    super
     @user = user
     @registration = registration
   end
@@ -13,15 +14,19 @@ class RegistrationPolicy < ApplicationPolicy
   end
 
   def destroy?
-    user&.admin_or_leader? || registration.user == user
+    edit?
+  end
+
+  def restore?
+    new?
   end
 
   def update?
-    user&.admin_or_leader? || registration.user == user
+    edit?
   end
 
   def index?
-    user&.admin_or_leader?
+    new?
   end
 
   def new?
@@ -33,6 +38,6 @@ class RegistrationPolicy < ApplicationPolicy
   end
 
   def show?
-    user&.admin_or_leader?
+    new?
   end
 end

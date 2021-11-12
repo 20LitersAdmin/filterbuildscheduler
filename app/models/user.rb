@@ -182,7 +182,7 @@ class User < ApplicationRecord
   end
 
   def registered?(event)
-    Registration.where(user: self, event: event).present?
+    Registration.kept.where(user: self, event: event).present?
   end
 
   def role
