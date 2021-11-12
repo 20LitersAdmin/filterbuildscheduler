@@ -38,7 +38,7 @@ class Component < ApplicationRecord
 
   # Not in Itemable because it's unique to Component and Part
   def self.search_name_and_uid(string)
-    return [] if string.blank? || !string.is_a?(String)
+    return Component.none if string.blank? || !string.is_a?(String)
 
     ary = []
     args = string.tr(',', '').tr(';', '').split
@@ -50,7 +50,6 @@ class Component < ApplicationRecord
     Component.kept.where('name ILIKE any ( array[?] )', ary).or(where('uid ILIKE any ( array[?] )', ary))
   end
 
-  # TODO: Needs .active?
   # NOTE: will only find 1st-level parents, not all ancestors
   def super_components
     Component.kept.find_by_sql(
@@ -63,7 +62,6 @@ class Component < ApplicationRecord
     )
   end
 
-  # TODO: Needs .active?
   # NOTE: will only find 1st-level children, not all descendents
   def sub_components
     Component.kept.find_by_sql(

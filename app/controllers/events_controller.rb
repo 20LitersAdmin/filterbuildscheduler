@@ -2,7 +2,20 @@
 
 class EventsController < ApplicationController
   before_action :find_stale
-  before_action :set_event, only: %i[show edit update attendance poster replicate replicator restore leaders leader_unregister leader_register]
+  before_action :set_event,
+                only: %i[
+                  attendance
+                  edit
+                  leader_register
+                  leader_unregister
+                  leaders
+                  poster
+                  replicate
+                  replicator
+                  restore
+                  show
+                  update
+                ]
 
   def index
     our_events = policy_scope(Event)
@@ -198,21 +211,22 @@ class EventsController < ApplicationController
     @replicator = Replicator.new
   end
 
-  def replicate_occurrences
-    return if params[:f].blank? || params[:s].blank? || params[:e].blank?
+  # TODO: This seems to be unused
+  # def replicate_occurrences
+  #   return if params[:f].blank? || params[:s].blank? || params[:e].blank?
 
-    replicator = Replicator.new
+  #   replicator = Replicator.new
 
-    replicator.tap do |r|
-      r.event_id = Integer(params[:id])
-      r.start_time = Time.parse(params[:s])
-      r.end_time = Time.parse(params[:e])
-      r.frequency = params[:f]
-      r.occurrences = params[:o].blank? ? 1 : Integer(params[:o])
-    end
+  #   replicator.tap do |r|
+  #     r.event_id = Integer(params[:id])
+  #     r.start_time = Time.parse(params[:s])
+  #     r.end_time = Time.parse(params[:e])
+  #     r.frequency = params[:f]
+  #     r.occurrences = params[:o].blank? ? 1 : Integer(params[:o])
+  #   end
 
-    render json: replicator.date_array
-  end
+  #   render json: replicator.date_array
+  # end
 
   def replicator
     replicator = Replicator.new(replicator_params)
@@ -296,6 +310,6 @@ class EventsController < ApplicationController
 
   def set_event
     # TODO: this could be bad if navigating from one event directly to another event?
-    authorize @event ||= Event.find(params[:id])
+    authorize @event = Event.find(params[:id])
   end
 end

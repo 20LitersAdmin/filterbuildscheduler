@@ -1,10 +1,5 @@
 # README
 ## Slim Down Inventory project
-
-* Itemable things need `.kept` in lots of places
-  - Check all models
-  - Check views
-* `.restore` => `.undiscard`
 * Start searching for # TODO:
 * Run & fix tests
 

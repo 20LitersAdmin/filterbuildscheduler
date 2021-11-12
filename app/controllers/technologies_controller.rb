@@ -12,17 +12,16 @@ class TechnologiesController < ApplicationController
     # params[:tech] can be used to limit the donations needed
     tech_id_ary = broad_set_params.except(:q).keys
 
-    # TODO: Part.kept; Material.kept
     @items = []
     if tech_id_ary.any?
       @selected_technologies = Technology.active.where(id: tech_id_ary)
       @selected_technologies.each do |technology|
-        @items << technology.parts.active.joins(:supplier).pluck(:uid, :name, :'suppliers.name', :sku, :quantities, :price_cents)
+        @items << technology.parts.not_made_from_material.joins(:supplier).pluck(:uid, :name, :'suppliers.name', :sku, :quantities, :price_cents)
         @items << technology.materials.active.joins(:supplier).pluck(:uid, :name, :'suppliers.name', :sku, :quantities, :price_cents)
       end
     else
       @selected_technologies = Technology.list_worthy
-      @items << Part.not_made_from_materials.joins(:supplier).pluck(:uid, :name, :'suppliers.name', :sku, :quantities, :price_cents)
+      @items << Part.not_made_from_material.joins(:supplier).pluck(:uid, :name, :'suppliers.name', :sku, :quantities, :price_cents)
       @items << Material.active.joins(:supplier).pluck(:uid, :name, :'suppliers.name', :sku, :quantities, :price_cents)
     end
     @items.flatten!(1)
@@ -40,8 +39,6 @@ class TechnologiesController < ApplicationController
   def labels
     authorize Technology
     # page to select multiple items to print individual lables
-
-    # TODO: Technology.kept.list_worthy; Component.kept etc.
     @technologies = Technology.list_worthy.pluck(:uid, :name)
     @components =   Component.active.order(:name).pluck(:uid, :name)
     @parts =        Part.active.order(:name).pluck(:uid, :name)

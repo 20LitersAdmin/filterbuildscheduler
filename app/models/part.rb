@@ -44,7 +44,7 @@ class Part < ApplicationRecord
 
   # Not in Itemable because it's unique to Component and Part
   def self.search_name_and_uid(string)
-    return [] if string.blank? || !string.is_a?(String)
+    return Part.none if string.blank? || !string.is_a?(String)
 
     ary = []
     args = string.tr(',', '').tr(';', '').split
