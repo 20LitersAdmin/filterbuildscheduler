@@ -53,7 +53,7 @@ class Part < ApplicationRecord
       ary << "%#{arg}%"
     end
 
-    Part.where('name ILIKE any ( array[?] )', ary).or(where('uid ILIKE any ( array[?] )', ary))
+    Part.kept.where('name ILIKE any ( array[?] )', ary).or(where('uid ILIKE any ( array[?] )', ary))
   end
 
   def on_order?
@@ -66,14 +66,14 @@ class Part < ApplicationRecord
   end
 
   def per_technologies
-    technologies.map { |t| t.quantities[uid] }
+    technologies.kept.map { |t| t.quantities[uid] }
   end
 
   def reorder_total_cost
     min_order * price
   end
 
-  def superassemblies
+  def super_assemblies
     # alias of assemblies, for tree traversal up
     assemblies
   end
@@ -87,16 +87,12 @@ class Part < ApplicationRecord
     "#{supplier.name} - SKU: #{sku_as_link}".html_safe
   end
 
-  def subassemblies
+  def sub_assemblies
     Assembly.none
   end
 
-  # Handled by has_many relationship
-  # def technologies
-  #   Technology.where('quantities ? :key', key: uid)
-  # end
-
   def tech_names_short
+    # Itemable#all_technologies
     all_technologies.pluck(:short_name)
   end
 

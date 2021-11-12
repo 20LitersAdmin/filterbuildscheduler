@@ -36,8 +36,8 @@ module Itemable
   def all_technologies
     return [] if is_a?(Technology)
 
-    # .technologies finds direct relations through Assembly, but doesn't include technologies where this part may be deeply nested in components
-    Technology.where('quantities ? :key', key: uid)
+    # .technologies finds direct relations through Assembly, but doesn't include technologies where this part may be deeply nested in components through assemblies
+    Technology.kept.where('quantities ? :key', key: uid)
   end
 
   def all_technologies_names

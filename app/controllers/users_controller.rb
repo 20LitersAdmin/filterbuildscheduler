@@ -38,7 +38,7 @@ class UsersController < ApplicationController
 
   def edit_leader_notes
     respond_to do |format|
-      format.js { render 'edit_leader_notes' }
+      format.js { render 'edit_leader_notes', layout: 'blank' }
     end
   end
 
@@ -58,7 +58,7 @@ class UsersController < ApplicationController
           redirect_to show_user_path @user
         end
         # from `/leaders` updating leader_notes
-        format.js { render 'update' }
+        format.js { render 'update', layout: 'blank' }
       end
     else
       respond_to do |format|

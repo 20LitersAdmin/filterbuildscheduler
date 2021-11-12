@@ -20,13 +20,13 @@
     = csrf_meta_tags
     = stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload'
     = javascript_include_tag 'application', 'data-turbolinks-track': 'reload'
-    = action_cable_meta_tag
+    = action_cable_meta_tag if controller.controller_name == 'inventories' && controller.action_name == 'edit'
     / dataTables Buttons & Responsive CDNs
     %link{ href: 'https://cdn.datatables.net/v/bs/jszip-2.5.0/dt-1.10.16/b-1.4.2/b-colvis-1.4.2/b-html5-1.4.2/b-print-1.4.2/r-2.2.0/datatables.min.css', rel: 'stylesheet', type: 'text/css' }/
     %script{ src: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.32/pdfmake.min.js', type: 'text/javascript' }
     %script{ src: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.32/vfs_fonts.js', type: 'text/javascript' }
     %script{ src: 'https://cdn.datatables.net/v/bs/jszip-2.5.0/dt-1.10.16/b-1.4.2/b-colvis-1.4.2/b-html5-1.4.2/b-print-1.4.2/r-2.2.0/datatables.min.js', type: 'text/javascript' }
-  %body.twentyliters{ 'data-action' => controller.action_name, 'data-controller' => controller.controller_name, 'data-site' => '20liters-make' }
+  %body.twentyliters{ data: { action: controller.action_name, controller: controller.controller_name, site: '20Liters-make' } }
 
     / Google Tag Manager (noscript)
     %noscript
@@ -46,3 +46,4 @@
         = yield
 
     = render partial: 'layouts/footer'
+= yield :channels

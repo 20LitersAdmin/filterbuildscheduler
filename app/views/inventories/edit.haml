@@ -32,7 +32,7 @@
         %button.btn.blue.status-btn{ type: 'button', data: { action: 'counted' } } Counted
       .btn-group.btn-group-sm{ role: 'group' }
         - @techs.each do |t|
-          %button.btn.empty.tech-btn{ type: 'button' , data: { tech: t.id } }= t.short_name
+          %button.btn.empty.tech-btn{ type: 'button', data: { tech: t.id } }= t.short_name
       .btn-group.btn-group-sm
         %input#search{ name: 'search', placeholder: 'Search...', type: 'text' }
       .btn-group.btn-group-sm
@@ -59,3 +59,6 @@
         #calculator_modal_body.modal-body
           .row
             = render partial: 'shared/calculator'
+
+- content_for :channels do
+  = javascript_include_tag 'channels/consumer', 'channels/counts_channel'

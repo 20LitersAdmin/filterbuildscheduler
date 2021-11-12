@@ -43,7 +43,7 @@ class Technology < ApplicationRecord
     uids = quantities.keys.grep(/^C[0-9]{3}/)
     ary = []
     uids.each { |u| ary << u.tr('C', '').to_i }
-    Component.active.where(id: ary)
+    Component.kept.where(id: ary)
   end
 
   def all_parts
@@ -52,7 +52,7 @@ class Technology < ApplicationRecord
     uids = quantities.keys.grep(/^P[0-9]{3}/)
     ary = []
     uids.each { |u| ary << u.tr('P', '').to_i }
-    Part.active.where(id: ary)
+    Part.kept.where(id: ary)
   end
 
   def event_tech_goals_within(num = 0)
@@ -65,7 +65,7 @@ class Technology < ApplicationRecord
     uids = quantities.keys.grep(/^M[0-9]{3}/)
     ary = []
     uids.each { |u| ary << u.tr('M', '').to_i }
-    # NOTE: `.active` is intentionally not included
+    # NOTE: `.kept` is intentionally not included
     Material.where(id: ary)
   end
 

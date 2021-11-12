@@ -23,10 +23,11 @@ class Contactor
   end
 
   def collect_ids
-    self.user_ids = User.leaders
+    self.user_ids = User.kept
+                        .leaders
                         .where(available_business_hours: available_business_hours, available_after_hours: available_after_hours)
                         .joins(:technologies)
-                        .where(technologies: { id: technology_ids } )
+                        .where(technologies: { id: technology_ids })
                         .map(&:id)
                         .uniq
   end

@@ -12,12 +12,12 @@ module ApplicationCable
     protected
 
     def find_verified_user
-      if (verified_user = env['warden'].user)
-        # TODO: only connect to user.can_do_inventory?
-        verified_user
-      else
-        reject_unauthorized_connection
-      end
+      # TESTING: only connect to user.can_do_inventory?
+      verified_user = env['warden'].user
+
+      return verified_user if verified_user.can_do_inventory?
+
+      reject_unauthorized_connection
     end
   end
 end

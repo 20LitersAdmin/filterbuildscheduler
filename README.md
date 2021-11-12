@@ -2,12 +2,13 @@
 ## Slim Down Inventory project
 
 * Itemable things need `.kept` in lots of places
-  - Checked all controllers
   - Check all models
   - Check views
 * `.restore` => `.undiscard`
 * Start searching for # TODO:
 * Run & fix tests
+
+* Itemable: use or remove `weeks_to_out`
 
 * `registration.non_leaders` => `registration.builders`
 * `registration.non_leaders_registered()` => `registration.builders_registered`
