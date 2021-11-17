@@ -102,12 +102,18 @@ class Inventory < ApplicationRecord
   def run_produceable_job
     return unless completed_at.present?
 
-    ProduceableJob.perform_later unless Delayed::Job.where(queue: 'produceable').any?
+    # Delete any jobs that exist, but haven't started, in favor of this new job
+    Delayed::Job.where(queue: 'produceable', locked_at: nil).delete_all
+
+    ProduceableJob.perform_later
   end
 
   def transfer_counts
     return unless completed_at.present?
 
-    CountTransferJob.perform_later(self) unless Delayed::Job.where(queue: 'count_transfer').any?
+    # Delete any jobs that exist, but haven't started, in favor of this new job
+    Delayed::Job.where(queue: 'count_transfer', locked_at: nil).delete_all
+
+    CountTransferJob.perform_later(self)
   end
 end

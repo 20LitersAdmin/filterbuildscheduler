@@ -80,11 +80,6 @@ class Component < ApplicationRecord
     "#{uid}: #{name}"
   end
 
-  def weeks_to_out
-    # TODO: needs to traverse down through subassemblies
-    nil
-  end
-
   private
 
   def dependent_destroy_assemblies

@@ -299,7 +299,6 @@ RailsAdmin.config do |config|
       field :ideal_group_size
     end
 
-    # TODO: Technology.minimum_on_hand, Technology.below_minimum, Technology.can_be_produced
     show do
       group :default do
         field :uid
@@ -354,6 +353,13 @@ RailsAdmin.config do |config|
             !bindings[:object].only_loose?
           end
         end
+        field :can_be_produced, :delimited
+        field :minimum_on_hand, :delimited
+        field :below_minimum, :true_is_bad do
+          visible do
+            bindings[:object].below_minimum
+          end
+        end
       end
 
       group 'Build info' do
@@ -369,7 +375,6 @@ RailsAdmin.config do |config|
       end
     end
 
-    # TODO: Technology.minimum_on_hand, Technology.below_minimum, Technology.can_be_produced
     edit do
       group :default do
         field :uid do
@@ -396,6 +401,14 @@ RailsAdmin.config do |config|
           help 'Calculated total available'
           read_only true
         end
+        field :available_count, :delimited do
+          help 'Calculated total available'
+          read_only true
+        end
+        field :can_be_produced, :delimited do
+          help 'Calculated number that can be made'
+          read_only true
+        end
         field :only_loose do
           help 'Does not come in boxes or specific quantities'
         end
@@ -406,6 +419,9 @@ RailsAdmin.config do |config|
           help 'Current box count'
         end
         field :quantity_per_box
+        field :minimum_on_hand do
+          help 'Minimum inventory level to maintain'
+        end
       end
 
       group 'Build info' do

@@ -60,15 +60,6 @@ class Part < ApplicationRecord
     last_ordered_at.present? && (last_received_at.nil? || last_ordered_at > last_received_at)
   end
 
-  # TODO: replace with Itemable#quantity(item)
-  def per_technology(technology)
-    technology.quantities[uid]
-  end
-
-  def per_technologies
-    technologies.kept.map { |t| t.quantities[uid] }
-  end
-
   def reorder_total_cost
     min_order * price
   end

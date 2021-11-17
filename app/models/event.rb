@@ -42,16 +42,10 @@ class Event < ApplicationRecord
   scope :with_results,    -> { kept.where('technologies_built != 0 OR boxes_packed != 0') }
   scope :within_days,     ->(num) { kept.where('start_time <= ?', Time.now + num.days) }
 
-  # TODO: this should be removed in favor of number_of_builders_attended
-  def builders_attended
-    attendance - number_of_leaders_attended
-  end
-
   def builders_hours
-    builders_attended * length
+    number_of_builders_attended * length
   end
 
-  # TODO: replace non_leaders_registered with this
   def builders_registered
     registrations.kept.builders
   end
@@ -168,11 +162,6 @@ class Event < ApplicationRecord
     errors.add(:max_leaders, 'there are more registered leaders than the event max leaders') if leaders_registered.count > max_leaders
   end
 
-  # TODO: this should be deleted in favor of number_of_leaders_attended
-  # def leaders_attended
-  #   registrations.kept.leaders.attended.size
-  # end
-
   def leaders_have_vs_needed
     "#{registrations.leaders.size} of #{max_leaders}"
   end
@@ -193,13 +182,12 @@ class Event < ApplicationRecord
                  .join(', ')
   end
 
-  # TODO: remove only_deleted
   def leaders_registered
     registrations.kept.leaders
   end
 
   def leaders_hours
-    leaders_attended * length
+    number_of_leaders_attended * length
   end
 
   def length
@@ -210,7 +198,6 @@ class Event < ApplicationRecord
     start_time.strftime('%a, %-m/%-d')
   end
 
-  # TODO: remove only_deleted
   def needs_leaders?
     leaders_registered.count < max_leaders
   end

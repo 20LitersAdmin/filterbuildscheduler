@@ -118,6 +118,10 @@ class User < ApplicationRecord
     # this allows for a form field that handles page redirects based on values: 'admin', 'self'
   end
 
+  def email_domain
+    email[/@\w+/i]
+  end
+
   def email_opt_in
     # KindfulClient wants email_opt_in, not email_opt_out
     !email_opt_out?

@@ -23,9 +23,6 @@ module Itemable
 
     before_save :update_available, if: -> { will_save_change_to_loose_count? || will_save_change_to_box_count? || will_save_change_to_quantity_per_box? }
 
-    # TODO: do this here?
-    # before_destroy :dependent_destroy_assemblies
-
     after_save :check_uid
 
     after_save :recalculate_prices, if: -> { saved_change_to_price_cents? }
@@ -115,7 +112,10 @@ module Itemable
   end
 
   def recalculate_prices
-    PriceCalculationJob.perform_later unless Delayed::Job.where(queue: 'price_calc').any?
+    # Delete any jobs that exist, but haven't started, in favor of this new job
+    Delayed::Job.where(queue: 'price_calc', locked_at: nil).delete_all
+
+    PriceCalculationJob.perform_later
   end
 
   def set_below_minimum
@@ -127,6 +127,9 @@ module Itemable
   end
 
   def run_produceable_job
-    ProduceableJob.perform_later unless Delayed::Job.where(queue: 'produceable').any?
+    # Delete any jobs that exist, but haven't started, in favor of this new job
+    Delayed::Job.where(queue: 'produceable', locked_at: nil).delete_all
+
+    ProduceableJob.perform_later
   end
 end

@@ -2,12 +2,13 @@
 
 class OauthUserPolicy < ApplicationPolicy
   def in?
-    # TODO: users must be oauth_admin to hit this link, but no CRUD for User#is_oauth_admin in RailsAdmin atm.
-    user&.is_oauth_admin?
+    # any logged-in user with a matching email domain can see
+    Constants::Email::INTERNAL_DOMAINS.include?(user&.email_domain)
   end
 
   def index?
-    in?
+    # only User#is_oauth_admin? can see
+    user&.is_oauth_admin?
   end
 
   def callback?
@@ -27,7 +28,8 @@ class OauthUserPolicy < ApplicationPolicy
   end
 
   def manual?
-    in?
+    # only User#is_oauth_admin? can see
+    index?
   end
 
   def update?
