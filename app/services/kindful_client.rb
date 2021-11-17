@@ -316,16 +316,12 @@ class KindfulClient
   def recreate_organizations
     return unless @results.any?
 
-    Organization.destroy_all
+    Organization.delete_all
 
     @results.flatten.each do |result|
       next if result['donor_type'] != 'Organization' && (result['email'].blank? || result['company_name'].blank?)
 
-      org = Organization.find_or_initialize_by(email: result['email'])
-      next unless org.new_record?
-
-      org.company_name = result['company_name']
-      org.save
+      Organization.create(company_name: result['company_name'], email: result['email'])
     end
   end
 
