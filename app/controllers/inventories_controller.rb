@@ -162,8 +162,6 @@ class InventoriesController < ApplicationController
   end
 
   def history
-    # TODO: have "undo" button, maybe just for most recent? Or just for @inventory.event_based?
-
     respond_to do |format|
       format.js do
         @item = params[:uid].presence&.objectify_uid

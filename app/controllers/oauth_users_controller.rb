@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class OauthUsersController < ApplicationController
-  before_action :find_and_authorize_user, only: %i[status manual update]
+  before_action :find_and_authorize_user, only: %i[status show manual update delete]
 
   layout 'blank', only: [:update]
 
@@ -42,6 +42,10 @@ class OauthUsersController < ApplicationController
     @emails = @oauth_user.emails.ordered
   end
 
+  def show
+    redirect_to auth_status_path(@oauth_user)
+  end
+
   def manual
     @emails = @oauth_user.emails.synced.ordered
   end
@@ -74,6 +78,13 @@ class OauthUsersController < ApplicationController
         format.js { render 'update', layout: 'blank' }
       end
     end
+  end
+
+  def delete
+    @oauth_user.destroy
+
+    flash[:notice] = 'Deleted Oauth User and associated emails.'
+    redirect_to auth_index_path
   end
 
   private

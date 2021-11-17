@@ -35,4 +35,8 @@ class OauthUserPolicy < ApplicationPolicy
   def update?
     in?
   end
+
+  def delete?
+    index?
+  end
 end

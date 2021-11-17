@@ -3,16 +3,6 @@
 * Search for .deleted_at, .really_delete
 * Run & fix tests
 
-* OauthUsers is currently excluded in RailsAdmin
-  - Created/Updated by OauthUser#from_omniauth(auth)
-  - Update #sync_emails vai #status to #update
-  - Destroy: impossible ATM
-
-* Emails model is currently excluded in RailsAdmin
-  - Created by GmailClient -> Email.from_gmail()
-  - Destroy stale via EmailSyncJob -> Email.stale.destroy_all
-  - Manual destroy: impossible ATM
-
 ### Nerfed pages:
 * `_*_functions` - how many can be removed?
   - Leaders should be able to get to `/events/lead` without having to visit `rails_admin`
