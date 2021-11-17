@@ -120,7 +120,7 @@ module RailsAdmin
             instances = []
 
             if current_user.is_admin?
-              # assign everything
+              # assign everything except Email Management
               instances = [
                 scheduler_links,
                 leader_links,
@@ -140,6 +140,7 @@ module RailsAdmin
 
               instances << inventory_links if current_user.does_inventory
 
+              # NOTE: admins, leaders, schedulers and data managers
               instances << event_management if current_user.can_edit_events?
             end
 

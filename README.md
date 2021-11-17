@@ -1,16 +1,50 @@
 # README
 ## Slim Down Inventory project
-* Search for .deleted_at, .really_delete
+
 * Run & fix tests
+* New tests:
+  - System: Rails Admin custom actions
+  - System: Combinations functions
+  - System: Event replication (with JS for event dates)
+  - System: Event duplication
+  - System: Inventory counting (with ActionCable)
+  - System: Report pages
+  - System: view donation list
+  - System: Inventory history
+  - System: Inventory paper
+  - System: Oauth in
+  - System: Oauth out
+  - System: Oauth index
+  - System: Oauth failure
+  - System: Oauth update
+  - System: Oauth delete
+  - Jobs:
+    - CountCreate
+    - CountTransfer
+    - EmailSync
+    - EventInventory
+    - PriceCalculation
+    - Produceable
+    - QuantityAndDepthCalculation
+    - RegistrationReminder
+  - Model: Assembly
+  - Concern: Itemable
+  - Mailers:
+    - EventMailer
+    - InventoryMailer
+    - RegistrationMailer
+    - MailerHelper
+  - Services:
+    - GmailClient
+    - LitersTrackerClient
 
-### Nerfed pages:
-* `_*_functions` - how many can be removed?
-  - Leaders should be able to get to `/events/lead` without having to visit `rails_admin`
-  - Scheduler should be able to get to `/leaders` and `/events/lead` without having to visit `rails_admin`
-  - Data Manager should be able to get to `users/communications` VIA `rails_admin`
 
+## After 1st deploy:
+- migrate the dB (which runs the necessary jobs)
+- remove extrap models
+- remove MaterialsPart
 
-### Still to do:
+### Should do:
 - easy-print report for setup crew:
   - every component and their subs w/ current counts
 
@@ -18,7 +52,7 @@
 
 - Inventory "undo" button? Maybe just for most recent? Or just for @inventory.event_based?
 
-### And also!
+### Someday
 1. Ability to pause / cancel registration emails
   - Using a suppress_emails? field?
   - `scope :pre_reminders, -> { where(reminder_sent_at: nil, suppress_reminder_emails: false) }`
@@ -30,10 +64,3 @@
 3. Simple-form client-side validations: https://jarlowrey.com/blog/simple-forms-client-validation-rails-5.html
 - yeah, but for what forms? Inventory? Event creation?
 
-## After 1st deploy:
-- migrate the dB (which runs the necessary jobs)
-- remove extrap models
-- remove MaterialsPart
-
-## Remind myself:
-`orphans = User.builders.left_outer_joins(:registrations).where(registrations: { id: nil })`

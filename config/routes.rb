@@ -80,7 +80,6 @@ Rails.application.routes.draw do
       get 'order_all'
       get 'order'
       get 'paper'
-      get 'status'
     end
     resources :counts
   end

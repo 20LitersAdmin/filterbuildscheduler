@@ -72,7 +72,7 @@ RailsAdmin.config do |config|
   config.current_user_method(&:current_user)
 
   config.authorize_with do |_controller|
-    unless current_user&.admin_or_leader?
+    unless current_user&.admin_or_leader? || current_user&.is_oauth_admin?
       flash[:error] = 'You don\'t have permission to visit the Admin dashboard.'
       redirect_to main_app.root_path
     end

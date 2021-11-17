@@ -57,8 +57,11 @@ class CountsController < ApplicationController
   private
 
   def count_params
-    params.require(:count).permit :components_id, :parts_id, :materials_id,
-                                  :loose_count, :unopened_boxes_count, :deleted_at
+    params.require(:count).permit :components_id,
+                                  :parts_id,
+                                  :materials_id,
+                                  :loose_count,
+                                  :unopened_boxes_count
   end
 
   def set_count

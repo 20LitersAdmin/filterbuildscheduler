@@ -746,7 +746,7 @@ class InventoryMigrationJob < ApplicationJob
       ]
     )
 
-    # TODO: build assemblies for T007: SAM2
+    # Waiting for SAM2 redesign project to finish
     puts 'TODO: build assemblies for T007: SAM2'
   end
 end

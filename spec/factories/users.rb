@@ -30,4 +30,32 @@ FactoryBot.define do
     password { 'password' }
     password_confirmation { 'password' }
   end
+
+  factory :scheduler, class: User do
+    fname { Faker::Name.unique.first_name }
+    lname { Faker::Name.unique.last_name }
+    email { Faker::Internet.email }
+    is_scheduler { true }
+  end
+
+  factory :data_manager, class: User do
+    fname { Faker::Name.unique.first_name }
+    lname { Faker::Name.unique.last_name }
+    email { Faker::Internet.email }
+    is_data_manager { true }
+  end
+
+  factory :oauth_admin, class: User do
+    fname { Faker::Name.unique.first_name }
+    lname { Faker::Name.unique.last_name }
+    email { Faker::Internet.email }
+    is_oauth_admin { true }
+  end
+
+  factory :inventoryist, class: User do
+    fname { Faker::Name.unique.first_name }
+    lname { Faker::Name.unique.last_name }
+    email { Faker::Internet.email }
+    does_inventory { true }
+  end
 end
