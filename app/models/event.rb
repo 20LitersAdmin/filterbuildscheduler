@@ -57,7 +57,7 @@ class Event < ApplicationRecord
   end
 
   def builders_have_vs_total
-    "#{number_of_builders_and_guests_registered} of #{max_registrations}"
+    "#{total_registered} of #{max_registrations}"
   end
 
   def complete?
@@ -169,9 +169,9 @@ class Event < ApplicationRecord
   end
 
   # TODO: this should be deleted in favor of number_of_leaders_attended
-  def leaders_attended
-    registrations.kept.leaders.attended.size
-  end
+  # def leaders_attended
+  #   registrations.kept.leaders.attended.size
+  # end
 
   def leaders_have_vs_needed
     "#{registrations.leaders.size} of #{max_leaders}"

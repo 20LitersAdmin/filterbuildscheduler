@@ -51,8 +51,8 @@ Rails.application.routes.draw do
       get 'poster'
       get 'replicate'
       put 'replicator'
-      # TODO: I think this is unnecessary
-      # get 'replicate_occurrences'
+      # uses JS to show occurrences on /replicator
+      get 'replicate_occurrences'
     end
     resources :registrations do
       collection do

@@ -1,0 +1,13 @@
+-# frozen_string_literal: true
+
+.container.events-replicate
+  .page-header
+    %h1.center-align
+      = @event.title
+    - if @event.is_private
+      %h4.center-align Private Event
+    %h4.center-align
+      = @event.format_time_range
+  .row
+    %h2 Replicate this event:
+    = render partial: 'replicate_form'

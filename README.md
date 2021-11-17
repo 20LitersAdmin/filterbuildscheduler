@@ -1,6 +1,7 @@
 # README
 ## Slim Down Inventory project
 * Start searching for # TODO:
+* Search for .deleted_at, .really_delete
 * Run & fix tests
 
 * Itemable: use or remove `weeks_to_out`
