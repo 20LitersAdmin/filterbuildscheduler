@@ -17,6 +17,61 @@ class EventsController < ApplicationController
                   update
                 ]
 
+  def attendance
+    @registrations = @event.registrations.active.builders.ordered_by_user_lname
+
+    @print_blanks = @event.max_registrations - @event.total_registered + 5
+    @print_navbar = true
+
+    @discarded_registrations = @event.registrations.discarded.builders.ordered_by_user_lname
+  end
+
+  def create
+    authorize @event = Event.new(event_params)
+    if @event.save
+      flash[:success] = 'The event has been created.'
+      EventMailer.delay.created(@event, current_user)
+      redirect_to action: :index
+    else
+      @locations = Location.active.order(:name)
+      @technologies = Technology.list_worthy.order(:id).map { |t| ["#{t.name} (#{t.short_name})", t.id] }
+      render 'new'
+    end
+  end
+
+  def destroy
+    admins_notified = nil
+    users_notified = nil
+
+    # send emails to registrations and leaders before cancelling
+    if @event.start_time > Time.now
+      EventMailer.delay.cancelled(@event, current_user)
+      admins_notified = 'Admins notified.'
+
+      if @event.registrations.exists?
+        @event.registrations.each do |registration|
+          RegistrationMailer.delay.event_cancelled(registration, event)
+          registration.discard
+        end
+        users_notified = 'All registered builders notified.'
+      end
+    end
+
+    if @event.discard
+      flash[:success] = "Event cancelled. #{admins_notified} #{users_notified}"
+      redirect_to root_path
+    else
+      flash[:warning] = @event.errors.first.join(': ')
+      redirect_to edit_event_path(@event)
+    end
+  end
+
+  def edit
+    @show_report = current_user&.admin_or_leader? && @event.start_time < Time.now
+
+    @too_old = (Date.today - @event.end_time.to_date).round > 14
+  end
+
   def index
     our_events = policy_scope(Event)
     @events = our_events.future
@@ -28,6 +83,112 @@ class EventsController < ApplicationController
       @stats = liters_tracker.stat_ary
     rescue NoMethodError
       @stats = []
+    end
+  end
+
+  def lead
+    @user = current_user
+    @events = Event.needs_leaders
+
+    authorize Event
+  end
+
+  def leaders
+    @leaders = User.leaders
+    @already_registered_leaders = User.find(@event.registrations.active.leaders.pluck(:user_id))
+    @remaining_leaders = @leaders - @already_registered_leaders
+  end
+
+  def leader_unregister
+    @registration = @event.registrations.active.leaders.where(user_id: params[:user_id]).first
+
+    if @registration.blank?
+      flash[:error] = 'Oops, something went wrong.'
+    else
+      # actually delete, not discard
+      @registration.delete
+      flash[:success] = "#{@registration.user.name} was unregistered."
+    end
+
+    redirect_to leaders_event_path(@event)
+  end
+
+  def leader_register
+    @registration = @event.registrations.where(user_id: params[:user_id]).first_or_initialize
+
+    @registration.leader = true
+    @registration.undiscard if @registration.discarded?
+    @registration.save
+    RegistrationMailer.created(@registration).deliver_now
+
+    flash[:success] = "Registered #{@registration.user.name}."
+    redirect_to leaders_event_path(@event)
+  end
+
+  def new
+    @locations = Location.active.order(:name)
+    @technologies = Technology.list_worthy.order(:id).map { |t| ["#{t.name} (#{t.short_name})", t.id] }
+
+    if params[:source_event].blank?
+      @indicator = 'new'
+      authorize @event = Event.new
+    else
+      @indicator = 'duplicate'
+      authorize @event = Event.find(params[:source_event]).dup
+    end
+  end
+
+  def poster
+    @technology = @event.technology
+    @tech_img = @technology.display_image
+    @location = @event.location
+    @location_img = @location.image
+
+    @tech_blurb = @technology.public_description
+
+    @child_statement_email =
+      if @technology.family_friendly
+        'children as young as 4 can participate'
+      else
+        'this event is best for ages 12 and up'
+      end
+
+    @print_navbar = true
+  end
+
+  def replicate
+    @replicator = Replicator.new
+  end
+
+  # AJAX from #replicate view, shows recurring dates as a list on the page
+  def replicate_occurrences
+    return render(json: 'missing param', status: :unprocessable_entity) if params[:f].blank? || params[:s].blank? || params[:e].blank? || params[:o].blank?
+
+    replicator = Replicator.new
+
+    replicator.tap do |r|
+      r.event_id = Integer(params[:id])
+      r.start_time = Time.parse(params[:s])
+      r.end_time = Time.parse(params[:e])
+      r.frequency = params[:f]
+      r.occurrences = Integer(params[:o])
+    end
+
+    render json: replicator.date_array
+  end
+
+  def replicator
+    @replicator = Replicator.new(replicator_params)
+
+    @replicator.event_id = @event.id
+    @replicator.user = current_user
+
+    if @replicator.go!
+      flash[:success] = 'Event was successfully replicated!'
+      redirect_to root_path
+    else
+      flash[:error] = @replicator.errors.full_messages.to_sentence
+      render :replicate
     end
   end
 
@@ -49,38 +210,6 @@ class EventsController < ApplicationController
     @leaders = @event.registrations.leaders
 
     @user = current_user || User.new
-  end
-
-  def new
-    @locations = Location.active.order(:name)
-    @technologies = Technology.list_worthy.order(:id).map { |t| ["#{t.name} (#{t.short_name})", t.id] }
-
-    if params[:source_event].blank?
-      @indicator = 'new'
-      authorize @event = Event.new
-    else
-      @indicator = 'duplicate'
-      authorize @event = Event.find(params[:source_event]).dup
-    end
-  end
-
-  def create
-    authorize @event = Event.new(event_params)
-    if @event.save
-      flash[:success] = 'The event has been created.'
-      EventMailer.delay.created(@event, current_user)
-      redirect_to action: :index
-    else
-      @locations = Location.active.order(:name)
-      @technologies = Technology.list_worthy.order(:id).map { |t| ["#{t.name} (#{t.short_name})", t.id] }
-      render 'new'
-    end
-  end
-
-  def edit
-    @show_report = current_user&.admin_or_leader? && @event.start_time < Time.now
-
-    @too_old = (Date.today - @event.end_time.to_date).round > 14
   end
 
   def update
@@ -138,138 +267,6 @@ class EventsController < ApplicationController
       @show_advanced = true
       render 'edit'
     end
-  end
-
-  def destroy
-    admins_notified = nil
-    users_notified = nil
-
-    # send emails to registrations and leaders before cancelling
-    if @event.start_time > Time.now
-      EventMailer.delay.cancelled(@event, current_user)
-      admins_notified = 'Admins notified.'
-
-      if @event.registrations.exists?
-        @event.registrations.each do |registration|
-          RegistrationMailer.delay.event_cancelled(registration, event)
-          registration.discard
-        end
-        users_notified = 'All registered builders notified.'
-      end
-
-    end
-
-    if @event.discard
-      flash[:success] = "Event cancelled. #{admins_notified} #{users_notified}"
-      redirect_to root_path
-    else
-      flash[:warning] = @event.errors.first.join(': ')
-      redirect_to edit_event_path(@event)
-    end
-  end
-
-  def lead
-    @user = current_user
-    @events = Event.needs_leaders
-
-    authorize Event
-  end
-
-  def leaders
-    @leaders = User.leaders
-    @already_registered_leaders = User.find(@event.registrations.active.leaders.pluck(:user_id))
-    @remaining_leaders = @leaders - @already_registered_leaders
-  end
-
-  def leader_unregister
-    @registration = @event.registrations.active.leaders.where(user_id: params[:user_id]).first
-
-    if @registration.blank?
-      flash[:error] = 'Oops, something went wrong.'
-    else
-      # actually delete, not discard
-      @registration.delete
-      flash[:success] = "#{@registration.user.name} was unregistered."
-    end
-
-    redirect_to leaders_event_path(@event)
-  end
-
-  def leader_register
-    @registration = @event.registrations.where(user_id: params[:user_id]).first_or_initialize
-
-    @registration.leader = true
-    @registration.undiscard if @registration.discarded?
-    @registration.save
-    RegistrationMailer.created(@registration).deliver_now
-
-    flash[:success] = "Registered #{@registration.user.name}."
-    redirect_to leaders_event_path(@event)
-  end
-
-  def replicate
-    @replicator = Replicator.new
-  end
-
-  # TODO: This seems to be unused
-  # def replicate_occurrences
-  #   return if params[:f].blank? || params[:s].blank? || params[:e].blank?
-
-  #   replicator = Replicator.new
-
-  #   replicator.tap do |r|
-  #     r.event_id = Integer(params[:id])
-  #     r.start_time = Time.parse(params[:s])
-  #     r.end_time = Time.parse(params[:e])
-  #     r.frequency = params[:f]
-  #     r.occurrences = params[:o].blank? ? 1 : Integer(params[:o])
-  #   end
-
-  #   render json: replicator.date_array
-  # end
-
-  def replicator
-    replicator = Replicator.new(replicator_params)
-
-    replicator.event_id = @event.id
-    replicator.initiator = current_user
-
-    if replicator.go!
-      flash[:success] = 'Event was successfully replicated!'
-      redirect_to root_path
-    else
-      flash[:warning] = replicator.errors.messages
-      # @event = Event.find(params[:id])
-      @replicator = Replicator.new
-      render :replicate
-    end
-  end
-
-  def attendance
-    @registrations = @event.registrations.active.builders.ordered_by_user_lname
-
-    @print_blanks = @event.max_registrations - @event.total_registered + 5
-    @print_navbar = true
-
-    @discarded_registrations = @event.registrations.discarded.builders.ordered_by_user_lname
-  end
-
-  def poster
-    @technology = @event.technology
-    @tech_img = @technology.display_image
-    @location = @event.location
-    @location_img = @location.image
-
-    @tech_blurb = @technology.public_description
-
-    @child_statement_email =
-      if @technology.family_friendly
-        'children as young as 4 can participate'
-      else
-        'this event is best for ages 12 and up'
-      end
-
-    @print_navbar = true
   end
 
   private

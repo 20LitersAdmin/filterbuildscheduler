@@ -32,6 +32,7 @@ $(document).on('turbolinks:load', function() {
     $("ol#occurrences").empty();
   };
 
+  // hits EventsController#replicate_occurrences to retrieve a JSON array of dates
   function showOccurrences(){
     var id = $('#event_id')
     var startTime = $('#replicator_start_time').val();
@@ -94,8 +95,8 @@ $(document).on('turbolinks:load', function() {
     event.preventDefault();
   });
 
-  if (actionMatches(['replicate'])) {
-    $(document).on("change", ":input", "form#new_replicator",function(){
+  if (actionMatches(['replicate', 'replicator'])) {
+    $(document).on("change keyup click", ":input", "form#new_replicator",function(){
       clearOccurrences();
       showOccurrences();
     });

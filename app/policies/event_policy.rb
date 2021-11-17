@@ -53,6 +53,14 @@ class EventPolicy < ApplicationPolicy
     show?
   end
 
+  def replicate?
+    create?
+  end
+
+  def replicator?
+    create?
+  end
+
   def show?
     if event.in_the_past?
       if user&.can_edit_events? ||
