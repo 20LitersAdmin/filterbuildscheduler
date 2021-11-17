@@ -1,51 +1,34 @@
 # frozen_string_literal: true
 
 module CleanupCrew
-  # TODO: 2nd deploy: remove .with_deleted
   def clean_up!
-    Registration.with_deleted.each do |r|
-      r.really_destroy!
-    end
+    # use .destroy_all to fire all callbacks, including deleting ActiveStorage::Attachments via dependent: :purge
 
-    User.with_deleted.each do |u|
-      u.really_destroy!
-    end
+    # Should destroy all Registrations via dependent: :destroy
+    Event.destroy_all
+    #   Should destroy all TechnologiesUser via HABTM
+    User.destroy_all
 
-    Event.with_deleted.each do |e|
-      e.really_destroy!
-    end
+    # Event requires a location, Events must be destroyed first
+    Location.destroy_all
 
-    Location.with_deleted.each do |l|
-      l.really_destroy!
-    end
+    # Should destroy all Counts via dependent: :destroy
+    Inventory.destroy_all
 
-    Technology.with_deleted.each do |t|
-      t.really_destroy!
-    end
+    # Should destroy all Assemblies via dependent: :destroy
+    Component.destroy_all
+    Part.destroy_all
+    Material.destroy_all
+    #   Should destroy all TechnologiesUser via HABTM
+    Technology.destroy_all
 
-    Count.with_deleted.each do |c|
-      c.really_destroy!
-    end
+    # Should destroy all Emails via dependent: :destroy
+    OauthUser.destroy_all
 
-    Inventory.with_deleted.each do |i|
-      i.really_destroy!
-    end
-
-    Component.with_deleted.each do |c|
-      c.really_destroy!
-    end
-
-    Part.with_deleted.each do |part|
-      part.really_destroy!
-    end
-
-    Material.with_deleted.each do |m|
-      m.really_destroy!
-    end
-
-    Supplier.with_deleted.each do |s|
-      s.really_destroy!
-    end
+    # use .delete_all because there are no dependencies
+    Supplier.delete_all
+    Organization.delete_all
+    Delayed::Job.delete_all
 
     ActiveRecord::Base.connection.tables.each do |t|
       ActiveRecord::Base.connection.reset_pk_sequence!(t)

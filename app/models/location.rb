@@ -3,6 +3,8 @@
 class Location < ApplicationRecord
   include Discard::Model
 
+  has_many :events
+  has_many :users, class_name: 'User', foreign_key: 'primary_location_id'
   has_one_attached :image, dependent: :purge
   attr_accessor :remove_image
 
