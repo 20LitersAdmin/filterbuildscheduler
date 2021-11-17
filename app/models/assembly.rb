@@ -97,12 +97,11 @@ class Assembly < ApplicationRecord
   end
 
   def update_items_via_jobs
-    # TODO: Current: Run unless one exists
-    # Better: If one exists, destroy it, then schedule a new one
-    QuantityAndDepthCalculationJob.perform_later unless Delayed::Job.where(queue: 'quantity_calc').any?
+    # Delete any jobs that exist, but haven't started, in favor of this new job
+    Delayed::Job.where(queue: %w[quantity_calc price_calc produceable], locked_at: nil).delete_all
 
-    PriceCalculationJob.perform_later unless Delayed::Job.where(queue: 'price_calc').any?
-
-    ProduceableJob.perform_later unless Delayed::Job.where(queue: 'produceable').any?
+    QuantityAndDepthCalculationJob.perform_later
+    PriceCalculationJob.perform_later
+    ProduceableJob.perform_later
   end
 end

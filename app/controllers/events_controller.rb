@@ -306,7 +306,6 @@ class EventsController < ApplicationController
   end
 
   def set_event
-    # TODO: this could be bad if navigating from one event directly to another event?
     authorize @event = Event.find(params[:id])
   end
 end

@@ -161,10 +161,10 @@ RSpec.describe Event, type: :model do
     end
   end
 
-  describe "#non_leaders_registered" do
+  describe "#builders_registered" do
     let(:user4) { create :user }
     it "gives 0 when there are no registrations" do
-      expect(event.non_leaders_registered.count).to eq 0
+      expect(event.builders_registered.count).to eq 0
     end
 
     it "counts the number of registrations that aren't leaders" do
@@ -177,15 +177,8 @@ RSpec.describe Event, type: :model do
       event.registrations << reg8
       event.registrations << reg9
 
-      expect(event.non_leaders_registered.count).to eq 2
+      expect(event.builders_registered.count).to eq 2
       expect(event.total_registered_w_leaders).to eq 8
-    end
-
-    it "takes a scope to handle only_deleted records" do
-      expect(event.non_leaders_registered("only_deleted").count).to eq(0)
-
-      Registration.create(user: user4, event: event, guests_registered: 6, deleted_at: Time.now)
-      expect(event.non_leaders_registered("only_deleted").count).to eq(1)
     end
   end
 
@@ -205,13 +198,6 @@ RSpec.describe Event, type: :model do
       reg_leader2.save
       expect(event.leaders_registered.count).to eq(2)
     end
-
-    it "takes a scope to handle only_deleted records" do
-      expect(event.leaders_registered("only_deleted").count).to eq(0)
-
-      Registration.create(user: user5, event: event, leader: true, deleted_at: Time.now)
-      expect(event.leaders_registered("only_deleted").count).to eq(1)
-    end
   end
 
   describe "#registrations_filled?" do
@@ -225,14 +211,6 @@ RSpec.describe Event, type: :model do
       event.registrations << reg1
       expect(event.registrations_filled?).to be_falsey
     end
-
-    it "takes a scope to handle only_deleted records" do
-      event.registrations << reg_del1
-      expect(event.registrations_filled?("only_deleted")).to be_falsey
-
-      event.registrations << reg_del2
-      expect(event.registrations_filled?("only_deleted")).to eq true
-    end
   end
 
   describe "#registrations_remaining" do
@@ -242,14 +220,6 @@ RSpec.describe Event, type: :model do
       expect(event.registrations_remaining).to eq(5)
       event.registrations << reg2
       expect(event.registrations_remaining).to eq(0)
-    end
-
-    it "takes a scope to handle only_deleted records" do
-      expect(event.registrations_remaining("only_deleted")).to eq(25)
-      event.registrations << reg_del1
-      expect(event.registrations_remaining("only_deleted")).to eq(5)
-      event.registrations << reg_del2
-      expect(event.registrations_remaining("only_deleted")).to eq(0)
     end
   end
 
@@ -262,16 +232,6 @@ RSpec.describe Event, type: :model do
       expect(event.does_not_need_leaders?).to eq true
       event.registrations << reg_leader3
       expect(event.does_not_need_leaders?).to eq true
-    end
-
-    it "takes a scope to handle only_deleted records" do
-      expect(event.does_not_need_leaders?("only_deleted")).to be_falsey
-      event.registrations << reg_leader_del1
-      expect(event.does_not_need_leaders?("only_deleted")).to be_falsey
-      event.registrations << reg_leader_del2
-      expect(event.does_not_need_leaders?("only_deleted")).to eq true
-      event.registrations << reg_leader_del3
-      expect(event.does_not_need_leaders?("only_deleted")).to eq true
     end
   end
 
@@ -287,16 +247,6 @@ RSpec.describe Event, type: :model do
       event2.registrations << reg_leader3
       expect(event2.really_needs_leaders?).to be_falsey
     end
-
-    it "takes a scope to handle only_deleted records" do
-      expect(event2.really_needs_leaders?("only_deleted")).to eq true
-      event2.registrations << reg_leader_del1
-      expect(event2.really_needs_leaders?("only_deleted")).to eq true
-      event2.registrations << reg_leader_del2
-      expect(event2.really_needs_leaders?("only_deleted")).to be_falsey
-      event2.registrations << reg_leader_del3
-      expect(event2.really_needs_leaders?("only_deleted")).to be_falsey
-    end
   end
 
   describe "#needs_leaders?" do
@@ -310,16 +260,6 @@ RSpec.describe Event, type: :model do
       expect(event2.needs_leaders?).to eq true
       event2.registrations << reg_leader3
       expect(event2.needs_leaders?).to be_falsey
-    end
-
-    it "takes a scope to handle only_deleted records" do
-      expect(event2.needs_leaders?("only_deleted")).to eq true
-      event2.registrations << reg_leader_del1
-      expect(event2.needs_leaders?("only_deleted")).to eq true
-      event2.registrations << reg_leader_del2
-      expect(event2.needs_leaders?("only_deleted")).to eq true
-      event2.registrations << reg_leader_del3
-      expect(event2.needs_leaders?("only_deleted")).to be_falsey
     end
   end
 
@@ -346,13 +286,6 @@ RSpec.describe Event, type: :model do
       event.registrations << reg3
       expect(event.you_are_attendee(user1)).to eq " (including you)"
     end
-
-    it "takes a scope to handle only_deleted records" do
-      expect(event.you_are_attendee(user1, "only_deleted")).to be_falsey
-
-      event.registrations << reg_del
-      expect(event.you_are_attendee(user1, "only_deleted")).to eq " (including you)"
-    end
   end
 
   describe "#you_are_leader" do
@@ -370,14 +303,6 @@ RSpec.describe Event, type: :model do
 
       event.registrations << reg4
       expect(event.you_are_leader(leader)).to eq " (including you)"
-    end
-
-    it "takes a scope to handle only_deleted records" do
-      event.registrations << reg_del3
-      expect(event.you_are_leader(user1, "only_deleted")).to be_falsey
-
-      event.registrations << reg_del4
-      expect(event.you_are_leader(leader, "only_deleted")).to eq " (including you)"
     end
   end
 

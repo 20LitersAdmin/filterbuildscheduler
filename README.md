@@ -1,13 +1,7 @@
 # README
 ## Slim Down Inventory project
-* Start searching for # TODO:
 * Search for .deleted_at, .really_delete
 * Run & fix tests
-
-* Itemable: use or remove `weeks_to_out`
-
-* `registration.non_leaders` => `registration.builders`
-* `registration.non_leaders_registered()` => `registration.builders_registered`
 
 * OauthUsers is currently excluded in RailsAdmin
   - Created/Updated by OauthUser#from_omniauth(auth)
@@ -30,11 +24,9 @@
 - easy-print report for setup crew:
   - every component and their subs w/ current counts
 
-- Weeks_to_out
-  - `Component#weeks_to_out` should traverse downward
-    - Or YAGNI weeks_to_out all together
-
 - is Oauth Email syncing causing the R14 Memory Quota Exceeded issue?
+
+- Inventory "undo" button? Maybe just for most recent? Or just for @inventory.event_based?
 
 ### And also!
 1. Ability to pause / cancel registration emails

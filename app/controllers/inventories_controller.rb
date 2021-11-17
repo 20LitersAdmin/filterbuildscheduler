@@ -163,7 +163,6 @@ class InventoriesController < ApplicationController
 
   def history
     # TODO: have "undo" button, maybe just for most recent? Or just for @inventory.event_based?
-    # Does "undo" call @inventory.destroy, using #destroy action?
 
     respond_to do |format|
       format.js do

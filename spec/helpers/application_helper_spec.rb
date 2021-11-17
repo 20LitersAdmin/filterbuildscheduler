@@ -3,7 +3,6 @@
 require 'rails_helper'
 
 RSpec.describe ApplicationHelper, type: :helper do
-  # TODO: write all tests
   describe 'date_for_form' do
     context 'when date is not present' do
       it 'returns today\'s date in iso8601' do

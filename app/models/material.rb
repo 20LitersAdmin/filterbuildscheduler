@@ -34,14 +34,6 @@ class Material < ApplicationRecord
     technologies.kept.map(&:owner_acronym)
   end
 
-  def per_technology(technology)
-    technology.quantities[uid]
-  end
-
-  def per_technologies
-    technologies.kept.map { |t| t.quantities[uid] }
-  end
-
   def reorder?
     available_count < minimum_on_hand
   end
