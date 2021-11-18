@@ -14,13 +14,13 @@ class Assembly < ApplicationRecord
   belongs_to :combination, polymorphic: true
   belongs_to :item, polymorphic: true
 
+  validates_numericality_of :quantity, greater_than: 0
+
+  monetize :price_cents, numericality: { greater_than_or_equal_to: 0 }
+
   before_save :calculate_price
   after_save :update_items_via_jobs
   after_destroy :update_items_via_jobs
-
-  validates_numericality_of :quantity, greater_than: 0
-
-  monetize :price_cents, allow_nil: true, numericality: { greater_than_or_equal_to: 0 }
 
   # ascending ensures that the "highest" nodes of the tree appear first
   scope :ascending, -> { order(:depth, :item_type, :item_id) }
@@ -41,7 +41,7 @@ class Assembly < ApplicationRecord
   end
 
   def has_sub_items?
-    return item.made_from_materials? if item_type == 'Part'
+    return item.made_from_material? if item_type == 'Part'
 
     Assembly.where(combination: item).any?
   end
@@ -83,7 +83,7 @@ class Assembly < ApplicationRecord
   def super_assemblies
     return Assembly.none if combination_type == 'Technology'
 
-    Assembly.where(item_id: combination_id, item_type: combination_type)
+    Assembly.where(item: combination)
   end
 
   def types

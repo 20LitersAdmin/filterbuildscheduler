@@ -22,6 +22,8 @@ class Part < ApplicationRecord
   attr_accessor :remove_image
 
   validates_presence_of :name
+  # When #made_from_material? #quantity_from_material must be set
+  validates :quantity_from_material, presence: true, if: :made_from_material
 
   # rails_admin scope "active" sounds better than "kept"
   scope :active, -> { kept }
@@ -38,7 +40,7 @@ class Part < ApplicationRecord
   # scope :with_attached_image, -> { joins(:image_attachment) }
   scope :without_attached_image, -> { where.missing(:image_attachment) }
 
-  before_save :set_made_from_material
+  before_validation :set_made_from_material
   before_save :process_image, if: -> { attachment_changes.any? }
   after_save { image.purge if remove_image == '1' }
 
@@ -117,7 +119,7 @@ class Part < ApplicationRecord
   def set_made_from_material
     self.made_from_material = material.present?
 
-    # PriceCalculationJob will skip this part because of a divide by zero error if it is zero
-    self.quantity_from_material = 1.0 if quantity_from_material.zero?
+
+    self.quantity_from_material = 1.0 if quantity_from_material&.zero?
   end
 end
