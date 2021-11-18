@@ -26,40 +26,7 @@ RSpec.describe Part, type: :model do
     it 'prices can\'t be negative' do
       expect(negative_price.save).to be_falsey
     end
-
-    describe '#per_technology' do
-      let(:part1) { create :part }
-      let(:technology1) { create :technology }
-      let(:tech_part1) { create :tech_part, part: part1, technology: technology1, parts_per_technology: 5 }
-
-      let(:part2) { create :part }
-      let(:component2) { create :component }
-      let(:comp_part2) { create :comp_part, part: part2, component: component2, parts_per_component: 2 }
-
-      let(:technology2) { create :technology }
-      let(:tech_comp2) { create :tech_comp, component: component2, technology: technology2, components_per_technology: 2 }
-
-      it 'returns 0 if there\'s no extrapolate records to use' do
-        expect(part.per_technology).to eq 0
-      end
-
-      it 'uses parts_per_technology if it exists' do
-        part1
-        technology1
-        tech_part1
-
-        expect(part1.per_technology).to eq 5.0
-      end
-
-      it 'uses parts_per_component, then components_per_technology if it needs to' do
-        part2
-        component2
-        comp_part2
-        technology2
-        tech_comp2
-
-        expect(part2.per_technology).to eq 4.0
-      end
-    end
   end
+
+
 end

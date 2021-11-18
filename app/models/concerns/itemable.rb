@@ -25,7 +25,7 @@ module Itemable
 
     after_save :check_uid
 
-    after_save :recalculate_prices, if: -> { saved_change_to_price_cents? }
+    after_save :run_price_calculation_job, if: -> { saved_change_to_price_cents? }
 
     after_update :run_produceable_job, if: -> { saved_change_to_loose_count? || saved_change_to_box_count? || saved_change_to_quantity_per_box? }
   end
@@ -111,7 +111,7 @@ module Itemable
     update_columns(uid: "#{self.class.to_s[0]}#{id.to_s.rjust(3, '0')}") if uid.blank? || id != uid[1..].to_i
   end
 
-  def recalculate_prices
+  def run_price_calculation_job
     # Delete any jobs that exist, but haven't started, in favor of this new job
     Delayed::Job.where(queue: 'price_calc', locked_at: nil).delete_all
 
