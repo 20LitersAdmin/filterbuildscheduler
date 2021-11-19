@@ -34,6 +34,7 @@ class GmailClient
             next
           end
 
+          # trim_response sets @body_data as a string
           resp = trim_response response
           Email.from_gmail(resp, @body_data, @user)
         end
@@ -45,7 +46,7 @@ class GmailClient
     paged_response = list_queried_messages(query: query)
 
     # TESTING: This is a likely source of the Heroku R14 memory leak
-    puts "batch_get_queried_messages: response size: #{paged_response.size}"
+    puts "batch_get_queried_messages: response size: #{paged_response.as_json.size}"
 
     ids = []
     paged_response.each do |message|

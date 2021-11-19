@@ -8,7 +8,11 @@ module Constants
 
   module Email
     INTERNAL_DOMAINS = %w[@20liters @twentyliters @20litres @twentylitres].freeze
+
+    # implementation of URI::MailTo::EMAIL_REGEXP, except the requirements for start of string and end of string matching.
+    REGEX = %r/[a-zA-Z0-9.!\#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*/
     public_constant :INTERNAL_DOMAINS
+    public_constant :REGEX
   end
 
   module UID
