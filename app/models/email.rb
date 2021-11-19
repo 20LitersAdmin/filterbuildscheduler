@@ -7,7 +7,7 @@ class Email < ApplicationRecord
   validates :from, :to, presence: true
   validate :deny_internal_messages
 
-  after_create :send_to_kindful
+  after_create :send_to_kindful, unless: -> { Rails.env.test? }
 
   scope :ordered, -> { order(datetime: :desc) }
   scope :stale, -> { where('datetime < ?', Time.now - 14.days) }
@@ -15,10 +15,22 @@ class Email < ApplicationRecord
 
   def self.from_gmail(response, body_data, oauth_user)
     # TODO: trim body_data if too large?
-    # migt be causing Heroku R14 memory overflow issue
+    # might be causing Heroku R14 memory overflow issue
 
-    message_id = cleanup_text response.payload.headers.select { |header| header.name.downcase == 'message-id' }.first&.value
+    message_id = cleanup_text response.payload
+                                      .headers
+                                      .select { |header| header.name.downcase == 'message-id' }
+                                      .first&.value
 
+    from_emails = email_address_from_text response.payload
+                                                  .headers
+                                                  .select { |header| header.name.downcase == 'from' }
+                                                  .first&.value
+
+    to_emails = email_address_from_text response.payload
+                                                .headers
+                                                .select { |header| header.name.downcase == 'to' }
+                                                .first&.value
     return if message_id.nil?
 
     email = where(message_id: message_id).first_or_initialize
@@ -29,11 +41,19 @@ class Email < ApplicationRecord
       e.oauth_user = oauth_user
       e.gmail_id   = response.id
       e.snippet    = response.snippet.squish
-      e.from       = email_address_from_text response.payload.headers.select { |header| header.name.downcase == 'from' }.first&.value
-      e.to         = email_address_from_text response.payload.headers.select { |header| header.name.downcase == 'to' }.first&.value
-      e.subject    = cleanup_text response.payload.headers.select { |header| header.name.downcase == 'subject' }.first&.value
-      e.datetime   = Time.parse(response.payload.headers.select { |header| header.name.downcase == 'date' }.first&.value)
+      e.from       = from_emails
+      e.to         = to_emails
+      e.subject    = cleanup_text response.payload
+                                          .headers
+                                          .select { |header| header.name.downcase == 'subject' }
+                                          .first&.value
       e.body       = body_data
+      e.datetime   = Time.parse(
+        response.payload
+          .headers
+          .select { |header| header.name.downcase == 'date' }
+          .first&.value
+      )
     end
 
     email.save
@@ -57,11 +77,12 @@ class Email < ApplicationRecord
           kf.import_user_w_email_note(email_address, self, direction)
         end
 
-      next if response['status'] == 'error'
+      next if response.nil? || response['status'] == 'error'
 
       temp_matched_emails << email_address
       temp_job_ids << response['id']
     end
+
     update_columns(sent_to_kindful_on: Time.now, matched_emails: temp_matched_emails, kindful_job_id: temp_job_ids) if temp_matched_emails.any?
 
     reload
@@ -76,7 +97,7 @@ class Email < ApplicationRecord
   def self.email_address_from_text(text)
     return if text.nil?
 
-    text.scan(/[a-zA-Z0-9.!\#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*/)
+    text.scan(Constants::Email::REGEX)
   end
 
   def sync_msg
@@ -86,9 +107,7 @@ class Email < ApplicationRecord
   end
 
   def sync_banner_color
-    return 'success' if sent_to_kindful_on.present?
-
-    'warning'
+    sent_to_kindful_on.present? ? 'success' : 'warning'
   end
 
   def synced?
@@ -100,23 +119,26 @@ class Email < ApplicationRecord
   end
 
   def deny_internal_messages
-    errors.add(:from, 'blank!') if from.blank?
-    errors.add(:to, 'blank!') if to.blank?
-
-    return if from.blank? || to.blank?
+    return false if from.blank? || to.blank?
 
     domains = Constants::Email::INTERNAL_DOMAINS
-
     address_domains = []
+
+    # Email Regex for domain was:
+    # /@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])/
+    # which I think came from me pulling URI::MailTo::EMAIL_REGEXP apart to find just the domain portion?
+    # Now it's just a simple "everything after @ until a period"
     (from + to).uniq.each do |address|
-      address_domains << address.scan(/@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])/)
+      address_domains << address.scan(/@[^.]+/)
     end
 
     external_domains = address_domains.flatten.reject { |addr| domains.include? addr }
 
-    return if external_domains.any?
+    return true if external_domains.any?
 
     errors.add(:from, 'Internal Emails only!')
+
+    false
   end
 
   def target_emails

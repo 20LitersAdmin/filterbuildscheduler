@@ -8,6 +8,7 @@ class KindfulClient
     @query_token = ''
     @results = []
     # you can test in the sandbox by first setting @env to anything other than 'production'
+
     @env = env
 
     # easy way to change which campaign and fund are linked for body methods
