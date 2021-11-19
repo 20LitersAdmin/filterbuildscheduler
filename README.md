@@ -27,7 +27,6 @@
     - Produceable
     - QuantityAndDepthCalculation
     - RegistrationReminder
-  - Model: Assembly
   - Concern: Itemable
   - Mailers:
     - EventMailer

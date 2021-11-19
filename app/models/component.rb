@@ -54,7 +54,7 @@ class Component < ApplicationRecord
   # NOTE: will only find 1st-level parents, not all ancestors
   def super_components
     Component.kept.find_by_sql(
-      "SELECT * FROM components
+      "SELECT components.* FROM components
       INNER JOIN assemblies
       ON assemblies.combination_id = components.id
       AND assemblies.combination_type = 'Component'
@@ -66,7 +66,7 @@ class Component < ApplicationRecord
   # NOTE: will only find 1st-level children, not all descendents
   def sub_components
     Component.kept.find_by_sql(
-      "SELECT * FROM components
+      "SELECT components.* FROM components
       INNER JOIN assemblies
       ON assemblies.item_id = components.id
       AND assemblies.item_type = 'Component'
