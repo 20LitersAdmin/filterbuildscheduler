@@ -73,6 +73,12 @@ class Technology < ApplicationRecord
     owner.gsub(/([a-z]|\s)/, '')
   end
 
+  def results_worthy?
+    people.positive? &&
+      lifespan_in_years.positive? &&
+      liters_per_day.positive?
+  end
+
   def short_name_w_owner
     "#{short_name} (#{owner_acronym})"
   end

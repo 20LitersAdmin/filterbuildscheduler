@@ -12,8 +12,9 @@ class Event < ApplicationRecord
   has_many :users, through: :registrations
   has_one :inventory
 
-  validates :start_time, :end_time, :title, :min_leaders, :max_leaders, :min_registrations, :max_registrations, :location_id, presence: true
-  validates :min_registrations, :max_registrations, :min_leaders, :max_leaders, numericality: { only_integer: true, greater_than: 0 }
+  validates_presence_of :start_time, :end_time, :title
+
+  validates :min_registrations, :max_registrations, :min_leaders, :max_leaders, presence: true, numericality: { only_integer: true, greater_than: 0 }
 
   validates :technologies_built, :boxes_packed, :attendance, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
 
@@ -58,14 +59,6 @@ class Event < ApplicationRecord
     return false unless start_time < Time.zone.now
 
     attendance.positive? || (boxes_packed.positive? || technologies_built.positive?)
-  end
-
-  def dates_are_valid?
-    return if start_time.nil? || end_time.nil?
-
-    # accuracy to within a minute
-    diff = ((end_time - start_time) / 1.minute).round
-    errors.add(:end_time, 'must be after start time') unless diff.positive?
   end
 
   def does_not_need_leaders?(scope = '')
@@ -128,38 +121,16 @@ class Event < ApplicationRecord
     inventory.present?
   end
 
-  def important_fields_for_admins_changed?
-    start_time_changed? ||
-      end_time_changed? ||
-      location_id_changed? ||
-      technology_id_changed? ||
-      is_private_changed?
-  end
-
-  def important_fields_for_builders_changed?
-    start_time_changed? ||
-      end_time_changed? ||
-      location_id_changed?
-  end
-
   def incomplete?
     !complete?
   end
 
   def in_the_future?
-    end_time >= Time.zone.now
+    start_time > Time.zone.now
   end
 
   def in_the_past?
     end_time <= Time.zone.now
-  end
-
-  def leaders_are_valid?
-    return if min_leaders.nil? || max_leaders.nil?
-
-    errors.add(:max_leaders, 'must be greater than min leaders') if min_leaders > max_leaders
-
-    errors.add(:max_leaders, 'there are more registered leaders than the event max leaders') if leaders_registered.count > max_leaders
   end
 
   def leaders_have_vs_needed
@@ -277,7 +248,7 @@ class Event < ApplicationRecord
   end
 
   def results_liters_lifespan
-    results_liters_per_year * 10
+    results_liters_per_year * technology.lifespan_in_years
   end
 
   def should_notify_admins?
@@ -286,7 +257,8 @@ class Event < ApplicationRecord
   end
 
   def should_notify_builders?
-    registrations.kept.any? &&
+    start_time_was > Time.now &&
+      registrations.kept.any? &&
       important_fields_for_builders_changed?
   end
 
@@ -305,7 +277,8 @@ class Event < ApplicationRecord
     !emails_sent? &&
       attendance.positive? &&
       registrations.kept.any? &&
-      technology_results.positive?
+      technology_results.positive? &&
+      technology.results_worthy?
   end
 
   def technology_results
@@ -329,7 +302,9 @@ class Event < ApplicationRecord
   def total_registered_without(registration)
     return 0 if registrations.kept.empty?
 
-    registrations.kept.where.not(id: registration.id).sum(:guests_registered) + builders_registered.count
+    regs = registrations.kept.where.not(id: registration.id)
+
+    regs.sum(:guests_registered) + regs.count
   end
 
   def volunteer_hours
@@ -345,6 +320,36 @@ class Event < ApplicationRecord
   end
 
   private
+
+  def dates_are_valid?
+    return if start_time.nil? || end_time.nil?
+
+    # accuracy to within a minute
+    diff = ((end_time - start_time) / 1.minute).round
+    errors.add(:end_time, 'must be after start time') unless diff.positive?
+  end
+
+  def important_fields_for_admins_changed?
+    start_time_changed? ||
+      end_time_changed? ||
+      location_id_changed? ||
+      technology_id_changed? ||
+      is_private_changed?
+  end
+
+  def important_fields_for_builders_changed?
+    start_time_changed? ||
+      end_time_changed? ||
+      location_id_changed?
+  end
+
+  def leaders_are_valid?
+    return if min_leaders.nil? || max_leaders.nil?
+
+    errors.add(:max_leaders, 'must be greater than min leaders') if min_leaders > max_leaders
+
+    errors.add(:max_leaders, 'there are more registered leaders than the event max leaders') if leaders_registered.count > max_leaders
+  end
 
   def registrations_are_valid?
     return if min_registrations.nil? || max_registrations.nil?

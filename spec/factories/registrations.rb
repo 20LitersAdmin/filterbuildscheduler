@@ -22,4 +22,12 @@ FactoryBot.define do
     leader { true }
     guests_registered { Random.rand(0..3) }
   end
+
+  factory :registration_leader_attended, class: Registration do
+    user
+    event
+    leader { true }
+    attended { true }
+    guests_registered { Random.rand(0..3) }
+  end
 end
