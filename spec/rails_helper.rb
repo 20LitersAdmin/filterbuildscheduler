@@ -74,6 +74,10 @@ RSpec.configure do |config|
     Capybara.page.driver.browser.manage.window.resize_to(1920, 2024)
   end
 
+  config.after :suite do
+    CleanupCrew.clean_up!
+  end
+
   config.around :each, :js do |ex|
     ex.run_with_retry retry: 3
   end

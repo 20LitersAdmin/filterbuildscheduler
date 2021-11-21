@@ -2,6 +2,10 @@
 
 module CleanupCrew
   def clean_up!
+    # This cannot be allowed to run in production
+    # I believe it's safe because the require call only exists in RSpec's rails_helper
+    return unless Rails.env.test?
+
     # use .destroy_all to fire all callbacks, including deleting ActiveStorage::Attachments via dependent: :purge
 
     # Should destroy all Registrations via dependent: :destroy
@@ -34,4 +38,6 @@ module CleanupCrew
       ActiveRecord::Base.connection.reset_pk_sequence!(t)
     end
   end
+
+  module_function :clean_up!
 end

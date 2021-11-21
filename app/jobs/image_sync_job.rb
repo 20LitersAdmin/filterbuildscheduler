@@ -5,13 +5,13 @@ class ImageSyncJob < ApplicationJob
 
   def perform(*_args)
     # Never trigger an analyzer when calling methods on ActiveStorage
-    ActiveStorage::Blob::Analyzable.module_eval do
-      def analyze_later; end
+    # ActiveStorage::Blob::Analyzable.module_eval do
+    #   def analyze_later; end
 
-      def analyzed?
-        true
-      end
-    end
+    #   def analyzed?
+    #     true
+    #   end
+    # end
 
     ActiveRecord::Base.logger.level = 1
 
