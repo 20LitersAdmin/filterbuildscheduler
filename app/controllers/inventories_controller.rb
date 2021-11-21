@@ -83,7 +83,8 @@ class InventoriesController < ApplicationController
     # CountTransferJob
     @inventory.save
 
-    InventoryMailer.delay.notify(@inventory, current_user) if @inventory.has_items_below_minimum?
+    # NOTE: the unless is probably unnecessary as event-based inventories don't hit the update action, but just being overly cautious
+    InventoryMailer.delay.notify(@inventory, current_user) unless @inventory.event_based?
 
     flash[:success] = 'Inventory complete! All completed counts have been transferred to their items.'
 

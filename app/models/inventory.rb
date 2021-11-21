@@ -12,7 +12,7 @@ class Inventory < ApplicationRecord
 
   validates :date, presence: true
 
-  after_update :transfer_counts, :run_produceable_job
+  after_update :run_count_transfer_job, :run_produceable_job
 
   def count_summary
     summary = "#{item_count} of #{counts.count} items "
@@ -32,24 +32,8 @@ class Inventory < ApplicationRecord
     event_id.present?
   end
 
-  def has_items_below_minimum?
-    counts.select(&:reorder?).count.positive?
-  end
-
-  def item_count
-    counts.where.not(user_id: nil).count
-  end
-
-  def latest?
-    Inventory.latest.id == id
-  end
-
   def name
     "#{date.strftime('%-m/%-d/%y')}: #{type}"
-  end
-
-  def name_title
-    "#{date.strftime('%m-%d-%y')}: #{type}"
   end
 
   def technologies
@@ -63,10 +47,20 @@ class Inventory < ApplicationRecord
       'Receiving'
     elsif shipping
       'Shipping'
-    elsif manual
+    else # manual
       'Manual'
-    else
-      'Unknown'
+    end
+  end
+
+  def type_for_params
+    if receiving
+      'receiving'
+    elsif shipping
+      'shipping'
+    elsif event_id.present?
+      'event'
+    else # manual
+      'manual'
     end
   end
 
@@ -82,21 +76,11 @@ class Inventory < ApplicationRecord
     end
   end
 
-  def type_for_params
-    if receiving
-      'receiving'
-    elsif shipping
-      'shipping'
-    elsif manual
-      'manual'
-    elsif event_id.present?
-      'event'
-    else
-      'unknown'
-    end
-  end
-
   private
+
+  def item_count
+    counts.where.not(user_id: nil).count
+  end
 
   def run_produceable_job
     return unless completed_at.present?
@@ -107,7 +91,7 @@ class Inventory < ApplicationRecord
     ProduceableJob.perform_later
   end
 
-  def transfer_counts
+  def run_count_transfer_job
     return unless completed_at.present?
 
     # Delete any jobs that exist, but haven't started, in favor of this new job
