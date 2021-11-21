@@ -50,6 +50,14 @@ group :production do
   gem 'rails_12factor'
 end
 
+group :development do
+  gem 'letter_opener_web'
+  gem 'listen', '~> 3.2'
+  gem 'rubocop', require: false
+  gem 'spring-watcher-listen', '~> 2.0.0'
+  gem 'web-console', '>= 3.3.0'
+end
+
 group :development, :test do
   gem 'airborne'
   gem 'better_errors'
@@ -59,6 +67,8 @@ group :development, :test do
   gem 'faker'
   gem 'foreman'
   gem 'selenium-webdriver'
+  gem 'spring'
+  gem 'spring-commands-rspec'
   gem 'timecop'
   gem 'webdrivers'
 end
@@ -72,15 +82,6 @@ group :test do
   gem 'rspec-rails'
   gem 'rspec-retry'
   gem 'shoulda-matchers'
-end
-
-group :development do
-  gem 'letter_opener_web'
-  gem 'listen', '~> 3.2'
-  gem 'rubocop', require: false
-  gem 'spring'
-  gem 'spring-watcher-listen', '~> 2.0.0'
-  gem 'web-console', '>= 3.3.0'
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem

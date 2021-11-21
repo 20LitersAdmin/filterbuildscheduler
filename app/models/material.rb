@@ -29,9 +29,9 @@ class Material < ApplicationRecord
   end
 
   def owners
-    return ['N/A'] unless technologies.present?
+    return ['N/A'] unless all_technologies.present?
 
-    technologies.kept.map(&:owner_acronym)
+    all_technologies.kept.map(&:owner_acronym)
   end
 
   def reorder?
@@ -45,18 +45,11 @@ class Material < ApplicationRecord
   def supplier_and_sku
     return supplier.name unless order_url.present?
 
-    sku_as_link = ActionController::Base.helpers.link_to sku, order_url, target: '_blank', rel: 'tooltip'
+    sku_sub = sku.presence || 'link'
+
+    sku_as_link = ActionController::Base.helpers.link_to sku_sub, order_url, target: '_blank', rel: 'tooltip'
 
     "#{supplier.name} - SKU: #{sku_as_link}".html_safe
-  end
-
-  def technologies
-    Technology.where('quantities ? :key', key: uid)
-  end
-
-  def tech_names_short
-    # Itemable#all_technologies
-    all_technologies.pluck(:short_name)
   end
 
   # Rails Admin virtual
@@ -72,7 +65,10 @@ class Material < ApplicationRecord
     # When this method is triggered properly, `file` is instance of `ActionDispatch::Http::UploadedFile`
     # but apparently `ImageProcessing::MiniMagick.call` causes this callback to trigger again
     # but this time `file` is the Hash from image.attach(io: String, filename: String, content_type: String) so...
-    # Early return if file is a Hash
+
+    # In RSpec, this is always a hash
+    file = file[:io].path if file.instance_of?(Hash) && Rails.env.test?
+
     return if file.instance_of?(Hash)
 
     processed_image = ImageProcessing::MiniMagick

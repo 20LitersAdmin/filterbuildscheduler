@@ -94,6 +94,9 @@ class Technology < ApplicationRecord
       target = ac[0]
       file = attachment_changes[target].attachable
 
+      # In RSpec, this is always a hash
+      file = file[:io].path if file.instance_of?(Hash) && Rails.env.test?
+
       next if file.instance_of?(Hash)
 
       processed_image = ImageProcessing::MiniMagick
