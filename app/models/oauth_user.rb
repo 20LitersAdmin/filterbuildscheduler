@@ -40,10 +40,14 @@ class OauthUser < ApplicationRecord
   end
 
   def oauth_expired?
+    return true if oauth_expires_at.nil?
+
     oauth_expires_at < Time.now
   end
 
   def oauth_remaining
+    return 0 if oauth_expires_at.nil?
+
     ((oauth_expires_at - Time.now) / 1.minutes).to_i
   end
 
