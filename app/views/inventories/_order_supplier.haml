@@ -4,12 +4,14 @@
   if order_supplier.id.nil?
     @id = 0
     @h2 = 'Items without a supplier:'
-    @supplier_items = @items_w_no_supplier.dup
+    @supplier_items = items
   else
     @id = order_supplier.id
     @h2 = order_supplier.name
     @supplier_items = order_supplier.related_items(items)
+    # TODO: this is better: @supplier_items = [order_suppler.parts, order_supplier.materials].flatten
   end
+
 
 .row{ id: "order_supplier_row_#{@id}" }
   .col-xs-8

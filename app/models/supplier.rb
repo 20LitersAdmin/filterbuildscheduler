@@ -7,7 +7,7 @@ class Supplier < ApplicationRecord
   has_many :parts
   has_many :materials
 
-  validates :name, presence: true
+  validates_presence_of :name
   validate :valid_url?
   validates :email, :poc_email, format: { with: /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\z/i }, allow_blank: true
 
@@ -36,11 +36,9 @@ class Supplier < ApplicationRecord
   end
 
   def related_items(items)
-    ary = []
-    items.each do |i|
-      ary << i if i.supplier == self
-    end
-    ary
+    # ugly, but used for InventoriesController#order
+    # items == [parts, materials].flatten
+    items.map { |i| i if i.supplier_id == id }
   end
 
   def valid_url?
