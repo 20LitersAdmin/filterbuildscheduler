@@ -45,7 +45,6 @@ RSpec.describe Email, type: :model do
       context 'when message_id is nil' do
         it 'returns nil' do
           response_no_id = JSON.parse(File.read("#{Rails.root}/spec/fixtures/files/gmail_message_no_id_spec.json"), object_class: OpenStruct)
-          # response = JSON.parse(File.read("#{Rails.root}/spec/fixtures/files/gmail_message_spec.json"), object_class: OpenStruct)
 
           expect(Email.from_gmail(response_no_id, 'email body string', oauth_user)).to eq nil
         end
