@@ -2,7 +2,7 @@
 
 module Constants
   module Inventory
-    COUNT_BTN_TEXT = { receiving: 'Receive', shipping: 'Ship', manual: 'Count', event: 'Adjust', unknown: 'Adjust' }.freeze
+    COUNT_BTN_TEXT = { receiving: 'Receive', shipping: 'Ship', manual: 'Count', event: 'Adjust' }.freeze
     public_constant :COUNT_BTN_TEXT
   end
 

@@ -25,7 +25,6 @@ class User < ApplicationRecord
 
   validates :fname, :lname, :email, presence: true
   validates_confirmation_of :password
-  before_save :ensure_authentication_token, :check_phone_format
 
   # rails_admin scope "active" sounds better than "kept"
   scope :active, -> { kept }
@@ -39,6 +38,8 @@ class User < ApplicationRecord
   scope :non_builders,          -> { kept.where('is_admin = TRUE OR is_leader = TRUE OR does_inventory = TRUE OR send_notification_emails = TRUE OR send_inventory_emails = TRUE') }
   scope :with_registrations,    -> { joins(:registrations).uniq }
   scope :without_registrations, -> { left_outer_joins(:registrations).where(registrations: { id: nil }) }
+
+  before_save :ensure_authentication_token, :check_phone_format
 
   # https://github.com/plataformatec/devise/issues/5033
   before_save do |user|

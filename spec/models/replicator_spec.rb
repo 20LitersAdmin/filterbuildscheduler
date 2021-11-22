@@ -85,7 +85,31 @@ RSpec.describe Replicator, type: :model do
   end
 
   describe '#morph_params' do
-    pending 'changes strings into better values'
+    it 'changes strings into better values' do
+      string_start = Time.now.to_s
+      string_end = (Time.now + 3.hours).to_s
+      string_occurrences = '5'
+      string_replicate_leaders = 'false'
+
+      replicator.tap do |rep|
+        rep.start_time        = string_start
+        rep.end_time          = string_end
+        rep.occurrences       = string_occurrences
+        rep.replicate_leaders = string_replicate_leaders
+      end
+
+      expect(replicator.start_time.is_a?(String)).to eq true
+      expect(replicator.end_time.is_a?(String)).to eq true
+      expect(replicator.occurrences.is_a?(String)).to eq true
+      expect(replicator.replicate_leaders.is_a?(String)).to eq true
+
+      replicator.morph_params
+
+      expect(replicator.start_time.is_a?(Time)).to eq true
+      expect(replicator.end_time.is_a?(Time)).to eq true
+      expect(replicator.occurrences.is_a?(Integer)).to eq true
+      expect(replicator.replicate_leaders.is_a?(FalseClass)).to eq true
+    end
   end
 
   describe '#check_for_errors' do
