@@ -259,7 +259,29 @@ RSpec.describe User, type: :model do
     let(:inventory_user) { build :inventoryist }
     let(:scheduler_user) { build :scheduler }
     let(:data_manager_user) { build :data_manager }
-    pending
+
+    context 'when user is' do
+      it 'admin, returns true' do
+        expect(admin_user.can_manage_leaders?).to eq true
+      end
+
+      it 'scheduler, returns true' do
+        expect(scheduler_user.can_manage_leaders?).to eq true
+      end
+    end
+
+    context 'when user is not admin or scheduler' do
+      it 'returns false' do
+        user.is_oauth_admin = true
+        user.is_leader = true
+        user.does_inventory = true
+        user.is_data_manager = true
+        user.send_notification_emails = true
+        user.send_inventory_emails = true
+
+        expect(user.can_manage_leaders?).to eq false
+      end
+    end
   end
 
   describe '#can_lead_event?(event)' do
@@ -645,7 +667,21 @@ RSpec.describe User, type: :model do
   end
 
   describe '#generate_authentication_token' do
-    pending
+    it 'assigns a unique Devise.friendly_token' do
+      user.authentication_token = nil
+
+      expect(user.authentication_token).to eq nil
+      user.__send__(:ensure_authentication_token)
+      expect(user.authentication_token).not_to eq nil
+    end
+
+    it 'calls Devise.friendly_token' do
+      allow(Devise).to receive(:friendly_token).and_call_original
+
+      expect(Devise).to receive(:friendly_token)
+
+      user.__send__(:generate_authentication_token)
+    end
   end
 
   describe '#update_kindful' do

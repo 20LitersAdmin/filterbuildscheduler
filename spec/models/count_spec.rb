@@ -117,15 +117,6 @@ RSpec.describe Count, type: :model do
           expect(count2.link_text).to eq 'Adjust'
         end
       end
-
-      context 'and inventory type is unknown' do
-        let(:inventory) { create :inventory, manual: false }
-        let(:count2) { create :count, inventory: inventory }
-
-        it 'returns "Adjust"' do
-          expect(count2.link_text).to eq 'Adjust'
-        end
-      end
     end
   end
 
