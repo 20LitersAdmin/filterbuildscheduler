@@ -22,36 +22,36 @@ RSpec.describe Material, type: :model do
     it 'prices must be positive' do
       expect(negative_price.save).to be_falsey
     end
+  end
 
-    describe '#on_order?' do
-      context 'when last_order_at.present?' do
-        before :each do
-          material.last_ordered_at = Time.now - 1.day
-        end
+  describe '#on_order?' do
+    context 'when last_order_at.present?' do
+      before :each do
+        material.last_ordered_at = Time.now - 1.day
+      end
 
-        context 'and last_received_at.nil? OR last_ordered_at > last_received_at' do
-          it 'returns true' do
-            expect(material.last_received_at).to eq nil
-            expect(material.on_order?).to eq true
+      context 'and last_received_at.nil? OR last_ordered_at > last_received_at' do
+        it 'returns true' do
+          expect(material.last_received_at).to eq nil
+          expect(material.on_order?).to eq true
 
-            material.last_received_at = Time.now - 10.days
-            expect(material.on_order?).to eq true
-          end
-        end
-
-        context 'but !last_received_at.nil? OR !(last_ordered_at > last_received_at)' do
-          it 'returns false' do
-            material.last_received_at = Time.now
-            expect(material.on_order?).to eq false
-          end
+          material.last_received_at = Time.now - 10.days
+          expect(material.on_order?).to eq true
         end
       end
 
-      context 'when last_order_at.nil?' do
+      context 'but !last_received_at.nil? OR !(last_ordered_at > last_received_at)' do
         it 'returns false' do
-          expect(material.last_ordered_at).to eq nil
+          material.last_received_at = Time.now
           expect(material.on_order?).to eq false
         end
+      end
+    end
+
+    context 'when last_order_at.nil?' do
+      it 'returns false' do
+        expect(material.last_ordered_at).to eq nil
+        expect(material.on_order?).to eq false
       end
     end
   end
