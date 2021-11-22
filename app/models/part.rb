@@ -23,7 +23,7 @@ class Part < ApplicationRecord
 
   validates_presence_of :name
   # When #made_from_material? #quantity_from_material must be set
-  validates :quantity_from_material, presence: true, if: :made_from_material
+  validates_presence_of :quantity_from_material, if: :made_from_material
 
   # rails_admin scope "active" sounds better than "kept"
   scope :active, -> { kept }
