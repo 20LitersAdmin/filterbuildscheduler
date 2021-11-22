@@ -13,15 +13,15 @@ class Replicator
                 :user
 
   def go!
-    morph_params
     check_for_errors
-
     return false if errors.any?
+
+    morph_params
 
     base_event = Event.find(event_id)
 
-    new_event_ids = []
     error_ary = []
+    replicated_events = []
 
     occurrences.times do |indx|
       starting = start_time + indx.public_send(interval.to_sym)
@@ -61,7 +61,7 @@ class Replicator
 
       event.save
 
-      new_event_ids << event.reload.id
+      replicated_events << event.reload
 
       # auto-register leaders
       event.registrations << base_event.registrations.leaders if replicate_leaders
@@ -69,9 +69,7 @@ class Replicator
 
     Rails.logger.warn error_ary if error_ary.any?
 
-    events = Event.where(id: new_event_ids)
-
-    EventMailer.delay.replicated(events, user)
+    EventMailer.delay.replicated(replicated_events, user)
 
     true
   end
@@ -109,10 +107,13 @@ class Replicator
   end
 
   def check_for_errors
-    errors.add(:frequency, :invalid, message: "must be either 'weekly' or 'monthly'") unless %w[monthly weekly].include?(frequency)
-    errors.add(:occurrences, :invalid, message: 'must be present and positive') unless occurrences.to_i.positive?
-    errors.add(:event_id, :invalid, message: 'must be present') if event_id.blank?
-    errors.add(:start_time, :invalid, message: 'must be present') if start_time.blank?
-    errors.add(:end_time, :invalid, message: 'must be present') if end_time.blank?
+    errors.add(:frequency, message: "must be either 'weekly' or 'monthly'") unless %w[monthly weekly].include?(frequency)
+    errors.add(:occurrences, message: 'must be present and positive') unless occurrences.to_i.positive?
+    errors.add(:event_id, message: 'must be present') if event_id.blank?
+    errors.add(:start_time, message: 'must be present') if start_time.blank?
+    errors.add(:end_time, message: 'must be present') if end_time.blank?
+    errors.add(:user, message: 'must be present') if user.blank?
+
+    errors.add(:replicate_leaders, message: 'must be either true or false') unless [true, false, 'true', 'false', 0, 1, nil].include? replicate_leaders
   end
 end
