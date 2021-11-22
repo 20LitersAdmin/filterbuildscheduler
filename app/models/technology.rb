@@ -14,10 +14,6 @@ class Technology < ApplicationRecord
   has_one_attached :display_image, dependent: :purge
   attr_accessor :remove_image, :remove_display_image
 
-  before_save :process_images, if: -> { attachment_changes.any? }
-  after_save { image.purge if remove_image == '1' }
-  after_save { display_image.purge if remove_display_image == '1' }
-
   has_many :assemblies, as: :combination, dependent: :destroy, inverse_of: :combination
   accepts_nested_attributes_for :assemblies, allow_destroy: true
 
@@ -25,6 +21,10 @@ class Technology < ApplicationRecord
   has_many :parts, through: :assemblies, source: :item, source_type: 'Part'
 
   validates_presence_of :name, :short_name
+
+  before_save :process_images, if: -> { attachment_changes.any? }
+  after_save { image.purge if remove_image == '1' }
+  after_save { display_image.purge if remove_display_image == '1' }
 
   # Exists in ActiveStorage already
   # scope :with_attached_image, -> { joins(:image_attachment) }
@@ -55,12 +55,6 @@ class Technology < ApplicationRecord
     Part.kept.where(id: ary)
   end
 
-  def event_tech_goals_within(num = 0)
-    events = Event.future.within_days(num).where(technology: self)
-
-    events.map(&:item_goal).sum
-  end
-
   def materials
     uids = quantities.keys.grep(/^M[0-9]{3}/)
     ary = []
@@ -70,7 +64,7 @@ class Technology < ApplicationRecord
   end
 
   def owner_acronym
-    owner.gsub(/([a-z]|\s)/, '')
+    owner.scan(/\b(\d+|\w)/).join
   end
 
   def results_worthy?
@@ -86,7 +80,14 @@ class Technology < ApplicationRecord
   private
 
   def name_underscore
-    name.tr(' ', '').underscore
+    # remove bad characters like commas etc
+    # remove excess spaces
+    # replace spaces with underscores
+    # lowercase any capital letters
+    name.gsub(/[^a-zA-Z0-9\s]/, '')
+        .squish
+        .tr(' ', '_')
+        .downcase
   end
 
   def process_images

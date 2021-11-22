@@ -11,44 +11,23 @@ FactoryBot.define do
     max_registrations { 25 }
     technology
     location
-  end
 
-  factory :recent_event, class: Event do
-    title { Faker::Games::Zelda.unique.game }
-    start_time { Faker::Time.backward(days: 2).beginning_of_day + 9.hours }
-    end_time { start_time + 3.hours }
-    min_leaders { 1 }
-    max_leaders { 2 }
-    min_registrations { 5 }
-    max_registrations { 25 }
-    technology
-    location
-  end
+    factory :recent_event do
+      start_time { Faker::Time.backward(days: 2).beginning_of_day + 9.hours }
+      end_time { start_time + 3.hours }
+    end
 
-  factory :past_event, class: Event do
-    title { Faker::Games::Zelda.unique.game }
-    start_time { Faker::Time.backward(days: 20).beginning_of_day + 9.hours }
-    end_time { start_time + 3.hours }
-    min_leaders { 1 }
-    max_leaders { 2 }
-    min_registrations { 5 }
-    max_registrations { 25 }
-    technology
-    location
-  end
+    factory :past_event do
+      start_time { Faker::Time.backward(days: 20).beginning_of_day + 9.hours }
+      end_time { start_time + 3.hours }
+    end
 
-  factory :complete_event, class: Event do
-    title { Faker::Games::Zelda.unique.game }
-    start_time { Faker::Time.backward(days: 2).beginning_of_day + 9.hours }
-    end_time { start_time + 3.hours }
-    min_leaders { 1 }
-    max_leaders { 2 }
-    min_registrations { 5 }
-    max_registrations { 25 }
-    technology
-    location
-    technologies_built { 30 }
-    boxes_packed { 1 }
-    attendance { 20 }
+    factory :complete_event do
+      start_time { Faker::Time.backward(days: 2).beginning_of_day + 9.hours }
+      end_time { start_time + 3.hours }
+      technologies_built { 30 }
+      boxes_packed { 1 }
+      attendance { 20 }
+    end
   end
 end

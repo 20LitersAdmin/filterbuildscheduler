@@ -10,7 +10,7 @@ FactoryBot.define do
     ideal_leaders { 2 }
     family_friendly { true }
     unit_rate { 1 }
-    owner { 'No one!' }
+    owner { Faker::Company.name }
     people { 5 }
     lifespan_in_years { 10 }
     liters_per_day { 100 }

@@ -92,9 +92,8 @@ class User < ApplicationRecord
   end
 
   def can_do_inventory?
-    does_inventory? ||
-      admin_or_leader? ||
-      send_inventory_emails?
+    is_admin? ||
+      does_inventory?
   end
 
   def can_edit_events?
@@ -119,6 +118,8 @@ class User < ApplicationRecord
   end
 
   def email_domain
+    # this can be simple because it is only trying to match against Constants::Email::INTERNAL_DOMAINS
+    # see OauthUserPolicy#in?
     email[/@\w+/i]
   end
 
@@ -128,37 +129,23 @@ class User < ApplicationRecord
   end
 
   def events_attended
-    applicable_event_ids = registrations.attended.joins(:event).where('events.discarded_at IS NULL').map(&:event_id)
+    applicable_event_ids = registrations.past.kept.attended.map(&:event_id)
 
     Event.where(id: applicable_event_ids)
   end
 
   def events_led
-    applicable_event_ids = registrations.attended.leaders.joins(:event).where('events.discarded_at IS NULL').map(&:event_id)
+    return Event.none unless is_leader?
 
-    Event.where(id: applicable_event_ids).any? ? Event.where(id: applicable_event_ids) : nil
-  end
-
-  def events_skipped
-    applicable_event_ids = registrations.where(attended: false).joins(:event).where('events.discarded_at IS NULL').map(&:event_id)
+    applicable_event_ids = registrations.past.kept.attended.leaders.map(&:event_id)
 
     Event.where(id: applicable_event_ids)
   end
 
-  def events_led_between(start_date: nil, end_date: nil)
-    return unless is_leader?
+  def events_skipped
+    applicable_event_ids = registrations.past.kept.where(attended: false).map(&:event_id)
 
-    applicable_event_ids = registrations.attended.joins(:event).map(&:event_id)
-
-    if start_date.present? && end_date.present?
-      Event.where(end_time: start_date..end_date).where(id: applicable_event_ids).order(start_time: :asc)
-    elsif start_date.present?
-      Event.where('start_time >= ?', start_date).where(id: applicable_event_ids).order(start_time: :asc)
-    elsif end_date.present?
-      Event.where('end_time <= ?', end_date).where(id: applicable_event_ids).order(start_time: :asc)
-    else
-      Event.where(id: applicable_event_ids).order(start_time: :asc)
-    end
+    Event.where(id: applicable_event_ids)
   end
 
   def has_no_password
@@ -170,7 +157,9 @@ class User < ApplicationRecord
   end
 
   def leading?(event)
-    Registration.kept.where(user: self, event: event, leader: true).present?
+    return false unless is_leader?
+
+    registrations.kept.leaders.where(event: event).present?
   end
 
   def name
@@ -178,42 +167,12 @@ class User < ApplicationRecord
   end
 
   def password_required?
+    # Devise: make password optional
     false
   end
 
   def registered?(event)
     Registration.kept.where(user: self, event: event).present?
-  end
-
-  def role
-    if is_admin?
-      'Admin'
-    elsif is_leader?
-      'Leader'
-    elsif does_inventory?
-      'Inventory'
-    else
-      'Builder'
-    end
-  end
-
-  def role_leadership_html
-    ary = []
-    ary << 'Admin' if is_admin?
-    ary << 'Leader' if is_leader?
-    ary << 'Inventoryist' if does_inventory?
-    ary << 'Notified of events' if send_notification_emails?
-    ary << 'Notified of inventories' if send_inventory_emails?
-
-    return unless ary.any?
-
-    str = '<ul>'
-    ary.each do |role|
-      str += "<li>#{role}</li>"
-    end
-    str += '</ul>'
-
-    str.html_safe
   end
 
   def send_reset_password_email
@@ -222,28 +181,19 @@ class User < ApplicationRecord
     # which fires Devise#send_reset_password_instructions
   end
 
-  def self.to_csv
-    attributes = %w[fname lname email]
-    CSV.generate(headers: true) do |csv|
-      csv << attributes
-
-      all.each do |u|
-        csv << u.attributes.values_at(*attributes)
-      end
-    end
-  end
-
   def total_volunteer_hours
-    registrations.attended
+    registrations.kept
+                 .attended
                  .includes(:event)
                  .map { |r| r.event.length }
                  .sum
   end
 
   def total_leader_hours
-    return unless is_leader?
+    return 0 unless is_leader?
 
-    registrations.attended
+    registrations.kept
+                 .attended
                  .leaders
                  .includes(:event)
                  .map { |r| r.event.length }
@@ -255,7 +205,7 @@ class User < ApplicationRecord
   end
 
   def techs_qualified
-    return unless is_leader?
+    return unless is_leader? && technologies.any?
 
     ary = []
     technologies.list_worthy.order(:name).pluck(:name, :owner).each do |tech|
@@ -266,7 +216,7 @@ class User < ApplicationRecord
   end
 
   def techs_qualified_html
-    return unless is_leader?
+    return unless is_leader? && technologies.any?
 
     str = '<ul>'
     techs_qualified.each do |tech|
@@ -279,17 +229,6 @@ class User < ApplicationRecord
 
   private
 
-  def generate_authentication_token
-    loop do
-      token = Devise.friendly_token
-      break token unless User.where(authentication_token: token).first
-    end
-  end
-
-  def update_kindful
-    KindfulClient.new.import_user(self)
-  end
-
   def ensure_authentication_token
     self.authentication_token = generate_authentication_token if authentication_token.blank?
   end
@@ -297,5 +236,17 @@ class User < ApplicationRecord
   def check_phone_format
     # Remove any non-numbers, and any symbols that aren't part of [(,),-,.,+]
     phone.gsub!(/[^\d,(,),+,\s,.,-]/, '') if phone.present? && phone.match('^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$').nil?
+  end
+
+  def generate_authentication_token
+    loop do
+      token = Devise.friendly_token
+      # return token unless it's already been assigned to some user
+      break token unless User.where(authentication_token: token).first
+    end
+  end
+
+  def update_kindful
+    KindfulClient.new.import_user(self)
   end
 end

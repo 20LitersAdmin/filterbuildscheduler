@@ -15,9 +15,21 @@ class Registration < ApplicationRecord
   scope :attended,              -> { where(attended: true) }
 
   scope :builders,              -> { where(leader: false) }
+  scope :future,                -> {
+    select('registrations.*')
+      .joins(:event)
+      .where('events.discarded_at IS NULL')
+      .where('events.start_time > ?', Time.now)
+  }
   scope :leaders,               -> { where(leader: true) }
 
   scope :ordered_by_user_lname, -> { includes(:user).order('users.lname') }
+  scope :past,                  -> {
+    select('registrations.*')
+      .joins(:event)
+      .where('events.discarded_at IS NULL')
+      .where('events.start_time < ?', Time.now)
+  }
   scope :pre_reminders,         -> { where(reminder_sent_at: nil) }
 
   def form_source
