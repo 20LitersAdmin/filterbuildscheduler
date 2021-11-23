@@ -53,7 +53,7 @@ class OauthUser < ApplicationRecord
 
   def email_service
     update_columns(oauth_error_message: nil) if oauth_error_message.present?
-    # https://github.com/googleapis/google-api-ruby-client/blob/master/generated/google/apis/gmail_v1/service.rb
+    # https://github.com/googleapis/google-api-ruby-client/blob/main/generated/google-apis-gmail_v1/lib/google/apis/gmail_v1/service.rb
     @service = Google::Apis::GmailV1::GmailService.new
     @service.authorization = authorization
 

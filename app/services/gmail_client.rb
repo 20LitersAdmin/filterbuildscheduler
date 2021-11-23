@@ -27,6 +27,7 @@ class GmailClient
   def batch_get_messages(message_ids)
     @service.batch do |gmail|
       message_ids.each do |id|
+        # https://github.com/googleapis/google-api-ruby-client/blob/4958ea8ca0e10ad0b18780c307dac12b9ca9bd59/generated/google-apis-gmail_v1/lib/google/apis/gmail_v1/service.rb#L789
         gmail.get_user_message(@user_id, id, fields: @standard_fields) do |response, error|
           if error.present?
             @skipped_ids << id
@@ -46,7 +47,7 @@ class GmailClient
     paged_response = list_queried_messages(query: query)
 
     # TESTING: This is a likely source of the Heroku R14 memory leak
-    puts "batch_get_queried_messages: response size: #{paged_response.as_json.size}"
+    Rails.logger.warn "batch_get_queried_messages: response size: #{paged_response.as_json.size}"
 
     ids = []
     paged_response.each do |message|
@@ -91,7 +92,7 @@ class GmailClient
   end
 
   def get_message(message_id)
-    # https://github.com/googleapis/google-api-ruby-client/blob/master/generated/google/apis/gmail_v1/service.rb#L783
+    # https://github.com/googleapis/google-api-ruby-client/blob/4958ea8ca0e10ad0b18780c307dac12b9ca9bd59/generated/google-apis-gmail_v1/lib/google/apis/gmail_v1/service.rb#L789
     response = trim_response @service.get_user_message(@user_id, message_id, fields: @standard_fields)
 
     if response.nil?
@@ -112,7 +113,7 @@ class GmailClient
   end
 
   def list_queried_messages(query:)
-    # https://github.com/googleapis/google-api-ruby-client/blob/master/generated/google/apis/gmail_v1/service.rb#L944
+    # https://github.com/googleapis/google-api-ruby-client/blob/4958ea8ca0e10ad0b18780c307dac12b9ca9bd59/generated/google-apis-gmail_v1/lib/google/apis/gmail_v1/service.rb#L953
     @service.fetch_all(items: :messages) do |token|
       @service.list_user_messages(@user_id, include_spam_trash: false, q: query, page_token: token)
     end
@@ -124,6 +125,7 @@ class GmailClient
 
   # Unused
   def see_message(message_id)
+    # https://github.com/googleapis/google-api-ruby-client/blob/4958ea8ca0e10ad0b18780c307dac12b9ca9bd59/generated/google-apis-gmail_v1/lib/google/apis/gmail_v1/service.rb#L789
     @service.get_user_message(@user_id, message_id, fields: @standard_fields)
   end
 
