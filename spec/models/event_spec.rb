@@ -667,10 +667,10 @@ RSpec.describe Event, type: :model do
       event.reload.end_time += 1.hour
       expect(event.__send__(:important_fields_for_admins_changed?))
 
-      event.reload.location = FactoryBot.create(:location)
+      event.reload.location = create :location
       expect(event.__send__(:important_fields_for_admins_changed?))
 
-      event.reload.technology = FactoryBot.create(:technology)
+      event.reload.technology = create :technology
       expect(event.__send__(:important_fields_for_admins_changed?))
 
       event.reload.is_private = true
@@ -686,7 +686,7 @@ RSpec.describe Event, type: :model do
       event.reload.end_time += 1.hour
       expect(event.__send__(:important_fields_for_builders_changed?))
 
-      event.reload.location = FactoryBot.create(:location)
+      event.reload.location = create :location
       expect(event.__send__(:important_fields_for_builders_changed?))
     end
   end

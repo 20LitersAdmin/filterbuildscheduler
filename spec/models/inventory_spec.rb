@@ -4,7 +4,7 @@ require 'rails_helper'
 
 RSpec.describe Inventory, type: :model do
   let(:inventory) { create :inventory }
-  let(:manual) { build :inventory_man }
+  let(:manual) { build :inventory }
   let(:shipping) { build :inventory_ship }
   let(:receiving) { build :inventory_rec }
   let(:event) { build :inventory_event }
@@ -12,7 +12,7 @@ RSpec.describe Inventory, type: :model do
   describe 'must be valid' do
     let(:no_receiving) { build :inventory_rec, receiving: nil }
     let(:no_shipping) { build :inventory_ship, shipping: nil }
-    let(:no_manual) { build :inventory_man, manual: nil }
+    let(:no_manual) { build :inventory, manual: nil }
     let(:no_date) { build :inventory, date: nil }
 
     it 'in order to save' do
@@ -109,11 +109,11 @@ RSpec.describe Inventory, type: :model do
     let(:user) { create :user }
 
     it 'returns the number of counts that have a user_id' do
-      create_list(:count_part, 4, inventory: inventory, user: user)
+      create_list(:count, 4, inventory: inventory, user: user)
       create_list(:count_comp, 3, inventory: inventory, user: user)
       create_list(:count_mat, 2, inventory: inventory, user: user)
 
-      create_list(:count_part, 7, inventory: inventory)
+      create_list(:count, 7, inventory: inventory)
       create_list(:count_comp, 6, inventory: inventory)
       create_list(:count_mat, 5, inventory: inventory)
 

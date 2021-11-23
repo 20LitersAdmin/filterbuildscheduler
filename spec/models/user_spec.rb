@@ -505,8 +505,8 @@ RSpec.describe User, type: :model do
     it 'returns a float of the length of all events attended' do
       3.times do
         # FactoryBot events are 3 hours in length
-        event = FactoryBot.create(:past_event)
-        FactoryBot.create(:registration_attended, event: event, user: user)
+        event = create :past_event
+        create :registration_attended, event: event, user: user
       end
 
       expect(user.total_volunteer_hours).to eq 9.0
@@ -515,12 +515,12 @@ RSpec.describe User, type: :model do
 
   describe '#total_leader_hours' do
     before do
-      @leader = FactoryBot.create(:leader)
+      @leader = create :leader
       3.times do
         # FactoryBot events are 3 hours in length
-        event = FactoryBot.create(:past_event)
-        FactoryBot.create(:registration_attended, event: event, user: user)
-        FactoryBot.create(:registration_leader_attended, event: event, user: @leader)
+        event = create :past_event
+        create :registration_attended, event: event, user: user
+        create :registration_leader_attended, event: event, user: @leader
       end
     end
 
@@ -541,8 +541,8 @@ RSpec.describe User, type: :model do
     it 'returns an integer of the sum of all registrations#guests_attended' do
       3.times do
         # FactoryBot events are 3 hours in length
-        event = FactoryBot.create(:past_event)
-        FactoryBot.create(:registration_attended, event: event, user: user, guests_attended: 5)
+        event = create :past_event
+        create :registration_attended, event: event, user: user, guests_attended: 5
       end
 
       expect(user.total_guests).to eq 15
@@ -568,7 +568,7 @@ RSpec.describe User, type: :model do
       context 'with associated technologies' do
         it 'returns an array of tech names and owners' do
           3.times do
-            tech = FactoryBot.create(:technology)
+            tech = create(:technology)
             leader.technologies << tech
           end
 
@@ -599,7 +599,7 @@ RSpec.describe User, type: :model do
       context 'with associated technologies' do
         before do
           3.times do
-            tech = FactoryBot.create(:technology)
+            tech = create :technology
             leader.technologies << tech
           end
         end

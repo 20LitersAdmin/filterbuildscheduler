@@ -34,7 +34,7 @@ RSpec.describe Replicator, type: :model do
   describe '#go!' do
     before :each do
       # there must be at least one system user to receive notification emails
-      FactoryBot.create(:admin, send_notification_emails: true)
+      create :admin, send_notification_emails: true
     end
 
     it 'returns false if attributes have errors' do

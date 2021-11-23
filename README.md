@@ -28,14 +28,6 @@
     - QuantityAndDepthCalculation
     - RegistrationReminder
   - Concern: Itemable
-  - Mailers:
-    - EventMailer
-    - InventoryMailer
-    - RegistrationMailer
-    - MailerHelper
-  - Services:
-    - GmailClient
-    - LitersTrackerClient
 
 
 ## After 1st deploy:

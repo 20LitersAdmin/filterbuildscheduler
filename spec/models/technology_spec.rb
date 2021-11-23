@@ -22,14 +22,12 @@ RSpec.describe Technology, type: :model do
   describe '#all_components' do
     before do
       3.times do
-        comp = FactoryBot.create(:component)
+        comp = create :component
         technology.quantities[comp.uid] = 1
       end
       technology.save
 
-      3.times do
-        FactoryBot.create(:component)
-      end
+      create_list :component, 3
     end
     it 'returns a collection of Components' do
       expect(technology.all_components.pluck(:uid).sort).to eq technology.quantities.keys.sort
@@ -39,14 +37,12 @@ RSpec.describe Technology, type: :model do
   describe '#all_parts' do
     before do
       3.times do
-        part = FactoryBot.create(:part)
+        part = create :part
         technology.quantities[part.uid] = 1
       end
       technology.save
 
-      3.times do
-        FactoryBot.create(:part)
-      end
+      create_list :part, 3
     end
     it 'returns a collection of Parts' do
       expect(technology.all_parts.pluck(:uid).sort).to eq technology.quantities.keys.sort
@@ -56,14 +52,12 @@ RSpec.describe Technology, type: :model do
   describe '#materials' do
     before do
       3.times do
-        material = FactoryBot.create(:material)
+        material = create :material
         technology.quantities[material.uid] = 1
       end
       technology.save
 
-      3.times do
-        FactoryBot.create(:material)
-      end
+      create_list :material, 3
     end
     it 'returns a collection of Materials' do
       expect(technology.materials.pluck(:uid).sort).to eq technology.quantities.keys.sort

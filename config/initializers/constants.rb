@@ -23,8 +23,10 @@ module Constants
       'T': 'Technology'
     }.freeze
 
+    # string must match exactly, from start to end
     REGEX = /^(C|M|P|T)[0-9]{3}$/
 
+    # string can have other elements before or after the UID
     URL_REGEX = /(C|M|P|T)[0-9]{3}/
 
     public_constant :CHAR
