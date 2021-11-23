@@ -19,8 +19,6 @@
   - System: Oauth update
   - System: Oauth delete
   - Jobs:
-    - CountCreate
-    - CountTransfer
     - EmailSync
     - EventInventory
     - PriceCalculation
