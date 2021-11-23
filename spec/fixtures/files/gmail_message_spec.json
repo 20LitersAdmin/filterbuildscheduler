@@ -10,6 +10,19 @@
      {"name": "Content-Type", "value": "multipart/alternative; boundary=\"000000000000cc6f1d05d1257a61\""}],
    "mime_type": "multipart/alternative",
    "parts":
-    [{"mime_type": "text/plain", "body": {"data": "This is a very simple message.\r\n"}},
-     {"mime_type": "text/html", "body": {"data": "<div dir=\"ltr\">This is a very simple message.</div>\r\n"}}]},
+    [
+      {
+        "mime_type": "text/plain", "body":
+          {
+            "data": "This is a very simple message.\r\n"
+          }
+      },
+     {
+      "mime_type": "text/html", "body":
+        {
+          "data": "<div dir=\"ltr\">This is a very simple message.</div>\r\n"
+        }
+      }
+    ]
+  },
  "snippet": "This is a very simple message."}

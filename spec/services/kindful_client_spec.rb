@@ -38,7 +38,7 @@ RSpec.describe KindfulClient do
       json = file['data']['object'].deep_symbolize_keys
 
       arguments = {
-        headers: client.send(:headers),
+        headers: client.__send__(:headers),
         body: client.contact_w_transaction(json)
       }
       expect(KindfulClient).to receive(:post).with(client.import_host, arguments).and_return(http_spy)
@@ -49,7 +49,7 @@ RSpec.describe KindfulClient do
   describe 'import_user' do
     it 'takes user data and sends it to kindful' do
       arguments = {
-        headers: client.send(:headers),
+        headers: client.__send__(:headers),
         body: client.contact(user1)
       }
       expect(KindfulClient).to receive(:post).with(client.import_host, arguments).and_return(http_spy)
@@ -66,7 +66,7 @@ RSpec.describe KindfulClient do
       email.save
       direction = 'Received Email'
       arguments = {
-        headers: client.send(:headers),
+        headers: client.__send__(:headers),
         body: client.company_w_email_note(company.email, email, direction, company.company_name)
       }
       expect(KindfulClient).to receive(:post).with(client.import_host, arguments).and_return(http_spy)
@@ -82,7 +82,7 @@ RSpec.describe KindfulClient do
       email.save
       direction = 'Received Email'
       arguments = {
-        headers: client.send(:headers),
+        headers: client.__send__(:headers),
         body: client.contact_w_email_note(oauth_user.email, email, direction)
       }
       expect(KindfulClient).to receive(:post).with(client.import_host, arguments).and_return(http_spy)
@@ -94,7 +94,7 @@ RSpec.describe KindfulClient do
     it 'takes registration data and sends it to Kindful' do
       registration = FactoryBot.create(:registration_attended, user: user1)
       arguments = {
-        headers: client.send(:headers),
+        headers: client.__send__(:headers),
         body: client.contact_w_note(registration)
       }
       expect(KindfulClient).to receive(:post).with(client.import_host, arguments).and_return(http_spy)
@@ -105,7 +105,7 @@ RSpec.describe KindfulClient do
   describe 'email_exists_in_kindful?' do
     it 'asks Kindful production site to check if an email exists' do
       email = 'jondoe@email.com'
-      expect(KindfulClient).to receive(:get).with(client.email_host(email), { headers: client.send(:live_headers) }).and_return(http_spy)
+      expect(KindfulClient).to receive(:get).with(client.email_host(email), { headers: client.__send__(:live_headers) }).and_return(http_spy)
       client.email_exists_in_kindful?(email)
     end
   end
@@ -117,7 +117,7 @@ RSpec.describe KindfulClient do
       response = double(HTTParty::Response)
       allow(response).to receive(:parsed_response).and_return(file)
       arguments = {
-        headers: client.send(:headers),
+        headers: client.__send__(:headers),
         body: client.organizations_query
       }
       expect(KindfulClient).to receive(:post).with(client.query_host, arguments).and_return(response)
@@ -195,15 +195,21 @@ RSpec.describe KindfulClient do
   end
 
   describe 'import_host' do
-    # not worth testing
+    it 'returns a string' do
+      expect(client.import_host.is_a?(String)).to eq true
+    end
   end
 
-  describe 'email_host' do
-    # not worth testing
+  describe 'email_host()' do
+    it 'returns a string' do
+      expect(client.email_host('test@email.com').is_a?(String)).to eq true
+    end
   end
 
   describe 'query_host' do
-    # not worth testing
+    it 'returns a string' do
+      expect(client.query_host.is_a?(String)).to eq true
+    end
   end
 
   private
@@ -215,36 +221,39 @@ RSpec.describe KindfulClient do
     end
 
     it 'deletes existing organizations before creating organizations' do
-      expect(Organization).to receive(:destroy_all)
-      client.send(:recreate_organizations)
+      expect(Organization).to receive(:delete_all)
+      client.__send__(:recreate_organizations)
     end
     it 'creates organizations from an array of hashes' do
-      expect { client.send(:recreate_organizations) }.to change { Organization.all.size }.from(0).to(@file['results'].size)
+      expect { client.__send__(:recreate_organizations) }
+        .to change { Organization.all.size }
+        .from(0)
+        .to(@file['results'].size)
     end
   end
 
   describe 'token' do
     it 'retrieves a token from the credentials' do
       expect(Rails.application).to receive(:credentials).and_return(spy)
-      client.send(:token)
+      client.__send__(:token)
     end
   end
 
   describe 'headers' do
     it 'returns a hash' do
-      headers = client.send(:headers)
+      headers = client.__send__(:headers)
       expect(headers.class).to eq Hash
     end
 
     it 'includes a token' do
-      headers = client.send(:headers)
-      expect(headers[:Authorization]).to include client.send(:token)
+      headers = client.__send__(:headers)
+      expect(headers[:Authorization]).to include client.__send__(:token)
     end
   end
 
   describe 'live_headers' do
     it 'retrieves the production token' do
-      live_header = client.send(:live_headers)
+      live_header = client.__send__(:live_headers)
       expect(live_header[:Authorization]).to include(Rails.application.credentials.kf_filterbuild_token)
     end
   end
