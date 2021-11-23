@@ -3,12 +3,12 @@
 require 'rails_helper'
 
 RSpec.describe Count, type: :model do
-  let(:count) { create :count_part }
+  let(:count) { create :count }
 
   describe 'must be valid' do
-    let(:no_inv)    { build :count_part, inventory_id: nil }
-    let(:no_loose)  { build :count_part, loose_count: nil }
-    let(:no_box)    { build :count_part, unopened_boxes_count: nil }
+    let(:no_inv)    { build :count, inventory_id: nil }
+    let(:no_loose)  { build :count, loose_count: nil }
+    let(:no_box)    { build :count, unopened_boxes_count: nil }
 
     it 'in order to save' do
       expect { no_inv.save!(validate: false) }
@@ -22,7 +22,7 @@ RSpec.describe Count, type: :model do
 
   describe '#available' do
     let(:part) { create :part, quantity_per_box: 10 }
-    let(:count2) { create :count_part, item: part, unopened_boxes_count: 5, loose_count: 10 }
+    let(:count2) { create :count, item: part, unopened_boxes_count: 5, loose_count: 10 }
 
     it 'calculates the number of items available' do
       expect(count2.available).to eq(60)
@@ -31,7 +31,7 @@ RSpec.describe Count, type: :model do
 
   describe '#box_count' do
     let(:part) { create :part, quantity_per_box: 10 }
-    let(:count2) { create :count_part, item: part, unopened_boxes_count: 5, loose_count: 10 }
+    let(:count2) { create :count, item: part, unopened_boxes_count: 5, loose_count: 10 }
 
     it 'calculates the individual items based upon the quantity_per_box of the associated item' do
       expect(count2.box_count).to eq(50)
@@ -101,7 +101,7 @@ RSpec.describe Count, type: :model do
       end
 
       context 'and inventory is manual' do
-        let(:inventory_man) { create :inventory_man }
+        let(:inventory_man) { create :inventory }
         let(:count2) { create :count, inventory: inventory_man }
 
         it 'returns "Count"' do

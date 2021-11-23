@@ -9,7 +9,7 @@ class Count < ApplicationRecord
 
   validates_presence_of :inventory_id
 
-  scope :changed, -> { where.not(user_id: nil) }
+  scope :submitted, -> { where.not(user_id: nil) }
   scope :uncounted, -> { where(user_id: nil) }
 
   def available
