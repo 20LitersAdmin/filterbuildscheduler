@@ -4,6 +4,9 @@ class PriceCalculationJob < ApplicationJob
   queue_as :price_calc
 
   def perform(*_args)
+    # NOTE: QuantityAndDepthCalculationJob needs to have been performed recently, to ensure assemblies have a "depth"
+    # Since saving or destroying an assembly triggers QuantityAndDepthCalculationJob, we can be confident assemblies have an accurate "depth"
+
     ActiveRecord::Base.logger.level = 1
 
     puts '========================= Starting PriceCalculationJob ========================='
@@ -14,7 +17,18 @@ class PriceCalculationJob < ApplicationJob
     Component.update_all(price_cents: 0)
     Part.made_from_material.update_all(price_cents: 0)
 
-    # recalculate Part#made_from_material before looping over assemblies
+    # recalculate Part#made_from_material first
+    set_prices_for_parts_made_from_materials
+
+    # then loop over assemblies to update the combination price
+    sum_prices_for_assembly_combinations
+
+    puts '========================= FINISHED QuantityAndDepthCalculationJob ========================='
+
+    ActiveRecord::Base.logger.level = 0
+  end
+
+  def set_prices_for_parts_made_from_materials
     puts 'Setting prices for Parts made from Materials'
     Part.made_from_material.each do |part|
       q_from_m = part.quantity_from_material
@@ -24,16 +38,18 @@ class PriceCalculationJob < ApplicationJob
       end
 
       # round up to the nearest cent using .ceil()
-      new_price_cents = (part.material.price_cents / part.quantity_from_material).ceil
+      new_price_cents = (part.material.price_cents / q_from_m).ceil
 
       part.update_columns(price_cents: new_price_cents)
     end
+  end
 
+  def sum_prices_for_assembly_combinations
     # starting with the "lowest" nodes is crucial to make sure prices
     # get summed as we traverse upwards towards the roots
     puts 'Looping over Assemblies to set their prices and their combination\'s price'
     Assembly.descending.each do |a|
-      # reclaculates a.price_cents on save
+      # reclaculates a.price_cents on before_save
       a.save
       a.reload
 
@@ -42,9 +58,5 @@ class PriceCalculationJob < ApplicationJob
       # c.price_cents + a.price_cents is sorta just +=
       c.update_columns(price_cents: c.price_cents + a.price_cents)
     end
-
-    puts '========================= FINISHED QuantityAndDepthCalculationJob ========================='
-
-    ActiveRecord::Base.logger.level = 0
   end
 end
