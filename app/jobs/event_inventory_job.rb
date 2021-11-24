@@ -3,6 +3,8 @@
 class EventInventoryJob < ApplicationJob
   queue_as :event_inventory
 
+  attr_accessor :inventory, :loose_created, :box_created, :technology, :produced_and_boxed, :item
+
   def perform(event)
     # ProduceableJob sets all item.can_be_produced values, and is run by Inventory#after_update callback
     # so we can assume item.can_be_produced is accurate from the latest inventory
@@ -34,16 +36,15 @@ class EventInventoryJob < ApplicationJob
 
     create_technology_count_only if technology_has_sufficient_loose_count
 
-    # sloppy early return
-    return true if technology_has_sufficient_loose_count
+    unless technology_has_sufficient_loose_count
+      # @technology couldn't handle it alone, time to rely on the tree
+      # Create a count for Technology that results in @technology.loose_count == @loose_created && @technology.box_count += @box_created
+      create_technology_count
 
-    # @technology couldn't handle it alone, time to rely on the tree
-    # Create a count for Technology that results in @technology.loose_count == @loose_created && @technology.box_count += @box_created
-    create_technology_count
-
-    # @remainder_needed is set and represents what we still need to "produce" from sub items
-    @technology_remainder = @produced_total - @technology.loose_count
-    loop_assemblies(@technology, @technology_remainder)
+      # @remainder_needed is set and represents what we still need to "produce" from sub items
+      @technology_remainder = @produced_total - @technology.loose_count
+      loop_assemblies(@technology, @technology_remainder)
+    end
 
     # run @inventory.update to trigger CountTransfer job:
     @inventory.update(completed_at: Time.now)
@@ -156,7 +157,7 @@ class EventInventoryJob < ApplicationJob
   end
 
   def material_can_satisfy_remainder(part, parts_needed)
-    # Assume whole materials are used, which can lead to the part count needing to be adjusted upwards to compensate for the material producing more parts than are needed to satisfy the remainder
+    # Assume whole materials are used, which can lead to the part count needing to be adjusted upwards - to compensate for the material producing more parts than are needed to satisfy the remainder
     material = part.material
     part_quantity_from_material = part.quantity_from_material
     material_needed = (parts_needed / part_quantity_from_material).ceil
@@ -189,7 +190,7 @@ class EventInventoryJob < ApplicationJob
   end
 
   def produce_from_material(part, remainder)
-    # material might actually add back to the part count
+    # this is the alternative to #loop_assemblies and can only be one node deep (material is the bottom), so no loop necessary
     material = part.material
     parts_produceable = material.available_count * part.quantity_from_material
 
