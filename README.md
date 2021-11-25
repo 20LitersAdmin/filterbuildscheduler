@@ -2,6 +2,14 @@
 ## Slim Down Inventory project
 
 * Run & fix tests
+  - Concern test is green
+  - Helper test is green
+  - Job tests are green
+  - Model tests are green
+  - Request test is green
+  - Service tests are green
+  - System tests are red (236 tests , 127 failures)
+
 * New tests:
   - System: Rails Admin custom actions
   - System: Combinations functions
@@ -18,7 +26,6 @@
   - System: Oauth failure
   - System: Oauth update
   - System: Oauth delete
-  - Concern: Itemable
 
 
 ## After 1st deploy:
