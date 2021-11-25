@@ -3,6 +3,8 @@
 class QuantityAndDepthCalculationJob < ApplicationJob
   queue_as :quantity_calc
 
+  attr_accessor :technology, :component_ids, :part_ids_made_from_material, :counter
+
   def perform(*_args)
     ActiveRecord::Base.logger.level = 1
 
@@ -47,9 +49,9 @@ class QuantityAndDepthCalculationJob < ApplicationJob
 
   def assemblies_loop(assemblies)
     assemblies.each do |a|
-      # only set the depth to the counter if it's higher than the existing value
+      # only set the depth to the counter if it's bigger than the existing value
       # this ensures that components or parts shared by multiple assemblies only
-      # get pushed lower and not accidentally raised higher
+      # get pushed lower (via a bigger number) and not accidentally raised higher (via a smaller number)
       a.update_columns(depth: @counter) if @counter > a.depth
       insert_into_quantity(a)
 
@@ -94,9 +96,12 @@ class QuantityAndDepthCalculationJob < ApplicationJob
 
   def loop_parts_for_materials(part_ids)
     Part.where(id: part_ids).each do |part|
-      parts_per_technology = @technology.quantities[part.uid]
-
       next if part.quantity_from_material.zero?
+
+      # technology.quantities[part.uid] will already exist
+      # because assemblies_loop gathers part ids into @part_ids_made_from_material
+      # which is then passed to here
+      parts_per_technology = @technology.quantities[part.uid]
 
       material_per_technology = parts_per_technology / part.quantity_from_material
 

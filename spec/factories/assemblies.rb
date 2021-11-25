@@ -19,5 +19,9 @@ FactoryBot.define do
       combination factory: :technology
       item factory: :part
     end
+
+    factory :assembly_part_from_material do
+      item factory: :part_from_material
+    end
   end
 end

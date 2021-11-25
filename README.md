@@ -19,8 +19,6 @@
   - System: Oauth update
   - System: Oauth delete
   - Jobs:
-    - PriceCalculation
-    - Produceable
     - QuantityAndDepthCalculation
     - RegistrationReminder
   - Concern: Itemable
