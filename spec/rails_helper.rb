@@ -12,9 +12,11 @@ require 'rspec/rails'
 # Add additional requires below this line. Rails is not loaded until this point!
 # note: require 'devise' after require 'rspec/rails'
 require 'devise'
+require 'support/cleanup_crew'
+
+# These are only for system specs and should probably be moved
 require 'capybara/rspec'
 require 'selenium-webdriver'
-require 'support/cleanup_crew'
 require 'support/form_helper'
 require 'rspec/retry'
 
@@ -58,7 +60,7 @@ RSpec.configure do |config|
   # config.exceptions_to_retry = [Net::ReadTimeout]
 
   config.expect_with :rspec do |expectations|
-    expectations.syntax = [:should, :expect]
+    expectations.syntax = %i[should expect]
   end
 
   config.before(:each) do

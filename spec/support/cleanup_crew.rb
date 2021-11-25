@@ -4,7 +4,7 @@ module CleanupCrew
   def clean_up!
     # This cannot be allowed to run in production
     # I believe it's safe because the require call only exists in RSpec's rails_helper
-    return unless Rails.env.test?
+    abort('The Rails environment isn\'t Test!!!') unless Rails.env.test?
 
     Rails.logger.info 'CleanupCrew has arrived.'
 
