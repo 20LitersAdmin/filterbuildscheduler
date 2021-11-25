@@ -208,6 +208,7 @@ RSpec.describe Assembly, type: :model do
 
     it 'sets the records price_cents to match the item\'s price_cents times the quantity' do
       assembly.price_cents = 0
+      assembly.item.price_cents = 69
 
       expect(assembly.price_cents).not_to eq((assembly.item.price_cents * assembly.quantity))
 

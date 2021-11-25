@@ -22,6 +22,9 @@ RSpec.describe GmailClient do
   end
 
   describe '#batch_get_latest_messages(:after, :before)' do
+    let(:after) { Date.yesterday.iso8601 }
+    let(:before) { Date.today.iso8601 }
+
     it 'passes the vars to batch_get_queried_messages' do
       expect(client).to receive(:batch_get_queried_messages).with(query: query)
 
@@ -34,6 +37,7 @@ RSpec.describe GmailClient do
       allow(oauth_user).to receive(:refresh_authorization!).and_return(true)
       allow(oauth_user).to receive(:email_service).and_return(gmail_instance)
       allow(gmail_instance).to receive(:batch).and_yield(gmail_instance)
+      allow(gmail_instance).to receive(:get_user_message)
     end
     it 'gets messages in batches' do
       expect(client.service).to receive(:batch)
