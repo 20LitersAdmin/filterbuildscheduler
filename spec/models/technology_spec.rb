@@ -1,8 +1,11 @@
 # frozen_string_literal: true
 
 require 'rails_helper'
+require 'concerns/itemable_spec'
 
 RSpec.describe Technology, type: :model do
+  it_behaves_like Itemable
+
   let(:technology) { create :technology }
 
   describe 'must be valid' do

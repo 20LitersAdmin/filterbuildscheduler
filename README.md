@@ -18,8 +18,6 @@
   - System: Oauth failure
   - System: Oauth update
   - System: Oauth delete
-  - Jobs:
-    - RegistrationReminder
   - Concern: Itemable
 
 

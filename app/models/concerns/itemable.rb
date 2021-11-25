@@ -21,7 +21,7 @@ module Itemable
 
     before_save :set_below_minimum
 
-    before_save :update_available, if: -> { will_save_change_to_loose_count? || will_save_change_to_box_count? || will_save_change_to_quantity_per_box? }
+    before_save :update_available_count, if: -> { will_save_change_to_loose_count? || will_save_change_to_box_count? || will_save_change_to_quantity_per_box? }
 
     after_save :check_uid
 
@@ -34,7 +34,7 @@ module Itemable
     return [] if is_a?(Technology)
 
     # .technologies finds direct relations through Assembly, but doesn't include technologies where this part may be deeply nested in components through assemblies
-    Technology.kept.where('quantities ? :key', key: uid)
+    Technology.active.where('quantities ? :key', key: uid)
   end
 
   def all_technologies_names
@@ -60,10 +60,19 @@ module Itemable
   end
 
   def history_only(key)
+    return {} if history.empty?
+    return unless %w[box loose inv_type available].include? key
+
+    # History structure:
+    # { date: { box: 99, loose: 99, inv_type: 'str', available: 99 }, ... }
+    # history_only('box')
+    # => [[date, 99][date, 99]...]
     history.map { |h| [h[0], h[1][key]] }
   end
 
   def history_series
+    return [] if history.empty?
+
     [
       { name: 'Available', data: history_only('available') },
       { name: 'Loose Count', data: history_only('loose') },
@@ -96,6 +105,8 @@ module Itemable
   end
 
   def quantities_with_tech_names_short
+    return [] unless is_a? Technology
+
     ary = []
 
     quantities.each do |k, v|
@@ -108,7 +119,7 @@ module Itemable
   private
 
   def check_uid
-    update_columns(uid: "#{self.class.to_s[0]}#{id.to_s.rjust(3, '0')}") if uid.blank? || id != uid[1..].to_i
+    update_columns(uid: "#{self.class.name[0]}#{id.to_s.rjust(3, '0')}") if uid.blank? || id != uid[1..].to_i || self.class.name[0] != uid[0]
   end
 
   def run_price_calculation_job
@@ -129,7 +140,7 @@ module Itemable
     self.below_minimum = available_count < minimum_on_hand
   end
 
-  def update_available
+  def update_available_count
     self.available_count = (box_count * quantity_per_box) + loose_count
   end
 end

@@ -38,6 +38,8 @@ Naming/PredicateName:
   Enabled: false
 Style/BlockComments:
   Enabled: false
+Style/EmptyLiteral:
+  Enabled: false
 Style/InlineComment:
   Enabled: false
 Style/Documentation:

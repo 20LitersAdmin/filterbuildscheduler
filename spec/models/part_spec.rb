@@ -1,8 +1,11 @@
 # frozen_string_literal: true
 
 require 'rails_helper'
+require 'concerns/itemable_spec'
 
 RSpec.describe Part, type: :model do
+  it_behaves_like Itemable
+
   let(:part) { create :part }
 
   describe 'must be valid' do
