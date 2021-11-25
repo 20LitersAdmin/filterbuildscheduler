@@ -29,5 +29,10 @@ FactoryBot.define do
       boxes_packed { 1 }
       attendance { 20 }
     end
+
+    factory :event_upcoming do
+      start_time { Faker::Time.forward(days: 1).beginning_of_day + 9.hours }
+      end_time { start_time + 3.hours }
+    end
   end
 end

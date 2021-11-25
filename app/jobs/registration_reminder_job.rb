@@ -14,9 +14,9 @@ class RegistrationReminderJob < ApplicationJob
         RegistrationMailer.reminder(r).deliver_now
         r.update(reminder_sent_at: Time.zone.now)
       end
-      puts '-+-+ ' + e.registrations.count.to_s + ' registration reminder email(s) sent'
+      puts "-+-+ #{e.registrations.count} registration reminder email(s) sent"
 
-      puts '-+-+ No registrations for ' + e.full_title if e.registrations.count < 1
+      puts "-+-+ No registrations for #{e.full_title}" if e.registrations.count.zero?
 
       e.update(reminder_sent_at: Time.zone.now)
     end
