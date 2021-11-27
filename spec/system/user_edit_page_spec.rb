@@ -3,6 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe 'User#edit', type: :system do
+  # TODO: This is now in rails_admin
   after :all do
     clean_up!
   end

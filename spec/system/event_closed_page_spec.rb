@@ -3,6 +3,8 @@
 require 'rails_helper'
 
 RSpec.describe "Events#Closed", type: :system do
+  # TODO: This is now RailsAdmin
+
   before :each do
     3.times do
       FactoryBot.create(:complete_event)

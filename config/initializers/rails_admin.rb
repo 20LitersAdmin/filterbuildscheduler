@@ -149,7 +149,7 @@ RailsAdmin.config do |config|
           label 'Qualifications'
         end
 
-        field :role_leadership_html do
+        field :role_html do
           label 'Roles'
           visible { bindings[:object].is_leader? }
         end
@@ -211,15 +211,15 @@ RailsAdmin.config do |config|
         field :is_data_manager do
           help 'Adds Event Reports and manages User Communication Preferences'
         end
+        field :send_notification_emails do
+          help 'Will get an email everytime an event is created or changed'
+        end
         field :is_admin do
           help 'Full access to all system functions. Admins can\'t be discarded or deleted.'
           read_only do
             # can't de-admin the first user
             bindings[:object].id == 1
           end
-        end
-        field :send_notification_emails do
-          help 'Will get an email everytime an event is created or changed'
         end
       end
 

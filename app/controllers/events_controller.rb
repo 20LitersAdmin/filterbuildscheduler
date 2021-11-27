@@ -192,6 +192,8 @@ class EventsController < ApplicationController
   end
 
   def show
+    # TODO: Handle destroyed technologies and locations
+    # TODO: Check that discarded technologies and locations still show up
     @registration = @event.registrations.active.where(user: current_user).first_or_initialize
 
     @registration.leader = (params[:leader].present? && current_user&.can_lead_event?(@event)) if @registration.new_record?

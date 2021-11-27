@@ -41,6 +41,7 @@ class CombinationsController < ApplicationController
   end
 
   def item_search
+    # used for editing and creating assemblies
     authorize :combination, :item_search?
 
     # combination can be a Technology or a Component
