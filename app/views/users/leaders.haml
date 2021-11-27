@@ -1,6 +1,5 @@
 -# frozen_string_literal: true
 .container.user-leaders
-  = render partial: 'shared/event_functions' if current_user&.admin_or_leader?
   .row.spacer-top
     = simple_form_for @contactor, method: :get, url: leaders_path do |f|
       .col-sm-3

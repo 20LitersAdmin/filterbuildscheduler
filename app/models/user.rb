@@ -186,6 +186,37 @@ class User < ApplicationRecord
     Registration.kept.where(user: self, event: event).present?
   end
 
+  def role_ary
+    # rails_admin users#index and #show
+    ary = []
+    ary << 'Admin' if is_admin
+    ary << 'Leader' if is_leader
+    ary << 'Inventoryist' if does_inventory
+    ary << 'Scheduler' if is_scheduler
+    ary << 'Data Manager' if is_data_manager
+    ary << 'Oauth Admin' if is_oauth_admin
+
+    ary << 'Builder' if ary.blank?
+
+    ary
+  end
+
+  def role
+    # rails_admin users#index
+    role_ary.to_sentence
+  end
+
+  def role_html
+    # rails_admin users#show
+    block = '<ul>'
+    role_ary.each do |r|
+      block += "<li>#{r}</li>"
+    end
+
+    block += '</ul>'
+    block.html_safe
+  end
+
   def send_reset_password_email
     # RailsAdmin custom form field with custom partial
     # custom partial links to UsersController#admin_password_reset

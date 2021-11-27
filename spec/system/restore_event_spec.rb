@@ -3,6 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe "Restoring a cancelled event", type: :system do
+  # TODO: this is now a Rails Admin function
 
   before :each do
     sign_in FactoryBot.create(:admin)
