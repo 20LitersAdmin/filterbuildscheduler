@@ -30,7 +30,7 @@ class EventsController < ApplicationController
     authorize @event = Event.new(event_params)
     if @event.save
       flash[:success] = 'The event has been created.'
-      EventMailer.delay.created(@event, current_user)
+      EventMailer.delay(queue: 'event_mailer').created(@event, current_user)
       redirect_to action: :index
     else
       @locations = Location.active.order(:name)
@@ -45,12 +45,12 @@ class EventsController < ApplicationController
 
     # send emails to registrations and leaders before cancelling
     if @event.start_time > Time.now
-      EventMailer.delay.cancelled(@event, current_user)
+      EventMailer.delay(queue: 'event_mailer').cancelled(@event, current_user)
       admins_notified = 'Admins notified.'
 
       if @event.registrations.exists?
         @event.registrations.each do |registration|
-          RegistrationMailer.delay.event_cancelled(registration, event)
+          RegistrationMailer.delay(queue: 'registration_mailer').event_cancelled(registration, event)
           registration.discard
         end
         users_notified = 'All registered builders notified.'
@@ -67,9 +67,8 @@ class EventsController < ApplicationController
   end
 
   def edit
-    @show_report = current_user&.admin_or_leader? && @event.start_time < Time.now
-
-    @too_old = (Date.today - @event.end_time.to_date).round > 14
+    @locations = Location.active.order(:name)
+    @technologies = Technology.list_worthy.order(:id).map { |t| ["#{t.name} (#{t.short_name})", t.id] }
   end
 
   def index
@@ -213,6 +212,7 @@ class EventsController < ApplicationController
   end
 
   def update
+    # this also marks checked registrations as attended
     @event.assign_attributes(event_params)
 
     admins_notified = nil
@@ -249,9 +249,10 @@ class EventsController < ApplicationController
 
       # Only trigger stuff if the event is actually complete.
       if @event.complete?
-        @event.registrations.where(attended: true).each do |r|
-          RegistrationMailer.delay.event_results(r) if send_results_emails
-          KindfulClient.new.delay.import_user_w_note(r)
+        # shouldn't be any need for .active here because registrations were just marked as attended, there hasn't been a chance to discard them.
+        @event.registrations.attended.each do |r|
+          RegistrationMailer.delay(queue: 'registration_mailer').event_results(r) if send_results_emails
+          KindfulClient.new.delay(queue: 'kindful_client').import_user_w_note(r)
         end
 
         EventInventoryJob.perform_later(@event) if create_inventory
@@ -264,7 +265,8 @@ class EventsController < ApplicationController
       redirect_to event_path(@event)
     else
       flash[:danger] = 'There was a problem saving this event report.'
-      @show_advanced = true
+      @locations = Location.active.order(:name)
+      @technologies = Technology.list_worthy.order(:id).map { |t| ["#{t.name} (#{t.short_name})", t.id] }
       render 'edit'
     end
   end

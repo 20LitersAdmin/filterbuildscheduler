@@ -3,9 +3,13 @@
 .container.event-show
   - if current_user&.can_edit_events?
     .row
-      = link_to 'Edit', edit_event_path(@event), class: 'float-right btn yellow'
-  .page-header.row
-    %h1= @event.full_title
+      .col-sm-10
+        = link_to 'Print Sign-in Sheet', attendance_event_path(@event), class: 'btn btn-sm blue'
+      .col-sm-2.right-align
+        = link_to 'Edit Event', edit_event_path(@event), class: 'btn btn-sm yellow'
+  .row
+    %h1
+      = @event.full_title
     - if @event.is_private
       %h4.center-align Private Event
     - if @event.description.present?
@@ -82,13 +86,14 @@
 #waiverModal.modal.fade{ tabindex: '-1', role: 'dialog', aria: { labelledby: 'Liability Waiver & Media Release', hidden: 'true' } }
   = render partial: 'users/user_waiver_form', locals: { show_accept_button: current_user ? !@registration.waiver_accepted? : true }
 
-#photoModal.modal.fade{ tabindex: '-1', role: 'dialog', aria: { labelledby: 'Larger Photo', hidden: 'true' } }
-  .modal-dialog.modal-lg{ role: 'document' }
-    .modal-content
-      .modal-header
-        %button.close{ type: 'button', 'data-dismiss': 'modal', 'aria-label': 'Close' }
-          %span{ 'aria-hidden': 'true' } &times;
-      .modal-body
-        = image_tag @location_img, class: 'location-img'
-      .modal-footer
-        %button.btn.yellow.fullwidth{ type: 'button', 'data-dismiss': 'modal', 'aria-label': 'Close' } Close
+- if @location_img.present?
+  #photoModal.modal.fade{ tabindex: '-1', role: 'dialog', aria: { labelledby: 'Larger Photo', hidden: 'true' } }
+    .modal-dialog.modal-lg{ role: 'document' }
+      .modal-content
+        .modal-header
+          %button.close{ type: 'button', 'data-dismiss': 'modal', 'aria-label': 'Close' }
+            %span{ 'aria-hidden': 'true' } &times;
+        .modal-body
+          = image_tag @location_img, class: 'location-img'
+        .modal-footer
+          %button.btn.yellow.fullwidth{ type: 'button', 'data-dismiss': 'modal', 'aria-label': 'Close' } Close

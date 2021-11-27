@@ -1,6 +1,6 @@
 -# frozen_string_literal: true
 
-.col-md-6.col-md-offset-3.col-sm-8.col-sm-offset-2.event-form
+.col-md-8.col-md-offset-2.event-form
   = simple_form_for @event do |f|
     = f.error_notification
     = f.input :title
@@ -34,26 +34,23 @@
       .col-sm-6
         = f.input :max_registrations, label: 'Max. Builders'
     .row
-      .col-sm-6
+      .col-xs-6
         = f.input :is_private, label: 'Private Event'
-      .col-sm-6
+      .col-xs-6
         %p If it's private, is there a contact person?
     .row
       .col-sm-6
         = f.input :contact_name
       .col-sm-6
         = f.input :contact_email
-    - if @show_report
+    - if @event.in_the_past?
       .row
         %hr/
       %h2 Report
       = render partial: 'events/report_fields', locals: { f: f }
     = f.submit 'Submit', class: 'btn yellow fullwidth'
-    - if @show_report && !@too_old
-      - if @event.registrations.count.positive? && @event.emails_sent == false
-        = f.button :submit, name: 'send_report', value: 'Submit & Email Results', class: 'btn blue fullwidth'
-      - if @event.emails_sent == true
-        %p.btn.blue.fullwidth (results already emailed)
+    - if @event.should_allow_results_emails_to_be_sent?
+      = f.button :submit, name: 'send_report', value: 'Submit & Email Results', class: 'btn blue fullwidth'
     - unless @event.new_record?
       .row
         .col-xs-4

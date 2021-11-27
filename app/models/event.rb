@@ -56,6 +56,7 @@ class Event < ApplicationRecord
   end
 
   def complete?
+    return false if new_record?
     return false unless start_time < Time.zone.now
 
     attendance.positive? || (boxes_packed.positive? || technologies_built.positive?)
@@ -126,10 +127,14 @@ class Event < ApplicationRecord
   end
 
   def in_the_future?
+    return false if new_record?
+
     start_time > Time.zone.now
   end
 
   def in_the_past?
+    return false if new_record?
+
     end_time <= Time.zone.now
   end
 
@@ -251,15 +256,11 @@ class Event < ApplicationRecord
     results_liters_per_year * technology.lifespan_in_years
   end
 
-  def should_notify_admins?
-    start_time_was > Time.now &&
-      important_fields_for_admins_changed?
-  end
-
-  def should_notify_builders?
-    start_time_was > Time.now &&
-      registrations.kept.any? &&
-      important_fields_for_builders_changed?
+  def should_allow_results_emails_to_be_sent?
+    in_the_past? &&
+      !emails_sent? &&
+      registrations.kept.size.positive? &&
+      (Date.today - end_time.to_date).round < 14
   end
 
   def should_create_inventory?
@@ -271,6 +272,17 @@ class Event < ApplicationRecord
 
     (technologies_built_changed? || boxes_packed_changed?) &&
       (technologies_built.positive? || boxes_packed.positive?)
+  end
+
+  def should_notify_admins?
+    start_time_was > Time.now &&
+      important_fields_for_admins_changed?
+  end
+
+  def should_notify_builders?
+    start_time_was > Time.now &&
+      registrations.kept.any? &&
+      important_fields_for_builders_changed?
   end
 
   def should_send_results_emails?

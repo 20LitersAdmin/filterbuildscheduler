@@ -1,14 +1,10 @@
 @import 'variables';
 // `/labels`
-#labels_chooser {
-  img.table-img {
-    width: 80px;
+.row.labels-check-btns {
+  margin-bottom: 1em;
+  a.btn-check {
+    font-size: 9px;
   }
-}
-
-// '/labels'
-.twentyliters form a.btn-check {
-  font-size: 9px;
 }
 
 // `/label/:uid`

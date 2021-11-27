@@ -69,7 +69,7 @@ class Replicator
 
     Rails.logger.warn error_ary if error_ary.any?
 
-    EventMailer.delay.replicated(replicated_events, user)
+    EventMailer.delay(queue: 'event_mailer').replicated(replicated_events, user)
 
     true
   end

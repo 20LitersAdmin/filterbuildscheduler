@@ -3,6 +3,16 @@
 class User < ApplicationRecord
   include Discard::Model
 
+  # SCHEMA NOTES: Roles:
+  # is_admin
+  # is_leader
+  # does_inventory
+  # is_scheduler
+  # is_data_manager
+  # is_oauth_admin
+  # none of the above == builder
+  # not signed in == anon user
+
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable
   devise :database_authenticatable,

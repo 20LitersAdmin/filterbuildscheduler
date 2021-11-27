@@ -18,12 +18,12 @@ FactoryBot.define do
     end
 
     factory :past_event do
-      start_time { Faker::Time.backward(days: 20).beginning_of_day + 9.hours }
+      start_time { (Time.now - 20.days).beginning_of_day + 9.hours }
       end_time { start_time + 3.hours }
     end
 
     factory :complete_event do
-      start_time { Faker::Time.backward(days: 2).beginning_of_day + 9.hours }
+      start_time { Faker::Time.backward(days: 4).beginning_of_day + 9.hours }
       end_time { start_time + 3.hours }
       technologies_built { 30 }
       boxes_packed { 1 }

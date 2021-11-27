@@ -9,7 +9,7 @@
 .col-sm-6
   = f.input :attendance, label: 'Total Attendance (Builders and Leaders):'
 .row
-  - if @event.registrations.count.positive?
+  - if @event.registrations.kept.count.positive?
     .col-xs-2
       %a#btn_check_all.btn.blue.btn-check{ href: '#' }
         %span.fa-stack
@@ -22,17 +22,18 @@
           = icon('far', 'square', class: 'fa-stack-2x')
         %span.btn-text all
 
-  %div{ class: @event.registrations.count.positive? ? 'col-xs-10' : 'col-xs-12' }
+  %div{ class: @event.registrations.kept.count.positive? ? 'col-xs-10' : 'col-xs-12' }
     %h3
       Registration-based attendance:
       %span#attendance_counter 0
-= f.simple_fields_for :registrations, @event.registrations.joins(:user).order('users.lname') do |r|
+= f.simple_fields_for :registrations, @event.registrations.kept.joins(:user).order('users.lname') do |r|
   .row
-    .col-sm-6
+    .col-xs-6
       = r.input :attended, label: "#{r.object.user.name} (with #{r.object.guests_registered} guests)", input_html: { tabindex: '-1' }
-    .col-sm-3.mt-10.right-align-md
+    .col-xs-4.mt-10
       Guests attended:
-    .col-sm-3.mt-5
+    .col-xs-2.mt-5
       = r.input :guests_attended, label: false
   .row.thin
-    %hr/
+    .col-xs-12
+      %hr/

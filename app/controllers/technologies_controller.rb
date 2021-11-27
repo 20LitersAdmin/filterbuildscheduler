@@ -28,12 +28,14 @@ class TechnologiesController < ApplicationController
   end
 
   def label
+    authorize Technology
     # page to print a full page of labels for one item
     @item = params[:uid].objectify_uid
 
     raise ActiveRecord::RecordNotFound unless @item.present?
 
     @label = Label.new(@item.label_hash)
+    @print_navbar = true
   end
 
   def labels
@@ -59,6 +61,8 @@ class TechnologiesController < ApplicationController
       item = uid.objectify_uid
       @ary << Label.new(item.label_hash) unless item.nil?
     end
+
+    @print_navbar = true
 
     render 'labels_show'
   end
