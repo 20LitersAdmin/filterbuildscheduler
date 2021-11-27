@@ -6,6 +6,8 @@ class TechnologyPolicy < ApplicationPolicy
   def initialize(user, technology)
     @user = user
     @technology = technology
+
+    super
   end
 
   def index?

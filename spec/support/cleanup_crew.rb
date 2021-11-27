@@ -6,7 +6,7 @@ module CleanupCrew
     # I believe it's safe because the require call only exists in RSpec's rails_helper
     abort('The Rails environment isn\'t Test!!!') unless Rails.env.test?
 
-    Rails.logger.info 'CleanupCrew has arrived.'
+    puts 'CleanupCrew has arrived.'
 
     # use .destroy_all to fire all callbacks, including deleting ActiveStorage::Attachments via dependent: :purge
 
@@ -36,13 +36,13 @@ module CleanupCrew
     Organization.delete_all
     Delayed::Job.delete_all
 
-    Rails.logger.info 'Mess is gone, boss.'
+    puts 'Mess is gone, boss.'
 
     ActiveRecord::Base.connection.tables.each do |t|
       ActiveRecord::Base.connection.reset_pk_sequence!(t)
     end
 
-    Rails.logger.info 'Lights are off, doors are locked. Good night.'
+    puts 'Lights are off, doors are locked. Good night.'
   end
 
   module_function :clean_up!

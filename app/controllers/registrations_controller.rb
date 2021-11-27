@@ -64,7 +64,7 @@ class RegistrationsController < ApplicationController
       sign_in(@user) unless current_user
 
       # don't send emails for past events.
-      RegistrationMailer.delay.created(@registration) if @event.in_the_future?
+      RegistrationMailer.delay(queue: 'registration_mailer').created(@registration) if @event.in_the_future?
 
       @user.update_columns(signed_waiver_on: Date.today) if @user.signed_waiver_on.blank? && waiver_accepted == '1'
       flash[:success] = 'Registration successful!'
@@ -177,9 +177,9 @@ class RegistrationsController < ApplicationController
     @message = params[:message]
     @sender = current_user
     @event.registrations.each do |registration|
-      EventMailer.delay.messenger(registration, @subject, @message, @sender)
+      EventMailer.delay(queue: 'event_mailer').messenger(registration, @subject, @message, @sender)
     end
-    EventMailer.delay.messenger_reporter(@event, @subject, @message, @sender)
+    EventMailer.delay(queue: 'event_mailer').messenger_reporter(@event, @subject, @message, @sender)
 
     flash[:success] = 'Message sent!'
     redirect_to event_registrations_path(@event)
@@ -188,7 +188,7 @@ class RegistrationsController < ApplicationController
   # re-send all registrations confirmation emails
   def reconfirms
     @event.registrations.each do |registration|
-      RegistrationMailer.delay.created(registration)
+      RegistrationMailer.delay(queue: 'registration_mailer').created(registration)
     end
     flash[:success] = "Sending confirmation emails to #{@event.registrations.size} registrants"
     redirect_to event_registrations_path(@event)
