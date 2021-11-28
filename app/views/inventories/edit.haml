@@ -13,7 +13,7 @@
     .row
       .col-sm-12.center-align
         %h4 When all items have been counted and verified, click "Finalize Inventory" to mark the inventory complete, update all counted items, and send notfications.
-        - if @uncounted[0].to_i > 0
+        - if @uncounted[0].to_i.positive?
           %h3
             There are still
             %span.uncounted_number= @uncounted
@@ -59,6 +59,3 @@
         #calculator_modal_body.modal-body
           .row
             = render partial: 'shared/calculator'
-
-- content_for :channels do
-  = javascript_include_tag 'channels/consumer', 'channels/counts_channel'

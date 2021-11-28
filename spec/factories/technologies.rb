@@ -9,6 +9,7 @@ FactoryBot.define do
     ideal_group_size { 20 }
     ideal_leaders { 2 }
     family_friendly { true }
+    list_worthy { true }
     unit_rate { 1 }
     owner { Faker::Company.name }
     people { 5 }

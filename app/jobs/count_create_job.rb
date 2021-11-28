@@ -7,31 +7,44 @@ class CountCreateJob < ApplicationJob
 
   # called by InventoriesController#create with #perform_now
 
-  def perform(inventory, technologies_params = [])
+  def perform(inventory, technologies_params = { 'technologies': [] })
     @inventory = inventory
 
-    tech_uids_to_skip = technologies_params.present? ? technologies_params['technologies'] : []
+    tech_uids_to_skip = technologies_params['technologies'].presence
 
-    item_uids = []
+    if tech_uids_to_skip
+      item_uids_to_potentially_skip = Technology.active
+                                                .where(uid: tech_uids_to_skip)
+                                                .map { |t| t.quantities.keys }
+                                                .flatten.uniq.sort
 
-    techs = Technology.list_worthy.where.not(uid: tech_uids_to_skip)
+      techs = Technology.list_worthy.where.not(uid: tech_uids_to_skip)
 
-    return unless techs&.any?
+      item_uids_to_not_skip = techs.list_worthy
+                                   .where.not(uid: tech_uids_to_skip)
+                                   .map { |t| t.quantities.keys }
+                                   .flatten.uniq.sort
 
-    techs.each do |technology|
-      item_uids << technology.uid
-      item_uids << technology.quantities.keys
+      item_uids_to_definitely_skip = (item_uids_to_potentially_skip - item_uids_to_not_skip).sort
+    else
+      techs = Technology.list_worthy
+      item_uids_to_definitely_skip = []
     end
 
-    item_uids.flatten.uniq.each do |item_uid|
-      create_count(item_uid.objectify_uid)
+    items = []
+    items << techs
+    items << Component.active
+    items << Part.active
+    items << Material.active
+
+    items.flatten(1).each do |item|
+      next if item_uids_to_definitely_skip.include?(item.uid)
+
+      create_count(item)
     end
   end
 
   def create_count(item)
-    # String.objectify_uid returns nil if nothing is found
-    return if item.nil?
-
     Count.create(
       inventory_id: @inventory.id,
       item: item,

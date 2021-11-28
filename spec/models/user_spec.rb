@@ -193,6 +193,7 @@ RSpec.describe User, type: :model do
     context 'when user is' do
       let(:admin_user) { build :admin }
       let(:inventory_user) { build :inventoryist }
+      let(:data_manager) { build :data_manager }
 
       it 'admin, returns true' do
         expect(admin_user.can_do_inventory?).to eq true
@@ -201,16 +202,45 @@ RSpec.describe User, type: :model do
       it 'inventoryist, returns true' do
         expect(inventory_user.can_do_inventory?).to eq true
       end
+
+      it 'data_manager, returns true' do
+        expect(data_manager.can_do_inventory?).to eq true
+      end
     end
 
-    context 'whne user is not admin or inventoryist' do
+    context 'when user is not admin or inventoryist' do
       it 'returns false' do
         user.is_oauth_admin = true
         user.is_leader = true
         user.is_scheduler = true
-        user.is_data_manager = true
         user.send_notification_emails = true
         user.send_inventory_emails = true
+
+        expect(user.can_do_inventory?).to eq false
+      end
+    end
+  end
+
+  describe '#can_view_inventory?' do
+    context 'when user' do
+      let(:admin_user) { build :admin }
+      let(:inv_user) { build :user, send_inventory_emails: true }
+
+      it 'can_do_inventory, returns true' do
+        expect(admin_user.can_view_inventory?).to eq true
+      end
+
+      it 'receives inventory emails, returns true' do
+        expect(inv_user.can_view_inventory?).to eq true
+      end
+    end
+
+    context 'when user cannot do inventory or receive inventory emails' do
+      it 'returns false' do
+        user.is_oauth_admin = true
+        user.is_leader = true
+        user.is_scheduler = true
+        user.send_notification_emails = true
 
         expect(user.can_do_inventory?).to eq false
       end

@@ -66,7 +66,7 @@ class InventoriesController < ApplicationController
   def edit
     # This view is where inventory counting gets performed
 
-    redirect_to inventory_path(@inventory) && return if @inventory.counts.none?
+    return redirect_to inventory_path(@inventory) if @inventory.counts.none?
 
     @counts = @inventory.counts.sort_by { |c| [c.sort_by_status, - c.item.name] }
     @uncounted = "#{view_context.pluralize(@inventory.counts.uncounted.size, 'item')} uncounted."

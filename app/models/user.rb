@@ -104,7 +104,13 @@ class User < ApplicationRecord
 
   def can_do_inventory?
     is_admin? ||
-      does_inventory?
+      does_inventory? ||
+      is_data_manager?
+  end
+
+  def can_view_inventory?
+    can_do_inventory? ||
+      send_inventory_emails?
   end
 
   def can_edit_events?

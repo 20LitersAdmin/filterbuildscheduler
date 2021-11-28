@@ -6,26 +6,28 @@ class InventoryPolicy < ApplicationPolicy
   def initialize(user, inventory)
     @user = user
     @inventory = inventory
+
+    super
   end
 
   def index?
-    user&.can_do_inventory?
+    user&.can_do_inventory? || user&.can_view_inventory?
   end
 
   def new?
-    index?
+    user&.can_do_inventory?
   end
 
   def create?
-    index?
+    new?
   end
 
   def edit?
-    index?
+    new?
   end
 
   def update?
-    index?
+    new?
   end
 
   def show?
@@ -47,8 +49,4 @@ class InventoryPolicy < ApplicationPolicy
   def paper?
     index?
   end
-
-  # def financials?
-  #   index?
-  # end
 end
