@@ -63,10 +63,7 @@ class EventPolicy < ApplicationPolicy
 
   def show?
     if event.in_the_past?
-      if user&.can_edit_events? ||
-         (user&.is_leader? && user&.leading?(event))
-
-        # only show it if the leader led the event
+      if user&.can_edit_events?
         true
       else
         # anonymous users and builders can't see past events
