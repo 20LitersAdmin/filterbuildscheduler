@@ -12,12 +12,12 @@
 
 * New System tests:
   - view_all_events
-  - view_events_that_need_leaders_via_rails_admin
-  - view_events_that_need_leaders_via_events_lead
-  - view_future_events
-  - view_events_that_need_reports
-  - view_closed_events
-  - view_discarded_events
+    - view_events_that_need_leaders_via_rails_admin
+    - view_events_that_need_leaders_via_events_lead
+    - view_future_events
+    - view_events_that_need_reports
+    - view_closed_events
+    - view_discarded_events
   - discard_an_event_via_rails_admin
   - discard_an_event_via_events_edit
   - destroy_an_event

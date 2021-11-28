@@ -3,10 +3,6 @@
 require 'rails_helper'
 
 RSpec.describe 'Creating a new inventory', type: :system do
-  after :all do
-    # clean_up!
-  end
-
   context 'when visiting the page as' do
     it 'anon users redirects to sign_in page' do
       visit new_inventory_path
@@ -16,7 +12,7 @@ RSpec.describe 'Creating a new inventory', type: :system do
     end
 
     it 'builders redirects to home page' do
-      sign_in FactoryBot.create(:user)
+      sign_in create(:user)
 
       visit new_inventory_path
 
@@ -24,41 +20,58 @@ RSpec.describe 'Creating a new inventory', type: :system do
       expect(page).to have_content 'Upcoming Builds'
     end
 
-    it 'leaders shows the page' do
-      sign_in FactoryBot.create(:leader)
+    it 'leaders redirects to home page' do
+      sign_in create(:leader)
 
       visit new_inventory_path
 
-      expect(page).to have_content 'Create a new inventory'
+      expect(page).to have_content "You don't have permission"
+      expect(page).to have_content 'Upcoming Builds'
     end
 
     it 'inventory users shows the page' do
-      sign_in FactoryBot.create(:user, does_inventory: true)
+      sign_in create(:inventoryist)
       visit new_inventory_path
 
       expect(page).to have_content 'Create a new inventory'
     end
 
-    it 'users who receive inventory emails shows the page' do
-      sign_in FactoryBot.create(:user, send_inventory_emails: true)
+    it 'users who receive inventory redirects to home page' do
+      sign_in create(:user, send_inventory_emails: true)
       visit new_inventory_path
 
-      expect(page).to have_content 'Create a new inventory'
+      expect(page).to have_content "You don't have permission"
+      expect(page).to have_content 'Upcoming Builds'
     end
 
     it 'admins shows the page' do
-      sign_in FactoryBot.create(:admin)
+      sign_in create(:admin)
       visit new_inventory_path
 
       expect(page).to have_content 'Create a new inventory'
       expect(page).to have_css('input#inventory_date')
       expect(page).to have_button 'Create Inventory'
     end
+
+    it 'scheduler redirects to home page' do
+      sign_in create(:scheduler)
+      visit new_inventory_path
+
+      expect(page).to have_content "You don't have permission"
+      expect(page).to have_content 'Upcoming Builds'
+    end
+
+    it 'data manager shows the page' do
+      sign_in create(:data_manager)
+      visit new_inventory_path
+
+      expect(page).to have_content 'Create a new inventory'
+    end
   end
 
   context 'when the URL has' do
     before :each do
-      sign_in FactoryBot.create(:admin)
+      sign_in create(:admin)
     end
 
     context 'no parameter' do
@@ -126,41 +139,54 @@ RSpec.describe 'Creating a new inventory', type: :system do
     end
   end
 
-  context 'when a conflicting inventory exists' do
-    it "isn't possible" do
-      FactoryBot.create(:inventory)
-      sign_in FactoryBot.create(:admin)
+  context 'is possible' do
+    let(:technologies) { create_list :technology, 3 }
+    let(:parts) { create_list :part, 7 }
+    let(:components) { create_list :component, 4 }
+    let(:materials) { create_list :material, 2 }
+
+    it 'by clicking the button' do
+      technologies
+      parts
+      components
+      materials
+
+      sign_in create(:admin)
       visit new_inventory_path
 
-      first_count = Inventory.all.count
-
-      click_button 'Create Inventory'
-
-      expect(page).to have_content 'A manual inventory already exists for'
-
-      expect(page).to have_content('Inventory Counts as of')
-
-      second_count = Inventory.all.count
-
-      expect(second_count).to eq first_count
-    end
-  end
-
-  context "when there's no conflicting inventory" do
-    it 'is possible' do
-      sign_in FactoryBot.create(:admin)
-      visit new_inventory_path
-
-      first_count = Inventory.all.count
-
-      click_button 'Create Inventory'
+      expect { click_button 'Create Inventory' }
+        .to change { Inventory.all.count }
+        .by(1)
 
       expect(page).to have_content('The inventory has been created.')
       expect(page).to have_css('div#inventory_edit')
+    end
 
-      second_count = Inventory.all.count
+    context 'while skipping some technologies' do
+      it 'and then clicking the button' do
+        technologies
+        parts
+        components
+        materials
+        Assembly.create(item: Part.first, combination: Technology.first)
+        Assembly.create(item: Component.first, combination: Technology.first)
+        Assembly.create(item: Material.first, combination: Technology.first)
 
-      expect(second_count).to eq first_count + 1
+        QuantityAndDepthCalculationJob.perform_now
+
+        sign_in create(:admin)
+        visit new_inventory_path
+
+        find("input[value=#{Technology.first.uid}]").click
+
+        click_button 'Create Inventory'
+
+        # Should have skipped creating 1 of each item (16 counts would be everything)
+        expect(page).to have_content('The inventory has been created.')
+        expect(page).to have_css('div#inventory_edit')
+
+        expect(Inventory.latest.counts.size).to eq 12
+      end
     end
   end
 end

@@ -32,6 +32,10 @@ class Inventory < ApplicationRecord
     event_id.present?
   end
 
+  def latest?
+    Inventory.latest == self
+  end
+
   def name
     "#{date.strftime('%-m/%-d/%y')}: #{type}"
   end

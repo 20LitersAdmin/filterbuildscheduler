@@ -12,49 +12,55 @@ RSpec.describe CountCreateJob, type: :job do
 
   describe '#perform' do
     let(:technology_to_skip) { create :technology }
+    let(:technology) { create :technology }
     let(:technologies_params) { ActionController::Parameters.new(technologies: ['T009', 'T007', technology_to_skip.uid.to_s]) }
 
     context 'when technologies_params includes technologies' do
-      let(:technology_to_include) { create :technology }
+      it 'doesn\'t create counts for items exclusive to the skipped technologies' do
+        3.times do
+          part_to_maybe_skip = create :part
+          technology_to_skip.quantities[part_to_maybe_skip.uid] = 1
 
-      it 'pulls technologies excluding those UIDs' do
-        expect(Technology).to receive_message_chain(:list_worthy, :where, :not)
-          .with(uid: ['T009', 'T007', technology_to_skip.uid.to_s])
-          .and_return(Technology.where(uid: technology_to_include.uid))
+          create :part # no association to any tech
+
+          part_to_not_skip = create :part
+          technology.quantities[part_to_not_skip] = 1
+        end
+
+        technology_to_skip.save
+        technology.save
+
+        # take one of the maybes and share it with another technology
+        parts_to_maybe_skip = technology_to_skip.quantities.keys
+        technology.quantities[parts_to_maybe_skip.pop] = 1
 
         job.perform(inventory, technologies_params)
+
+        count_uids = Inventory.latest.counts.map { |c| c.item.uid }
+
+        parts_to_maybe_skip.each do |p_uid|
+          expect(count_uids).not_to include p_uid
+        end
+        expect(count_uids).to include technology.uid
+        expect(count_uids).not_to include technology_to_skip.uid
       end
     end
 
-    it 'returns early if no technologies are found' do
-      expect(Technology).to receive_message_chain(:list_worthy, :where, :not)
-        .with(uid: ['T009', 'T007', technology_to_skip.uid.to_s])
-        .and_return(Technology.none)
-
-      expect(job.perform(inventory, technologies_params)).to eq nil
-    end
-
-    it 'calls create_count for itself and each key in quantities' do
-      technology = create :technology
+    it 'calls create_count for each item in the system' do
       3.times do
         part = create :part
         technology.quantities[part.uid] = 1
+        create :part
       end
       technology.save
 
-      expect(job).to receive(:create_count).exactly(4).times
+      expect(job).to receive(:create_count).exactly(7).times
 
-      job.perform(inventory, technologies_params)
+      job.perform(inventory)
     end
   end
 
   describe '#create_count' do
-    context 'when item is nil' do
-      it 'returns early' do
-        expect(job.create_count(nil)).to eq nil
-      end
-    end
-
     it 'creates a Count record from an item record' do
       part = create :part
 

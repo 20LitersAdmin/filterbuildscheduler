@@ -1,6 +1,8 @@
 -# frozen_string_literal: true
-.col-xs-12
+.col-xs-8
   %h2 Create a new inventory
+.col-xs-4.right-align
+  = link_to 'Back', inventories_path, class: 'btn btn-small blue'
 #inventory_new.col-xs-12
   = simple_form_for @inventory do |f|
     = f.error_notification

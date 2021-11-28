@@ -20,7 +20,9 @@
     = csrf_meta_tags
     = stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload'
     = javascript_include_tag 'application', 'data-turbolinks-track': 'reload'
-    = action_cable_meta_tag if controller.controller_name == 'inventories' && controller.action_name == 'edit'
+    - if controller.controller_name == 'inventories' && controller.action_name == 'edit'
+      = action_cable_meta_tag
+      = javascript_include_tag 'channels/consumer', 'channels/counts_channel'
     / dataTables Buttons & Responsive CDNs
     %link{ href: 'https://cdn.datatables.net/v/bs/jszip-2.5.0/dt-1.10.16/b-1.4.2/b-colvis-1.4.2/b-html5-1.4.2/b-print-1.4.2/r-2.2.0/datatables.min.css', rel: 'stylesheet', type: 'text/css' }/
     %script{ src: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.32/pdfmake.min.js', type: 'text/javascript' }
