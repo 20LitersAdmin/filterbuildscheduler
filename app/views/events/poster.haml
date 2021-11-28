@@ -1,0 +1,64 @@
+-# frozen_string_literal: true
+
+.event-poster
+  .poster-row
+    .poster-logo-div
+      = image_tag 'logo-horizontal-417-208.png', class: 'poster-logo'
+    .poster-title-div
+      %h3
+        Roll up your sleeves to
+        %br>/
+        solve the global water crisis.
+      %h5 Take a global problem personally and solve it for the next decade.
+  .poster-row
+    .poster-event-title-div
+      %h1.center-align.event-title
+        = @event.title
+  .poster-row
+    .poster-third
+      %h2
+        We're Building #{@technology.name}s
+      - if @technology.family_friendly
+        %h4 Family-friendly! Ages 4 - 104 are welcome.
+      - else
+        %h4 Grown-up build
+        %i Ages 12+ for safety reasons
+      %h4= @tech_blurb
+      %h4 Lasting 10 years or more, these filters change lives. Improving health, education, and income with every glass.
+    .poster-third
+      = image_tag(@tech_img, class: 'tech-img') unless @tech_img.blank?
+    .poster-third
+      %h2 What to expect:
+      %ul
+        %li Info on the global water crisis
+        %li Hands-on training
+        %li Casual, social environment
+        %li Gloves and tools provided
+        %li
+          Childcare is not provided, #{@child_statement_email}
+      %h2 What to bring:
+      %ul
+        %li A water bottle is a good idea
+        %li Comfortable, close-toed shoes
+        %li A desire to help the 663 million people without access to clean water
+  .poster-row
+    .poster-half
+      %h3= @event.format_time_range
+      %h3.slim= @event.location.name
+      %h5= @event.location.address
+      %h5= @event.location.one_liner
+      %h3 You in? Ready to build?
+      - if @event.is_private?
+        - if @event.contact_name.present?
+          %h4
+            Talk to #{@event.contact_name}
+          %h4= @event.contact_email
+          %h4
+            Sign up at #{event_url(@event)}
+      - else
+        %h4
+          Sign up at #{event_url(@event)}
+    .poster-half
+      = image_tag(@location_img, class: 'location-img') if @location_img.present?
+  .poster-row.center-align.poster-footer
+    20 Liters is a 501(c)3 non profit corporation, EIN 27-3378656&#160;&#160;|&#160;&#160;20liters.org&#160;&#160;|&#160;&#160;616.528.0314
