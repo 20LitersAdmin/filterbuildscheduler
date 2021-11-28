@@ -26,7 +26,7 @@ class EventPolicy < ApplicationPolicy
   end
 
   def lead?
-    attendance?
+    create?
   end
 
   def leaders?
