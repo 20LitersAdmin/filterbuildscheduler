@@ -3,13 +3,9 @@
 require 'rails_helper'
 
 RSpec.describe 'Homepage', type: :system do
-  after :all do
-    clean_up!
-  end
-
   context 'an Admin user' do
     before :each do
-      sign_in FactoryBot.create(:admin)
+      sign_in create(:admin)
     end
 
     it 'goes to the homepage' do
@@ -19,121 +15,77 @@ RSpec.describe 'Homepage', type: :system do
     end
 
     context 'when public events are present' do
+      let(:events) { create_list :event, 3 }
+
       it 'shows the events' do
-        3.times do
-          FactoryBot.create(:event)
-        end
+        events
         visit '/'
 
         expect(page).to have_content 'Upcoming Builds'
-        expect(page).to have_selector(:css, "div#event_#{Event.first.id}")
-        expect(page).to have_selector(:css, "div#event_#{Event.second.id}")
-        expect(page).to have_selector(:css, "div#event_#{Event.third.id}")
+        expect(page).to have_selector(:css, "div#event_#{events.first.id}")
+        expect(page).to have_selector(:css, "div#event_#{events.second.id}")
+        expect(page).to have_selector(:css, "div#event_#{events.third.id}")
       end
     end
 
     context 'when private events are present' do
+      let(:events) { create_list :event, 3, is_private: true }
+
       it 'shows the events' do
-        3.times do
-          FactoryBot.create(:event, is_private: true)
-        end
+        events
         visit '/'
 
         expect(page).to have_content 'Upcoming Builds'
-        expect(page).to have_selector(:css, "div#event_#{Event.first.id}")
-        expect(page).to have_selector(:css, "div#event_#{Event.second.id}")
-        expect(page).to have_selector(:css, "div#event_#{Event.third.id}")
-      end
-    end
-
-    context 'when past events are present' do
-      before :each do
-        3.times do
-          FactoryBot.create(:past_event)
-        end
-        visit '/'
-      end
-
-      it 'shows the events' do
-        expect(page).to have_content 'Open Builds (report is missing)'
-        expect(page).to have_selector(:css, "div#event_#{Event.first.id}")
-        expect(page).to have_selector(:css, "div#event_#{Event.second.id}")
-        expect(page).to have_selector(:css, "div#event_#{Event.third.id}")
-      end
-
-      it 'links directly to the edit page' do
-        expect(page).to have_link('', href: edit_event_path(Event.first))
-        expect(page).to have_link('', href: edit_event_path(Event.second))
-        expect(page).to have_link('', href: edit_event_path(Event.third))
+        expect(page).to have_selector(:css, "div#event_#{events.first.id}")
+        expect(page).to have_selector(:css, "div#event_#{events.second.id}")
+        expect(page).to have_selector(:css, "div#event_#{events.third.id}")
       end
     end
   end
 
   context 'a Leader user' do
     before :each do
-      sign_in FactoryBot.create(:leader)
+      sign_in create(:leader)
     end
 
     it 'goes to the homepage' do
       visit '/'
 
-      expect(page).to have_content 'Available functions:'
+      expect(page).to have_content 'Admin'
     end
 
     context 'when public events are present' do
+      let(:events) { create_list :event, 3 }
+
       it 'shows the events' do
-        3.times do
-          FactoryBot.create(:event)
-        end
+        events
         visit '/'
 
         expect(page).to have_content 'Upcoming Builds'
-        expect(page).to have_selector(:css, "div#event_#{Event.first.id}")
-        expect(page).to have_selector(:css, "div#event_#{Event.second.id}")
-        expect(page).to have_selector(:css, "div#event_#{Event.third.id}")
+        expect(page).to have_selector(:css, "div#event_#{events.first.id}")
+        expect(page).to have_selector(:css, "div#event_#{events.second.id}")
+        expect(page).to have_selector(:css, "div#event_#{events.third.id}")
       end
     end
 
     context 'when private events are present' do
+      let(:events) { create_list :event, 3, is_private: true }
+
       it 'shows the events' do
-        3.times do
-          FactoryBot.create(:event, is_private: true)
-        end
+        events
         visit '/'
 
         expect(page).to have_content 'Upcoming Builds'
-        expect(page).to have_selector(:css, "div#event_#{Event.first.id}")
-        expect(page).to have_selector(:css, "div#event_#{Event.second.id}")
-        expect(page).to have_selector(:css, "div#event_#{Event.third.id}")
-      end
-    end
-
-    context 'when past events are present' do
-      before :each do
-        3.times do
-          FactoryBot.create(:past_event)
-        end
-        visit '/'
-      end
-
-      it 'shows the events' do
-        expect(page).to have_content 'Open Builds (report is missing)'
-        expect(page).to have_selector(:css, "div#event_#{Event.first.id}")
-        expect(page).to have_selector(:css, "div#event_#{Event.second.id}")
-        expect(page).to have_selector(:css, "div#event_#{Event.third.id}")
-      end
-
-      it 'links directly to the edit page' do
-        expect(page).to have_link('', href: edit_event_path(Event.first))
-        expect(page).to have_link('', href: edit_event_path(Event.second))
-        expect(page).to have_link('', href: edit_event_path(Event.third))
+        expect(page).to have_selector(:css, "div#event_#{events.first.id}")
+        expect(page).to have_selector(:css, "div#event_#{events.second.id}")
+        expect(page).to have_selector(:css, "div#event_#{events.third.id}")
       end
     end
   end
 
   context 'a Builder user' do
     before :each do
-      sign_in FactoryBot.create(:user)
+      sign_in create(:user)
     end
 
     it 'goes to homepage' do
@@ -143,46 +95,30 @@ RSpec.describe 'Homepage', type: :system do
     end
 
     context 'when public events are present' do
+      let(:events) { create_list :event, 3 }
+
       it 'shows the events' do
-        3.times do
-          FactoryBot.create(:event)
-        end
+        events
         visit '/'
 
         expect(page).to have_content 'Upcoming Builds'
-        expect(page).to have_selector(:css, "div#event_#{Event.first.id}")
-        expect(page).to have_selector(:css, "div#event_#{Event.second.id}")
-        expect(page).to have_selector(:css, "div#event_#{Event.third.id}")
+        expect(page).to have_selector(:css, "div#event_#{events.first.id}")
+        expect(page).to have_selector(:css, "div#event_#{events.second.id}")
+        expect(page).to have_selector(:css, "div#event_#{events.third.id}")
       end
     end
 
     context 'when private events are present' do
+      let(:events) { create_list :event, 3, is_private: true }
+
       it 'doesn\'t show the events' do
-        3.times do
-          FactoryBot.create(:event, is_private: true)
-        end
+        events
         visit '/'
 
         expect(page).to have_content 'Upcoming Builds'
-        expect(page).not_to have_selector(:css, "div#event_#{Event.first.id}")
-        expect(page).not_to have_selector(:css, "div#event_#{Event.second.id}")
-        expect(page).not_to have_selector(:css, "div#event_#{Event.third.id}")
-      end
-    end
-
-    context 'when past events are present' do
-      before :each do
-        3.times do
-          FactoryBot.create(:past_event)
-        end
-        visit '/'
-      end
-
-      it 'doesn\'t show the events' do
-        expect(page).not_to have_content 'Open Builds (report is missing)'
-        expect(page).not_to have_selector(:css, "div#event_#{Event.first.id}")
-        expect(page).not_to have_selector(:css, "div#event_#{Event.second.id}")
-        expect(page).not_to have_selector(:css, "div#event_#{Event.third.id}")
+        expect(page).not_to have_selector(:css, "div#event_#{events.first.id}")
+        expect(page).not_to have_selector(:css, "div#event_#{events.second.id}")
+        expect(page).not_to have_selector(:css, "div#event_#{events.third.id}")
       end
     end
   end
@@ -195,46 +131,30 @@ RSpec.describe 'Homepage', type: :system do
     end
 
     context 'when public events are present' do
+      let(:events) { create_list :event, 3 }
+
       it 'shows the events' do
-        3.times do
-          FactoryBot.create(:event)
-        end
+        events
         visit '/'
 
         expect(page).to have_content 'Upcoming Builds'
-        expect(page).to have_selector(:css, "div#event_#{Event.first.id}")
-        expect(page).to have_selector(:css, "div#event_#{Event.second.id}")
-        expect(page).to have_selector(:css, "div#event_#{Event.third.id}")
+        expect(page).to have_selector(:css, "div#event_#{events.first.id}")
+        expect(page).to have_selector(:css, "div#event_#{events.second.id}")
+        expect(page).to have_selector(:css, "div#event_#{events.third.id}")
       end
     end
 
     context 'when private events are present' do
+      let(:events) { create_list :event, 3, is_private: true }
+
       it 'doesn\'t show the events' do
-        3.times do
-          FactoryBot.create(:event, is_private: true)
-        end
+        events
         visit '/'
 
         expect(page).to have_content 'Upcoming Builds'
-        expect(page).not_to have_selector(:css, "div#event_#{Event.first.id}")
-        expect(page).not_to have_selector(:css, "div#event_#{Event.second.id}")
-        expect(page).not_to have_selector(:css, "div#event_#{Event.third.id}")
-      end
-    end
-
-    context 'when past events are present' do
-      before :each do
-        3.times do
-          FactoryBot.create(:past_event)
-        end
-        visit '/'
-      end
-
-      it 'doesn\'t show the events' do
-        expect(page).not_to have_content 'Open Builds (report is missing)'
-        expect(page).not_to have_selector(:css, "div#event_#{Event.first.id}")
-        expect(page).not_to have_selector(:css, "div#event_#{Event.second.id}")
-        expect(page).not_to have_selector(:css, "div#event_#{Event.third.id}")
+        expect(page).not_to have_selector(:css, "div#event_#{events.first.id}")
+        expect(page).not_to have_selector(:css, "div#event_#{events.second.id}")
+        expect(page).not_to have_selector(:css, "div#event_#{events.third.id}")
       end
     end
   end
