@@ -86,7 +86,7 @@ RSpec.describe 'Visiting Events', type: :system do
       expect(page).to have_content event.full_title
       expect(page).to have_content "You're Registered!"
       expect(page).to have_content leader.name
-      expect(page).to have_link "Change/Cancel Registration"
+      expect(page).to have_link 'Change/Cancel Registration'
     end
   end
 
