@@ -80,9 +80,9 @@ RSpec.configure do |config|
     CleanupCrew.clean_up!
   end
 
-  config.around :each, :js do |ex|
-    ex.run_with_retry retry: 3
-  end
+  # config.around :each, :js do |ex|
+  #   ex.run_with_retry retry: 3
+  # end
 end
 
 Shoulda::Matchers.configure do |config|

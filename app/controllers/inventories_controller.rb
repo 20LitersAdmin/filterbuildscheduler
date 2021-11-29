@@ -64,12 +64,12 @@ class InventoriesController < ApplicationController
   end
 
   def edit
-    # This view is where inventory counting gets performed
-
     return redirect_to inventory_path(@inventory) if @inventory.counts.none?
 
+    # This view is where inventory counting gets performed
+
     @counts = @inventory.counts.sort_by { |c| [c.sort_by_status, - c.item.name] }
-    @uncounted = "#{view_context.pluralize(@inventory.counts.uncounted.size, 'item')} uncounted."
+    @uncounted = "#{view_context.pluralize(@inventory.counts.untouched.size, 'item')} uncounted."
 
     @techs = Technology.list_worthy
   end
@@ -78,7 +78,7 @@ class InventoriesController < ApplicationController
     # @inventory only gets updated once, on complete, no incremental updates
     @inventory.completed_at = Time.now.localtime
 
-    # Inventory#after_update triggers:
+    # If completed_at is present, Inventory#after_update triggers:
     # ProduceableJob
     # CountTransferJob
     @inventory.save
