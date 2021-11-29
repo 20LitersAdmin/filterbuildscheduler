@@ -8,7 +8,7 @@
   - Model tests are green
   - Request test is green
   - Service tests are green
-  - System tests are red (258 tests , 85 failures)
+  - System tests are red (265 tests , 31 failures)
 
 * New System tests:
   - view_all_events
