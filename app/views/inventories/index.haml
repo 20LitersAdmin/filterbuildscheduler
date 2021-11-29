@@ -29,7 +29,7 @@
       = link_to 'Inventory History', history_inventories_path, class: 'btn btn-sm empty'
       = link_to 'New Inventory', new_inventory_path, class: 'btn btn-sm yellow'
     .col-xs-12
-      %table.table.table-striped.table-bordered.datatable
+      %table#item_tbl.table.table-striped.table-bordered.datatable
         %thead
           = render partial: 'item_tbl_head'
         %tbody
