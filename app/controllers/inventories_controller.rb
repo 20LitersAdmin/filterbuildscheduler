@@ -69,7 +69,7 @@ class InventoriesController < ApplicationController
     # This view is where inventory counting gets performed
 
     @counts = @inventory.counts.sort_by { |c| [c.sort_by_status, - c.item.name] }
-    @uncounted = "#{view_context.pluralize(@inventory.counts.untouched.size, 'item')} uncounted."
+    @uncounted = "#{view_context.pluralize(@inventory.counts.uncounted.size, 'item')} uncounted."
 
     @techs = Technology.list_worthy
   end

@@ -117,7 +117,7 @@ RSpec.describe 'Inventory edit page', type: :system do
       visit edit_inventory_path @inventory
     end
 
-    fit 'search' do
+    it 'search' do
       expect(page).to have_content "Edit #{inventory.name}"
 
       fill_in 'search', with: Part.second.name
@@ -139,7 +139,7 @@ RSpec.describe 'Inventory edit page', type: :system do
       expect(page).to have_css("div[data-item-uid=#{Component.second.uid}]", visible: false)
     end
 
-    fit 'filter by status' do
+    it 'filter by status' do
       @count1 = Count.first
       @count1.update(user: @user)
 
@@ -175,26 +175,70 @@ RSpec.describe 'Inventory edit page', type: :system do
       expect(page).to have_content Count.third.item.name
     end
 
-    # HERE
-    # All submissions should hit CountUpdate.new
-    # Partials: button text ends in 'Count'
-    # Full submissions: button text is 'Edit'
-    pending 'submit a partial box count'
+    it 'submit counts' do
+      expect(page).to have_content "Edit #{inventory.name}"
 
-    pending 'submit a partial loose count'
+      # partial box submit
+      find("div#count_#{Count.first.id} a.count-btn").click
+      find('input#count_unopened_boxes_count')
 
-    pending 'submit a full count'
+      fill_in 'count_unopened_boxes_count', with: 5
 
-    pending 'finalize the inventory' do
-      allow(CountTransferJob).to receive(:perform_later).with(inventory).and_call_original
+      click_button('Submit Box Count')
+
+      # wait for CountsController#update.js.erb to clear the  modal
+      sleep(1)
+      count_modal_body = find('#count_modal_body', visible: false)['innerHTML']
+
+      expect(count_modal_body).to eq 'cleared'
+
+      # partial loose submit
+      find("div#count_#{Count.second.id} a.count-btn").click
+      find('input#count_loose_count')
+      fill_in 'count_loose_count', with: 50
+
+      click_button('Submit Loose Count')
+
+      # wait for CountsController#update.js.erb to clear the  modal
+      sleep(1)
+      count_modal_body = find('#count_modal_body', visible: false)['innerHTML']
+      expect(count_modal_body).to eq 'cleared'
+
+      # full submit
+      find("div#count_#{Count.third.id} a.count-btn").click
+      find('input#count_loose_count')
+      fill_in 'count_loose_count', with: 30
+      fill_in 'count_unopened_boxes_count', with: 3
+
+      click_button('Submit')
+
+      sleep(3)
+      count_1_btn_text = find("div#count_#{Count.first.id}
+        a.count-btn").text
+      count_2_btn_text = find("div#count_#{Count.second.id} a.count-btn").text
+      count_3_btn_text = find("div#count_#{Count.third.id} a.count-btn").text
+
+      expect(count_1_btn_text).to eq 'Loose Count'
+      expect(count_2_btn_text).to eq 'Box Count'
+      expect(count_3_btn_text).to eq 'Edit'
+
+      expect(Count.first.unopened_boxes_count).to eq 5
+      expect(Count.second.loose_count).to eq 50
+      expect(Count.third.loose_count).to eq 30
+      expect(Count.third.unopened_boxes_count).to eq 3
+      expect(Count.third.user_id).not_to eq nil
+    end
+
+    it 'finalize the inventory' do
+      allow(CountTransferJob).to receive(:perform_later).with(@inventory).and_call_original
 
       click_link 'Finalize'
 
-      expect(CountTransferJob).to receive(:perform_later).with(inventory)
+      expect(CountTransferJob).to receive(:perform_later).with(@inventory)
 
       click_button 'Finalize Inventory'
 
-      expect(page).not_to have_content 'Current Inventory:'
+      expect(page).to have_content 'Inventory complete! All completed counts have been transferred to their items.'
       expect(page).to have_content 'Inventory Counts:'
     end
   end

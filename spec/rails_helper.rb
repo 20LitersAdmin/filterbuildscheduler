@@ -38,6 +38,7 @@ require 'rspec/retry'
 
 ActiveRecord::Migration.maintain_test_schema!
 Capybara.server = :puma
+Capybara.javascript_driver = :selenium
 FactoryBot.use_parent_strategy = false
 
 RSpec.configure do |config|

@@ -4,9 +4,11 @@ development:
   channel_prefix: build-planner_development
 
 test:
-  adapter: async
+  adapter: redis
+  url: redis://localhost:6379/1
+  channel_prefix: build-planner_test
 
 production:
   adapter: redis
-  url: redis://localhost:6379/1
+  url: REDIS_URL
   channel_prefix: build-planner_production
