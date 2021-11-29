@@ -208,7 +208,7 @@ class EventsController < ApplicationController
 
     @show_edit = (current_user&.is_admin || @registration&.leader?)
 
-    @leaders = @event.registrations.leaders
+    @leaders = @event.registrations.active.leaders
 
     @user = current_user || User.new
   end
