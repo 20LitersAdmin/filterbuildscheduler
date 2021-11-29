@@ -11,7 +11,7 @@ class InventoryPolicy < ApplicationPolicy
   end
 
   def index?
-    user&.can_do_inventory? || user&.can_view_inventory?
+    user&.can_view_inventory?
   end
 
   def new?
