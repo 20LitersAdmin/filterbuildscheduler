@@ -42,22 +42,6 @@ RSpec.describe Supplier, type: :model do
     end
   end
 
-  describe '#related_items(items)' do
-    let(:related_part) { create :part, supplier: supplier }
-    let(:related_material) { create :material, supplier: supplier }
-    let(:unrelated_part) { create :part }
-    let(:unrelated_material) { create :material }
-
-    it 'maps an array of items and returns those that match this supplier' do
-      items = [related_part, related_material, unrelated_part, unrelated_material]
-
-      expect(supplier.related_items(items)).to include related_part
-      expect(supplier.related_items(items)).to include related_material
-      expect(supplier.related_items(items)).not_to include unrelated_part
-      expect(supplier.related_items(items)).not_to include unrelated_material
-    end
-  end
-
   describe '#valid_url?' do
     let(:no_url) { create :supplier, url: nil }
 

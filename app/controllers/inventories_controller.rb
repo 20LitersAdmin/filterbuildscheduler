@@ -121,8 +121,8 @@ class InventoriesController < ApplicationController
       materials = Material.below_minimums
     end
 
-    @items = [parts, materials].flatten
-    @suppliers = [parts.map(&:supplier).uniq, materials.map(&:supplier).uniq].flatten.uniq.compact
+    @items = [parts, materials].flatten(1).uniq
+    @suppliers = [parts.map(&:supplier).uniq, materials.map(&:supplier).uniq].flatten(1).uniq.compact
 
     @items_w_no_supplier = @items.select { |item| item.supplier.nil? }
   end
@@ -145,7 +145,7 @@ class InventoriesController < ApplicationController
       materials = Material.active
     end
 
-    @items = [parts, materials].flatten
+    @items = [parts, materials].flatten(1).uniq
     @suppliers = [parts.map(&:supplier).uniq, materials.map(&:supplier).uniq].flatten.uniq.compact
 
     @items_w_no_supplier = @items.select { |item| item.supplier.nil? }

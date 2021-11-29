@@ -4,7 +4,7 @@
   #sticky.row
     .col-xs-12.col-sm-10
       %h2#title
-        #{@items.count} items need to be ordered #{'for' if @selected_tech} #{@selected_tech&.name}:
+        #{@items.count} items need to be ordered#{' for ' if @selected_tech}#{@selected_tech&.name}:
     .col-xs-12.col-sm-2.right-align.match-h2
       = link_to 'View All', order_all_inventories_path, class: 'btn empty use-load-screen'
     = render partial: 'order_admin_div'
