@@ -6,7 +6,7 @@ class User < ApplicationRecord
   # SCHEMA NOTES: Roles:
   # is_admin
   # is_leader
-  # does_inventory
+  # does_inventory # (inventoryist)
   # is_scheduler
   # is_data_manager
   # is_oauth_admin

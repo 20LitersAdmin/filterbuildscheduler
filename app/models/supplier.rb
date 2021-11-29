@@ -35,12 +35,6 @@ class Supplier < ApplicationRecord
     full_address&.html_safe
   end
 
-  def related_items(items)
-    # ugly, but used for InventoriesController#order
-    # items == [parts, materials].flatten
-    items.map { |i| i if i.supplier_id == id }
-  end
-
   def valid_url?
     # Allow nil
     return true if url.nil?

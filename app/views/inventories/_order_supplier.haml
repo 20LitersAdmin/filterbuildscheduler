@@ -8,10 +8,8 @@
   else
     @id = order_supplier.id
     @h2 = order_supplier.name
-    @supplier_items = order_supplier.related_items(items)
-    # TODO: this is better: @supplier_items = [order_suppler.parts, order_supplier.materials].flatten
+    @supplier_items = [order_supplier.parts, order_supplier.materials].flatten(1)
   end
-
 
 .row{ id: "order_supplier_row_#{@id}" }
   .col-xs-8
