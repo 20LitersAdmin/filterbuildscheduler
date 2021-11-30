@@ -12,7 +12,7 @@ RSpec.describe 'Admin creating event registrations', type: :system do
       visit new_event_registration_path event
     end
 
-    it 'shows the standard registration form' do
+    it 'shows the registration form' do
       expect(page).to have_content "Register someone for #{event.full_title}"
       expect(page).to have_field 'registration_user_fname'
       expect(page).to have_css("input[name='commit']")

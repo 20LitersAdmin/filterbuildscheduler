@@ -4,7 +4,7 @@ class CombinationPolicy < Struct.new(:user, :combination)
   # attr_reader :user, :technology
 
   def index?
-    user&.admin_or_leader?
+    user&.can_do_inventory?
   end
 
   def show?
