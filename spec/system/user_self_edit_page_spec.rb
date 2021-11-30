@@ -3,14 +3,9 @@
 require 'rails_helper'
 
 RSpec.describe 'User#edit', type: :system do
-  # TODO: This is now in rails_admin
-  after :all do
-    clean_up!
-  end
-
   context 'when a user has a password' do
     before :each do
-      @user = FactoryBot.create(:user_w_password)
+      @user = create(:user_w_password)
       sign_in @user
       visit edit_user_path @user
     end
@@ -49,7 +44,7 @@ RSpec.describe 'User#edit', type: :system do
 
   context 'when changing the password' do
     before :each do
-      @user = FactoryBot.create(:user_w_password)
+      @user = create(:user_w_password)
       sign_in @user
       visit edit_user_path @user
     end

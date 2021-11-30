@@ -44,7 +44,7 @@ RSpec.describe 'An event can be shared', type: :system, js: true do
     expect(@twitter_window).to exist
   end
 
-  it 'by printing a poster' do
+  it 'by printing a poster', retry: 3 do
     expect(page).to have_css('a#poster_link')
 
     poster_window = window_opened_by { click_link 'poster_link' }

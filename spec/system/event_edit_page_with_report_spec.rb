@@ -145,7 +145,7 @@ RSpec.describe 'To create an event report', type: :system do
       visit edit_event_path event
     end
 
-    it 'with some technology stats' do
+    it 'with some technology stats', retry: 3 do
       fill_in 'event_technologies_built', with: 450
       fill_in 'event_boxes_packed', with: 4
 

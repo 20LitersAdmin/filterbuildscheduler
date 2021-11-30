@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe Assembly, type: :model do
-  let(:assembly) { create :assembly }
+  let(:assembly) { build :assembly }
 
   describe 'must be valid' do
     let(:no_combination) { build :assembly, combination: nil }
@@ -233,20 +233,17 @@ RSpec.describe Assembly, type: :model do
 
     it 'enqueues QuantityAndDeptCalculationJob' do
       expect { assembly.__send__(:update_items_via_jobs) }
-        .to change { Delayed::Job.where(queue: 'quantity_calc').size }
-        .from(0).to(1)
+        .to have_enqueued_job(QuantityAndDepthCalculationJob)
     end
 
     it 'enqueues PriceCalculationJob' do
       expect { assembly.__send__(:update_items_via_jobs) }
-        .to change { Delayed::Job.where(queue: 'price_calc').size }
-        .from(0).to(1)
+        .to have_enqueued_job(PriceCalculationJob)
     end
 
     it 'enqueues ProduceableJob' do
       expect { assembly.__send__(:update_items_via_jobs) }
-        .to change { Delayed::Job.where(queue: 'produceable').size }
-        .from(0).to(1)
+        .to have_enqueued_job(ProduceableJob)
     end
   end
 end

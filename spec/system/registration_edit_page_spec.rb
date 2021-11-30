@@ -3,5 +3,6 @@
 require 'rails_helper'
 
 RSpec.describe 'Admin editing event registrations', type: :system do
-  pending 'needs tests'
+  pending 'can edit'
+  pending 'can discard'
 end

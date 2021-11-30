@@ -1,13 +1,12 @@
 # frozen_string_literal: true
 
 class UserPolicy < ApplicationPolicy
-
   def delete?
     user&.is_admin?
   end
 
   def show?
-    user&.is_admin? || user == record
+    user&.can_manage_users? || user == record
   end
 
   def update?
@@ -15,27 +14,31 @@ class UserPolicy < ApplicationPolicy
   end
 
   def communication?
-    delete?
+    update?
   end
 
   def comm_update?
-    delete?
+    update?
   end
 
   def leaders?
-    delete?
+    user&.can_manage_leaders?
   end
 
   def availability?
-    delete?
+    leaders?
   end
 
   def leader_type?
-    delete?
+    leaders?
   end
 
   def edit_leader_notes?
-    delete?
+    leaders?
+  end
+
+  def edit?
+    show?
   end
 
   def admin_password_reset?
