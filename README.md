@@ -8,75 +8,57 @@
   - Model tests are green
   - Request test is green
   - Service tests are green
-  - System tests are red (265 tests , 31 failures)
+  - System tests are red (260 tests , 21 failures, 2 pending)
 
 * New System tests:
-  - view_all_events
-    - view_events_that_need_leaders_via_rails_admin
-    - view_events_that_need_leaders_via_events_lead
-    - view_future_events
-    - view_events_that_need_reports
-    - view_closed_events
-    - view_discarded_events
-  - discard_an_event_via_rails_admin
-  - discard_an_event_via_events_edit
-  - destroy_an_event
-  - restore_an_event
-  - show_an_event_in_app_via_rails_admin
-  - edit_an_event_in_app_via_rails_admin
-  - discard_a_registration_via_registrations_index
-  - destroy_a_registration
-  - restore_a_registration_via_rails_admin
-  - restore_a_registration_via_registrations_index
-  - retore_all_discarded_registrations (RegistrationsController#restore_all)
-  - resend_all_confirmation_emails (RegistrationsController#index)
-  - discard_a_part
-  - destroy_a_part
-  - restore_a_part
-  - discard_a_material
-  - destroy_a_material
-  - restore_a_material
-  - discard_a_component
-  - destroy_a_component
-  - restore_a_component
-  - discard_a_technology
-  - destroy_a_technology
-  - restore_a_technology
-  - discard_a_location
-  - destroy_a_location
-  - restore_a_location
-  - discard_a_supplier
-  - destroy_a_supplier
-  - restore_a_supplier
-  - show_a_user_via_rails_admin
-  - show_a_user_via_users_show
-  - edit_a_user_via_rails_admin
-  - edit_a_user_via_app
-  - discard_a_user
-  - destroy_a_user
-  - restore_a_user
-  - password_reset_via_admin
-  - contact_leaders (/leaders; users#leaders)
-  - combinations_index_page
-  - combinations_show_page
-  - combinations_edit_page
-  - create_an_assembly
-  - edit_an_assembly
-  - destroy_an_assembly
-  - replicate_an_event (with JS for event dates)
-  - duplicate_an_event
-  - view_report_page
-  - view_volunteer_report
-  - view_leader_report
-  - view_donation_list
-  - view_inventory_history
-  - view_order_page
-  - view_order_all_page
-  - print_a_paper_inventory
-  - perform_an_inventory_count
-  - perform_an_inventory_partial_loose_count
-  - perform_an_inventory_partial_box_count
-  - edit_an_inventory_count
+  2- combinations_index_page
+  2- combinations_show_page
+  2- combinations_edit_page
+    - create_an_assembly
+    - edit_an_assembly
+    - destroy_an_assembly
+
+  - component_rails_admin_views
+  - component_rails_admin_manage (c, u, di, r, de)
+
+  - donation_list_page_spec
+
+  1- events_lead_page_spec
+  - events_rails_admin_views
+  - event_rails_admin_discard
+  - event_rails_admin_destroy
+
+  - inventory_history_page_spec
+  1- inventory_paper_page_spec
+
+  - location_rails_admin_views
+  - location_rails_admin_manage (c, u, di, r, de)
+
+  - material_rails_admin_views
+  - material_rails_admin_edit (c, u, di, r, de)
+
+  - part_rails_admin_views
+  - part_rails_admin_edit (create, update, discard, restore, destroy)
+
+  1- registration_edit_page_spec (with discard and restore and restore_all)
+  - registration_rails_admin_views
+  - registration_rails_admin_edit (and discard and destroy and restore)
+  1- registration_index_page (and resend_all_confirmation_emails)
+
+  - report_page_spec
+  - report_volunteer_page_spec
+  - report_leader_page_spec
+
+  - supplier_rails_admin_views
+  - supplier_rails_admin_manage (c, u, di, r, de)
+
+  - technology_rails_admin_views
+  - technology_rails_admin_manage (c, u, di, r, de)
+
+  - user_rails_admin_views
+  - user_rails_admin_manage (c, u, di, r, de)
+  - user_leaders_page_spec
+
   - oauth_in
   - oauth_out
   - oauth_index

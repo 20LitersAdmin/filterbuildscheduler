@@ -78,7 +78,7 @@ RSpec.describe 'Manage own registration:', type: :system do
     end
   end
 
-  fcontext 'leader of the event' do
+  context 'leader of the event' do
     let(:user) { create :leader, signed_waiver_on: Time.now }
 
     let(:registration) { create :registration_leader, user: user, event: event }

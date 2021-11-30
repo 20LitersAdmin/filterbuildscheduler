@@ -15,7 +15,6 @@ RSpec.describe 'Admin creating event registrations', type: :system do
     it 'shows the standard registration form' do
       expect(page).to have_content "Register someone for #{event.full_title}"
       expect(page).to have_field 'registration_user_fname'
-      expect(page).to have_field 'registration_leader'
       expect(page).to have_css("input[name='commit']")
     end
 
@@ -69,8 +68,6 @@ RSpec.describe 'Admin creating event registrations', type: :system do
           fill_in 'registration_user_fname', with: user.fname
           fill_in 'registration_user_lname', with: user.lname
 
-          first_count = Delayed::Job.count
-
           expect_any_instance_of(KindfulClient).to receive(:import_user)
 
           click_submit
@@ -81,9 +78,6 @@ RSpec.describe 'Admin creating event registrations', type: :system do
           expect(builder_tbl_text).to have_content user.name
 
           expect(User.last.email).to eq user.email
-
-          second_count = Delayed::Job.count
-          expect(second_count).to eq first_count + 1
         end
       end
     end

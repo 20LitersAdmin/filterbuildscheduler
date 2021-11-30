@@ -18,21 +18,6 @@ RSpec.describe 'User self-registering for an event', type: :system do
         expect(page).to have_css("input[name='commit']")
 
         expect(page).to_not have_field 'registration_user_fname'
-        expect(page).to_not have_field 'registration_leader'
-      end
-
-      it 'with leader checkbox for a qualified leader' do
-        user = create(:leader)
-        sign_in user
-        user.technologies << event.technology
-        user.save
-        visit event_path event
-
-        expect(page).to have_content event.full_title
-        expect(page).to have_content user.name
-        expect(page).to have_field 'registration_accept_waiver'
-        expect(page).to have_field 'registration_leader'
-        expect(page).to have_css("input[name='commit']")
       end
     end
 
@@ -44,39 +29,12 @@ RSpec.describe 'User self-registering for an event', type: :system do
 
         check 'registration_accept_waiver'
 
-        first_count = Delayed::Job.count
-
-        click_submit
-
-        expect(page).to have_content 'Registration successful!'
-        expect(page).to have_content user.name
-        expect(page).to have_link 'Change/Cancel Registration'
-
-        second_count = Delayed::Job.count
-        expect(second_count).to eq first_count + 1
-      end
-
-      it 'to register a leader and send an email' do
-        user = create(:leader)
-        sign_in user
-        user.technologies << event.technology
-        user.save
-        visit event_path event
-
-        check 'registration_accept_waiver'
-        check 'registration_leader'
-
-        first_count = Delayed::Job.count
-
-        click_submit
+        expect { click_submit }
+          .to have_enqueued_mail(RegistrationMailer, :created).once
 
         expect(page).to have_content 'Registration successful!'
         expect(page).to have_content user.name
         expect(page).to have_link 'Change/Cancel Registration'
-        expect(page).to have_content 'You are the only leader currently registered.'
-
-        second_count = Delayed::Job.count
-        expect(second_count).to eq first_count + 1
       end
     end
   end
@@ -92,7 +50,6 @@ RSpec.describe 'User self-registering for an event', type: :system do
       expect(page).to have_field 'registration_user_fname'
       expect(page).to have_field 'registration_accept_waiver'
       expect(page).to have_css("input[name='commit']")
-      expect(page).to_not have_field 'registration_leader'
     end
 
     it 'can be filled out and submitted, which sends the user\'s info to Kindful' do

@@ -180,47 +180,32 @@ RSpec.describe 'Inventory edit page', type: :system do
 
       # partial box submit
       find("div#count_#{Count.first.id} a.count-btn").click
-      find('input#count_unopened_boxes_count')
-
       fill_in 'count_unopened_boxes_count', with: 5
 
       click_button('Submit Box Count')
 
       # wait for CountsController#update.js.erb to clear the  modal
-      sleep(1)
-      count_modal_body = find('#count_modal_body', visible: false)['innerHTML']
-
-      expect(count_modal_body).to eq 'cleared'
+      expect(page).to have_css('#count_modal_body', visible: false, text: 'cleared')
 
       # partial loose submit
       find("div#count_#{Count.second.id} a.count-btn").click
-      find('input#count_loose_count')
       fill_in 'count_loose_count', with: 50
 
       click_button('Submit Loose Count')
 
       # wait for CountsController#update.js.erb to clear the  modal
-      sleep(1)
-      count_modal_body = find('#count_modal_body', visible: false)['innerHTML']
-      expect(count_modal_body).to eq 'cleared'
+      expect(page).to have_css('#count_modal_body', visible: false, text: 'cleared')
 
       # full submit
       find("div#count_#{Count.third.id} a.count-btn").click
-      find('input#count_loose_count')
       fill_in 'count_loose_count', with: 30
       fill_in 'count_unopened_boxes_count', with: 3
 
       click_button('Submit')
 
-      sleep(3)
-      count_1_btn_text = find("div#count_#{Count.first.id}
-        a.count-btn").text
-      count_2_btn_text = find("div#count_#{Count.second.id} a.count-btn").text
-      count_3_btn_text = find("div#count_#{Count.third.id} a.count-btn").text
-
-      expect(count_1_btn_text).to eq 'Loose Count'
-      expect(count_2_btn_text).to eq 'Box Count'
-      expect(count_3_btn_text).to eq 'Edit'
+      expect(page).to have_css("div#count_#{Count.first.id} a.count-btn", text: 'Loose Count', wait: 3)
+      expect(page).to have_css("div#count_#{Count.second.id} a.count-btn", text: 'Box Count', wait: 3)
+      expect(page).to have_css("div#count_#{Count.third.id} a.count-btn", text: 'Edit', wait: 3)
 
       expect(Count.first.unopened_boxes_count).to eq 5
       expect(Count.second.loose_count).to eq 50
