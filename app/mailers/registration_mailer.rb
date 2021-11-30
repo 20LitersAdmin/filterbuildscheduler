@@ -19,7 +19,7 @@ class RegistrationMailer < ApplicationMailer
     end
 
     @summary = "[20 Liters] Filter Build: #{@event.technology.name}"
-    @description = render partial: 'details.text'
+    @description = render partial: 'details'
     @details = @description.gsub("\n", '%0A').gsub(' ', '%20')
     @attachment_title = "20Liters_filterbuild_#{@event.start_time.strftime('%Y%m%dT%H%M')}.ical"
 

@@ -22,7 +22,7 @@
         = f.check_box :accept_waiver, required: true
         %strong
           Accept the
-          %a.waiver_click{ data: { target: '#waiverModal', toggle: 'modal' } }
+          %a#waiver_click{ data: { target: '#waiverModal', toggle: 'modal' } }
             = f.label :accept_waiver, 'Waiver and Release'
   - else
     = f.hidden_field :accept_waiver, value: '1'

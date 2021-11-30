@@ -17,5 +17,27 @@
       - else
         %strong Event is full. No more room for additional guests.
 .col-xs-12.col-md-6.col-md-offset-3
-  %h4 If the user already exists, just enter their email:
-  = render partial: 'form'
+  = link_to 'Click here to register leaders', leaders_event_path(@event), class: 'btn fullwidth yellow'
+  %h4 If the builder already exists, just enter their email.
+  = simple_form_for [@event, @registration] do |f|
+    = f.error_notification
+    = f.hidden_field :form_source, value: 'admin'
+    = f.hidden_field :event_id
+    = f.simple_fields_for :user do |o|
+      = o.input :fname, required: false
+      = o.input :lname, required: false
+      = o.input :email
+      = o.input :phone, required: false
+      = o.check_box :email_opt_out
+      = o.label :email_opt_out, 'Opt out of emails?'
+      - if @event.registrations_filled?
+        %p This registration will automatically increase the event's max attendance
+      - else
+        %p
+          Room for #{pluralize(@event.registrations_remaining - 1, 'more guest')} without increasing max attendance.
+          %br>/
+          Max attendance will be updated automatically if necessary.
+      = f.input :guests_registered, label: 'Guests', input_html: { min: 0, max: @event.registrations_remaining - 1 }
+      = f.input :accommodations, label: 'Notes', as: :text
+    = f.button :submit, class: 'btn yellow fullwidth'
+    = f.button :submit, name: 'commit_and_new', value: 'Create & New', class: 'btn yellow fullwidth'

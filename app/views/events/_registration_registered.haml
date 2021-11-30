@@ -16,7 +16,7 @@
           You are one of #{pluralize(@event.registrations.active.leaders.count, 'leader')} for this event.
   %h5
     Review the
-    %a.waiver_click{ data: { target: '#waiverModal', toggle: 'modal' } } Waiver and Release
+    %a#waiver_click{ data: { target: '#waiverModal', toggle: 'modal' } } Waiver and Release
     (accepted on #{current_user.signed_waiver_on&.strftime('%-m/%-d/%Y')})
 = link_to 'Change/Cancel Registration', edit_event_registration_path(@event, @registration), class: 'btn red fullwidth'
 = link_to('Not you? Sign Out', destroy_user_session_path, method: :delete, class: 'btn empty fullwidth')

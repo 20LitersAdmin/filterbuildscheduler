@@ -1,0 +1,16 @@
+-# frozen_string_literal: true
+
+%tr
+  %td
+    = leader.name
+  %td
+    = leader.email
+  %td
+    = leader.phone
+  %td
+    = human_boolean(leader.can_lead_event?(@event))
+  %td
+    = leader.leader_type&.capitalize
+  %td
+    = link_to 'Remove', leader_unregister_event_path(@event, user_id: leader.id), class: 'btn yellow' if already
+    = link_to 'Register', leader_register_event_path(@event, user_id: leader.id), class: 'btn yellow' unless already

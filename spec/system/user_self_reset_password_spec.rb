@@ -3,12 +3,8 @@
 require 'rails_helper'
 
 RSpec.describe 'Password Reset', type: :system do
-  after :all do
-    clean_up!
-  end
-
   before :each do
-    @user = FactoryBot.create(:user)
+    @user = create(:user)
     visit new_user_password_path
   end
 
