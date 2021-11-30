@@ -87,6 +87,8 @@ RSpec.configure do |config|
   # end
 end
 
+Capybara.default_host = 'http://localhost:3000/'
+
 Shoulda::Matchers.configure do |config|
   config.integrate do |with|
     # Choose a test framework:

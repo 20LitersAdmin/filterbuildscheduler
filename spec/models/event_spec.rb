@@ -204,6 +204,9 @@ RSpec.describe Event, type: :model do
     let(:current_event) { build :event, start_time: Time.now - 10.minutes }
 
     it 'returns a boolean comparison of start_time to current time' do
+      event.save
+      event.reload
+
       expect(event.in_the_future?).to eq true
       expect(recent_event.in_the_future?).to eq false
       expect(current_event.in_the_future?).to eq false
@@ -211,10 +214,13 @@ RSpec.describe Event, type: :model do
   end
 
   describe '#in_the_past?' do
-    let(:recent_event) { build :recent_event }
-    let(:current_event) { build :event, start_time: Time.now - 10.minutes }
+    let(:recent_event) { create :recent_event }
+    let(:current_event) { create :event, start_time: Time.now - 10.minutes }
 
     it 'returns a boolean comparison of end_time to current time' do
+      event.save
+      event.reload
+
       expect(event.in_the_past?).to eq false
       expect(recent_event.in_the_past?).to eq true
       expect(current_event.in_the_past?).to eq false

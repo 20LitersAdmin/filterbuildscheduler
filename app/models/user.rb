@@ -124,6 +124,12 @@ class User < ApplicationRecord
     is_admin? || is_scheduler?
   end
 
+  def can_manage_users?
+    is_admin? ||
+      is_scheduler? ||
+      is_data_manager?
+  end
+
   def can_lead_event?(event)
     return false unless admin_or_leader?
 

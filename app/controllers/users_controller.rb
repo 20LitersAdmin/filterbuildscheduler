@@ -80,9 +80,6 @@ class UsersController < ApplicationController
   def communication
     # filter out users with no registrations by joining :registrations
     authorize @users = User.builders.joins(:registrations).group('users.id').order('users.created_at DESC')
-
-    @cancelled_events = Event.discarded
-    @closed_events = Event.closed
   end
 
   def comm_update

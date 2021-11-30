@@ -143,36 +143,35 @@ RSpec.describe Inventory, type: :model do
       it "doesn't fire" do
         expect(inventory.completed_at).to eq nil
 
-        expect(Delayed::Job).not_to receive(:where)
+        ar_relation = instance_double(ActiveRecord::Relation)
+
+        allow(Delayed::Job).to receive(:where).with(queue: 'produceable', locked_at: nil).and_return(ar_relation)
+
+        expect(ar_relation).not_to receive(:delete_all)
 
         inventory.__send__(:run_produceable_job)
       end
     end
 
     context 'when inventory.completed_at is not nil' do
-      it 'fires' do
+      it 'fires and queues up an instance of ProduceableJob' do
         inventory.completed_at = Time.now
 
-        expect(Delayed::Job).to receive(:where)
-
-        inventory.__send__(:run_produceable_job)
+        expect { inventory.__send__(:run_produceable_job) }
+          .to have_enqueued_job(ProduceableJob)
       end
     end
 
     it 'deletes any currently queued Produceable jobs' do
       inventory.completed_at = Time.now
 
-      expect_any_instance_of(ActiveRecord::Relation).to receive(:delete_all)
+      ar_relation = instance_double(ActiveRecord::Relation)
+
+      allow(Delayed::Job).to receive(:where).with(queue: 'produceable', locked_at: nil).and_return(ar_relation)
+
+      expect(ar_relation).to receive(:delete_all)
 
       inventory.__send__(:run_produceable_job)
-    end
-
-    it 'queues up an instance of Produceable job' do
-      inventory.completed_at = Time.now
-
-      expect { inventory.__send__(:run_produceable_job) }
-        .to change { Delayed::Job.where(queue: 'produceable', locked_at: nil).size }
-        .from(0).to(1)
     end
   end
 
@@ -198,36 +197,29 @@ RSpec.describe Inventory, type: :model do
       it "doesn't fire" do
         expect(inventory.completed_at).to eq nil
 
-        expect(Delayed::Job).not_to receive(:where)
-
-        inventory.__send__(:run_count_transfer_job)
+        expect { inventory.__send__(:run_count_transfer_job) }
+          .not_to have_enqueued_job(CountTransferJob)
       end
     end
 
     context 'when inventory.completed_at is not nil' do
-      it 'fires' do
+      it 'fires and queues up an instance of CountTransfer job' do
         inventory.completed_at = Time.now
 
-        expect(Delayed::Job).to receive(:where)
-
-        inventory.__send__(:run_count_transfer_job)
+        expect { inventory.__send__(:run_count_transfer_job) }
+          .to have_enqueued_job(CountTransferJob)
       end
     end
 
     it 'deletes any currently queued CountTransfer jobs' do
       inventory.completed_at = Time.now
+      ar_relation = instance_double(ActiveRecord::Relation)
 
-      expect_any_instance_of(ActiveRecord::Relation).to receive(:delete_all)
+      allow(Delayed::Job).to receive(:where).with(queue: 'count_transfer', locked_at: nil).and_return(ar_relation)
+
+      expect(ar_relation).to receive(:delete_all)
 
       inventory.__send__(:run_count_transfer_job)
-    end
-
-    it 'queues up an instance of count_transfer job' do
-      inventory.completed_at = Time.now
-
-      expect { inventory.__send__(:run_count_transfer_job) }
-        .to change { Delayed::Job.where(queue: 'count_transfer', locked_at: nil).size }
-        .from(0).to(1)
     end
   end
 end
