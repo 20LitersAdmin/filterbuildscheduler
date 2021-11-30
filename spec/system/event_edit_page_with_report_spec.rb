@@ -218,7 +218,9 @@ RSpec.describe 'To create an event report', type: :system do
 
       expect(page).to have_field('event_attendance', with: '5')
 
-      click_button 'Submit & Email Results'
+      expect { click_button 'Submit & Email Results' }
+        .to have_enqueued_mail(RegistrationMailer, :event_results)
+        .exactly(5).times
 
       expect(page).to have_content 'Event updated.'
       expect(page).to have_content 'Attendees notified of results.'
@@ -230,7 +232,6 @@ RSpec.describe 'To create an event report', type: :system do
       expect(event.technologies_built).to eq 350
       expect(event.boxes_packed).to eq 3
       expect(event.emails_sent).to eq true
-      expect(Delayed::Job.where(queue: 'registration_mailer').size).to eq 5
     end
 
     it 'and submit it to create an inventory' do

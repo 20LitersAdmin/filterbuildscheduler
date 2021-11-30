@@ -5,6 +5,7 @@ class EventsController < ApplicationController
   before_action :set_event,
                 only: %i[
                   attendance
+                  destroy
                   edit
                   leader_register
                   leader_unregister
@@ -50,7 +51,7 @@ class EventsController < ApplicationController
 
       if @event.registrations.exists?
         @event.registrations.each do |registration|
-          RegistrationMailer.event_cancelled(registration, event).deliver_later
+          RegistrationMailer.event_cancelled(registration, @event).deliver_later
           registration.discard
         end
         users_notified = 'All registered builders notified.'
