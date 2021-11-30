@@ -40,6 +40,7 @@ ActiveRecord::Migration.maintain_test_schema!
 Capybara.server = :puma
 Capybara.javascript_driver = :selenium
 FactoryBot.use_parent_strategy = false
+ActiveJob::Base.queue_adapter = :test
 
 RSpec.configure do |config|
   config.include FactoryBot::Syntax::Methods

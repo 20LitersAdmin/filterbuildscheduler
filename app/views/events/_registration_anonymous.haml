@@ -5,10 +5,10 @@
   = f.hidden_field :form_source, value: 'anon'
   = f.hidden_field :event_id
   = f.simple_fields_for :user do |o|
-    = o.input :fname, input_html: { value: @user.fname }
-    = o.input :lname, input_html: { value: @user.lname }
-    = o.input :email, input_html: { value: @user.email }
-    = o.input :phone, required: false, input_html: { value: @user.phone }
+    = o.input :fname
+    = o.input :lname
+    = o.input :email
+    = o.input :phone, required: false
     %p
       Room for #{pluralize(@event.registrations_remaining - 1, 'more guest')}
     = f.input :guests_registered, label: 'Additional Guests (excluding you)', input_html: { min: 0, max: @event.registrations_remaining - 1 }

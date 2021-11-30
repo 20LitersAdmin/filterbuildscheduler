@@ -29,8 +29,6 @@
   - restore_a_registration_via_rails_admin
   - restore_a_registration_via_registrations_index
   - retore_all_discarded_registrations (RegistrationsController#restore_all)
-  - register_a_leader_for_an_event (EventsController#leaders)
-  - register_a_builder_for_an_event (RegistrationsController#new)
   - resend_all_confirmation_emails (RegistrationsController#index)
   - discard_a_part
   - destroy_a_part

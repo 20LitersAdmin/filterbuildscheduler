@@ -45,12 +45,12 @@ class EventsController < ApplicationController
 
     # send emails to registrations and leaders before cancelling
     if @event.start_time > Time.now
-      EventMailer.delay(queue: 'event_mailer').cancelled(@event, current_user)
+      EventMailer.cancelled(@event, current_user).deliver_later
       admins_notified = 'Admins notified.'
 
       if @event.registrations.exists?
         @event.registrations.each do |registration|
-          RegistrationMailer.delay(queue: 'registration_mailer').event_cancelled(registration, event)
+          RegistrationMailer.event_cancelled(registration, event).deliver_later
           registration.discard
         end
         users_notified = 'All registered builders notified.'
@@ -209,8 +209,6 @@ class EventsController < ApplicationController
     @show_edit = (current_user&.is_admin || @registration&.leader?)
 
     @leaders = @event.registrations.active.leaders
-
-    @user = current_user || User.new
   end
 
   def update
@@ -253,7 +251,7 @@ class EventsController < ApplicationController
       if @event.complete?
         # shouldn't be any need for .active here because registrations were just marked as attended, there hasn't been a chance to discard them.
         @event.registrations.attended.each do |r|
-          RegistrationMailer.delay(queue: 'registration_mailer').event_results(r) if send_results_emails
+          RegistrationMailer.event_results(r).deliver_later if send_results_emails
           KindfulClient.new.delay(queue: 'kindful_client').import_user_w_note(r)
         end
 

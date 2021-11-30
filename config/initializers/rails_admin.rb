@@ -1056,7 +1056,9 @@ RailsAdmin.config do |config|
     export
     show do
       visible do
-        !bindings[:object].instance_of?(Event)
+        !bindings[:object].instance_of?(Event) ||
+          (bindings[:object].instance_of?(Event) &&
+            bindings[:object].discarded?)
       end
     end
     edit do
@@ -1066,12 +1068,14 @@ RailsAdmin.config do |config|
     end
     show_in_app do
       visible do
-        bindings[:object].instance_of?(Event)
+        bindings[:object].instance_of?(Event) &&
+          !bindings[:object].discarded?
       end
     end
     edit_in_app do
       visible do
-        bindings[:object].instance_of?(Event)
+        bindings[:object].instance_of?(Event) &&
+          !bindings[:object].discarded?
       end
     end
     discardable

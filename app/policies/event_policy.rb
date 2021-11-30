@@ -75,6 +75,10 @@ class EventPolicy < ApplicationPolicy
     end
   end
 
+  def sender?
+    create?
+  end
+
   def update?
     create?
   end
