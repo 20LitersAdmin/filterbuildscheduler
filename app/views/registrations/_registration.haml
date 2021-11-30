@@ -12,10 +12,10 @@
   %td= registration.human_date
   %td= registration.guests_registered
   %td
-    = link_to 'Edit', edit_event_registration_path(@event, registration, admin: true), class: 'btn blue'
+    = link_to 'Edit', edit_event_registration_path(@event, registration, admin: true), class: 'btn blue', id: "edit_#{registration.id}"
     - if discarded
-      = link_to 'Restore', restore_event_registration_path(@event, registration), class: 'btn yellow'
+      = link_to 'Restore', restore_event_registration_path(@event, registration), class: 'btn yellow', id: "restore_#{registration.id}"
     - else
-      = link_to 'Discard', event_registration_path(@event, registration, admin: true), method: :delete, class: 'btn red'
+      = link_to 'Discard', event_registration_path(@event, registration, admin: true), method: :delete, class: 'btn red', id: "discard_#{registration.id}"
     - if @event.in_the_future? && !discarded
-      = link_to 'Resend Email', reconfirm_event_registration_path(@event, registration), class: 'btn empty'
+      = link_to 'Resend Email', reconfirm_event_registration_path(@event, registration), class: 'btn empty', id: "reconfirm_#{registration.id}"

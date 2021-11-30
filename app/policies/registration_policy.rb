@@ -17,27 +17,47 @@ class RegistrationPolicy < ApplicationPolicy
     edit?
   end
 
-  def restore?
-    new?
-  end
-
-  def update?
-    edit?
+  def edit?
+    user&.can_edit_events? || registration.user == user
   end
 
   def index?
     new?
   end
 
-  def new?
-    user&.admin_or_leader?
+  def messenger?
+    new?
   end
 
-  def edit?
-    user&.admin_or_leader? || registration.user == user
+  def new?
+    user&.can_edit_events?
+  end
+
+  def reconfirm?
+    new?
+  end
+
+  def reconfirms?
+    new?
+  end
+
+  def restore?
+    new?
+  end
+
+  def restore_all?
+    new?
+  end
+
+  def sender?
+    new?
   end
 
   def show?
-    new?
+    edit?
+  end
+
+  def update?
+    edit?
   end
 end

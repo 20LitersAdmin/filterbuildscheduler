@@ -138,6 +138,9 @@ class RegistrationsController < ApplicationController
       flash[:danger] = @registration.errors
                                     .map { |_k, v| v }
                                     .join(', ')
+      @user = @registration.user
+      @btn_admin = current_user.is_admin?
+
       render 'edit'
     end
   end
