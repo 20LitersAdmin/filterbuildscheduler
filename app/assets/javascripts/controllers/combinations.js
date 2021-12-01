@@ -21,7 +21,7 @@ $(document).on('turbolinks:load', function() {
     searchResponseDiv.html('');
     searchResponseDiv.hide();
 
-    console.log(`Searching for ${searchString}`);
+    console.log('Searching for ${searchString}');
     ajaxSpinner.show();
 
     $.ajax({
