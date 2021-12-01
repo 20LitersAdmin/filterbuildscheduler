@@ -94,9 +94,49 @@ RSpec.describe 'Event edit page', type: :system do
       expect(event.reload.discarded_at).not_to be_nil
       expect(event.registrations.pluck(:discarded_at).uniq).not_to include nil
     end
+  end
 
-    pending 'allows for duplicating'
+  it 'allows for duplicating' do
+    sign_in create(:admin)
+    visit edit_event_path event
 
-    pending 'allows for replicating'
+    expect(page).to have_content event.title
+
+    click_link 'Duplicate'
+
+    expect(page).to have_content "Create a copy of #{event.title}"
+    expect(page).to have_current_path(new_event_path(source_event: event.id))
+
+    fill_in 'event_title', with: 'Dup event'
+
+    click_submit
+
+    expect(page).to have_content 'Upcoming Builds'
+
+    dup_event = Event.last
+
+    expect(dup_event.title).to eq 'Dup event'
+    expect(event.technology).to eq dup_event.technology
+    expect(event.location).to eq dup_event.location
+    expect(event.start_time).to eq dup_event.start_time
+  end
+
+  it 'allows for replicating', js: true do
+    sign_in create(:admin)
+    visit edit_event_path event
+
+    expect(page).to have_content event.title
+
+    click_link 'Replicate'
+
+    expect(page).to have_content 'Replicate this event:'
+
+    select 'weekly', from: 'replicator_frequency'
+    fill_in 'replicator_occurrences', with: 3
+
+    # first instance is a duplicate, so it's skipped
+    expect { click_button 'Replicate' }
+      .to change { Event.all.size }
+      .by(2)
   end
 end

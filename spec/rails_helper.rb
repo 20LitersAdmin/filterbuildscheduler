@@ -20,22 +20,6 @@ require 'selenium-webdriver'
 require 'support/form_helper'
 require 'rspec/retry'
 
-# Requires supporting ruby files with custom matchers and macros, etc, in
-# spec/support/ and its subdirectories. Files matching `spec/**/*_spec.rb` are
-# run as spec files by default. This means that files in spec/support that end
-# in _spec.rb will both be required and run as specs, causing the specs to be
-# run twice. It is recommended that you do not name files matching this glob to
-# end with _spec.rb. You can configure this pattern with the --pattern
-# option on the command line or in ~/.rspec, .rspec or `.rspec-local`.
-#
-# The following line is provided for convenience purposes. It has the downside
-# of increasing the boot-up time by auto-requiring all files in the support
-# directory. Alternatively, in the individual `*_spec.rb` files, manually
-# require only the support files necessary.
-
-# Checks for pending migrations and applies them before tests are run.
-# If you are not using ActiveRecord, you can remove this line.
-
 ActiveRecord::Migration.maintain_test_schema!
 Capybara.server = :puma
 Capybara.javascript_driver = :selenium
@@ -82,9 +66,9 @@ RSpec.configure do |config|
     CleanupCrew.clean_up!
   end
 
-  # config.around :each, :js do |ex|
-  #   ex.run_with_retry retry: 3
-  # end
+  config.around :each, :js do |ex|
+    ex.run_with_retry retry: 2
+  end
 end
 
 Capybara.default_host = 'http://localhost:3000/'

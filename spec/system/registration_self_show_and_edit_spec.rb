@@ -93,32 +93,5 @@ RSpec.describe 'Manage own registration:', type: :system do
       expect(page).to have_content "You're Registered"
       expect(page).to have_content 'You are the only leader currently registered.'
     end
-
-    it 'can edit their leader status via registration' do
-      user.technologies << event.technology
-      user.save
-
-      registration
-      sign_in user
-      visit event_path event
-
-      expect(page).to have_content event.full_title
-      click_link 'Change/Cancel Registration'
-
-      expect(page).to have_content event.full_title
-      expect(page).to have_content user.name
-      expect(page).to have_field 'registration_leader'
-      expect(page).to have_button 'Update'
-
-      find('input#registration_leader').uncheck
-
-      click_button 'Update'
-
-      expect(page).to have_content event.full_title
-      expect(page).to have_content "You're Registered"
-      expect(page).not_to have_content 'You are the only leader currently registered.'
-
-      expect(registration.reload.leader).to eq false
-    end
   end
 end

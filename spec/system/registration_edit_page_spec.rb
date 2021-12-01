@@ -11,13 +11,13 @@ RSpec.describe 'Admin editing event registrations', type: :system do
   context 'for a builder' do
     before do
       sign_in admin
-      visit edit_event_registration_path event, registration
+      visit edit_event_registration_path event, registration, admin: true
     end
   end
 
   it 'can see the registration form' do
     sign_in admin
-    visit edit_event_registration_path event, registration
+    visit edit_event_registration_path event, registration, admin: true
 
     expect(page).to have_content event.full_title
     expect(page).to have_content user.name
@@ -32,7 +32,7 @@ RSpec.describe 'Admin editing event registrations', type: :system do
 
   it 'can fill out and update' do
     sign_in admin
-    visit edit_event_registration_path event, registration
+    visit edit_event_registration_path event, registration, admin: true
 
     expect(page).to have_content event.full_title
     expect(page).to have_content user.name
@@ -44,7 +44,7 @@ RSpec.describe 'Admin editing event registrations', type: :system do
     # get navigated to registrations#index
 
     # return to the form
-    visit edit_event_registration_path event, registration
+    visit edit_event_registration_path event, registration, admin: true
 
     expect(page).to have_css "input#registration_guests_registered[value='1']"
     expect(page).to have_css 'input#registration_user_email_opt_out[checked=checked]'
@@ -55,7 +55,7 @@ RSpec.describe 'Admin editing event registrations', type: :system do
 
   it 'can cancel (discarded)' do
     sign_in admin
-    visit edit_event_registration_path event, registration
+    visit edit_event_registration_path event, registration, admin: true
 
     expect(page).to have_content event.full_title
     expect(page).to have_content user.name

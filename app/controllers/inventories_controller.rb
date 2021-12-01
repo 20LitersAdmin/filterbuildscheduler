@@ -152,6 +152,7 @@ class InventoriesController < ApplicationController
   end
 
   def paper
+    authorize Inventory
     @print_navbar = true
 
     technologies = Technology.active.list_worthy
