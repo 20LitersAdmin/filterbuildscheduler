@@ -1,18 +1,17 @@
 default: &default
   adapter: postgresql
   encoding: utf8
+  prepared_statements: false
   pool: 5
   timeout: 5000
 
 development:
   <<: *default
   database: build_planner_dev
-  prepared_statements: false
 
 test:
   <<: *default
   database: build_planner_test
-  prepared_statements: false
 
 production:
   <<: *default
