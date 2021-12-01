@@ -175,7 +175,7 @@ RSpec.describe 'Inventory edit page', type: :system do
       expect(page).to have_content Count.third.item.name
     end
 
-    it 'submit counts' do
+    fit 'submit counts' do
       expect(page).to have_content "Edit #{inventory.name}"
 
       # partial box submit
