@@ -1,0 +1,11 @@
+-# frozen_string_literal: true
+
+.container.event-new
+  .page-header
+    %h2.heading
+      - if @indicator == 'new'
+        Create a new build:
+      - else
+        Create a copy of #{@event.title}
+  %div
+    = render partial: 'form'

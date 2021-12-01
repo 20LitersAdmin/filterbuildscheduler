@@ -1,0 +1,32 @@
+-# frozen_string_literal: true
+#item_history.col-xs-12
+  .row
+    .col-xs-12
+      = render partial: 'labels/label', locals: { label: Label.new(@item.label_hash) }
+    - if @item.history.any?
+      %h4.bold-text.center-align #{@item.history.size} counts total:
+      .col-xs-6
+        %table#item_history_tbl.table.table-striped.table-bordered.table-condensed
+          %thead
+            %tr
+              %th Date
+              %th Type
+              %th.center-align Loose Count
+              %th.center-align Box Count
+              %th.center-align Available
+          %tbody
+            - @item.history.reverse_each do |h|
+              %tr
+                %td= human_date h[0]
+                %td= h[1]['inv_type']
+                %td.center-align= human_number h[1]['loose']
+                %td.center-align= human_number h[1]['box']
+                %td.center-align= human_number h[1]['available']
+      .col-xs-6
+        = line_chart @item.history_series, curve: false, label: 'Avaliable', thousands: ',', colors: ['#FCE000', '#9BB4C8', '#4A4A4A']
+    - else
+      .col-xs-12
+        %p.center-align
+          %i No counts found for #{@item.name}
+
+

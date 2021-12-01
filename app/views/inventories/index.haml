@@ -1,0 +1,45 @@
+-# frozen_string_literal: true
+#inventory_index.col-xs-12
+  -#
+    After creating an inventory, user is redirected to InventoriesController#index
+    Then this div is visible and user can edit the inventory.
+
+  - if @latest.counts.any?
+    .inv-latest.row
+      .col-xs-12
+        %h2 Current Inventory:
+        .row.well
+          .col-xs-6.col-sm-4
+            %h4= @latest.name
+          .col-xs-6.col-sm-4
+            %p= @latest.count_summary
+            %p
+              - if @latest.completed_at.present?
+                %strong FINALIZED
+                &nbsp;
+          .col-xs-6.col-sm-4
+            = link_to 'Edit', edit_inventory_path(@latest), class: 'btn blue full-width use-load-screen'
+
+  .row
+    .col-xs-8
+      %h2 Inventory Counts:
+      %p
+        %i Click on an item's name to see the count history
+    .col-xs-4.right-align
+      = link_to 'Inventory History', history_inventories_path, class: 'btn btn-sm empty'
+      = link_to 'New Inventory', new_inventory_path, class: 'btn btn-sm yellow'
+    .col-xs-12
+      %table#item_tbl.table.table-striped.table-bordered.datatable
+        %thead
+          = render partial: 'item_tbl_head'
+        %tbody
+          = render partial: 'item_tbl', collection: @items
+
+  #item_history_modal.modal.fade{ role: 'dialog', 'tab-index': '-1' }
+    .modal-dialog.modal-lg{ role: 'document' }
+      .modal-content
+        .modal-header
+          %button.close{ 'aria-label': 'Close', 'data-dismiss': 'modal', type: 'button' }
+            %span{ 'aria-hidden': 'true' } ×
+        #history_modal_body.modal-body.row
+          %p Oops! Something broke.

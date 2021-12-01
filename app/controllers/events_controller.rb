@@ -2,13 +2,80 @@
 
 class EventsController < ApplicationController
   before_action :find_stale
+  before_action :set_event,
+                only: %i[
+                  attendance
+                  destroy
+                  edit
+                  leader_register
+                  leader_unregister
+                  leaders
+                  poster
+                  replicate
+                  replicator
+                  restore
+                  show
+                  update
+                ]
+
+  def attendance
+    @registrations = @event.registrations.active.builders.ordered_by_user_lname
+
+    @print_blanks = @event.max_registrations - @event.total_registered + 5
+    @print_navbar = true
+
+    @discarded_registrations = @event.registrations.discarded.builders.ordered_by_user_lname
+  end
+
+  def create
+    authorize @event = Event.new(event_params)
+    if @event.save
+      flash[:success] = 'The event has been created.'
+      EventMailer.delay(queue: 'event_mailer').created(@event, current_user)
+      redirect_to action: :index
+    else
+      @locations = Location.active.order(:name)
+      @technologies = Technology.list_worthy.order(:id).map { |t| ["#{t.name} (#{t.short_name})", t.id] }
+      render 'new'
+    end
+  end
+
+  def destroy
+    admins_notified = nil
+    users_notified = nil
+
+    # send emails to registrations and leaders before cancelling
+    if @event.start_time > Time.now
+      EventMailer.cancelled(@event, current_user).deliver_later
+      admins_notified = 'Admins notified.'
+
+      if @event.registrations.exists?
+        @event.registrations.each do |registration|
+          RegistrationMailer.event_cancelled(registration, @event).deliver_later
+          registration.discard
+        end
+        users_notified = 'All registered builders notified.'
+      end
+    end
+
+    if @event.discard
+      flash[:success] = "Event cancelled. #{admins_notified} #{users_notified}"
+      redirect_to root_path
+    else
+      flash[:warning] = @event.errors.first.join(': ')
+      redirect_to edit_event_path(@event)
+    end
+  end
+
+  def edit
+    @locations = Location.active.order(:name)
+    @technologies = Technology.list_worthy.order(:id).map { |t| ["#{t.name} (#{t.short_name})", t.id] }
+  end
 
   def index
     our_events = policy_scope(Event)
     @events = our_events.future
     @user = current_user
-
-    @past_events = our_events.needs_report if @user&.admin_or_leader?
 
     begin
       liters_tracker = LitersTrackerClient.new
@@ -19,243 +86,26 @@ class EventsController < ApplicationController
     end
   end
 
-  def show
-    authorize @event = Event.find(params[:id])
-    @registration = @event.registrations.where(user: current_user).first_or_initialize
-
-    @registration.leader = (params[:leader].present? && current_user&.can_lead_event?(@event)) if @registration.new_record?
-
-    @tech_img = @event.technology.img_url if @event.technology&.img_url.present?
-
-    @tech_info = @event.technology.info_url if @event.technology&.info_url.present?
-
-    @location_img = @event.location.photo_url if @event.location.photo_url.present?
-
-    @show_edit = (current_user&.is_admin || @registration&.leader?)
-
-    @leaders = @event.registrations.registered_as_leader
-
-    @finder = 'show'
-
-    @user = current_user || User.new
-  end
-
-  def new
-    if params[:source_event].blank?
-      @indicator = 'new'
-      authorize @event = Event.new
-    else
-      @indicator = 'duplicate'
-      authorize @event = Event.find(params[:source_event]).dup
-    end
-
-    @finder = 'new'
-  end
-
-  def create
-    authorize @event = Event.new(event_params)
-
-    @finder = 'new'
-    if @event.save
-      flash[:success] = 'The event has been created.'
-      EventMailer.delay.created(@event, current_user)
-      redirect_to action: :index
-    else
-      render 'new'
-    end
-  end
-
-  def edit
-    authorize @event = Event.find(params[:id])
-
-    @show_report = current_user&.admin_or_leader? && @event.start_time < Time.now
-
-    @too_old = (Date.today - @event.end_time.to_date).round > 14
-
-    @finder = 'edit'
-  end
-
-  def update
-    authorize @event = Event.find(params[:id])
-
-    modified_params = event_params.dup
-
-    modified_params[:technologies_built] = @event.technologies_built || 0 if event_params[:technologies_built] == ''
-
-    modified_params[:boxes_packed] = @event.boxes_packed || 0 if event_params[:boxes_packed] == ''
-
-    modified_params[:item_goal] = @event.item_goal || 0 if event_params[:item_goal] == ''
-
-    @event.assign_attributes(modified_params)
-
-    @inventory_created = ''
-    @admins_notified = ''
-    @users_notified = ''
-    @results_emails_sent = ''
-    # CREATE AN INVENTORY WHEN AN EVENT REPORT IS SUBMITTED UNDER CERTAIN CONDITIONS.
-    # Fields in question: technologies_built, boxes_packed
-    # This is the first time the event report is being submitted (@event.emails_sent == false)
-    # Conditions: They're not negative AND ( they're not both 0 OR they weren't zero but now they are. )
-    # ESCAPE CLAUSE: the event's technology doesn't have a primary_component
-
-    # Condition: Neither number is negative
-    @positive_numbers = false
-    @positive_numbers = true if @event.technologies_built >= 0 && @event.boxes_packed >= 0
-
-    # Condition: they're not both 0
-    @more_than_zero = (@event.technologies_built + @event.boxes_packed).positive?
-
-    # Condition: they weren't zero, but now they are:
-    @changed_to_zero = false
-    @changed_to_zero = true if @event.technologies_built_was != 0 && @event.technologies_built.zero?
-    @changed_to_zero = true if @event.boxes_packed_was != 0 && @event.boxes_packed.zero?
-
-    # combine conditions
-    if @positive_numbers && (@more_than_zero || @changed_to_zero) && @event.technology.primary_component.present? && @event.emails_sent == false
-
-      # determine the values to use when populating the count
-      @loose =
-        if event_params[:technologies_built] == ''
-          nil
-        elsif @event.technologies_built_changed?
-          @event.technologies_built - @event.technologies_built_was
-        else
-          @event.technologies_built
-        end
-
-      @box =
-        if event_params[:boxes_packed] == ''
-          nil
-        elsif @event.boxes_packed_changed?
-          @event.boxes_packed - @event.boxes_packed_was
-        else
-          @event.boxes_packed
-        end
-
-      @inventory = CreateInventory.new(@event, @loose, @box, current_user.id)
-      @inventory_created = 'Inventory created.'
-
-    end
-
-    if @event.start_time_was > Time.now && (@event.start_time_changed? || @event.end_time_changed? || @event.location_id_changed? || @event.technology_id_changed? || @event.is_private_changed?)
-      # Can't use delayed_job because ActiveModel::Dirty doesn't persist
-      EventMailer.changed(@event, current_user).deliver_now
-      @admins_notified = 'Admins notified.'
-      if @event.registrations.exists? && (@event.start_time_changed? || @event.end_time_changed? || @event.location_id_changed? || @event.technology_id_changed?)
-        @event.registrations.each do |registration|
-          # Can't use delayed_job because ActiveModel::Dirty doesn't persist
-          RegistrationMailer.event_changed(registration, @event).deliver_now
-          @users_notified = 'All registered builders notified.'
-        end
-      end
-    end
-
-    @send_results_emails = false
-    # CONDITIONS:
-    # This is the first time the event report is being submitted (emails_sent == false)
-    # The attendance is above 0
-    # There are registrations associated with the event
-    # The event generated some loose_count or unopened_boxes_count result
-    # The 'Submit Report & Email Results' button was pushed (as opposed to the 'Submit Report' button)
-    if @event.emails_sent == false && @event.attendance&.positive? && @event.registrations.count&.positive? && @more_than_zero && params[:send_report].present?
-      @send_results_emails = true
-      @event.emails_sent = true
-      @results_emails_sent = 'Attendees notified of results.'
-    end
-
-    if @event.save
-      flash[:success] = "Event updated. #{@admins_notified} #{@users_notified} #{@results_emails_sent} #{@inventory_created}"
-
-      @event.registrations.where(attended: true).each do |r|
-        RegistrationMailer.delay.event_results(r) if @send_results_emails == true
-        KindfulClient.new.import_user_w_note(r)
-      end
-
-      redirect_to event_path(@event)
-    else
-      flash[:danger] = 'There was a problem saving this event report.'
-      @show_advanced = true
-      render 'edit'
-    end
-  end
-
-  def destroy
-    authorize @event = Event.find(params[:id])
-
-    @event_id = @event.id
-
-    @admins_notified = ''
-    @users_notified = ''
-
-    # send emails to registrations and leaders before cancelling
-    if @event.start_time > Time.now
-      # Send the Event ID instead of the record, since the recod gets pushed out of default scope on paranoid deletion.
-      EventMailer.delay.cancelled(@event_id, current_user)
-      @admins_notified = 'Admins notified.'
-
-      if @event.registrations.exists?
-        # Collect the registration IDs instead of the records, because the records get pushed out of default scope on paranoid deletion.
-        @registration_ids = @event.registrations.map(&:id)
-
-        @registration_ids.each do |registration_id|
-          RegistrationMailer.delay.event_cancelled(registration_id)
-        end
-        @users_notified = 'All registered builders notified.'
-      end
-
-    end
-
-    if @event.destroy
-      flash[:success] = "Event cancelled. #{@admins_notified} #{@users_notified}"
-      redirect_to root_path
-    else
-      flash[:warning] = @event.errors.first.join(': ')
-      redirect_to edit_event_path(@event)
-    end
-  end
-
-  def cancelled
-    authorize @cancelled_events
-    @user = current_user
-
-    @finder = 'cancelled'
-  end
-
-  def closed
-    authorize @closed_events
-    @user = current_user
-
-    @finder = 'closed'
-  end
-
   def lead
     @user = current_user
-    @events = []
+    @events = Event.needs_leaders
 
-    Event.future.each do |e|
-      @events << e if e.needs_leaders?
-    end
-
-    authorize @events.first if @events.any?
-
-    @finder = 'lead'
+    authorize Event
   end
 
   def leaders
-    authorize @event = Event.find(params[:id])
-
     @leaders = User.leaders
-    @already_registered_leaders = User.find(@event.registrations.registered_as_leader.pluck(:user_id))
+    @already_registered_leaders = User.find(@event.registrations.active.leaders.pluck(:user_id))
     @remaining_leaders = @leaders - @already_registered_leaders
   end
 
   def leader_unregister
-    authorize @event = Event.find(params[:id])
-    @registration = @event.registrations.registered_as_leader.where(user_id: params[:user_id]).first
+    @registration = @event.registrations.active.leaders.where(user_id: params[:user_id]).first
 
     if @registration.blank?
       flash[:error] = 'Oops, something went wrong.'
     else
+      # actually delete, not discard
       @registration.delete
       flash[:success] = "#{@registration.user.name} was unregistered."
     end
@@ -264,11 +114,10 @@ class EventsController < ApplicationController
   end
 
   def leader_register
-    authorize @event = Event.find(params[:id])
-    @registration = @event.registrations.with_deleted.where(user_id: params[:user_id]).first_or_initialize
+    @registration = @event.registrations.where(user_id: params[:user_id]).first_or_initialize
 
     @registration.leader = true
-    @registration.restore if @registration.deleted?
+    @registration.undiscard if @registration.discarded?
     @registration.save
     RegistrationMailer.created(@registration).deliver_now
 
@@ -276,82 +125,26 @@ class EventsController < ApplicationController
     redirect_to leaders_event_path(@event)
   end
 
-  def restore
-    authorize @event = Event.only_deleted.find(params[:id])
-    if params[:recursive] == 'false'
-      Event.restore(@event.id)
-      flash[:success] = 'Event restored but not registrations.'
+  def new
+    @locations = Location.active.order(:name)
+    @technologies = Technology.list_worthy.order(:id).map { |t| ["#{t.name} (#{t.short_name})", t.id] }
+
+    if params[:source_event].blank?
+      @indicator = 'new'
+      authorize @event = Event.new
     else
-      Event.restore(@event.id, recursive: true)
-      flash[:success] = 'Event and associated registrations restored.'
+      @indicator = 'duplicate'
+      authorize @event = Event.find(params[:source_event]).dup
     end
-
-    if Event.only_deleted.exists?
-      redirect_to cancelled_events_path
-    else
-      redirect_to events_path
-    end
-  end
-
-  def replicate
-    @event = Event.find(params[:id])
-
-    @replicator = Replicator.new
-  end
-
-  def replicate_occurrences
-    return if params[:f].blank? || params[:s].blank? || params[:e].blank?
-
-    replicator = Replicator.new
-
-    replicator.tap do |r|
-      r.event_id = Integer(params[:id])
-      r.start_time = Time.parse(params[:s])
-      r.end_time = Time.parse(params[:e])
-      r.frequency = params[:f]
-      r.occurrences = params[:o].blank? ? 1 : Integer(params[:o])
-    end
-
-    render json: replicator.date_array
-  end
-
-  def replicator
-    @event = Event.find(params[:id])
-
-    replicator = Replicator.new(replicator_params)
-
-    replicator.event_id = @event.id
-    replicator.initiator = current_user
-
-    if replicator.go!
-      flash[:success] = 'Event was successfully replicated!'
-      redirect_to root_path
-    else
-      flash[:warning] = replicator.errors.messages
-      @event = Event.find(params[:id])
-      @replicator = Replicator.new
-      render :replicate
-    end
-  end
-
-  def attendance
-    @event = Event.find(params[:id])
-    authorize @event, :edit?
-
-    @registrations = @event.registrations.where.not(leader: true).ordered_by_user_lname
-
-    @print_blanks = @event.max_registrations - @event.total_registered + 5
-    @print_navbar = true
   end
 
   def poster
-    @event = Event.find(params[:id])
     @technology = @event.technology
-    @tech_img = @technology.img_url
+    @tech_img = @technology.display_image
     @location = @event.location
-    @location_img = @location.photo_url
+    @location_img = @location.image
 
-    @tech_blurb = @technology.description
+    @tech_blurb = @technology.public_description
 
     @child_statement_email =
       if @technology.family_friendly
@@ -361,6 +154,122 @@ class EventsController < ApplicationController
       end
 
     @print_navbar = true
+  end
+
+  def replicate
+    @replicator = Replicator.new
+  end
+
+  # AJAX from #replicate view, shows recurring dates as a list on the page
+  def replicate_occurrences
+    return render(json: 'missing param', status: :unprocessable_entity) if params[:f].blank? || params[:s].blank? || params[:e].blank? || params[:o].blank?
+
+    replicator = Replicator.new
+
+    replicator.tap do |r|
+      r.event_id = Integer(params[:id])
+      r.start_time = Time.parse(params[:s])
+      r.end_time = Time.parse(params[:e])
+      r.frequency = params[:f]
+      r.occurrences = Integer(params[:o])
+    end
+
+    render json: replicator.date_array
+  end
+
+  def replicator
+    @replicator = Replicator.new(replicator_params)
+
+    @replicator.event_id = @event.id
+    @replicator.user = current_user
+
+    if @replicator.go!
+      flash[:success] = 'Event was successfully replicated!'
+      redirect_to root_path
+    else
+      flash[:error] = @replicator.errors.full_messages.to_sentence
+      render :replicate
+    end
+  end
+
+  def show
+    # TODO: Handle destroyed technologies and locations
+    # TODO: Check that discarded technologies and locations still show up
+    @registration = @event.registrations.active.where(user: current_user).first_or_initialize
+
+    @registration.leader = (params[:leader].present? && current_user&.can_lead_event?(@event)) if @registration.new_record?
+
+    @tech_img = @event.technology.display_image
+
+    @tech_info = @event.technology.info_url if @event.technology&.info_url.present?
+
+    @location = @event.location
+
+    @location_img = @event.location.image
+
+    @show_edit = (current_user&.is_admin || @registration&.leader?)
+
+    @leaders = @event.registrations.active.leaders
+  end
+
+  def update
+    # this also marks checked registrations as attended
+    @event.assign_attributes(event_params)
+
+    admins_notified = nil
+    users_notified = nil
+    results_emails_sent = nil
+    inventory_created = nil
+
+    if @event.should_notify_admins?
+      # Can't use delayed_job because ActiveModel::Dirty doesn't persist
+      EventMailer.changed(@event, current_user).deliver_now
+      admins_notified = 'Admins notified.'
+    end
+
+    if @event.should_notify_builders?
+      @event.registrations.each do |registration|
+        # Can't use delayed_job because ActiveModel::Dirty doesn't persist
+        RegistrationMailer.event_changed(registration, @event).deliver_now
+      end
+      users_notified = 'All registered builders notified.'
+    end
+
+    if @event.should_send_results_emails? && params[:send_report].present?
+      send_results_emails = true
+      @event.emails_sent = true
+      results_emails_sent = 'Attendees notified of results.'
+    end
+
+    # set a variable now, while ActiveModel::Dirty can inspect *_changed?
+    # then trigger EventInventoryJob after @event.save
+    create_inventory = true if @event.should_create_inventory?
+
+    if @event.save
+      @event.reload
+
+      # Only trigger stuff if the event is actually complete.
+      if @event.complete?
+        # shouldn't be any need for .active here because registrations were just marked as attended, there hasn't been a chance to discard them.
+        @event.registrations.attended.each do |r|
+          RegistrationMailer.event_results(r).deliver_later if send_results_emails
+          KindfulClient.new.delay(queue: 'kindful_client').import_user_w_note(r)
+        end
+
+        EventInventoryJob.perform_later(@event) if create_inventory
+
+        inventory_created = 'Inventory created. ' if create_inventory
+      end
+
+      flash[:success] = "Event updated. #{admins_notified} #{users_notified} #{results_emails_sent} #{inventory_created}"
+
+      redirect_to event_path(@event)
+    else
+      flash[:danger] = 'There was a problem saving this event report.'
+      @locations = Location.active.order(:name)
+      @technologies = Technology.list_worthy.order(:id).map { |t| ["#{t.name} (#{t.short_name})", t.id] }
+      render 'edit'
+    end
   end
 
   private
@@ -395,7 +304,11 @@ class EventsController < ApplicationController
   end
 
   def find_stale
-    @cancelled_events = Event.only_deleted
+    @cancelled_events = Event.discarded
     @closed_events = Event.closed
+  end
+
+  def set_event
+    authorize @event = Event.find(params[:id])
   end
 end

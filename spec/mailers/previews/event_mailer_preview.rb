@@ -22,7 +22,7 @@ class EventMailerPreview < ActionMailer::Preview
   end
 
   def cancelled
-    EventMailer.cancelled(Event.first.id, User.first)
+    EventMailer.cancelled(Event.first, User.first)
   end
 
   def messenger

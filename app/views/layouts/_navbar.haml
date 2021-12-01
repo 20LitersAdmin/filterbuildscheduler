@@ -1,0 +1,33 @@
+-# frozen_string_literal: true
+
+%nav.navbar.navbar-default
+  .container-fluid
+    / Brand and toggle get grouped for better mobile display
+    .navbar-header
+      %button.navbar-toggle.collapsed{ 'aria-expanded' => 'false', 'data-target' => '#bs-example-navbar-collapse-1', 'data-toggle' => 'collapse', type: 'button' }
+        %span.sr-only Toggle navigation
+        %span.icon-bar
+        %span.icon-bar
+        %span.icon-bar
+      %a.navbar-brand{ href: 'https://20liters.org' }
+    #bs-example-navbar-collapse-1.collapse.navbar-collapse
+      - if @print_navbar.present?
+        %ul.nav.navbar-nav.navbar-right
+          %li
+            = link_to 'Home', root_path, class: 'use-load-screen'
+          %li= link_to 'Admin', '/admin' if current_user&.admin_or_leader?
+          %li
+            %a#print_btn{ alt: 'Print', href: 'javascript:window.print()' }
+              = icon('fa', 'print')
+              Print
+      - else
+        %ul.nav.navbar-nav.navbar-right
+          %li= link_to 'Builds', root_path if !current_page?('/events') && !current_page?(root_url)
+
+          %li= link_to 'Info', info_path if !current_page?('/info') && !current_user&.is_admin?
+          %li= link_to 'Admin', '/admin' if current_user&.admin_or_leader?
+          %li= link_to 'My Account', show_user_path(current_user), class: 'use-load-screen' if current_user
+          %li= link_to 'Sign Out', destroy_user_session_path, method: :delete if current_user
+          %li= link_to 'Sign In', user_session_path unless current_user
+          %li
+            %a.btn.btn-primary.empty.give-button{ href: 'https://20liters.org/get-involved/#organize' } Give

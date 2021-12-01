@@ -20,7 +20,7 @@ class ApplicationController < ActionController::Base
   private
 
   def reload_rails_admin
-    models = %w[User Event Registration Location Technology Component Part Material Supplier Count Inventory]
+    models = %w[User Event Registration Location Technology Component Part Material Supplier]
     models.each do |m|
       RailsAdmin::Config.reset_model(m)
     end

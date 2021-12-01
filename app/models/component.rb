@@ -1,85 +1,112 @@
 # frozen_string_literal: true
 
 class Component < ApplicationRecord
-  acts_as_paranoid
+  include Discard::Model
+  include Itemable
+  # SCHEMA notes
+  # #history is a JSON store of historical inventory counts: { date.iso8601 => { loose: 99, box: 99, available: 99 } }
+  # #quantities is a JSON store of the total number (integer) needed per technology: { technology.uid => 99, technology.uid => 99 }
 
-  has_many :extrapolate_technology_components, dependent: :destroy, inverse_of: :component
-  has_many :technologies, through: :extrapolate_technology_components
-  accepts_nested_attributes_for :extrapolate_technology_components, allow_destroy: true
+  # assembly_path wants to call @item.assemblies regardless of whether the @item is a Technology or Component
+  alias_attribute :assemblies, :sub_assemblies
 
-  has_many :extrapolate_component_parts, dependent: :destroy, inverse_of: :component
-  has_many :parts, through: :extrapolate_component_parts
-  accepts_nested_attributes_for :extrapolate_component_parts, allow_destroy: true
+  has_many :super_assemblies, -> { where item_type: 'Component' }, class_name: 'Assembly', foreign_key: :item_id, dependent: :destroy
+  has_many :sub_assemblies, -> { where combination_type: 'Component' }, class_name: 'Assembly', foreign_key: :combination_id, dependent: :destroy
 
-  has_many :counts, dependent: :destroy
-  scope :active, -> { where(deleted_at: nil) }
-  scope :required, -> { joins(:extrapolate_technology_components).where.not(completed_tech: true).where(extrapolate_technology_components: { required: true }) }
+  accepts_nested_attributes_for :sub_assemblies, allow_destroy: true
 
-  def available
-    if latest_count.present?
-      latest_count.available
-    else
-      0
-    end
-  end
+  has_many :technologies, through: :super_assemblies, source: :combination, source_type: 'Technology'
+  has_many :parts, through: :sub_assemblies, source: :item, source_type: 'Part'
 
-  def latest_count
-    Count.where(inventory: Inventory.latest_completed, component: self).first
-  end
+  has_one_attached :image, dependent: :purge
+  attr_accessor :remove_image
 
-  def picture
-    begin
-      ActionController::Base.helpers.asset_path('uids/' + uid + '.jpg')
-    rescue => error
-      'http://placekitten.com/140/140'
-    end
-  end
+  validates_presence_of :name
 
-  def per_technology
-    if extrapolate_technology_components.any?
-      extrapolate_technology_components.first.components_per_technology.to_i
-    else
-      1
-    end
-  end
+  # rails_admin scope "active" sounds better than "kept"
+  scope :active, -> { kept }
 
-  def price
+  # Exists in ActiveStorage already
+  # scope :with_attached_image, -> { joins(:image_attachment) }
+  scope :without_attached_image, -> { where.missing(:image_attachment) }
+
+  # https://stackoverflow.com/questions/69545741/ruby-on-rails-scope-of-polymorphic-join-with-only-specified-type
+  # scope :with_only_parts, -> { joins(:parts).distinct }
+
+  before_save :process_image, if: -> { attachment_changes.any? }
+  after_save { image.purge if remove_image == '1' }
+  before_destroy :dependent_destroy_assemblies
+
+  # Not in Itemable because it's unique to Component and Part
+  def self.search_name_and_uid(string)
+    return Component.none if string.blank? || !string.is_a?(String)
+
     ary = []
-    extrapolate_component_parts.each do |ecp|
-      next if ecp&.part.nil?
+    args = string.tr(',', '').tr(';', '').split
 
-      if ecp.part.made_from_materials? && ecp.part.price_cents.zero? && ecp.part.extrapolate_material_parts.any?
-        emp = ecp.part.extrapolate_material_parts.first
-
-        ary << emp.part_price * ecp.parts_per_component.to_i
-      else
-        ary << ecp.part_price * ecp.parts_per_component.to_i
-      end
+    args.each do |arg|
+      ary << "%#{arg}%"
     end
-    ary.sum
+
+    Component.kept.where('name ILIKE any ( array[?] )', ary).or(where('uid ILIKE any ( array[?] )', ary))
   end
 
-  def required?
-    if extrapolate_technology_components.any?
-      extrapolate_technology_components.first.required?
-    else
-      false
-    end
+  # NOTE: will only find 1st-level parents, not all ancestors
+  def super_components
+    Component.kept.find_by_sql(
+      "SELECT components.* FROM components
+      INNER JOIN assemblies
+      ON assemblies.combination_id = components.id
+      AND assemblies.combination_type = 'Component'
+      WHERE assemblies.item_type = 'Component'
+      AND assemblies.item_id = #{id}"
+    )
   end
 
-  def technology
-    technologies.first
+  # NOTE: will only find 1st-level children, not all descendents
+  def sub_components
+    Component.kept.find_by_sql(
+      "SELECT components.* FROM components
+      INNER JOIN assemblies
+      ON assemblies.item_id = components.id
+      AND assemblies.item_type = 'Component'
+      WHERE assemblies.combination_type = 'Component'
+      AND assemblies.combination_id = #{id}"
+    )
   end
 
-  def total
-    if latest_count
-      latest_count.total
-    else
-      0
-    end
+  # Rails Admin virtual
+  def uid_and_name
+    "#{uid}: #{name}"
   end
 
-  def uid
-    'C' + id.to_s.rjust(3, '0')
+  private
+
+  def dependent_destroy_assemblies
+    super_assemblies.destroy_all
+    sub_assemblies.destroy_all
+  end
+
+  def process_image
+    file = attachment_changes['image'].attachable
+
+    # When this method is triggered properly, `file` is instance of `ActionDispatch::Http::UploadedFile`
+    # but apparently `ImageProcessing::MiniMagick.call` causes this callback to trigger again
+    # but this time `file` is the Hash from image.attach(io: String, filename: String, content_type: String) so...
+
+    # In RSpec, this is always a hash
+    file = file[:io].path if file.instance_of?(Hash) && Rails.env.test?
+
+    return if file.instance_of?(Hash)
+
+    processed_image = ImageProcessing::MiniMagick
+                      .source(File.open(file))
+                      .resize_to_limit(600, 600)
+                      .convert('png')
+                      .call
+
+    image_name = "#{uid}_#{Date.today.iso8601}.png"
+
+    image.attach(io: File.open(processed_image.path), filename: image_name, content_type: 'image/png')
   end
 end

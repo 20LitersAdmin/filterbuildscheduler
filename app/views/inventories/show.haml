@@ -1,0 +1,50 @@
+-# frozen_string_literal: true
+
+#inventory_show.container
+  .row
+    .col-xs-6
+      %h2 #{@inventory.name} Inventory
+    .col-xs-6.right-align
+      = link_to 'Back', history_inventories_path, class: 'btn yellow'
+  - if current_user.is_admin?
+    .row
+      .col-xs-6
+        - if @inventory.latest?
+          = link_to 'Undo this Inventory', '#', class: 'btn red fullwidth', 'data-confirm': 'This will permanently undo the counts. Only do this if this inventory caused serious count errors. Are you sure? '
+      .col-xs-6
+        = link_to 'Delete this Inventory Record', inventory_path, method: :delete, class: 'btn blue fullwidth', 'data-confirm': 'This will not change the values of any item counts, it will only delete the record of this inventory occurring. Are you sure? '
+
+  - unless @inventory.manual?
+    .row
+      %h4 Note:
+      %p Shipping, Receiving and Event-based inventories adjust item counts up or down. The counts below show how much was added or removed from an item's counts as they were at the time of this inventory.
+
+  .row
+    %table.table.table-striped.datatable-inventory-search
+      %thead
+        %tr
+          %th Item UID
+          %th Item name
+          %th Loose count
+          %th Box count
+          %th
+            - if @inventory.manual
+              Available
+            - else
+              Total adjustment
+      %tbody
+        - @inventory.history.each do |hist|
+          -# - item = hist[0].objectify_uid
+          %tr
+            %td
+              - if current_user.is_admin?
+                - uid_eval = hist[0].evaluate_uid
+                -# NOTE: this could fail because the item could have been deleted
+                = link_to hist[0], rails_admin.show_path(model_name: uid_eval[0], id: uid_eval[1])
+              - else
+                = hist[0]
+            %td= hist[1]['item_name']
+            %td= human_number hist[1]['loose']
+            %td= human_number hist[1]['box']
+            %td= human_number hist[1]['available']
+

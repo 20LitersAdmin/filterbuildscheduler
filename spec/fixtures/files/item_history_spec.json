@@ -1,0 +1,26 @@
+{
+  "2021-07-01":
+    {
+      "box": 6, "loose": 60, "inv_type": "Items Received", "available": 1500
+    },
+  "2021-08-10":
+    {
+      "box": 6, "loose": 60, "inv_type": "Items Received", "available": 1500
+    },
+  "2021-08-17":
+    {
+      "box": 6, "loose": 60, "inv_type": "Items Received", "available": 1500
+    },
+  "2021-10-21":
+    {
+      "box": 6, "loose": 60, "inv_type": "Event Based", "available": 1500
+    },
+  "2021-10-27":
+    {
+      "box": 6, "loose": 60, "inv_type": "Event Based", "available": 1500
+    },
+  "2021-11-01":
+    {
+      "box": 3, "loose": 85, "inv_type": "Manual Inventory", "available": 805
+    }
+}

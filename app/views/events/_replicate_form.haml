@@ -1,0 +1,39 @@
+-# frozen_string_literal: true
+
+:ruby
+  start_value = @replicator.start_time || @event.start_time
+  end_value = @replicator.end_time || @event.end_time
+
+.col-xs-12.event-form
+  = simple_form_for(@replicator, method: :put, url: replicator_event_url(@event)) do |f|
+    .row
+      %h4 Select the next date and time when this event should occur:
+      .col-xs-12.col-sm-6
+        = f.input :start_time, as: :string, input_html: { class: 'datetimepicker', value: time_for_form(start_value) }
+      .col-xs-12.col-sm-6
+        = f.input :end_time, as: :string, input_html: { class: 'datetimepicker', value: time_for_form(end_value) }
+    .row
+      .col-xs-12.col-sm-6
+        %h4 Select how often to repeat it:
+        = f.input :frequency, collection: %w[weekly monthly], label: false
+      .col-xs-12.col-sm-6
+        %h4 Indicate how many events to create:
+        = f.input :occurrences, as: :integer, label: false
+    - if @event.leaders_registered.any?
+      .row
+        %h4 Replicate leader registrations?
+        .col-xs-12.col-sm-6
+          = f.input :replicate_leaders, as: :boolean, label: false
+        .col-xs-12.col-sm-6
+          %p
+            Leaders registered: #{@event.leaders_names_full}
+    .row
+      .col-xs-6
+        = f.button :submit, name: 'replicate', value: 'Replicate', class: 'btn blue fullwidth'
+      .col-xs-6
+        = link_to 'Back', edit_event_path(@event), class: 'btn yellow fullwidth'
+    .row.lots-o-space
+      .col-xs-12
+        %h4 Events will be created with these dates:
+      .col-xs-12.col-sm-8.col-sm-offset-2
+        %ol#occurrences

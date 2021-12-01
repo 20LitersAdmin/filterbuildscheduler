@@ -1,126 +1,93 @@
 # frozen_string_literal: true
 
 class Material < ApplicationRecord
-  acts_as_paranoid
+  include Discard::Model
+  include Itemable
 
-  has_many :extrapolate_material_parts, dependent: :destroy, inverse_of: :material
-  has_many :parts, through: :extrapolate_material_parts
-  accepts_nested_attributes_for :extrapolate_material_parts, allow_destroy: true
+  # SCHEMA notes
+  # #history is a JSON store of historical inventory counts: { date.iso8601 => { loose: 99, box: 99, available: 99 } }
+  # #quantities is a JSON store of the total number (float) needed per technology: { technology.uid => 99, technology.uid => 99 }
 
-  has_many :extrapolate_technology_materials, dependent: :destroy, inverse_of: :material
-  has_many :technologies, through: :extrapolate_technology_materials
-  accepts_nested_attributes_for :extrapolate_technology_materials, allow_destroy: true
-
-  has_many :counts, dependent: :destroy
-
+  has_many :parts
   belongs_to :supplier, optional: true
 
-  monetize :price_cents, allow_nil: true, numericality: { greater_than_or_equal_to: 0 }
+  has_one_attached :image, dependent: :purge
+  attr_accessor :remove_image
 
-  scope :active, -> { where(deleted_at: nil) }
-  scope :required, -> { joins(:extrapolate_technology_materials).where(extrapolate_technology_materials: { required: true }) }
+  validates_presence_of :name
 
-  def available
-    if latest_count.present?
-      latest_count.available
-    else
-      0
-    end
-  end
+  # rails_admin scope "active" sounds better than "kept"
+  scope :active, -> { kept }
+  scope :with_parts, -> { joins(:parts).distinct }
 
-  def latest_count
-    Count.where(inventory: Inventory.latest_completed, material: self).first
-  end
-
-  def made_from_materials?
-    false
-  end
+  before_save :process_image, if: -> { attachment_changes.any? }
+  after_save { image.purge if remove_image == '1' }
+  after_save :escalate_price, if: -> { saved_change_to_price_cents? }
 
   def on_order?
     last_ordered_at.present? && (last_received_at.nil? || last_ordered_at > last_received_at)
   end
 
-  def owner
-    return 'N/A' unless technologies.present?
+  def owners
+    return ['N/A'] unless all_technologies.present?
 
-    technologies.map(&:owner_acronym).uniq.join(',')
-  end
-
-  def picture
-    begin
-      ActionController::Base.helpers.asset_path("uids/#{uid}.jpg")
-    rescue => e
-      'http://placekitten.com/140/140'
-    end
-  end
-
-  def per_technology
-    if extrapolate_technology_materials.first.present?
-      per_tech = extrapolate_technology_materials.first.materials_per_technology
-    elsif extrapolate_material_parts.first.present?
-      ppm = extrapolate_material_parts.first.parts_per_material.to_f
-
-      part = extrapolate_material_parts.first.part
-      ppc = part.extrapolate_component_parts.first.parts_per_component.to_f
-      component = part.extrapolate_component_parts.first.component
-      cpt = component.extrapolate_technology_components.first.components_per_technology.to_f
-      # per_tech = 1.0 / ( ( ppm / ppc ) * cpt )
-      per_tech = (cpt * ppc.to_f) / ppm
-    else
-      per_tech = 0.0
-    end
-
-    per_tech
+    all_technologies.kept.map(&:owner_acronym)
   end
 
   def reorder?
-    available < minimum_on_hand
+    available_count < minimum_on_hand
   end
 
   def reorder_total_cost
     min_order * price
   end
 
-  def required?
-    if extrapolate_technology_materials.any?
-      extrapolate_technology_materials.first.required?
-    else
-      false
+  def supplier_and_sku
+    return supplier.name unless order_url.present?
+
+    sku_sub = sku.presence || 'link'
+
+    sku_as_link = ActionController::Base.helpers.link_to sku_sub, order_url, target: '_blank', rel: 'tooltip'
+
+    "#{supplier.name} - SKU: #{sku_as_link}".html_safe
+  end
+
+  # Rails Admin virtual
+  def uid_and_name
+    "#{uid}: #{name}"
+  end
+
+  private
+
+  def process_image
+    file = attachment_changes['image'].attachable
+
+    # When this method is triggered properly, `file` is instance of `ActionDispatch::Http::UploadedFile`
+    # but apparently `ImageProcessing::MiniMagick.call` causes this callback to trigger again
+    # but this time `file` is the Hash from image.attach(io: String, filename: String, content_type: String) so...
+
+    # In RSpec, this is always a hash
+    file = file[:io].path if file.instance_of?(Hash) && Rails.env.test?
+
+    return if file.instance_of?(Hash)
+
+    processed_image = ImageProcessing::MiniMagick
+                      .source(File.open(file))
+                      .resize_to_limit(600, 600)
+                      .convert('png')
+                      .call
+
+    image_name = "#{uid}_#{Date.today.iso8601}.png"
+
+    image.attach(io: File.open(processed_image.path), filename: image_name, content_type: 'image/png')
+  end
+
+  def escalate_price
+    return true unless parts.any?
+
+    parts.each do |part|
+      part_price = price_cents / part.quantity_from_material
+      part.update_columns(price_cents: part_price)
     end
-  end
-
-  def technology
-    # The path from materials to technologies can vary:
-    # Material ->(materials_technologies)-> Technology
-    # Material ->(extrap_material_parts)-> Part ->(extrap_technology_parts)-> Technology
-    # Material ->(extrap_material_parts)-> Part ->(extrap_component_parts)-> Component ->(extrap_component_parts)-> Technology
-
-    if technologies.first.present?
-      technologies.first
-    elsif extrapolate_material_parts.first.present?
-      part = parts.first
-      if part.technologies.first.present?
-        part.technologies.first
-      elsif part.components.first.present?
-        component = part.components.first
-        component.technologies.first
-      end
-    end
-  end
-
-  def tech_names_short
-    if technologies.map(&:name).empty?
-      'n/a'
-    else
-      technologies.map { |t| t.name.gsub(' Filter', '').gsub(' for Bucket', '') }.join(', ')
-    end
-  end
-
-  def uid
-    "M#{id.to_s.rjust(3, 0.to_s)}"
-  end
-
-  def weeks_to_out
-    latest_count.present? ? latest_count.weeks_to_out : 0
   end
 end

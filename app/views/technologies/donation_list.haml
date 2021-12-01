@@ -1,0 +1,41 @@
+-# frozen_string_literal: true
+#donation_list.container
+  .row
+    .col-xs-4.col-md-2
+      = image_tag 'logo-horizontal-417-208.png', class: 'poster-logo'
+    .col-md-8
+      %h3 Donation List:
+      %p This is a list of materials and parts we use to construct our filter and rainwater harvesting technologies. We purchase these items from suppliers for retail price when we cannot secure donations.
+  .row.no-print.admin-div
+    .col-xs-12
+      = form_tag donation_list_path, method: 'get', class: 'form-inline' do
+        .row
+          .col-md-10
+            %h4 Select Technologies and quantities to include in donation list:
+          .col-md-2.no-print.form-group
+            = number_field_tag 'q', @quantity_val, { min: 0, step: 1, class: 'form-control', placeholder: 'Quantity' }
+        .row
+          - @technologies_select.each do |short_name, id|
+            - selected = @selected_technologies.pluck(:id).include? id
+            .col-sm-1.col-xs-2
+              %span.label.label-default
+                = short_name
+                = check_box_tag id, 'y', selected
+          .col-xs-12
+            = submit_tag 'Set Quantity', class: 'btn yellow float-right', name: nil
+  %br
+  .row
+    .col
+      %table.table.table-striped.datatable
+        %thead
+          %tr
+            %th UID
+            %th Item
+            %th Supplier
+            %th SKU
+            %th.text-right Quantity needed
+            %th.text-right Price each
+            - if @quantity > 1
+              %th.text-right Total cost
+        %tbody
+          = render partial: 'donation_item', collection: @items

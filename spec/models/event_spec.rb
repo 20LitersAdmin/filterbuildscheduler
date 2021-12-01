@@ -3,10 +3,9 @@
 require 'rails_helper'
 
 RSpec.describe Event, type: :model do
-  let(:technology) { create :technology }
-  let(:event) { create :event, technology: technology }
-  let(:future_event) { create :event, technology: technology, start_time: Time.now + 2.days, end_time: Time.now + 2.days + 2.hours }
-  let(:complete_event) { create :complete_event, technology: technology }
+  # let(:technology) { create :technology }
+  let(:event) { create :event }
+  let(:complete_event) { create :complete_event }
 
   let(:no_starttime)        { build :event, start_time: nil, end_time: nil }
   let(:no_endtime)          { build :event, end_time: nil }
@@ -15,26 +14,13 @@ RSpec.describe Event, type: :model do
   let(:no_minregistrations) { build :event, min_registrations: nil }
   let(:no_maxregistrations) { build :event, max_registrations: nil }
 
-  let(:user1) { create :user }
-  let(:user2) { create :user }
-  let(:user3) { create :user }
-
-  let(:reg1) { build :registration, event: event, guests_registered: 19 }
+  let(:user) { create :user }
+  let(:reg1) { build :registration, event: event, guests_registered: 19, user: user }
   let(:reg2) { build :registration, event: event, guests_registered: 4 }
 
-  let(:reg_del1) { build :registration, event: event, guests_registered: 19, deleted_at: Time.now }
-  let(:reg_del2) { build :registration, event: event, guests_registered: 4, deleted_at: Time.now }
-
-  let(:reg_leader1) { build :registration_leader, event: event }
-  let(:reg_leader2) { build :registration_leader, event: event }
+  let(:reg_leader1) { build :registration_leader, event: event, guests_registered: 0 }
+  let(:reg_leader2) { build :registration_leader, event: event, guests_registered: 0 }
   let(:reg_leader3) { build :registration_leader, event: event }
-
-  let(:reg_leader_del1) { build :registration_leader, event: event, deleted_at: Time.now }
-  let(:reg_leader_del2) { build :registration_leader, event: event, deleted_at: Time.now }
-  let(:reg_leader_del3) { build :registration_leader, event: event, deleted_at: Time.now }
-
-  let(:component_ct) { create :component_ct }
-  let(:tech_comp) { create :tech_comp, component: component_ct, technology: technology }
 
   describe 'must be valid' do
     let(:unsaved_event)         { build :event }
@@ -47,31 +33,628 @@ RSpec.describe Event, type: :model do
     let(:no_boxespacked)        { build :event, boxes_packed: nil }
 
     it 'in order to save' do
+      expect(no_location.save).to be_falsey
+      expect(no_technology.save).to be_falsey
+
       expect(unsaved_event.save).to eq true
       expect(no_starttime.save).to be_falsey
       expect(no_endtime.save).to be_falsey
       expect(no_title.save).to be_falsey
-      expect(no_location.save).to be_falsey
-      expect(no_technology.save).to be_falsey
-      expect { no_privacy.save!(validate: false) }.to raise_error ActiveRecord::NotNullViolation
-      expect { no_itemgoal.save!(validate: false) }.to raise_error ActiveRecord::NotNullViolation
-      expect(no_technologiesbuilt.save).to be_falsey
-      expect(no_boxespacked.save).to be_falsey
+
       expect(no_minleaders.save).to be_falsey
       expect(no_maxleaders.save).to be_falsey
       expect(no_minregistrations.save).to be_falsey
       expect(no_maxregistrations.save).to be_falsey
+
+      expect(no_technologiesbuilt.save).to be_falsey
+      expect(no_boxespacked.save).to be_falsey
+
+      expect { no_privacy.save!(validate: false) }
+        .to raise_error ActiveRecord::NotNullViolation
+      expect { no_itemgoal.save!(validate: false) }
+        .to raise_error ActiveRecord::NotNullViolation
     end
   end
+
+  describe '#builders_hours' do
+    it 'returns number_of_builders_attended * length' do
+      expect(event.builders_hours).to eq(event.number_of_builders_attended * event.length)
+    end
+  end
+
+  describe '#builders_registered' do
+    it 'returns the un-discarded builder records' do
+      expect(event.builders_registered).to eq event.registrations.kept.builders
+    end
+  end
+
+  describe '#builders_have_vs_total' do
+    it 'returns a string' do
+      expect(event.builders_have_vs_total.class).to eq String
+    end
+  end
+
+  describe '#complete?' do
+    it 'returns true only if report-based fields are present and the event has already started' do
+      expect(event.complete?).to be_falsey
+
+      event.technologies_built = 30
+      event.attendance = 20
+      event.save
+      expect(event.complete?).to be_falsey
+
+      expect(complete_event.complete?).to eq true
+    end
+  end
+
+  describe '#does_not_need_leaders?' do
+    it 'returns true only if there are enough or more than enough leaders' do
+      expect(event.does_not_need_leaders?).to be_falsey
+      event.registrations << reg_leader1
+      expect(event.does_not_need_leaders?).to be_falsey
+      event.registrations << reg_leader2
+      expect(event.does_not_need_leaders?).to eq true
+      event.registrations << reg_leader3
+      expect(event.does_not_need_leaders?).to eq true
+    end
+  end
+
+  describe '#format_date_only' do
+    context 'when event is contained within a day' do
+      it 'returns the start time with a format' do
+        expect(event.format_date_only).to eq event.start_time.strftime('%a, %-m/%-d')
+      end
+    end
+
+    context 'when event spans more than one day' do
+      let(:real_long_event) { build :event, start_time: Time.now, end_time: Time.now + 2.days }
+      it 'returns a formatted start and end time' do
+        expect(real_long_event.format_date_only).to include ' to '
+      end
+    end
+  end
+
+  describe '#format_date_w_year' do
+    context 'when event is contained within a day' do
+      it 'returns the start time with a format' do
+        expect(event.format_date_w_year).to eq event.start_time.strftime('%a, %-m/%-d/%y')
+      end
+    end
+
+    context 'when event spans more than one day' do
+      let(:real_long_event) { build :event, start_time: Time.now, end_time: Time.now + 2.days }
+      it 'returns a formatted start and end time' do
+        expect(real_long_event.format_date_w_year).to include ' to '
+      end
+    end
+  end
+
+  describe '#format_time_range' do
+    context 'when event is contained within a day' do
+      it 'returns the start and end times separated by a dash' do
+        expect(event.format_time_range).to include ' - '
+      end
+    end
+
+    context 'when event spans more than one day' do
+      let(:real_long_event) { build :event, start_time: Time.now, end_time: Time.now + 2.days }
+      it 'returns the start and end datetimes separated by "to"' do
+        expect(real_long_event.format_time_range).to include ' to '
+      end
+    end
+  end
+
+  describe '#format_time_only' do
+    context 'when event spans more than one day' do
+      let(:real_long_event) { build :event, start_time: Time.now, end_time: Time.now + 2.days }
+
+      it 'returns a string with a space' do
+        expect(real_long_event.format_time_only).to eq ' '
+      end
+    end
+
+    it 'returns the start and end times separated by a dash' do
+      expect(event.format_time_only).to include ' - '
+    end
+  end
+
+  describe '#format_time_slim' do
+    it 'returns a string with the start and end times separated by a dash' do
+      expect(event.format_time_slim).to include '-'
+    end
+  end
+
+  describe '#full_title' do
+    it 'returns a string with the start_time' do
+      expect(event.full_title).to include event.start_time.strftime('%-m/%-d')
+    end
+  end
+
+  describe '#full_title_w_year' do
+    it 'returns a string with the start_time' do
+      expect(event.full_title_w_year).to include event.start_time.strftime('%-m/%-d/%y')
+    end
+  end
+
+  describe '#has_begun?' do
+    let(:recent_event) { build :recent_event }
+    let(:current_event) { build :event, start_time: Time.now - 10.minutes }
+
+    it 'returns a boolean comparison of start_time to current time' do
+      expect(event.has_begun?).to eq false
+      expect(recent_event.has_begun?).to eq true
+      expect(current_event.has_begun?).to eq true
+    end
+  end
+
+  describe '#has_inventory?' do
+    it 'returns inventory.present?' do
+      expect(event.has_inventory?).to eq event.inventory.present?
+    end
+  end
+
+  describe '#incomplete?' do
+    it 'is the inverse of complete?' do
+      expect(event.incomplete?).to eq !event.complete?
+    end
+  end
+
+  describe '#in_the_future?' do
+    let(:recent_event) { build :recent_event }
+    let(:current_event) { build :event, start_time: Time.now - 10.minutes }
+
+    it 'returns a boolean comparison of start_time to current time' do
+      event.save
+      event.reload
+
+      expect(event.in_the_future?).to eq true
+      expect(recent_event.in_the_future?).to eq false
+      expect(current_event.in_the_future?).to eq false
+    end
+  end
+
+  describe '#in_the_past?' do
+    let(:recent_event) { create :recent_event }
+    let(:current_event) { create :event, start_time: Time.now - 10.minutes }
+
+    it 'returns a boolean comparison of end_time to current time' do
+      event.save
+      event.reload
+
+      expect(event.in_the_past?).to eq false
+      expect(recent_event.in_the_past?).to eq true
+      expect(current_event.in_the_past?).to eq false
+    end
+  end
+
+  describe '#leaders_have_vs_needed' do
+    it 'returns a string' do
+      expect(event.leaders_have_vs_needed.class).to eq String
+    end
+  end
+
+  describe '#leaders_names' do
+    it 'returns the names of registered leaders as a string' do
+      reg_leader1.save
+      reg_leader2.save
+
+      expect(event.leaders_names).to eq "#{reg_leader1.user.fname}, #{reg_leader2.user.fname}"
+    end
+  end
+
+  describe '#leaders_names_full' do
+    it 'returns the names of registered leaders as a string' do
+      reg_leader1.save
+      reg_leader2.save
+
+      expect(event.leaders_names_full).to eq "#{reg_leader1.user.name}, #{reg_leader2.user.name}"
+    end
+  end
+
+  describe '#leaders_registered' do
+    it 'returns the records of the registered active leaders' do
+      reg_leader1.save
+      reg_leader2.save
+
+      expect(event.leaders_registered).to eq event.registrations.kept.leaders
+    end
+  end
+
+  describe '#leaders_hours' do
+    let(:reg_leader_a) { create :registration_leader_attended, event: complete_event }
+    let(:reg_leader_b) { create :registration_leader_attended, event: complete_event }
+    let(:reg_leader_c) { create :registration_leader_attended, event: complete_event }
+
+    it 'returns the event hours * number of leaders' do
+      reg_leader_a
+      reg_leader_b
+      reg_leader_c
+
+      expect(complete_event.leaders_hours).to eq(3 * event.length)
+    end
+  end
+
+  describe '#length' do
+    it 'returns the event duration in hours' do
+      expect(event.length).to eq((event.end_time - event.start_time) / 1.hour)
+    end
+  end
+
+  describe '#mailer_time' do
+    it 'returns a formatted start_time' do
+      expect(event.mailer_time).to eq event.start_time.strftime('%a, %-m/%-d')
+    end
+  end
+
+  describe '#needs_leaders?' do
+    it 'returns a boolean comparison of the number of leaders needed vs registered' do
+      expect(event.needs_leaders?).to eq true
+
+      reg_leader1.save
+      expect(event.needs_leaders?).to eq true
+
+      reg_leader2.save
+      reg_leader3.save
+      expect(event.needs_leaders?).to eq false
+    end
+  end
+
+  describe '#needs_report?' do
+    it 'returns a boolean response to attendance.zero?' do
+      expect(event.needs_report?).to eq event.attendance.zero?
+    end
+  end
+
+  describe '#number_of_builders_attended' do
+    it 'returns the number of builders who attended' do
+      reg_leader1.save
+      reg_leader2.save
+      reg1.save
+      reg2.save
+
+      event.attendance = (reg1.total_registered + reg2.total_registered + reg_leader1.total_registered + reg_leader2.total_registered)
+
+      event.save
+
+      expect(event.number_of_builders_attended).to eq(event.attendance - event.number_of_leaders_attended)
+    end
+  end
+
+  describe '#number_of_leaders_attended' do
+    it 'returns the number of leaders who attended' do
+      reg_leader1.attended = true
+      reg_leader1.save
+      reg_leader2.attended = true
+      reg_leader2.save
+
+      expect(event.number_of_leaders_attended).to eq 2
+    end
+  end
+
+  describe '#number_of_leaders_registered' do
+    it 'returns the number of leaders registered' do
+      reg_leader1.save
+      reg_leader2.save
+
+      expect(event.number_of_leaders_registered).to eq 2
+    end
+  end
+
+  describe '#privacy_humanize' do
+    context 'when event is private' do
+      it 'returns a specific string' do
+        event.is_private = true
+        event.save
+
+        expect(event.privacy_humanize).to eq 'Private Event'
+      end
+    end
+
+    context 'when event is public' do
+      it 'returns a specific string' do
+        expect(event.privacy_humanize).to eq 'Public Event'
+      end
+    end
+  end
+
+  describe '#really_needs_leaders?' do
+    let(:event2) { create :event, min_leaders: 2, max_leaders: 3 }
+
+    it 'returns true if there are less leaders registered than the min' do
+      expect(event2.really_needs_leaders?).to eq true
+      event2.registrations << reg_leader1
+      expect(event2.really_needs_leaders?).to eq true
+      event2.registrations << reg_leader2
+      expect(event2.really_needs_leaders?).to be_falsey
+      event2.registrations << reg_leader3
+      expect(event2.really_needs_leaders?).to be_falsey
+    end
+  end
+
+  describe '#registrations_filled?' do
+    it 'returns true when the count of total_registered >= max_registrations' do
+      event.registrations << reg1
+      event.registrations << reg2
+      expect(event.registrations_filled?).to eq true
+    end
+
+    it 'returns false when the count of total_registered < max_registrations' do
+      event.registrations << reg1
+      expect(event.registrations_filled?).to be_falsey
+    end
+  end
+
+  describe '#registrations_remaining' do
+    it 'returns the # of slots remaining for the event' do
+      expect(event.registrations_remaining).to eq(25)
+      event.registrations << reg1
+      expect(event.registrations_remaining).to eq(5)
+      event.registrations << reg2
+      expect(event.registrations_remaining).to eq(0)
+    end
+  end
+
+  describe '#registrations_remaining_without(registration)' do
+    it 'returns the # of slots remaining for the event excluding the given registration' do
+      expect(event.registrations_remaining).to eq(25)
+      event.registrations << reg1
+      expect(event.registrations_remaining).to eq(5)
+      expect(event.registrations_remaining_without(reg1.reload)).to eq(25)
+      event.registrations << reg2
+      expect(event.registrations_remaining).to eq(0)
+      expect(event.registrations_remaining_without(reg2.reload)).to eq(5)
+    end
+  end
+
+  describe '#registrations_would_overflow?(registration)' do
+    let(:big_registration) { build :registration, guests_registered: 55, event: event }
+    let(:little_registration) { build :registration, guests_registered: 1, event: event }
+
+    it 'returns true if the given registration would bring the total registrations above the max_registrations limit' do
+      expect(event.registrations_would_overflow?(big_registration)).to eq true
+
+      expect(event.registrations_would_overflow?(little_registration)).to eq false
+    end
+  end
+
+  describe '#results_people' do
+    context 'when technology.people == 0' do
+      let(:tech_no_ppl) { create :technology, people: 0 }
+      let(:event2) { create :complete_event, technology: tech_no_ppl }
+
+      it 'returns 0' do
+        expect(event2.results_people).to eq(0)
+      end
+    end
+
+    context 'when event.technology_results == 0' do
+      it 'returns 0' do
+        expect(event.results_people).to eq(0)
+      end
+    end
+
+    it 'returns the number of people served * technology_results' do
+      expect(complete_event.results_people).to eq(155)
+    end
+  end
+
+  describe '#results_timespan' do
+    context 'when technology.lifespan_in_years == 0' do
+      let(:tech_no_lifespan) { create :technology, lifespan_in_years: 0 }
+      let(:event2) { create :complete_event, technology: tech_no_lifespan }
+
+      it 'returns 0' do
+        expect(event2.results_timespan).to eq(0)
+      end
+    end
+
+    context 'when event.technology_results == 0' do
+      it 'returns 0' do
+        expect(event.results_timespan).to eq(0)
+      end
+    end
+
+    it 'returns the technology.lifespan_in_years' do
+      expect(complete_event.results_timespan).to eq(10)
+    end
+  end
+
+  describe '#results_liters_per_day' do
+    context 'when technology.results_liters_per_day == 0' do
+      let(:tech_no_liters) { create :technology, liters_per_day: 0 }
+      let(:event2) { create :complete_event, technology: tech_no_liters }
+
+      it 'returns 0' do
+        expect(event2.results_liters_per_day).to eq(0)
+      end
+    end
+
+    context 'when event.technology_results == 0' do
+      it 'returns 0' do
+        expect(event.results_liters_per_day).to eq(0)
+      end
+    end
+
+    it 'returns the liters per day * technology_results' do
+      expect(complete_event.results_liters_per_day).to eq(3_100)
+    end
+  end
+
+  describe '#results_liters_per_year' do
+    it 'returns the results_liters_per_day * 365' do
+      expect(complete_event.results_liters_per_year).to eq(complete_event.results_liters_per_day * 365)
+    end
+  end
+
+  describe '#results_liters_lifespan' do
+    it 'returns the results_liters_per_year * technology.lifespan_in_years' do
+      expect(complete_event.results_liters_lifespan).to eq(complete_event.results_liters_per_year * complete_event.technology.lifespan_in_years)
+    end
+  end
+
+  describe '#should_notify_admins?' do
+    context 'when start_time_was is in the future and important_fields_for_admins_changed?' do
+      it 'returns true' do
+        complete_event.start_time = Time.now + 1.day
+        expect(complete_event.should_notify_admins?).to eq false
+
+        # event.start_time_was == 20 days in the future
+        event.start_time = Time.now + 1.day
+        expect(event.should_notify_admins?).to eq true
+      end
+    end
+  end
+
+  describe '#should_notify_builders?' do
+    context 'when start_time_was is in the future and event has registrations and important_fields_for_admins_changed?' do
+      it 'returns true' do
+        complete_event.start_time = Time.now + 1.day
+        expect(complete_event.should_notify_builders?).to eq false
+
+        reg1.save
+        # event.start_time_was == 20 days in the future
+        event.start_time = Time.now + 1.day
+        expect(event.should_notify_builders?).to eq true
+      end
+    end
+  end
+
+  describe '#should_create_inventory?' do
+    context 'when inventory.present?' do
+      let(:inventory) { create :inventory_event, event: completed_event }
+
+      it 'returns false' do
+        expect(complete_event.should_create_inventory?).to eq false
+      end
+    end
+
+    context 'when inventory is not present and a meaningful value or change exists for technologies_built or boxes_packed' do
+      let(:new_complete_event) { build :complete_event }
+
+      it 'returns true' do
+        expect(new_complete_event.should_create_inventory?).to eq true
+      end
+    end
+  end
+
+  describe '#should_send_results_emails?' do
+    context 'when emails_sent? is false, attendance is positive, registrations exist, technology_results are positive and technology is results_worthy' do
+      let(:reg_comp_a) { create :registration_attended, event: complete_event }
+      let(:reg_comp_b) { create :registration_attended, event: complete_event }
+
+      it 'returns true' do
+        reg_comp_a
+        reg_comp_b
+        expect(complete_event.should_send_results_emails?).to eq true
+      end
+    end
+  end
+
+  describe '#technology_results' do
+    it 'must be complete to run' do
+      expect(event.technology_results).to eq(0)
+    end
+
+    it 'returns the number of individual technologies produced' do
+      expect(complete_event.technology_results).to eq(31)
+    end
+  end
+
+  describe '#total_registered' do
+    it 'gives 0 when there are no registrations' do
+      expect(event.registrations.kept.empty?).to eq true
+      expect(event.total_registered).to eq(0)
+    end
+
+    it 'adds the number of guests and builders' do
+      reg1.save
+      reg2.save
+      expect(event.total_registered).to eq(25)
+    end
+  end
+
+  describe '#total_registered_w_leaders' do
+    context 'when there are no active registrations' do
+      it 'returns 0' do
+        expect(event.registrations.kept.empty?).to eq true
+        expect(event.total_registered_w_leaders).to eq 0
+      end
+    end
+
+    context 'when there are active registrations' do
+      it 'adds the number of guests and registrations' do
+        reg1.save
+        reg2.save
+        reg_leader1.save
+        reg_leader2.save
+
+        expect(event.total_registered_w_leaders).to eq 27
+      end
+    end
+  end
+
+  describe '#total_registered_without(registration)' do
+    context 'when there are no active registrations' do
+      it 'returns 0' do
+        expect(event.registrations.kept.empty?).to eq true
+        expect(event.total_registered_without(reg2)).to eq 0
+      end
+    end
+
+    context 'when there are active registrations' do
+      it 'returns the number of guests_registered and registrations excluding the provided registration' do
+        reg1.save
+        reg2.save
+        reg_leader1.save
+        reg_leader2.save
+
+        expect(event.registrations.kept.exists?).to eq true
+        expect(event.total_registered_without(reg2)).to eq 22
+      end
+    end
+  end
+
+  describe 'volunteer_hours' do
+    it 'multiplies event length by attendance' do
+      expect(complete_event.volunteer_hours).to eq(complete_event.length * complete_event.attendance)
+    end
+  end
+
+  describe '#you_are_attendee' do
+    it 'checks to see if a user is registered as a non-leader' do
+      expect(event.you_are_attendee(user)).to be_falsey
+
+      reg1.save
+      expect(event.you_are_attendee(user)).to eq ' (including you)'
+    end
+  end
+
+  describe '#you_are_leader' do
+    let(:leader) { create :leader }
+    let(:reg3) { build :registration, user: user, event: event, leader: true }
+    let(:reg4) { build :registration, user: leader, event: event, leader: true }
+
+    it 'checks to see if a user is a leader and is registered as a leader' do
+      expect(event.you_are_leader(leader)).to be_falsey
+
+      event.registrations << reg3
+      expect(event.you_are_leader(user)).to be_falsey
+
+      event.registrations << reg4
+      expect(event.you_are_leader(leader)).to eq ' (including you)'
+    end
+  end
+
+  private
 
   describe '#dates_are_valid?' do
     let(:same_times) { build :event, start_time: Time.now, end_time: Time.now }
     let(:bad_times) { build :event, start_time: Time.now, end_time: Time.now - 3.hours }
 
     it 'must have start and end times' do
-      expect(no_starttime.dates_are_valid?).to eq nil
-      expect(no_endtime.dates_are_valid?).to eq nil
-      expect(event.dates_are_valid?).to eq nil
+      expect(no_starttime.__send__(:dates_are_valid?)).to eq nil
+      expect(no_endtime.__send__(:dates_are_valid?)).to eq nil
+      expect(event.__send__(:dates_are_valid?)).to eq nil
     end
 
     it 'must have a start time that comes before end time' do
@@ -82,33 +665,35 @@ RSpec.describe Event, type: :model do
     end
   end
 
-  describe '#registrations_are_valid?' do
-    let(:same_registrations) { build :event, min_registrations: 3, max_registrations: 3 }
-    let(:less_registrations) { build :event, min_registrations: 23, max_registrations: 3 }
+  describe '#important_fields_for_admins_changed?' do
+    it 'returns true if ActiveRecor::Dirty calls return true on any of the specified fields' do
+      event.start_time += 30.minutes
+      expect(event.__send__(:important_fields_for_admins_changed?))
 
-    let(:event2) { create :event }
+      event.reload.end_time += 1.hour
+      expect(event.__send__(:important_fields_for_admins_changed?))
 
-    let(:reg3) { build :registration, event: event2, guests_registered: 10 }
-    let(:reg4) { build :registration, event: event2, guests_registered: 10 }
-    let(:reg5) { build :registration, event: event2, guests_registered: 10 }
+      event.reload.location = create :location
+      expect(event.__send__(:important_fields_for_admins_changed?))
 
-    it 'must have min and max registrations' do
-      expect(event.registrations_are_valid?).to eq nil
-      expect(no_minleaders.registrations_are_valid?).to eq nil
-      expect(no_maxleaders.registrations_are_valid?).to eq nil
+      event.reload.technology = create :technology
+      expect(event.__send__(:important_fields_for_admins_changed?))
+
+      event.reload.is_private = true
+      expect(event.__send__(:important_fields_for_admins_changed?))
     end
+  end
 
-    it 'must have a min registration that is less than the max registrations' do
-      expect(same_registrations.registrations_are_valid?).to eq nil
-      less_registrations.save
-      expect(less_registrations.errors.messages[:max_registrations]).to eq ['must be greater than min registrations']
-    end
+  describe '#important_fields_for_builders_changed?' do
+    it 'returns true if ActiveRecor::Dirty calls return true on any of the specified fields' do
+      event.start_time += 30.minutes
+      expect(event.__send__(:important_fields_for_builders_changed?))
 
-    it 'can\'t have more registrations than the max' do
-      event2.registrations << reg3
-      event2.registrations << reg4
-      event2.registrations << reg5
-      expect(event2.save).to be_falsey
+      event.reload.end_time += 1.hour
+      expect(event.__send__(:important_fields_for_builders_changed?))
+
+      event.reload.location = create :location
+      expect(event.__send__(:important_fields_for_builders_changed?))
     end
   end
 
@@ -123,13 +708,13 @@ RSpec.describe Event, type: :model do
     let(:reg5) { build :registration_leader, event: event3 }
 
     it 'must have min and max leaders' do
-      expect(event.leaders_are_valid?).to eq nil
-      expect(no_minleaders.leaders_are_valid?).to eq nil
-      expect(no_maxleaders.leaders_are_valid?).to eq nil
+      expect(event.__send__(:leaders_are_valid?)).to eq nil
+      expect(no_minleaders.__send__(:leaders_are_valid?)).to eq nil
+      expect(no_maxleaders.__send__(:leaders_are_valid?)).to eq nil
     end
 
     it 'must have a min leader that is less than the max leader' do
-      expect(same_leaders.leaders_are_valid?).to eq nil
+      expect(same_leaders.__send__(:leaders_are_valid?)).to eq nil
       less_leaders.save
       expect(less_leaders.errors.messages[:max_leaders]).to eq ['must be greater than min leaders']
     end
@@ -142,317 +727,33 @@ RSpec.describe Event, type: :model do
     end
   end
 
-  describe '#total_registered' do
-    it 'gives 0 when there are no registrations' do
-      expect(event.total_registered).to eq(0)
+  describe '#registrations_are_valid?' do
+    let(:same_registrations) { build :event, min_registrations: 3, max_registrations: 3 }
+    let(:less_registrations) { build :event, min_registrations: 23, max_registrations: 3 }
+
+    let(:event2) { create :event }
+
+    let(:reg3) { build :registration, event: event2, guests_registered: 10 }
+    let(:reg4) { build :registration, event: event2, guests_registered: 10 }
+    let(:reg5) { build :registration, event: event2, guests_registered: 10 }
+
+    it 'must have min and max registrations' do
+      expect(event.__send__(:registrations_are_valid?)).to eq nil
+      expect(no_minleaders.__send__(:registrations_are_valid?)).to eq nil
+      expect(no_maxleaders.__send__(:registrations_are_valid?)).to eq nil
     end
 
-    it 'adds the number of guests and users' do
-      Registration.create user: user1, event: event, guests_registered: 3
-      Registration.create user: user2, event: event, guests_registered: 0
-      expect(event.total_registered).to eq(5)
+    it 'must have a min registration that is less than the max registrations' do
+      expect(same_registrations.__send__(:registrations_are_valid?)).to eq nil
+      less_registrations.save
+      expect(less_registrations.errors.messages[:max_registrations]).to eq ['must be greater than min registrations']
     end
 
-    it 'takes a scope to handle only_deleted records' do
-      expect(event.total_registered("only_deleted")).to eq(0)
-
-      Registration.create user: user3, event: event, guests_registered: 3, deleted_at: Time.now
-      expect(event.total_registered("only_deleted")).to eq(4)
-    end
-  end
-
-  describe "#non_leaders_registered" do
-    let(:user4) { create :user }
-    it "gives 0 when there are no registrations" do
-      expect(event.non_leaders_registered.count).to eq 0
-    end
-
-    it "counts the number of registrations that aren't leaders" do
-      reg7 = Registration.create user: user1, event: event, guests_registered: 3
-      reg8 = Registration.create user: user2, event: event, guests_registered: 2
-      reg9 = Registration.create user: user3, event: event, leader: true
-
-      # Why does the first record get saved to the parent, but not the next 3??
-      # event.registrations << reg7
-      event.registrations << reg8
-      event.registrations << reg9
-
-      expect(event.non_leaders_registered.count).to eq 2
-      expect(event.total_registered_w_leaders).to eq 8
-    end
-
-    it "takes a scope to handle only_deleted records" do
-      expect(event.non_leaders_registered("only_deleted").count).to eq(0)
-
-      Registration.create(user: user4, event: event, guests_registered: 6, deleted_at: Time.now)
-      expect(event.non_leaders_registered("only_deleted").count).to eq(1)
-    end
-  end
-
-  describe "#leaders_registered" do
-    let(:reg_non_leader) { build :registration, event: event }
-
-    let(:user5) { create :user}
-
-    it "gives 0 when there are no leaders registered" do
-      reg_non_leader.save
-      expect(event.leaders_registered.count).to eq(0)
-    end
-
-    it "counts the number of leaders registered for the event" do
-      reg_leader1.save
-      expect(event.leaders_registered.count).to eq(1)
-      reg_leader2.save
-      expect(event.leaders_registered.count).to eq(2)
-    end
-
-    it "takes a scope to handle only_deleted records" do
-      expect(event.leaders_registered("only_deleted").count).to eq(0)
-
-      Registration.create(user: user5, event: event, leader: true, deleted_at: Time.now)
-      expect(event.leaders_registered("only_deleted").count).to eq(1)
-    end
-  end
-
-  describe "#registrations_filled?" do
-    it "returns true when the count of total_registered >= max_registrations" do
-      event.registrations << reg1
-      event.registrations << reg2
-      expect(event.registrations_filled?).to eq true
-    end
-
-    it "returns false when the count of total_registered < max_registrations" do
-      event.registrations << reg1
-      expect(event.registrations_filled?).to be_falsey
-    end
-
-    it "takes a scope to handle only_deleted records" do
-      event.registrations << reg_del1
-      expect(event.registrations_filled?("only_deleted")).to be_falsey
-
-      event.registrations << reg_del2
-      expect(event.registrations_filled?("only_deleted")).to eq true
-    end
-  end
-
-  describe "#registrations_remaining" do
-    it "returns the # of slots remaining for the event" do
-      expect(event.registrations_remaining).to eq(25)
-      event.registrations << reg1
-      expect(event.registrations_remaining).to eq(5)
-      event.registrations << reg2
-      expect(event.registrations_remaining).to eq(0)
-    end
-
-    it "takes a scope to handle only_deleted records" do
-      expect(event.registrations_remaining("only_deleted")).to eq(25)
-      event.registrations << reg_del1
-      expect(event.registrations_remaining("only_deleted")).to eq(5)
-      event.registrations << reg_del2
-      expect(event.registrations_remaining("only_deleted")).to eq(0)
-    end
-  end
-
-  describe "#does_not_need_leaders?" do
-    it "returns true only if there are enough or more than enough leaders" do
-      expect(event.does_not_need_leaders?).to be_falsey
-      event.registrations << reg_leader1
-      expect(event.does_not_need_leaders?).to be_falsey
-      event.registrations << reg_leader2
-      expect(event.does_not_need_leaders?).to eq true
-      event.registrations << reg_leader3
-      expect(event.does_not_need_leaders?).to eq true
-    end
-
-    it "takes a scope to handle only_deleted records" do
-      expect(event.does_not_need_leaders?("only_deleted")).to be_falsey
-      event.registrations << reg_leader_del1
-      expect(event.does_not_need_leaders?("only_deleted")).to be_falsey
-      event.registrations << reg_leader_del2
-      expect(event.does_not_need_leaders?("only_deleted")).to eq true
-      event.registrations << reg_leader_del3
-      expect(event.does_not_need_leaders?("only_deleted")).to eq true
-    end
-  end
-
-  describe "#really_needs_leaders?" do
-    let(:event2) { create :event, min_leaders: 2, max_leaders: 3 }
-
-    it "returns true if there are less leaders registered than the min" do
-      expect(event2.really_needs_leaders?).to eq true
-      event2.registrations << reg_leader1
-      expect(event2.really_needs_leaders?).to eq true
-      event2.registrations << reg_leader2
-      expect(event2.really_needs_leaders?).to be_falsey
-      event2.registrations << reg_leader3
-      expect(event2.really_needs_leaders?).to be_falsey
-    end
-
-    it "takes a scope to handle only_deleted records" do
-      expect(event2.really_needs_leaders?("only_deleted")).to eq true
-      event2.registrations << reg_leader_del1
-      expect(event2.really_needs_leaders?("only_deleted")).to eq true
-      event2.registrations << reg_leader_del2
-      expect(event2.really_needs_leaders?("only_deleted")).to be_falsey
-      event2.registrations << reg_leader_del3
-      expect(event2.really_needs_leaders?("only_deleted")).to be_falsey
-    end
-  end
-
-  describe "#needs_leaders?" do
-    let(:event2) { create :event, min_leaders: 2, max_leaders: 3 }
-
-    it "returns true if there are less leaders registered than the max" do
-      expect(event2.needs_leaders?).to eq true
-      event2.registrations << reg_leader1
-      expect(event2.needs_leaders?).to eq true
-      event2.registrations << reg_leader2
-      expect(event2.needs_leaders?).to eq true
-      event2.registrations << reg_leader3
-      expect(event2.needs_leaders?).to be_falsey
-    end
-
-    it "takes a scope to handle only_deleted records" do
-      expect(event2.needs_leaders?("only_deleted")).to eq true
-      event2.registrations << reg_leader_del1
-      expect(event2.needs_leaders?("only_deleted")).to eq true
-      event2.registrations << reg_leader_del2
-      expect(event2.needs_leaders?("only_deleted")).to eq true
-      event2.registrations << reg_leader_del3
-      expect(event2.needs_leaders?("only_deleted")).to be_falsey
-    end
-  end
-
-  describe "#complete?" do
-    it "returns true only if report-based fields are present and the event has already started" do
-      expect(future_event.complete?).to be_falsey
-
-      future_event.technologies_built = 30
-      future_event.attendance = 20
-      future_event.save
-      expect(future_event.complete?).to be_falsey
-
-      expect(complete_event.complete?).to eq true
-    end
-  end
-
-  describe "#you_are_attendee" do
-    let(:reg3) { build :registration, user: user1, event: event }
-    let(:reg_del) { build :registration, user: user1, event: event, deleted_at: Time.now }
-
-    it "checks to see if a user is registered as a non-leader" do
-      expect(event.you_are_attendee(user1)).to be_falsey
-
-      event.registrations << reg3
-      expect(event.you_are_attendee(user1)).to eq " (including you)"
-    end
-
-    it "takes a scope to handle only_deleted records" do
-      expect(event.you_are_attendee(user1, "only_deleted")).to be_falsey
-
-      event.registrations << reg_del
-      expect(event.you_are_attendee(user1, "only_deleted")).to eq " (including you)"
-    end
-  end
-
-  describe "#you_are_leader" do
-    let(:leader) { create :leader }
-    let(:reg3) { build :registration, user: user1, event: event, leader: true }
-    let(:reg4) { build :registration, user: leader, event: event, leader: true }
-    let(:reg_del3) { build :registration, user: user1, event: event, leader: true, deleted_at: Time.now }
-    let(:reg_del4) { build :registration, user: leader, event: event, leader: true, deleted_at: Time.now }
-
-    it "checks to see if a user is a leader and is registered as a leader" do
-      expect(event.you_are_leader(leader)).to be_falsey
-
-      event.registrations << reg3
-      expect(event.you_are_leader(user1)).to be_falsey
-
-      event.registrations << reg4
-      expect(event.you_are_leader(leader)).to eq " (including you)"
-    end
-
-    it "takes a scope to handle only_deleted records" do
-      event.registrations << reg_del3
-      expect(event.you_are_leader(user1, "only_deleted")).to be_falsey
-
-      event.registrations << reg_del4
-      expect(event.you_are_leader(leader, "only_deleted")).to eq " (including you)"
-    end
-  end
-
-  describe "#technology_results" do
-    let(:event_complete_no_ct) { create :complete_event }
-
-    it "must be complete to run" do
-      expect(event.technology_results).to eq(0)
-      expect(future_event.technology_results).to eq(0)
-    end
-
-    it "must have a technology.primary_component to run" do
-      expect(event_complete_no_ct.technology_results).to eq(0)
-    end
-
-    it "returns the number of individual technologies produced" do
-      technology.components << component_ct
-      expect(complete_event.technology_results).to eq(155)
-    end
-  end
-
-  describe "#results_people" do
-    let(:tech_no_ppl) { create :technology, people: 0 }
-    let(:event2) { create :complete_event, technology: tech_no_ppl }
-
-    it "must have a technology.people value greater than 0" do
-      tech_no_ppl.components << component_ct
-      expect(event2.results_people).to eq(0)
-    end
-
-    it "must have a technology_results value greater than 0" do
-      expect(future_event.results_people).to eq(0)
-    end
-
-    it "returns the number of people served * technology_results" do
-      technology.components << component_ct
-      expect(complete_event.results_people).to eq(775)
-    end
-  end
-
-  describe "#results_timespan" do
-    let(:tech_no_lifespan) { create :technology, lifespan_in_years: 0 }
-    let(:event2) { create :complete_event, technology: tech_no_lifespan }
-
-    it "must have a technology.lifespan_in_years greater than 0" do
-      tech_no_lifespan.components << component_ct
-      expect(event2.results_timespan).to eq(0)
-    end
-
-    it "must have a technology_results value greater than 0" do
-      expect(future_event.results_timespan).to eq(0)
-    end
-
-    it "returns the technology.lifespan_in_years" do
-      technology.components << component_ct
-      expect(complete_event.results_timespan).to eq(10)
-    end
-  end
-
-  describe "#results_liters_per_day" do
-    let(:tech_no_liters) { create :technology, liters_per_day: 0 }
-    let(:event2) { create :complete_event, technology: tech_no_liters }
-
-    it "must have a technology.liters_per_day greater than 0" do
-      tech_no_liters.components << component_ct
-      expect(event2.results_liters_per_day).to eq(0)
-    end
-
-    it "must have a technology_results value greater than 0" do
-      expect(future_event.results_liters_per_day).to eq(0)
-    end
-
-    it "returns the liters per day * technology_results" do
-      technology.components << component_ct
-      expect(complete_event.results_liters_per_day).to eq(15500)
+    it 'can\'t have more registrations than the max' do
+      event2.registrations << reg3
+      event2.registrations << reg4
+      event2.registrations << reg5
+      expect(event2.save).to be_falsey
     end
   end
 end

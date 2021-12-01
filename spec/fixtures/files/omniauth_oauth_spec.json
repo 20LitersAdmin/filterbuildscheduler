@@ -1,0 +1,49 @@
+{
+  "provider": "google",
+  "uid": "111111111111111111111",
+  "info": {
+    "name": "Chip Kragt",
+    "email": "chip@20liters.org",
+    "unverified_email": "chip@20liters.org",
+    "email_verified": true,
+    "first_name": "Chip",
+    "last_name": "Kragt",
+    "image": "https://lh3.googleusercontent.com/a-/FAKE4GhFEFgdtbV8HU39_qv1tBhNbMl5Dn1IXnkXxrfjzA=s96-cFAKE"
+  },
+  "credentials": {
+    "token": "ya29.FAKErdaM-fNjd5oW4CCxHvxGTuufbcBf3M__XDvf-819S5tskHyQ-OprMmIwLgdWEn7Apy-7JXcHsHW45cy9Pf4Y1yyzSqHggne_nkLk5nr4edMqrs3j0n0Hf6TC9hBFR--fHJQSCjT4p8CBj6hO0Olz7gFAKE",
+    "expires_at": 1111111111,
+    "expires": true
+  },
+  "extra": {
+    "id_token": "FAKEbGciOiJSUzI1NiIsImtpZCI6IjAzMmIyZWYzZDJjMjgwNjE1N2Y4YTliOWY0ZWY3Nzk4MzRmODVhZGEiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmdvb2dsZS5jb20iLCJhenAiOiI2NjMwMTg3ODI3ODctYXU1MTI1MW5xcWdiZzlodTJzNHBzdm9jMnFvMTgwOGguYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJhdWQiOiI2NjMwMTg3ODI3ODctYXU1MTI1MW5xcWdiZzlodTJzNHBzdm9jMnFvMTgwOGguYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJzdWIiOiIxMTgwNzc5MjE2ODk3OTYyMTE5MDIiLCJoZCI6IjIwbGl0ZXJzLm9yZyIsImVtYWlsIjoiY2hpcEAyMGxpdGVycy5vcmciLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiYXRfaGFzaCI6IjJqU19lQzNiQy0tN2ZxNG1ST1Nhc3ciLCJuYW1lIjoiQ2hpcCBLcmFndCIsInBpY3R1cmUiOiJodHRwczovL2xoMy5nb29nbGV1c2VyY29udGVudC5jb20vYS0vQU9oMTRHaEZFRmdkdGJWOEhVMzlfcXYxdEJoTmJNbDVEbjFJWG5rWHhyZmp6QT1zOTYtYyIsImdpdmVuX25hbWUiOiJDaGlwIiwiZmFtaWx5X25hbWUiOiJLcmFndCIsImxvY2FsZSI6ImVuIiwiaWF0IjoxNjM3NTI0NDEzLCJleHAiOjE2Mzc1MjgwMTN9.QHnrDqKe23JZ0W3R1oSAvfYR2Dbm96hi3tIvlxO4yzZ9Nen6Nm2bX4sxSjlnBFu_Y6KHDR8LgLNJPBLwOY824h1GFTAGeH5gbGxKJZESHI14QX_NcOimYUlIAiYA4Kse2CW8kJxLuRLHiHI3Uq384TBHUUVHJDIXiR5H7c1wPhTv1MMI8rkVOwCw2LB7FAKE",
+    "id_info": {
+      "iss": "https://accounts.google.com",
+      "azp": "663018782787-au51251nqqgbg9hu2s4psvoc2qoFAKE.apps.googleusercontent.com",
+      "aud": "663018782787-au51251nqqgbg9hu2s4psvoc2qoFAKE.apps.googleusercontent.com",
+      "sub": "111111111111111111111",
+      "hd": "20liters.org",
+      "email": "chip@20liters.org",
+      "email_verified": true,
+      "at_hash": "FAKE_eC3bC--7fq4mRoFAKE",
+      "name": "Chip Kragt",
+      "picture": "https://lh3.googleusercontent.com/a-/FAKE4GhFEFgdtbV8HU39_qv1tBhNbMl5Dn1IXnkXxrfjzA=s96-cFAKE",
+      "given_name": "Chip",
+      "family_name": "Kragt",
+      "locale": "en",
+      "iat": 1111111111,
+      "exp": 1111111111
+    },
+    "raw_info": {
+      "sub": "111111111111111111111",
+      "name": "Chip Kragt",
+      "given_name": "Chip",
+      "family_name": "Kragt",
+      "picture": "https://lh3.googleusercontent.com/a-/FAKE14GhFEFgdtbV8HU39_qv1tBhNbMl5Dn1IXnkXxrfjzA=s96-cFAKE",
+      "email": "chip@20liters.org",
+      "email_verified": true,
+      "locale": "en",
+      "hd": "20liters.org"
+    }
+  }
+}

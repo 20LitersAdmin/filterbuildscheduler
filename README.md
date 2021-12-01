@@ -1,17 +1,129 @@
 # README
-## Kindful Mail Client
-1. Write tests for Email model
+## Slim Down Inventory project
 
-## HMMM
-1. `weeks_to_out` and `per_technology` rely on lots of `.first`s which is an issue for items that `have_many` technologies
-- Part#technology
-- Material#technologydev
-- Component#technologies
-2. Tech Status sux big ones and needs some work (the 4-level deep problem)
-3. EventsController::SubtractSubsets.subtract! only goes 1 level deep.
+## After 1st deploy:
+- production run rails db:migrate
+- Heroku needs redis: https://blog.heroku.com/real_time_rails_implementing_websockets_in_rails_5_with_action_cable#deploying-our-application-to-heroku
+- migrate the dB (which runs the necessary jobs)
+- remove extrap models
+- remove MaterialsPart model
 
-## Remind myself:
-1. production backup / development restore-from production
-  - `User.first.reset_password("password", "password")`
-2. `Record.only_deleted.each do |record| record.really_destroy! end`
-3. `orphans = User.builders.left_outer_joins(:registrations).where(registrations: { id: nil })`
+### Should do:
+- easy-print report for setup crew:
+  - every component and their subs w/ current counts
+
+- is Oauth Email syncing causing the R14 Memory Quota Exceeded issue?
+
+- Inventory "undo" button? Maybe just for most recent? Or just for @inventory.event_based?
+
+- more System tests:
+  - component_rails_admin_views
+  - component_rails_admin_manage (c, u, di, r, de)
+
+  - donation_list_page_spec
+
+  - events_rails_admin_views
+  - event_rails_admin_discard
+  - event_rails_admin_destroy
+
+  - inventory_history_page_spec
+
+  - location_rails_admin_views
+  - location_rails_admin_manage (c, u, di, r, de)
+
+  - material_rails_admin_views
+  - material_rails_admin_edit (c, u, di, r, de)
+
+  - part_rails_admin_views
+  - part_rails_admin_edit (create, update, discard, restore, destroy)
+
+  - registration_rails_admin_views
+  - registration_rails_admin_edit (and discard and destroy and restore)
+
+  - report_page_spec
+  - report_volunteer_page_spec
+  - report_leader_page_spec
+
+  - supplier_rails_admin_views
+  - supplier_rails_admin_manage (c, u, di, r, de)
+
+  - technology_rails_admin_views
+  - technology_rails_admin_manage (c, u, di, r, de)
+
+  - user_rails_admin_views
+  - user_rails_admin_manage (c, u, di, r, de)
+  - user_leaders_page_spec
+
+  - oauth_in
+  - oauth_out
+  - oauth_index
+  - oauth_failure
+  - oauth_update
+  - oauth_delete
+
+### Someday
+1. Ability to pause / cancel registration emails
+  - Using a suppress_emails? field?
+  - `scope :pre_reminders, -> { where(reminder_sent_at: nil, suppress_reminder_emails: false) }`
+
+2. Inventories#index -> Inventories#history has @item.history_series kickchart, which lays available, box, and loose on the same axis. Should probably not be.
+  - Three separate charts, maybe?
+  - Three separate axes, but might be confusing: https://www.chartjs.org/docs/latest/axes/
+
+
+### system spec policy checking:
+```
+context 'when visited by a' do
+  it 'anon user, it redirects to sign-in page' do
+    visit url
+
+    expect(page).to have_content 'You need to sign in first'
+    expect(page).to have_content 'Sign in'
+  end
+
+  it 'builder, it redirects to home page' do
+    sign_in create :user
+    visit url
+
+    expect(page).to have_content 'You don\'t have permission'
+    expect(page).to have_content 'Upcoming Builds'
+  end
+
+  it 'leader, it redirects to home page' do
+    sign_in create :leader
+    visit url
+
+    expect(page).to have_content 'You don\'t have permission'
+    expect(page).to have_content 'Upcoming Builds'
+  end
+
+  it 'inventoryist, it shows the page' do
+    sign_in create :inventoryist
+    visit url
+
+    expect(page).to have_content 'Something'
+  end
+
+  it 'scheduler, it redirects to home page' do
+    sign_in create :scheduler
+    visit url
+
+    expect(page).to have_content 'You don\'t have permission'
+    expect(page).to have_content 'Upcoming Builds'
+  end
+
+  it 'data_manager, it shows the page' do
+    sign_in create :data_manager
+    visit url
+
+    expect(page).to have_content 'Something'
+  end
+
+  it 'admin, it shows the page' do
+    sign_in create :admin
+    visit url
+
+    expect(page).to have_content 'Something'
+  end
+end
+```

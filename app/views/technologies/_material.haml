@@ -1,0 +1,34 @@
+-# frozen_string_literal: true
+:ruby
+  # array comparison with '&'' prevents material.parts from returning parts associated with a different technology
+  parts_uid_ary = material.parts.map(&:uid) & @part_uids
+  available = material.available_count
+  per_tech = @technology.quantities[material.uid]
+  need = per_tech * @quantity
+  highlight = 'color: red; font-weight: bolder; border: solid 2px red' if available < need
+
+%tr
+  %td.right-align
+    = material.uid
+  %td{ colspan: 4 }
+    = material.name
+    %span
+      %em
+        (for #{parts_uid_ary.sort.to_sentence})
+  %td
+    = material.supplier&.name
+  - if action_name == 'prices'
+    %td.right-align
+      = humanized_money_with_symbol material.price
+  %td.right-align
+    = human_float(per_tech, 4)
+  - if action_name == 'items'
+    %td.right-align{ style: highlight }
+      = human_number available
+    %td.right-align
+      = human_float(need, 4)
+  - if action_name == 'prices'
+    %td.right-align
+      = humanized_money_with_symbol material.price * per_tech
+    %td.right-align
+      = humanized_money_with_symbol (material.price * per_tech) * need

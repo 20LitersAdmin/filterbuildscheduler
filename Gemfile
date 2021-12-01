@@ -8,31 +8,37 @@ git_source(:github) do |repo_name|
   "https://github.com/#{repo_name}.git"
 end
 
+gem 'aws-sdk-s3'
 gem 'bootsnap', '>= 1.4.2', require: false
 gem 'bootstrap3-datetimepicker-rails'
 gem 'bootstrap-sass'
+gem 'chartkick'
 gem 'delayed_cron_job', '~> 0.7.2'
 gem 'delayed_job', '~> 4.1'
 gem 'delayed_job_active_record', '~> 4.1'
 gem 'delayed_job_web'
 gem 'devise'
-gem 'font-awesome-rails'
+gem 'discard'
+gem 'font-awesome-sass', '~> 5.15.1'
 gem 'google-api-client'
+gem 'haml'
 gem 'httparty'
 gem 'icalendar'
+gem 'image_processing', '~> 1.2'
 gem 'jquery-datatables-rails'
 gem 'jquery-rails'
+gem 'mini_magick'
 gem 'momentjs-rails'
 gem 'money-rails'
 gem 'omniauth-google-oauth2'
 gem 'omniauth-rails_csrf_protection', '~> 0.1'
-gem 'paranoia', '~> 2.4'
 gem 'pg'
 gem 'pry-byebug'
 gem 'puma'
 gem 'pundit'
 gem 'rails', '~> 6.1.3.2'
-gem 'rails_admin', '~> 2.0'
+gem 'rails_admin', '~> 2.2'
+gem 'redis', '~> 4.3', '>= 4.3.1'
 gem 'rest-client'
 gem 'sass-rails', '>= 6'
 gem 'simple_form'
@@ -44,6 +50,14 @@ group :production do
   gem 'rails_12factor'
 end
 
+group :development do
+  gem 'letter_opener_web'
+  gem 'listen', '~> 3.2'
+  gem 'rubocop', require: false
+  gem 'spring-watcher-listen', '~> 2.0.0'
+  gem 'web-console', '>= 3.3.0'
+end
+
 group :development, :test do
   gem 'airborne'
   gem 'better_errors'
@@ -53,28 +67,20 @@ group :development, :test do
   gem 'faker'
   gem 'foreman'
   gem 'selenium-webdriver'
+  gem 'spring'
+  gem 'spring-commands-rspec'
   gem 'timecop'
   gem 'webdrivers'
 end
 
 group :test do
   gem 'capybara'
-  gem 'database_cleaner'
   gem 'rails-controller-testing'
   gem 'rspec'
   gem 'rspec_junit_formatter'
   gem 'rspec-rails'
   gem 'rspec-retry'
   gem 'shoulda-matchers'
-end
-
-group :development do
-  gem 'letter_opener_web'
-  gem 'listen', '~> 3.2'
-  gem 'rubocop', require: false
-  gem 'spring'
-  gem 'spring-watcher-listen', '~> 2.0.0'
-  gem 'web-console', '>= 3.3.0'
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem

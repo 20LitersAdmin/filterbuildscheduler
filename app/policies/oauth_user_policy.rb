@@ -2,11 +2,13 @@
 
 class OauthUserPolicy < ApplicationPolicy
   def in?
-    user&.is_admin?
+    # any logged-in user with a matching email domain can see
+    Constants::Email::INTERNAL_DOMAINS.include?(user&.email_domain)
   end
 
   def index?
-    user&.is_admin?
+    # only User#is_oauth_admin? can see
+    user&.is_oauth_admin?
   end
 
   def callback?
@@ -26,10 +28,15 @@ class OauthUserPolicy < ApplicationPolicy
   end
 
   def manual?
-    in?
+    # only User#is_oauth_admin? can see
+    index?
   end
 
   def update?
     in?
+  end
+
+  def delete?
+    index?
   end
 end

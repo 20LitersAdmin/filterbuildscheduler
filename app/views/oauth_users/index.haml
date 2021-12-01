@@ -1,0 +1,20 @@
+-# frozen_string_literal: true
+
+.col.s12.center
+  %table.table.oauth
+    %thead
+      %tr
+        %th Oauth User
+        %th Email
+        %th Details
+        %th
+    %tbody
+      - @oauth_users.each do |o|
+        %tr
+          %td= o.name
+          %td= o.email
+          %td= o.quick_details
+          %td
+            = link_to 'Status', auth_status_path(o), class: 'btn yellow'
+            = link_to 'Manual', auth_manual_path(o), class: 'btn blue'
+            = link_to 'Delete', auth_delete_path(o), method: :delete, class: 'btn red', data: { confirm: 'Are you sure? This will delete the Oauth User and associated emails.' }

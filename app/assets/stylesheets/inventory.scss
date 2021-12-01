@@ -1,9 +1,9 @@
 @import 'variables';
 
 #inventory_index {
-  .btn-group .btn {
-    margin: 1em;
-  }
+  // .btn-group .btn {
+  //   margin: 1em;
+  // }
 
   .col-sm-4 {
     text-align: center;
@@ -29,6 +29,30 @@
       margin-top: 8px;
     }
   }
+
+  #item_history_tbl {
+    width: 98%;
+    margin: 1em auto 0 auto;
+
+    thead {
+      // scrollbar is average 1em/16px width
+      // width: calc( 100% - 1em );
+      display: table;
+      width: 100%;
+      table-layout: fixed;
+    }
+    tbody{
+      display: block;
+      max-height: 280px;
+      overflow-y: scroll;
+
+      tr {
+        display: table;
+        width: 100%;
+        table-layout: fixed;
+      }
+    }
+  }
 }
 
 .match-h2 {
@@ -38,6 +62,11 @@
     margin-top: 15px;
     vertical-align: middle;
   }
+}
+
+.match-h3 {
+  min-height: 63px;
+  margin-top: 20px;
 }
 
 #inventory_edit {
@@ -64,12 +93,9 @@
     z-index: 2;
   }
 
-  .count-div {
-    background-color: $slightly-darker-light-grey;
-    background-repeat: no-repeat;
-    background-size: cover;
+  .count-wrapper > .count-div {
     border-radius: 4px;
-    height: 156px;
+    height: 16em;
     margin: .8em .2em;
     padding: .8em;
     text-align: center;
@@ -83,34 +109,29 @@
       font-weight: bold;
       padding-bottom: 6px;
       border-bottom: 2px solid #fce000;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      overflow: hidden;
+      height: 3.25em;
     }
     .count-tech, .current-count {
       margin: 0;
     }
-    p {
-      z-index: 9;
+    .half {
+      display: flex;
+      justify-content: center;
+      align-content: center;
+      flex-direction: column;
+      width: 50%;
+      height: 8em;
+      float: left;
+
+      &.count-img {
+        background-repeat: no-repeat;
+        background-size: contain;
+        background-position: center;
+      }
     }
-    a {
-      position: absolute;
-      bottom: 5px;
-      left: 0;
-      right: 0;
-      width: 60%;
-      margin: 0 auto;
-    }
-    .layer {
-      background-color: rgba(218, 218, 218, 0.75);
-      border-radius: 4px;
-      position: absolute;
-      top: 6%;
-      left: 6%;
-      width: 88%;
-      height: 88%;
-      z-index: 1;
-      padding-top: 4%;
+    .count-btn {
+      margin-top: 0.25em;
+      width: 80%;
     }
   }
 
@@ -172,10 +193,6 @@
       background: white;
     }
 
-    .too-late {
-      background-color: $light-red;
-    }
-
     .small-text {
       font-size: 0.8em;
     }
@@ -205,72 +222,102 @@
   }
 }
 
-#inventory_status {
-  .popover {
-    font-size: 10px;
-  }
-}
+// inventories/paper.haml
+.inventory_paper {
+  // I believe Chrome default margins are 0.4in, but assume 0.5 to be safe
+  width: 7.5in;
+  height: 10.245in;
+  margin: 0;
+  display: grid;
+  grid-template-columns: 4in repeat(2, 1.75in);
+  grid-template-rows: repeat(5, 2in) 0.245in;
+  gap: 0;
+  // page-break-after: always;
 
-#inventory_paper {
-  @media print {
-    thead { display: table-header-group; }
-  }
-
-  #inv_paper_tbl {
-    table-layout: fixed;
-
-    .prev, .write-in {
-      text-align: center;
-      padding: 0px;
-    }
-
-    .total {
-      border-left: 1px solid gray;
-      text-align: center;
-      padding: 0px;
-    }
-
-    .write-in {
-      border-left: 1px solid gray;
-      font-weight: bold;
-    }
-
-    p {
-      padding: 0px 2px;
-      margin: 0 0 0 0;
-      font-size: .8em;
-    }
+  .box-column p, .loose-column p, .loose-column-full p {
+    text-align: center;
+    margin: 5px 0 0;
   }
 
-  .item-label {
-    table-layout: fixed;
-
-    .td-img {
-      width: 150px;
-      img {
-        max-width: 90%;
-        max-height: 62px;
-      }
-    }
-
-    .td-name {
-      font-weight: bold;
-      font-size: 1.125em;
-
-      p {
-        padding-bottom: 6px !important;
-      }
-    }
-
-    .right-border {
-      border-right: 2px solid gray;
-      text-align: right;
-      padding-right: 4px;
-      margin-right: -2px;
-      width: 20px;
-      height: 15px;
-    }
+  .label-column {
+    grid-column: 1;
+    outline: 1px solid black;
   }
+
+  .loose-column {
+    grid-column: 2;
+    outline: 1px solid black;
+  }
+
+  .loose-column-full {
+    grid-column: 2 / 4;
+    outline: 1px solid black;
+  }
+
+  .box-column {
+    grid-column: 3;
+    outline: 1px solid black;
+  }
+
+  // @media print {
+  //   thead { display: table-header-group; }
+  // }
+
+  // #inv_paper_tbl {
+  //   table-layout: fixed;
+
+  //   .prev, .write-in {
+  //     text-align: center;
+  //     padding: 0px;
+  //   }
+
+  //   .total {
+  //     border-left: 1px solid gray;
+  //     text-align: center;
+  //     padding: 0px;
+  //   }
+
+  //   .write-in {
+  //     border-left: 1px solid gray;
+  //     font-weight: bold;
+  //   }
+
+  //   p {
+  //     padding: 0px 2px;
+  //     margin: 0 0 0 0;
+  //     font-size: .8em;
+  //   }
+  // }
+
+  // .item-label {
+  //   table-layout: fixed;
+
+  //   .td-img {
+  //     width: 150px;
+  //     img {
+  //       max-width: 90%;
+  //       max-height: 62px;
+  //     }
+  //   }
+
+  //   .td-name {
+  //     font-weight: bold;
+  //     font-size: 1.125em;
+
+  //     p {
+  //       padding-bottom: 6px !important;
+  //     }
+  //   }
+
+  //   .right-border {
+  //     border-right: 2px solid gray;
+  //     // text-align: right;
+  //     padding-right: 4px;
+  //     margin-right: -2px;
+  //     width: 20px;
+  //     height: 15px;
+  //   }
+  // }
 }
 
 #inventory_new {
@@ -279,3 +326,13 @@
   }
 }
 
+@media print {
+  body[data-action='paper'] .container-full {
+    margin: 0;
+  }
+
+  .inventory_paper {
+    -webkit-print-color-adjust:exact;
+    -webkit-filter:opacity(1);
+  }
+}

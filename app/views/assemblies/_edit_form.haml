@@ -1,0 +1,9 @@
+-# frozen_string_literal: true
+
+.col-xs-12
+  = @assembly.name_long
+.col-xs-12
+  = simple_form_for @assembly, as: :assembly, method: :patch, url: combination_assembly_path(@combination.uid, @assembly.id), remote: true do |f|
+    = f.error_notification
+    = f.input :quantity, hint: "#{@assembly.quantity_hint}"
+    = f.submit class: 'btn yellow'

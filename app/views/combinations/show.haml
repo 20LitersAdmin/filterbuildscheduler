@@ -1,0 +1,38 @@
+-# frozen_string_literal: true
+
+#combinations_show.container
+  .row
+    .col-xs-4
+      - if @all_technologies
+        %h5 In these Technologies:
+        %ul
+          - @all_technologies.each do |tech|
+            %li= link_to tech.name, combination_path(tech.uid)
+    .col-xs-4
+      - if @parents&.any?
+        %h5 Parent assemblies:
+        %ul
+          - @parents.each do |parent|
+            %li= link_to parent.name, combination_path(parent.uid)
+    .col-xs-4.right-align
+      = link_to 'Tech List', combinations_path, class: 'btn empty'
+      = link_to 'Edit', edit_combination_path(@combination.uid), class: 'btn blue'
+      = link_to @toggle_lang, @toggle_link, class: 'btn yellow'
+  .row
+    .col-xs-12
+      %table.table.show_combination_tbl{ id: "show_combination_tbl_#{@combination.uid}" }
+        %thead
+          %tr
+            %th{ colspan: 9 } #{@combination.uid}: #{@combination.name} (#{@combination.available_count} available; #{@combination.can_be_produced} produceable)
+            %th
+              - if @combination.image.attached?
+                %img{ src: url_for(@combination.image), height: '60' }
+            %th.right-align
+              = humanized_money_with_symbol @combination.price
+            %th.right-align # per
+            %th.right-align avail.
+            %th.right-align produceable
+        %tbody
+          = render partial: 'assembly', collection: @assemblies, locals: { nesting: 0 }
+
+

@@ -13,6 +13,7 @@
 //= require rails-ujs
 //= require jquery
 //= require jquery_ujs
+//= require activestorage
 //= require dataTables/jquery.dataTables
 //= require dataTables/bootstrap/3/jquery.dataTables.bootstrap
 //= require dataTables/extras/dataTables.responsive
@@ -21,14 +22,17 @@
 //= require bootstrap-datetimepicker
 //= require bootstrap-sprockets
 //= require turbolinks
-//= require_tree .
+//= require chartkick
+//= require Chart.bundle
+//= require_directory ./controllers
+//= require_tree ./rails_admin
 
 function controllerMatches(controllers_ary) {
   var controller = $('body').data('controller');
   return controllers_ary.indexOf(controller) !== -1;
-}
+};
 
 function actionMatches(actions_ary) {
   var action = $('body').data('action');
   return actions_ary.indexOf(action) !== -1;
-}
+};

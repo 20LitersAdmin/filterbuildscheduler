@@ -2,14 +2,10 @@
 
 require 'rails_helper'
 
-RSpec.describe 'Visiting Events', type: :system do
-  after :all do
-    clean_up!
-  end
-
+RSpec.describe 'Showing Events', type: :system do
   context 'in the future that are' do
     it 'public can be visited' do
-      event = FactoryBot.create(:event, is_private: false)
+      event = create(:event, is_private: false)
 
       visit event_path event
 
@@ -17,7 +13,7 @@ RSpec.describe 'Visiting Events', type: :system do
     end
 
     it 'private can be visited' do
-      event = FactoryBot.create(:event, is_private: true)
+      event = create(:event, is_private: true)
 
       visit event_path event
 
@@ -25,8 +21,8 @@ RSpec.describe 'Visiting Events', type: :system do
     end
 
     it 'full can be visited but without a form' do
-      event = FactoryBot.create(:event, min_registrations: 1, max_registrations: 2)
-      FactoryBot.create(:registration, guests_registered: 1, event: event)
+      event = create(:event, min_registrations: 1, max_registrations: 2)
+      create(:registration, guests_registered: 1, event: event)
 
       visit event_path event
 
@@ -65,13 +61,13 @@ RSpec.describe 'Visiting Events', type: :system do
     let(:event) { create :past_event }
     let(:leader) { create :leader }
 
-    it 'can\'t be visited' do
+    it 'can be visited' do
       sign_in leader
       visit event_path event
 
-      expect(page).to have_content 'You don\'t have permission'
-      expect(page).to_not have_content 'Want a custom build event for your group?'
-      expect(page).to have_content 'Upcoming Builds'
+      expect(page).to have_content event.full_title
+      expect(page).to have_link 'Not you?'
+      expect(page).to have_button 'Register'
     end
   end
 
@@ -90,7 +86,7 @@ RSpec.describe 'Visiting Events', type: :system do
       expect(page).to have_content event.full_title
       expect(page).to have_content "You're Registered!"
       expect(page).to have_content leader.name
-      expect(page).to have_link "Change/Cancel Registration"
+      expect(page).to have_link 'Change/Cancel Registration'
     end
   end
 

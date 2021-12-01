@@ -1,22 +1,36 @@
 # frozen_string_literal: true
 
 class Registration < ApplicationRecord
-  acts_as_paranoid
+  include Discard::Model
 
   belongs_to :user
   belongs_to :event
-  scope :registered_as_leader, -> { where(leader: true) }
-  scope :non_leader, -> { where(leader: false) }
-  scope :ordered_by_user_lname, -> { includes(:user).order('users.lname') }
   attr_accessor :accept_waiver
 
   validates :guests_registered, :guests_attended, numericality: { only_integer: true, greater_than_or_equal_to: 0 }, presence: true
 
-  scope :active, -> { where(deleted_at: nil) }
-  scope :attended, -> { where(attended: true) }
-  scope :leaders, -> { where(leader: true) }
-  scope :builders, -> { where.not(leader: true) }
-  scope :pre_reminders, -> { where(reminder_sent_at: nil) }
+  # RailsAdmin "active" is better than "kept"
+  scope :active, -> { kept }
+
+  scope :attended,              -> { where(attended: true) }
+
+  scope :builders,              -> { where(leader: false) }
+  scope :future,                -> {
+    select('registrations.*')
+      .joins(:event)
+      .where('events.discarded_at IS NULL')
+      .where('events.start_time > ?', Time.now)
+  }
+  scope :leaders,               -> { where(leader: true) }
+
+  scope :ordered_by_user_lname, -> { includes(:user).order('users.lname') }
+  scope :past,                  -> {
+    select('registrations.*')
+      .joins(:event)
+      .where('events.discarded_at IS NULL')
+      .where('events.start_time < ?', Time.now)
+  }
+  scope :pre_reminders,         -> { where(reminder_sent_at: nil) }
 
   def form_source
     # this allows for a form field that handles page redirects based on values: "admin", "self", "anon"
@@ -26,8 +40,8 @@ class Registration < ApplicationRecord
     created_at.strftime('%-m/%-d/%Y %H:%M')
   end
 
-  def waiver_accepted?
-    user.signed_waiver_on?
+  def role
+    leader? ? 'leader' : 'builder'
   end
 
   def total_registered
@@ -38,5 +52,10 @@ class Registration < ApplicationRecord
     return 0 unless attended?
 
     guests_attended + 1
+  end
+
+  # RegistrationsController line 69
+  def waiver_accepted?
+    user.signed_waiver_on?
   end
 end

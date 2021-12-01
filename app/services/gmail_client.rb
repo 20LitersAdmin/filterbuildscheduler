@@ -24,8 +24,31 @@ class GmailClient
     batch_get_queried_messages(query: "after:#{after} before:#{before}")
   end
 
+  def batch_get_messages(message_ids)
+    @service.batch do |gmail|
+      message_ids.each do |id|
+        # https://github.com/googleapis/google-api-ruby-client/blob/4958ea8ca0e10ad0b18780c307dac12b9ca9bd59/generated/google-apis-gmail_v1/lib/google/apis/gmail_v1/service.rb#L789
+        gmail.get_user_message(@user_id, id, fields: @standard_fields) do |response, error|
+          if error.present?
+            @skipped_ids << id
+            @fails << { id: id, msg: error, source: 'batch_get_messages' }
+            next
+          end
+
+          # trim_response sets @body_data as a string
+          resp = trim_response response
+          Email.from_gmail(resp, @body_data, @user)
+        end
+      end
+    end
+  end
+
   def batch_get_queried_messages(query:)
     paged_response = list_queried_messages(query: query)
+
+    # TESTING: This is a likely source of the Heroku R14 memory leak
+    Rails.logger.warn "batch_get_queried_messages: response size: #{paged_response.as_json.size}"
+
     ids = []
     paged_response.each do |message|
       ids << message.id
@@ -33,11 +56,16 @@ class GmailClient
 
     @skipped_ids = []
 
-    if ids.size > 100
+    if ids.size > 10
       # paged_responses uses `@service.fetch_all` which can return more than 100 messages
       # however, the `@service.batch` for `get_user_message()` is limited to 100 messages
       # so, spit the IDs into arrays of 99 or less.
-      ids.each_slice(99).to_a.each { |chunk_ids| batch_get_messages(chunk_ids) }
+
+      # TESTING: maybe the Heroku R14 memory leaks are due to this???
+      # if ids.size > 100
+      # ids.each_slice(99).to_a.each { |chunk_ids| batch_get_messages(chunk_ids) }
+
+      ids.in_groups_of(10).each { |chunk_ids| batch_get_messages(chunk_ids) }
     else
       batch_get_messages(ids)
     end
@@ -51,19 +79,20 @@ class GmailClient
     puts @fails if @fails.any?
   end
 
-  def list_latest_messages(after:, before:)
-    list_queried_messages(query: "after:#{after} before:#{before}")
-  end
+  def find_body(part, target_mime_type)
+    if part.mime_type == target_mime_type && part.body.present?
+      @body_data = ActionView::Base.full_sanitizer.sanitize(part.body.data).squish
+    elsif part.parts.present?
+      part.parts.each do |sub_part|
+        break if @body_data.present?
 
-  def list_queried_messages(query:)
-    # https://github.com/googleapis/google-api-ruby-client/blob/master/generated/google/apis/gmail_v1/service.rb#L944
-    @service.fetch_all(items: :messages) do |token|
-      @service.list_user_messages(@user_id, include_spam_trash: false, q: query, page_token: token)
+        find_body(sub_part, target_mime_type)
+      end
     end
   end
 
   def get_message(message_id)
-    # https://github.com/googleapis/google-api-ruby-client/blob/master/generated/google/apis/gmail_v1/service.rb#L783
+    # https://github.com/googleapis/google-api-ruby-client/blob/4958ea8ca0e10ad0b18780c307dac12b9ca9bd59/generated/google-apis-gmail_v1/lib/google/apis/gmail_v1/service.rb#L789
     response = trim_response @service.get_user_message(@user_id, message_id, fields: @standard_fields)
 
     if response.nil?
@@ -79,29 +108,25 @@ class GmailClient
     response
   end
 
-  def see_message(message_id)
-    @service.get_user_message(@user_id, message_id, fields: @standard_fields)
+  def list_latest_messages(after:, before:)
+    list_queried_messages(query: "after:#{after} before:#{before}")
   end
 
-  def batch_get_messages(message_ids)
-    @service.batch do |gmail|
-      message_ids.each do |id|
-        gmail.get_user_message(@user_id, id, fields: @standard_fields) do |response, error|
-          if error.present?
-            @skipped_ids << id
-            @fails << { id: id, msg: error, source: 'batch_get_messages' }
-            next
-          end
-
-          resp = trim_response response
-          Email.from_gmail(resp, @body_data, @user)
-        end
-      end
+  def list_queried_messages(query:)
+    # https://github.com/googleapis/google-api-ruby-client/blob/4958ea8ca0e10ad0b18780c307dac12b9ca9bd59/generated/google-apis-gmail_v1/lib/google/apis/gmail_v1/service.rb#L953
+    @service.fetch_all(items: :messages) do |token|
+      @service.list_user_messages(@user_id, include_spam_trash: false, q: query, page_token: token)
     end
   end
 
   def refresh_authorization!
     @user.refresh_authorization!
+  end
+
+  # Unused
+  def see_message(message_id)
+    # https://github.com/googleapis/google-api-ruby-client/blob/4958ea8ca0e10ad0b18780c307dac12b9ca9bd59/generated/google-apis-gmail_v1/lib/google/apis/gmail_v1/service.rb#L789
+    @service.get_user_message(@user_id, message_id, fields: @standard_fields)
   end
 
   def trim_response(response)
@@ -115,6 +140,7 @@ class GmailClient
     # singlepart emails have no 'parts', just have a 'body.data'
     # which can be 'text/plain' OR 'text/html'
     if response.payload.body&.data.present?
+      # TESTING: This is a likely source of the Heroku R14 memory leak
       @body_data = ActionView::Base.full_sanitizer.sanitize(response.payload.body.data).squish
     elsif response.payload.parts&.any?
       # multipart emails have 'parts', which can be nested within parts multiple times
@@ -140,17 +166,5 @@ class GmailClient
     end
 
     response
-  end
-
-  def find_body(part, target_mime_type)
-    if part.mime_type == target_mime_type && part.body.present?
-      @body_data = ActionView::Base.full_sanitizer.sanitize(part.body.data).squish
-    elsif part.parts.present?
-      part.parts.each do |sub_part|
-        break if @body_data.present?
-
-        find_body(sub_part, target_mime_type)
-      end
-    end
   end
 end

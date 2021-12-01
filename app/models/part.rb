@@ -1,127 +1,125 @@
 # frozen_string_literal: true
 
 class Part < ApplicationRecord
-  acts_as_paranoid
+  include Discard::Model
+  include Itemable
 
-  has_many :extrapolate_technology_parts, dependent: :destroy, inverse_of: :part
-  has_many :technologies, through: :extrapolate_technology_parts
-  accepts_nested_attributes_for :extrapolate_technology_parts, allow_destroy: true
+  # SCHEMA notes
+  # #history is a JSON store of historical inventory counts: { date.iso8601 => { loose: 99, box: 99, available: 99 } }
+  # #quantities is a JSON store of the total number (integer) needed per technology: { technology.uid => 99, technology.uid => 99 }
 
-  has_many :extrapolate_component_parts, dependent: :destroy, inverse_of: :part
-  has_many :components, through: :extrapolate_component_parts
-  accepts_nested_attributes_for :extrapolate_component_parts, allow_destroy: true
+  alias_attribute :super_assemblies, :assemblies
 
-  has_many :extrapolate_material_parts, dependent: :destroy, inverse_of: :part
-  has_many :materials, through: :extrapolate_material_parts
-  accepts_nested_attributes_for :extrapolate_material_parts, allow_destroy: true
+  has_many :assemblies, as: :item, dependent: :destroy, inverse_of: :item
+  has_many :components,   through: :assemblies, source: :combination, source_type: 'Component'
+  has_many :technologies, through: :assemblies, source: :combination, source_type: 'Technology'
+  accepts_nested_attributes_for :assemblies, allow_destroy: true
 
-  has_many :counts, dependent: :destroy
-
+  belongs_to :material, optional: true
   belongs_to :supplier, optional: true
 
-  monetize :price_cents, allow_nil: true, numericality: { greater_than_or_equal_to: 0 }
+  has_one_attached :image, dependent: :purge
+  attr_accessor :remove_image
 
-  scope :active, -> { where(deleted_at: nil) }
-  scope :orderable, -> { where(made_from_materials: false) }
+  validates_presence_of :name
+  # When #made_from_material? #quantity_from_material must be set
+  validates_presence_of :quantity_from_material, if: :made_from_material
 
-  def available
-    if latest_count.present?
-      latest_count.available
-    else
-      0
+  # rails_admin scope "active" sounds better than "kept"
+  scope :active, -> { kept }
+
+  scope :available, -> { kept.where('available_count > 0') }
+  scope :made_from_material, -> { kept.where(made_from_material: true) }
+  scope :not_made_from_material, -> { kept.where(made_from_material: false) }
+
+  class << self
+    alias orderable not_made_from_material
+  end
+
+  # Exists in ActiveStorage already
+  # scope :with_attached_image, -> { joins(:image_attachment) }
+  scope :without_attached_image, -> { where.missing(:image_attachment) }
+
+  before_validation :set_made_from_material
+  before_save :process_image, if: -> { attachment_changes.any? }
+  after_save { image.purge if remove_image == '1' }
+
+  # Not in Itemable because it's unique to Component and Part
+  def self.search_name_and_uid(string)
+    return Part.none if string.blank? || !string.is_a?(String)
+
+    ary = []
+    args = string.tr(',', '').tr(';', '').split
+
+    args.each do |arg|
+      ary << "%#{arg}%"
     end
-  end
 
-  def cprice
-    return price unless (price.nil? || price.zero?) && made_from_materials?
-
-    emp = extrapolate_material_parts.first
-
-    return Money.new(0) if emp.nil?
-
-    emp.material.price / emp.parts_per_material
-  end
-
-  def latest_count
-    Count.where(inventory: Inventory.latest_completed, part: self).first
+    Part.kept.where('name ILIKE any ( array[?] )', ary).or(where('uid ILIKE any ( array[?] )', ary))
   end
 
   def on_order?
     last_ordered_at.present? && (last_received_at.nil? || last_ordered_at > last_received_at)
   end
 
-  def owner
-    return 'N/A' unless technologies.present?
-
-    technologies.map(&:owner_acronym).uniq.join(',')
-  end
-
-  def picture
-    begin
-      ActionController::Base.helpers.asset_path("uids/#{uid}.jpg")
-    rescue => e
-      'http://placekitten.com/140/140'
-    end
-  end
-
-  def per_technology
-    if extrapolate_technology_parts.first.present?
-      per_tech = extrapolate_technology_parts.first.parts_per_technology.to_f
-    elsif extrapolate_component_parts.first.present?
-      ppc = extrapolate_component_parts.first.parts_per_component.to_f
-      component = extrapolate_component_parts.first.component
-      cpt = component.extrapolate_technology_components.first.components_per_technology.to_f
-      per_tech = ppc.to_f * cpt
-    else
-      per_tech = 0.0
-    end
-
-    per_tech
-  end
-
-  def reorder?
-    available < minimum_on_hand
-  end
-
   def reorder_total_cost
     min_order * price
   end
 
-  def required?
-    if extrapolate_technology_parts.any?
-      extrapolate_technology_parts.first.required?
-    else
-      false
-    end
+  def super_assemblies
+    # alias of assemblies, for tree traversal up
+    assemblies
   end
 
-  def technology
-    # The path from parts to technologies can vary:
-    # Part ->(extrap_technology_parts)-> Technology
-    # Part ->(extrap_component_parts)-> Component ->(extrap_component_parts)-> Technology
+  def supplier_and_sku
+    return '' if made_from_material?
 
-    # FLAWED: when one part belongs to two technologies, then .first is a bad idea
+    return supplier.name unless order_url.present?
 
-    if technologies.first.present?
-      technologies.first
-    elsif extrapolate_component_parts.first.present?
-      components.first.technologies.first
-    end
+    sku_sub = sku.presence || 'link'
+
+    sku_as_link = ActionController::Base.helpers.link_to sku_sub, order_url, target: '_blank', rel: 'tooltip'
+
+    "#{supplier.name} - SKU: #{sku_as_link}".html_safe
   end
 
-  def tech_names_short
-    if technologies.map(&:name).empty?
-      'n/a'
-    else
-      technologies.map { |t| t.name.gsub(' Filter', '').gsub(' for Bucket', '') }.join(', ')
-    end
+  def sub_assemblies
+    Assembly.none
   end
 
-  def uid
-    "P#{id.to_s.rjust(3, 0.to_s)}"
+  # Rails Admin virtual
+  def uid_and_name
+    "#{uid}: #{name}"
   end
 
-  def weeks_to_out
-    latest_count.present? ? latest_count.weeks_to_out : 0
+  private
+
+  def process_image
+    file = attachment_changes['image'].attachable
+
+    # When this method is triggered properly, `file` is instance of `ActionDispatch::Http::UploadedFile`
+    # but apparently `ImageProcessing::MiniMagick.call` causes this callback to trigger again
+    # but this time `file` is the Hash from image.attach(io: String, filename: String, content_type: String), so...
+
+    # In RSpec, this is always a hash
+    file = file[:io].path if file.instance_of?(Hash) && Rails.env.test?
+
+    return if file.instance_of?(Hash)
+
+    processed_image = ImageProcessing::MiniMagick
+                      .source(File.open(file))
+                      .resize_to_limit(600, 600)
+                      .convert('png')
+                      .call
+
+    image_name = "#{uid}_#{Date.today.iso8601}.png"
+
+    image.attach(io: File.open(processed_image.path), filename: image_name, content_type: 'image/png')
+  end
+
+  def set_made_from_material
+    self.made_from_material = material.present?
+
+    self.quantity_from_material = 1.0 if quantity_from_material&.zero?
   end
 end

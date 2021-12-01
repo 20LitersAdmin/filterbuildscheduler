@@ -4,14 +4,36 @@ class KindfulClient
   include HTTParty
   attr_accessor :results, :env
 
-  # NOTE: If Kindful is still changing the names of campaigns on import, try match_by: { campaign: 'name' }
-  # and remove campaign_id and fund_id and fund_name values
-
   def initialize(env: Rails.env.production? ? 'production' : 'sandbox')
     @query_token = ''
     @results = []
     # you can test in the sandbox by first setting @env to anything other than 'production'
+
     @env = env
+
+    # easy way to change which campaign and fund are linked for body methods
+    # NOTE: If Kindful is still changing the names of campaigns on import, try match_by: { campaign: 'name' }
+    # and remove campaign_id and fund_id and fund_name values
+    @kindful_email = {
+      campaign_id: '247247',
+      campaign_name: 'General',
+      fund_id: '25946',
+      fund_name: 'Contributions 40100'
+    }
+
+    @kindful_filter_build = {
+      campaign_id: '338482',
+      campaign_name: 'Filter Builds',
+      fund_id: '25946',
+      fund_name: 'Contributions 40100'
+    }
+
+    @kindful_causevox = {
+      campaign_id: '270572',
+      campaign_name: 'CauseVox Transactions',
+      fund_id: '27452',
+      fund_name: 'Special Events 40400'
+    }
 
     set_host
   end
@@ -81,6 +103,8 @@ class KindfulClient
   # body methods
 
   def contact(user)
+    # create or update contact in Kindful
+    # add to 'Vol: Filter Builder group'
     group_name = 'Vol: Filter Builder'
 
     {
@@ -108,6 +132,8 @@ class KindfulClient
   end
 
   def company_w_email_note(email_address, email, direction, company_name)
+    # create or update company
+    # add note record linked to company
     # direction: 'Received Email' || 'Sent Email'
     {
       data_format: 'contact_with_note',
@@ -132,16 +158,18 @@ class KindfulClient
           note_type: direction,
           note_sender_name: email.oauth_user.name,
           note_sender_email: email.oauth_user.email,
-          campaign_id: '247247',
-          campaign_name: 'General',
-          fund_id: '25946',
-          fund_name: 'Contributions 40100'
+          campaign_id: @kindful_email[:campaign_id],
+          campaign_name: @kindful_email[:campaign_name],
+          fund_id: @kindful_email[:fund_id],
+          fund_name: @kindful_email[:fund_name]
         }
       ]
     }.to_json
   end
 
   def contact_w_email_note(email_address, email, direction)
+    # create or update contact
+    # add note record linked to contact
     # direction: 'Received Email' || 'Sent Email'
     {
       data_format: 'contact_with_note',
@@ -165,16 +193,19 @@ class KindfulClient
           note_type: direction,
           note_sender_name: email.oauth_user.name,
           note_sender_email: email.oauth_user.email,
-          campaign_id: '247247',
-          campaign_name: 'General',
-          fund_id: '25946',
-          fund_name: 'Contributions 40100'
+          campaign_id: @kindful_email[:campaign_id],
+          campaign_name: @kindful_email[:campaign_name],
+          fund_id: @kindful_email[:fund_id],
+          fund_name: @kindful_email[:fund_name]
         }
       ]
     }.to_json
   end
 
   def contact_w_note(registration)
+    # create or update contact
+    # add a note about event attendance
+
     role = registration.leader? ? 'Leader:' : 'Builder:'
 
     guests = registration.guests_attended.positive? ? "(#{registration.guests_attended} #{'guest'.pluralize(registration.guests_attended)})" : ''
@@ -203,10 +234,10 @@ class KindfulClient
           note_time: registration.event.end_time.to_s,
           note_subject: subject,
           note_type: 'Event',
-          campaign_id: '338482',
-          campaign_name: 'Filter Builds',
-          fund_id: '25946',
-          fund_name: 'Contributions 40100'
+          campaign_id: @kindful_filter_build[:campaign_id],
+          campaign_name: @kindful_filter_build[:campaign_name],
+          fund_id: @kindful_filter_build[:fund_id],
+          fund_name: @kindful_filter_build[:fund_name]
         }
       ]
     }.to_json
@@ -236,15 +267,15 @@ class KindfulClient
           amount_in_cents: opts[:amount],
           currency: 'usd',
           transaction_time: opts[:created],
-          campaign_id: '270572',
-          campaign_name: 'CauseVox Transactions',
-          fund_id: '27452',
-          fund_name: 'Special Events 40400',
           acknowledged: 'false',
           transaction_note: opts[:metadata][:campaign_name],
           stripe_charge_id: opts[:id],
           transaction_type: opts[:source][:funding],
-          card_type: opts[:source][:brand]
+          card_type: opts[:source][:brand],
+          campaign_id: @kindful_causevox[:campaign_id],
+          campaign_name: @kindful_causevox[:campaign_name],
+          fund_id: @kindful_causevox[:fund_id],
+          fund_name: @kindful_causevox[:fund_name]
          }
       ]
     }.to_json
@@ -286,16 +317,12 @@ class KindfulClient
   def recreate_organizations
     return unless @results.any?
 
-    Organization.destroy_all
+    Organization.delete_all
 
     @results.flatten.each do |result|
       next if result['donor_type'] != 'Organization' && (result['email'].blank? || result['company_name'].blank?)
 
-      org = Organization.find_or_initialize_by(email: result['email'])
-      next unless org.new_record?
-
-      org.company_name = result['company_name']
-      org.save
+      Organization.create(company_name: result['company_name'], email: result['email'])
     end
   end
 

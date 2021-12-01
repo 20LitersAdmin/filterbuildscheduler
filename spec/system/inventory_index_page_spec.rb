@@ -2,63 +2,108 @@
 
 require 'rails_helper'
 
-RSpec.describe "Inventory#index", type: :system do
-  before :each do
-    @latest = FactoryBot.create(:inventory)
-    2.times { FactoryBot.create(:inventory_event, date: Faker::Time.backward(days: 60)) }
-    2.times { FactoryBot.create(:inventory_man, date: Faker::Time.backward(days: 60)) }
-    FactoryBot.create(:inventory_ship, date: Faker::Time.backward(days: 30))
-    FactoryBot.create(:inventory_rec, date: Faker::Time.backward(days: 30))
+RSpec.describe 'Inventory#index', type: :system do
+  let(:inventory) { create :inventory }
+
+  context 'when visited by' do
+    it 'anon users redirects to sign-in page' do
+      inventory
+      visit inventories_path
+
+      expect(page).to have_content 'You need to sign in first'
+      expect(page).to have_content 'Sign in'
+    end
+
+    it 'builders redirects to home page' do
+      inventory
+      sign_in create(:user)
+
+      visit inventories_path
+
+      expect(page).to have_content 'You don\'t have permission'
+      expect(page).to have_content 'Upcoming Builds'
+    end
+
+    it 'inventoryists shows the page' do
+      inventory
+      sign_in create(:inventoryist)
+      visit inventories_path
+
+      expect(page).to have_content 'Inventory Counts:'
+    end
+
+    it 'admins shows the page' do
+      inventory
+      sign_in create(:admin)
+      visit inventories_path
+
+      expect(page).to have_content 'Inventory Counts:'
+    end
+
+    it 'users who receive inventory emails shows the page' do
+      inventory
+      sign_in create(:user, send_inventory_emails: true)
+      visit inventories_path
+
+      expect(page).to have_content 'Inventory Counts:'
+    end
+
+    it 'data managers shows the page' do
+      inventory
+      sign_in create(:data_manager)
+      visit inventories_path
+
+      expect(page).to have_content 'Inventory Counts:'
+    end
+
+    it 'leaders redirects to home page' do
+      inventory
+      sign_in create(:leader)
+      visit inventories_path
+
+      expect(page).to have_content 'You don\'t have permission'
+      expect(page).to have_content 'Upcoming Builds'
+    end
+
+    it 'schedulers redirects to home page' do
+      inventory
+      sign_in create(:scheduler)
+      visit inventories_path
+
+      expect(page).to have_content 'You don\'t have permission'
+      expect(page).to have_content 'Upcoming Builds'
+    end
   end
 
-  after :all do
-    clean_up!
-  end
+  context 'with a current inventory with counts' do
+    let(:counts) { create_list :count, 2, inventory: inventory }
 
-  context "when visited by" do
-    it "anon users redirects to sign-in page" do
+    it 'shows current inventory' do
+      inventory
+      counts
+
+      sign_in create :admin
       visit inventories_path
 
-      expect(page).to have_content "You need to sign in first"
-      expect(page).to have_content "Sign in"
-    end
-
-    it "builders redirects to home page" do
-      sign_in FactoryBot.create(:user)
-
-      visit inventories_path
-
-      expect(page).to have_content "You don't have permission"
-      expect(page).to have_content "Upcoming Builds"
-    end
-
-    it "inventory users shows the page" do
-      sign_in FactoryBot.create(:user, does_inventory: true)
-      visit inventories_path
-
-      expect(page).to have_content "Current Inventory:"
-    end
-
-    it "admins shows the page" do
-      sign_in FactoryBot.create(:admin)
-      visit inventories_path
-
-      expect(page).to have_content "Current Inventory:"
-    end
-
-    it "users who receive inventory emails shows the page" do
-      sign_in FactoryBot.create(:user, send_inventory_emails: true)
-      visit inventories_path
-
-      expect(page).to have_content "Current Inventory:"
+      expect(page).to have_content 'Inventory Counts:'
+      expect(page).to have_content 'Current Inventory:'
     end
   end
 
-  it "shows all inventories" do
-    sign_in FactoryBot.create(:admin)
+  it 'shows a table of items and their latest counts' do
+    inventory
+    create_list :technology, 2, list_worthy: true
+    create_list :component, 3
+    create_list :part, 5
+    create_list :material, 3
+
+    sign_in create :admin
     visit inventories_path
 
-    expect(page).to have_content @latest.name
-    expect(page).to have_css("div.inventory", count: 7)
+    expect(page).to have_content 'Inventory Counts:'
+
+    within('table#item_tbl tbody') do
+      expect(all('tr').count).to eq 13
+    end
   end
 end

@@ -1,27 +1,34 @@
 # frozen_string_literal: true
 
 class UsersController < ApplicationController
-  before_action :find_and_authorize_user, only: %i[show edit update delete availability leader_type edit_leader_notes]
+  before_action :find_and_authorize_user, only: %i[show edit update delete availability leader_type edit_leader_notes comm_update]
 
   def show
     flash[:warning] = 'You haven\'t set your password yet, please do so now.' if @user.has_no_password
 
     @leading_events = @user.registrations
+                           .kept
                            .where(leader: true)
                            .joins(:event)
                            .where('events.end_time > ?', Time.now)
                            .map(&:event)
+
     @attending_events = @user.registrations
+                             .kept
                              .where(leader: false)
                              .joins(:event)
                              .where('events.end_time > ?', Time.now)
                              .map(&:event)
+
     @lead_events = @user.registrations
+                        .kept
                         .where(leader: true)
                         .joins(:event)
                         .where('events.end_time < ?', Time.now)
                         .map(&:event)
+
     @attended_events = @user.registrations
+                            .kept
                             .where(leader: false)
                             .joins(:event)
                             .where('events.end_time < ?', Time.now)
@@ -34,7 +41,7 @@ class UsersController < ApplicationController
 
   def edit_leader_notes
     respond_to do |format|
-      format.js { render 'edit_leader_notes' }
+      format.js { render 'edit_leader_notes', layout: 'blank' }
     end
   end
 
@@ -54,7 +61,7 @@ class UsersController < ApplicationController
           redirect_to show_user_path @user
         end
         # from `/leaders` updating leader_notes
-        format.js { render 'update' }
+        format.js { render 'update', layout: 'blank' }
       end
     else
       respond_to do |format|
@@ -71,26 +78,20 @@ class UsersController < ApplicationController
   end
 
   def communication
-    # filter out users with no registrations by joining
+    # filter out users with no registrations by joining :registrations
     authorize @users = User.builders.joins(:registrations).group('users.id').order('users.created_at DESC')
-
-    @cancelled_events = Event.only_deleted
-    @closed_events = Event.closed
-
-    @finder = 'communication'
   end
 
-  def comm_complete
-    @user_ids = params[:user_ids]
+  def comm_update
+    # When being unchecked, no param is submitted
+    # When being checked, param is submitted as "1"
+    # #<ActionController::Parameters {"email_opt_out"=>"true" ...
+    box_was_checked = params[:email_opt_out].present?
 
-    if @user_ids.present?
-      User.find(@user_ids).each do |u|
-        u.email_opt_out = true
-        u.save
-      end
-    end
+    # update @user.email_opt_out unless they already match
+    @user.update_columns(email_opt_out: box_was_checked) unless box_was_checked == @user.email_opt_out?
 
-    redirect_to users_communication_path
+    head :ok
   end
 
   def leaders
@@ -107,8 +108,7 @@ class UsersController < ApplicationController
       @technologies << [tech.short_name, tech.id]
     end
 
-    @finder = 'leaders'
-    @cancelled_events = Event.only_deleted
+    @cancelled_events = Event.discarded
     @closed_events = Event.closed
   end
 
@@ -125,6 +125,14 @@ class UsersController < ApplicationController
     end
 
     render json: @user.reload.availability_code
+  end
+
+  def admin_password_reset
+    # custom RailsAdmin link on admin/user/:id/edit hits this action
+    @user.send_reset_password_instructions
+
+    flash[:success] = 'Password reset email sent!'
+    redirect_to request.referrer
   end
 
   def leader_type

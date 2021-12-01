@@ -1,0 +1,22 @@
+-# frozen_string_literal: true
+
+.container.event-edit
+  .row
+    .col-sm-10
+      = link_to 'Print Sign-in Sheet', attendance_event_path(@event), class: 'btn btn-sm blue'
+      = link_to 'Manage Builders', event_registrations_path(@event), class: 'btn btn-sm yellow'
+    .col-sm-2.right-align
+      = link_to 'Show Event', event_path(@event), class: 'btn btn-sm yellow'
+  .row
+    .col-xs-12
+      %h1.center-align= @event.title
+      - if @event.is_private
+        %h4.center-align Private Event
+  - if @event.registrations.kept.any? && @event.in_the_future?
+    .event-edit-warning
+      %h4.center-align.alert.danger
+        WARNING! People have registered for this event.
+        %br>/
+        Everyone who registered will be notified if you change the location, times, or technology, or cancel the event.
+  %div
+    = render partial: 'form'

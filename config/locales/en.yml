@@ -32,16 +32,32 @@
 en:
   admin:
     actions:
-      restore:
+      restorable:
         menu: 'Restore'
         title: 'Restore'
         breadcrumb: 'Restore'
-        done: 'restored, along with associated records'
-      paranoid_delete:
+        done: 'restored'
+      discardable:
+        menu: 'Discard'
+        title: 'Discard'
+        breadcrumb: 'Discard'
+        done: 'discarded, but can be restored'
+      destroyable:
         menu: 'Delete'
-        title: 'Delete'
+        title: 'Delete forever'
         breadcrumb: 'Delete'
-        done: 'deleted, but can be restored'
+        done: 'deleted forever'
+      assemble:
+        menu: 'Assemble'
+        title: 'Assemble'
+        breadcrumb: 'Assemble'
+      edit_in_app:
+        menu: 'Edit in app'
+        title: 'Edit in app'
+        breadcrumb: 'Edit'
+    scopes:
+      user:
+        active: 'All'
   activerecord:
     attributes:
       user:

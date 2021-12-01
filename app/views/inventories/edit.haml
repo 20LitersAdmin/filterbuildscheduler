@@ -1,0 +1,61 @@
+-# frozen_string_literal: true
+#inventory_edit.col-xs-12{ 'data-id': @inventory.id }
+  .row
+    .col-xs-8
+      %h2
+        Edit #{@inventory.name}
+    .col-xs-4.match-h2
+      = link_to 'Back', inventories_path, class: 'btn yellow'
+      %a#show_finalize_form.btn.blue{ href: '#' } Finalize
+      %p.uncounted_number.right-align= @uncounted
+  .row.spacer-bottom
+  #finalize_form.col-xs-12
+    .row
+      .col-sm-12.center-align
+        %h4 When all items have been counted and verified, click "Finalize Inventory" to mark the inventory complete, update all counted items, and send notfications.
+        - if @uncounted[0].to_i.positive?
+          %h3
+            There are still
+            %span.uncounted_number= @uncounted
+            Do you wish to proceed?
+      .col-sm-12.center-align
+        = simple_form_for @inventory do |f|
+          = f.submit 'Finalize Inventory', class: 'btn yellow'
+          %a#hide_finalize_form.btn.blue{ href: '#' } Cancel
+  #filter_div.col-xs-12.center
+    .row
+      %p Filters:
+      %button.btn.yellow{ type: 'button', data: { action: 'show_all' } } Show All
+      .btn-group.btn-group-sm{ role: 'group' }
+        %button.btn.yellow.status-btn{ type: 'button', data: { action: 'uncounted' } } Uncounted
+        %button.btn.blue.status-btn{ type: 'button', data: { action: 'partial' } } Partial
+        %button.btn.blue.status-btn{ type: 'button', data: { action: 'counted' } } Counted
+      .btn-group.btn-group-sm{ role: 'group' }
+        - @techs.each do |t|
+          %button.btn.empty.tech-btn{ type: 'button', data: { tech: t.id } }= t.short_name
+      .btn-group.btn-group-sm
+        %input#search{ name: 'search', placeholder: 'Search...', type: 'text' }
+      .btn-group.btn-group-sm
+        %button#calculator.btn.blue{ 'data-target': '#calculator_modal', 'data-toggle': 'modal', type: 'button' } Calculator
+  #counts_div.col-xs-12
+    #counts_row.row
+      = render partial: 'counts/count', collection: @counts
+
+  #edit_count_modal.modal.fade{ role: 'dialog', 'tab-index': '-1' }
+    .modal-dialog{ role: 'document' }
+      .modal-content
+        .modal-header
+          %button.close{ 'aria-label': 'Close', 'data-dismiss': 'modal', type: 'button' }
+            %span{ 'aria-hidden': 'true' } ×
+        #count_modal_body.modal-body.row
+          %p Oops! Something broke.
+
+  #calculator_modal.modal.fade{ role: 'dialog', 'tab-index': '-1' }
+    .modal-dialog{ role: 'document' }
+      .modal-content
+        .modal-header
+          %button.close{ 'aria-label': 'Close', 'data-dismiss': 'modal', type: 'button' }
+            %span{ 'aria-hidden': 'true' } ×
+        #calculator_modal_body.modal-body
+          .row
+            = render partial: 'shared/calculator'

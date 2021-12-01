@@ -4,9 +4,13 @@ AllCops:
   EnabledByDefault: true
 Bundler/GemComment:
   Enabled: false
+Bundler/GemVersion:
+  Enabled: false
 Layout/LineLength:
   Enabled: false
 Layout/FirstHashElementIndentation:
+  Enabled: false
+Layout/RedundantLineBreak:
   Enabled: false
 Lint/AmbiguousBlockAssociation:
   Enabled: false
@@ -34,9 +38,13 @@ Naming/PredicateName:
   Enabled: false
 Style/BlockComments:
   Enabled: false
+Style/EmptyLiteral:
+  Enabled: false
 Style/InlineComment:
   Enabled: false
 Style/Documentation:
+  Enabled: false
+Style/DisableCopsWithinSourceCodeDirective:
   Enabled: false
 Style/SymbolArray:
   Enabled: true
@@ -56,4 +64,6 @@ Style/DocumentationMethod:
 Style/Copyright:
   Enabled: false
 Naming/AccessorMethodName:
+  Enabled: false
+Naming/MemoizedInstanceVariableName:
   Enabled: false

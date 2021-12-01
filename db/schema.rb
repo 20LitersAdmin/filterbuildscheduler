@@ -10,46 +10,89 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_09_21_183307) do
+ActiveRecord::Schema.define(version: 2021_11_10_182021) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
+  create_table "active_storage_attachments", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "record_type", null: false
+    t.bigint "record_id", null: false
+    t.bigint "blob_id", null: false
+    t.datetime "created_at", null: false
+    t.index ["blob_id"], name: "index_active_storage_attachments_on_blob_id"
+    t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
+  end
+
+  create_table "active_storage_blobs", force: :cascade do |t|
+    t.string "key", null: false
+    t.string "filename", null: false
+    t.string "content_type"
+    t.text "metadata"
+    t.string "service_name", null: false
+    t.bigint "byte_size", null: false
+    t.string "checksum", null: false
+    t.datetime "created_at", null: false
+    t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
+  end
+
+  create_table "active_storage_variant_records", force: :cascade do |t|
+    t.bigint "blob_id", null: false
+    t.string "variation_digest", null: false
+    t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
+  end
+
+  create_table "assemblies", force: :cascade do |t|
+    t.bigint "combination_id", null: false
+    t.string "combination_type", null: false
+    t.bigint "item_id", null: false
+    t.string "item_type", null: false
+    t.integer "quantity", default: 1, null: false
+    t.integer "price_cents", default: 0, null: false
+    t.string "price_currency", default: "USD", null: false
+    t.integer "depth"
+    t.boolean "affects_price_only", default: false, null: false
+    t.index ["combination_id", "combination_type"], name: "index_assemblies_on_combination_id_and_combination_type"
+    t.index ["item_id", "item_type"], name: "index_assemblies_on_item_id_and_item_type"
+  end
+
   create_table "components", force: :cascade do |t|
     t.string "name", null: false
-    t.integer "sample_size"
-    t.float "sample_weight"
-    t.boolean "completed_tech", default: false
-    t.datetime "deleted_at"
+    t.datetime "discarded_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "quantity_per_box", default: 1
-    t.float "tare_weight", default: 0.0
     t.text "comments"
     t.boolean "only_loose", default: false
     t.text "description"
-    t.index ["deleted_at"], name: "index_components_on_deleted_at"
+    t.string "uid"
+    t.integer "loose_count", default: 0
+    t.integer "box_count", default: 0
+    t.integer "available_count", default: 0
+    t.jsonb "history", default: {}, null: false
+    t.jsonb "quantities", default: {}, null: false
+    t.integer "can_be_produced", default: 0
+    t.integer "price_cents", default: 0, null: false
+    t.string "price_currency", default: "USD", null: false
+    t.boolean "below_minimum", default: false, null: false
+    t.integer "minimum_on_hand", default: 0, null: false
+    t.index ["discarded_at"], name: "index_components_on_discarded_at"
   end
 
   create_table "counts", force: :cascade do |t|
     t.bigint "user_id"
     t.bigint "inventory_id", null: false
-    t.bigint "component_id"
-    t.bigint "part_id"
-    t.bigint "material_id"
     t.integer "loose_count", default: 0, null: false
     t.integer "unopened_boxes_count", default: 0, null: false
-    t.datetime "deleted_at"
-    t.integer "extrapolated_count", default: 0, null: false
     t.boolean "partial_box", default: false
     t.boolean "partial_loose", default: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["component_id"], name: "index_counts_on_component_id"
-    t.index ["deleted_at"], name: "index_counts_on_deleted_at"
+    t.string "item_type"
+    t.bigint "item_id"
     t.index ["inventory_id"], name: "index_counts_on_inventory_id"
-    t.index ["material_id"], name: "index_counts_on_material_id"
-    t.index ["part_id"], name: "index_counts_on_part_id"
+    t.index ["item_type", "item_id"], name: "index_counts_on_item"
     t.index ["user_id"], name: "index_counts_on_user_id"
   end
 
@@ -105,69 +148,18 @@ ActiveRecord::Schema.define(version: 2021_09_21_183307) do
     t.boolean "is_private", default: false, null: false
     t.integer "item_goal", default: 0, null: false
     t.integer "technologies_built", default: 0, null: false
-    t.datetime "deleted_at"
+    t.datetime "discarded_at"
     t.integer "attendance", default: 0
     t.integer "boxes_packed", default: 0, null: false
     t.string "contact_name"
     t.string "contact_email"
     t.boolean "emails_sent", default: false
     t.datetime "reminder_sent_at"
-    t.index ["deleted_at"], name: "index_events_on_deleted_at"
-  end
-
-  create_table "extrapolate_component_parts", force: :cascade do |t|
-    t.bigint "component_id", null: false
-    t.bigint "part_id", null: false
-    t.decimal "parts_per_component", precision: 8, scale: 4, default: "1.0", null: false
-    t.datetime "deleted_at"
-    t.index ["component_id", "part_id"], name: "by_component_and_part", unique: true
-    t.index ["part_id", "component_id"], name: "by_part_and_component", unique: true
-  end
-
-  create_table "extrapolate_material_parts", force: :cascade do |t|
-    t.bigint "material_id", null: false
-    t.bigint "part_id", null: false
-    t.decimal "parts_per_material", precision: 8, scale: 4, default: "1.0", null: false
-    t.datetime "deleted_at"
-    t.index ["material_id", "part_id"], name: "by_material_and_part", unique: true
-    t.index ["part_id", "material_id"], name: "by_part_and_material", unique: true
-  end
-
-  create_table "extrapolate_technology_components", force: :cascade do |t|
-    t.bigint "component_id", null: false
-    t.bigint "technology_id", null: false
-    t.decimal "components_per_technology", precision: 8, scale: 4, default: "1.0", null: false
-    t.boolean "required", default: false
-    t.datetime "deleted_at"
-    t.index ["component_id", "technology_id"], name: "by_component_and_technology", unique: true
-    t.index ["technology_id", "component_id"], name: "by_technology_and_component", unique: true
-  end
-
-  create_table "extrapolate_technology_materials", force: :cascade do |t|
-    t.bigint "technology_id"
-    t.bigint "material_id"
-    t.decimal "materials_per_technology", precision: 8, scale: 4, default: "1.0", null: false
-    t.boolean "required", default: false, null: false
-    t.datetime "deleted_at"
-    t.index ["material_id", "technology_id"], name: "index_materials_technologies_on_material"
-    t.index ["material_id"], name: "index_extrapolate_technology_materials_on_material_id"
-    t.index ["technology_id", "material_id"], name: "index_materials_technologies_on_technology"
-    t.index ["technology_id"], name: "index_extrapolate_technology_materials_on_technology_id"
-  end
-
-  create_table "extrapolate_technology_parts", force: :cascade do |t|
-    t.bigint "part_id", null: false
-    t.bigint "technology_id", null: false
-    t.decimal "parts_per_technology", precision: 8, scale: 4, default: "1.0", null: false
-    t.boolean "required", default: false
-    t.datetime "deleted_at"
-    t.index ["part_id", "technology_id"], name: "by_part_and_technology", unique: true
-    t.index ["technology_id", "part_id"], name: "by_technology_and_part", unique: true
+    t.index ["discarded_at"], name: "index_events_on_discarded_at"
   end
 
   create_table "inventories", force: :cascade do |t|
     t.boolean "receiving", default: false, null: false
-    t.datetime "deleted_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "event_id"
@@ -176,7 +168,7 @@ ActiveRecord::Schema.define(version: 2021_09_21_183307) do
     t.date "date", null: false
     t.datetime "completed_at"
     t.datetime "report_sent_at"
-    t.index ["deleted_at"], name: "index_inventories_on_deleted_at"
+    t.jsonb "history", default: {}, null: false
     t.index ["event_id"], name: "index_inventories_on_event_id"
   end
 
@@ -188,12 +180,11 @@ ActiveRecord::Schema.define(version: 2021_09_21_183307) do
     t.string "state"
     t.string "zip"
     t.string "map_url"
-    t.string "photo_url"
     t.text "instructions"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.datetime "deleted_at"
-    t.index ["deleted_at"], name: "index_locations_on_deleted_at"
+    t.datetime "discarded_at"
+    t.index ["discarded_at"], name: "index_locations_on_discarded_at"
   end
 
   create_table "materials", force: :cascade do |t|
@@ -202,7 +193,7 @@ ActiveRecord::Schema.define(version: 2021_09_21_183307) do
     t.integer "min_order", default: 1
     t.string "sku"
     t.float "weeks_to_deliver", default: 1.0
-    t.datetime "deleted_at"
+    t.datetime "discarded_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "quantity_per_box", default: 1
@@ -217,7 +208,14 @@ ActiveRecord::Schema.define(version: 2021_09_21_183307) do
     t.integer "last_ordered_quantity"
     t.datetime "last_received_at"
     t.integer "last_received_quantity"
-    t.index ["deleted_at"], name: "index_materials_on_deleted_at"
+    t.string "uid"
+    t.integer "loose_count", default: 0
+    t.integer "box_count", default: 0
+    t.integer "available_count", default: 0
+    t.jsonb "history", default: {}, null: false
+    t.jsonb "quantities", default: {}, null: false
+    t.boolean "below_minimum", default: false, null: false
+    t.index ["discarded_at"], name: "index_materials_on_discarded_at"
     t.index ["supplier_id"], name: "index_materials_on_supplier_id"
   end
 
@@ -255,10 +253,8 @@ ActiveRecord::Schema.define(version: 2021_09_21_183307) do
     t.integer "min_order", default: 1
     t.string "sku"
     t.float "weeks_to_deliver", default: 1.0
-    t.integer "sample_size"
-    t.float "sample_weight"
-    t.boolean "made_from_materials", default: false
-    t.datetime "deleted_at"
+    t.boolean "made_from_material", default: false
+    t.datetime "discarded_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "quantity_per_box", default: 1
@@ -273,7 +269,18 @@ ActiveRecord::Schema.define(version: 2021_09_21_183307) do
     t.integer "last_ordered_quantity"
     t.datetime "last_received_at"
     t.integer "last_received_quantity"
-    t.index ["deleted_at"], name: "index_parts_on_deleted_at"
+    t.string "uid"
+    t.integer "loose_count", default: 0
+    t.integer "box_count", default: 0
+    t.integer "available_count", default: 0
+    t.jsonb "history", default: {}, null: false
+    t.jsonb "quantities", default: {}, null: false
+    t.integer "can_be_produced", default: 0
+    t.bigint "material_id"
+    t.float "quantity_from_material"
+    t.boolean "below_minimum", default: false, null: false
+    t.index ["discarded_at"], name: "index_parts_on_discarded_at"
+    t.index ["material_id"], name: "index_parts_on_material_id"
     t.index ["supplier_id"], name: "index_parts_on_supplier_id"
   end
 
@@ -287,9 +294,9 @@ ActiveRecord::Schema.define(version: 2021_09_21_183307) do
     t.text "accommodations", default: ""
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.datetime "deleted_at"
+    t.datetime "discarded_at"
     t.datetime "reminder_sent_at"
-    t.index ["deleted_at"], name: "index_registrations_on_deleted_at"
+    t.index ["discarded_at"], name: "index_registrations_on_discarded_at"
     t.index ["user_id", "event_id"], name: "index_registrations_on_user_id_and_event_id", unique: true
   end
 
@@ -310,13 +317,13 @@ ActiveRecord::Schema.define(version: 2021_09_21_183307) do
     t.string "poc_phone"
     t.string "poc_address"
     t.text "comments"
-    t.datetime "deleted_at"
+    t.datetime "discarded_at"
     t.index ["name"], name: "index_suppliers_on_name"
   end
 
   create_table "technologies", force: :cascade do |t|
     t.string "name", null: false
-    t.text "description"
+    t.text "public_description"
     t.integer "ideal_build_length"
     t.integer "ideal_group_size"
     t.integer "ideal_leaders"
@@ -324,8 +331,7 @@ ActiveRecord::Schema.define(version: 2021_09_21_183307) do
     t.float "unit_rate"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.datetime "deleted_at"
-    t.string "img_url"
+    t.datetime "discarded_at"
     t.string "info_url"
     t.string "owner"
     t.integer "people", default: 0, null: false
@@ -335,7 +341,21 @@ ActiveRecord::Schema.define(version: 2021_09_21_183307) do
     t.integer "monthly_production_rate", default: 1, null: false
     t.string "short_name"
     t.boolean "list_worthy", default: true, null: false
-    t.index ["deleted_at"], name: "index_technologies_on_deleted_at"
+    t.string "uid"
+    t.boolean "only_loose", default: false
+    t.integer "loose_count", default: 0
+    t.integer "box_count", default: 0
+    t.integer "available_count", default: 0
+    t.jsonb "history", default: {}, null: false
+    t.jsonb "quantities", default: {}, null: false
+    t.integer "quantity_per_box", default: 1
+    t.integer "can_be_produced", default: 0
+    t.integer "price_cents", default: 0, null: false
+    t.string "price_currency", default: "USD", null: false
+    t.boolean "below_minimum", default: false, null: false
+    t.integer "minimum_on_hand", default: 0, null: false
+    t.text "description"
+    t.index ["discarded_at"], name: "index_technologies_on_discarded_at"
   end
 
   create_table "technologies_users", id: false, force: :cascade do |t|
@@ -365,7 +385,7 @@ ActiveRecord::Schema.define(version: 2021_09_21_183307) do
     t.integer "primary_location_id"
     t.string "fname"
     t.string "lname"
-    t.datetime "deleted_at"
+    t.datetime "discarded_at"
     t.string "authentication_token", limit: 30
     t.boolean "does_inventory", default: false
     t.boolean "send_notification_emails", default: false
@@ -375,23 +395,20 @@ ActiveRecord::Schema.define(version: 2021_09_21_183307) do
     t.boolean "available_after_hours", default: false, null: false
     t.integer "leader_type"
     t.string "leader_notes"
+    t.boolean "is_scheduler", default: false
+    t.boolean "is_data_manager", default: false
+    t.boolean "is_oauth_admin", default: false
     t.index ["authentication_token"], name: "index_users_on_authentication_token", unique: true
-    t.index ["deleted_at"], name: "index_users_on_deleted_at"
+    t.index ["discarded_at"], name: "index_users_on_discarded_at"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "emails", "oauth_users"
   add_foreign_key "events", "locations"
   add_foreign_key "events", "technologies"
-  add_foreign_key "extrapolate_component_parts", "components"
-  add_foreign_key "extrapolate_component_parts", "parts"
-  add_foreign_key "extrapolate_material_parts", "materials"
-  add_foreign_key "extrapolate_material_parts", "parts"
-  add_foreign_key "extrapolate_technology_components", "components"
-  add_foreign_key "extrapolate_technology_components", "technologies"
-  add_foreign_key "extrapolate_technology_parts", "parts"
-  add_foreign_key "extrapolate_technology_parts", "technologies"
   add_foreign_key "registrations", "events"
   add_foreign_key "registrations", "users"
 end
