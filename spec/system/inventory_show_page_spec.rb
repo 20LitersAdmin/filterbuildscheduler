@@ -2,53 +2,70 @@
 
 require 'rails_helper'
 
-RSpec.describe "Inventory show page", type: :system do
-  before :each do
-    @inventory = FactoryBot.create(:inventory, completed_at: Time.now)
-  end
+RSpec.describe 'Inventory show page', type: :system do
+  let(:inventory) { create :inventory }
 
-  after :all do
-    clean_up!
-  end
+  context 'when visited by' do
+    it 'anon users redirects to sign_in page' do
+      visit inventory_path inventory
 
-  context "when visited by" do
-    it "anon users redirects to sign_in page" do
-      visit inventory_path @inventory
-
-      expect(page).to have_content "You need to sign in first"
-      expect(page).to have_content "Sign in"
+      expect(page).to have_content 'You need to sign in first'
+      expect(page).to have_content 'Sign in'
     end
 
-    it "builders redirects to home page" do
-      sign_in FactoryBot.create(:user)
-      visit inventory_path @inventory
+    it 'builders redirects to home page' do
+      sign_in create(:user)
 
-      expect(page).to have_content "You don't have permission"
-      expect(page).to have_content "Upcoming Builds"
+      visit inventory_path inventory
+
+      expect(page).to have_content 'You don\'t have permission'
+      expect(page).to have_content 'Upcoming Builds'
     end
 
-    it "inventory users shows the page" do
-      sign_in FactoryBot.create(:user, does_inventory: true)
-      visit inventory_path @inventory
+    it 'leaders redirects to home page' do
+      sign_in create(:leader)
 
-      expect(page).to have_content @inventory.name
-      expect(page).to have_content "Full inventory:"
+      visit inventory_path inventory
+
+      expect(page).to have_content 'You don\'t have permission'
+      expect(page).to have_content 'Upcoming Builds'
     end
 
-    it "users who receive inventory emails shows the page" do
-      sign_in FactoryBot.create(:user, send_inventory_emails: true)
-      visit inventory_path @inventory
+    it 'inventoryists shows the page' do
+      sign_in create(:inventoryist)
+      visit inventory_path inventory
 
-      expect(page).to have_content @inventory.name
-      expect(page).to have_content "Full inventory:"
+      expect(page).to have_content "#{inventory.name} Inventory"
     end
 
-    it "admins shows the page" do
-      sign_in FactoryBot.create(:admin)
-      visit inventory_path @inventory
+    it 'users who receive inventory emails shows the page' do
+      sign_in create(:user, send_inventory_emails: true)
+      visit inventory_path inventory
 
-      expect(page).to have_content @inventory.name
-      expect(page).to have_content "Full inventory:"
+      expect(page).to have_content "#{inventory.name} Inventory"
+    end
+
+    it 'admins shows the page' do
+      sign_in create(:admin)
+      visit inventory_path inventory
+
+      expect(page).to have_content "#{inventory.name} Inventory"
+    end
+
+    it 'data_managers shows the page' do
+      sign_in create(:data_manager)
+      visit inventory_path inventory
+
+      expect(page).to have_content "#{inventory.name} Inventory"
+    end
+
+    it 'schedulers redirects to the home page' do
+      sign_in create(:scheduler)
+
+      visit inventory_path inventory
+
+      expect(page).to have_content 'You don\'t have permission'
+      expect(page).to have_content 'Upcoming Builds'
     end
   end
 end

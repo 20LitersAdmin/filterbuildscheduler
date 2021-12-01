@@ -10,10 +10,10 @@ module ErrorHandler
 
   def render_forbidden
     if current_user
-      flash[:danger] = 'You don\'t have permission'
+      flash[:danger] = 'You don\'t have permission.'
       redirect_back(fallback_location: root_path)
     else
-      flash[:danger] = 'You need to sign in first'
+      flash[:danger] = 'You need to sign in first.'
       redirect_to new_user_session_path(return_to: request.env['PATH_INFO'])
     end
   end

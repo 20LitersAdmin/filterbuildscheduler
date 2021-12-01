@@ -1,0 +1,22 @@
+-# frozen_string_literal: true
+:ruby
+  item = assembly_edit.item
+  item_type = assembly_edit.item_type
+
+%tr{ id: "assembly_#{assembly_edit.id}" }
+  %td.right-align.left-border
+    - if item_type == 'Component'
+      = link_to item.uid, edit_combination_path(item.uid)
+    - else
+      = item.uid
+  %td
+    = item.name
+  %td{ id: "assembly_quantity_#{assembly_edit.id}" }
+    = assembly_edit.quantity
+  %td
+    - if item.image.attached?
+      %img{ src: url_for(item.image), height: '60' }
+  %td.right-align
+    = link_to 'Edit', edit_combination_assembly_path(@combination.uid, assembly_edit.id), remote: true, class: 'btn blue'
+  %td.right-align
+    = link_to 'Delete', combination_assembly_path(@combination.uid, assembly_edit.id), remote: true, method: :delete, class: 'btn red', 'data-confirm': 'Are you sure? This can\'t be undone.'

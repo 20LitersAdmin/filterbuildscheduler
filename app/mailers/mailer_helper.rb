@@ -26,11 +26,11 @@ module MailerHelper
   end
 
   def url_for_event_gcal
-    "https://www.google.com/calendar/event?action=TEMPLATE&text=#{event_title_for_gcal}&dates=#{datetime_for_gcal}&details=#{details_for_gcal}&location=#{location_for_gcal}&trp=false&sprop=https:/build.villagewaterfilters.org/&sprop=name:#{name_for_gcal}"
+    "https://www.google.com/calendar/event?action=TEMPLATE&text=#{event_title_for_gcal}&dates=#{datetime_for_gcal}&details=#{details_for_gcal}&location=#{location_for_gcal}&trp=false&sprop=https:/make.20liters.org/&sprop=name:#{name_for_gcal}"
   end
 
   def url_for_registration_gcal
-    "https://www.google.com/calendar/event?action=TEMPLATE&text=#{registration_title_for_gcal}&dates=#{datetime_for_gcal}&details=#{details_for_gcal}&location=#{location_for_gcal}&trp=false&sprop=https:/build.villagewaterfilters.org/&sprop=name:#{name_for_gcal}"
+    "https://www.google.com/calendar/event?action=TEMPLATE&text=#{registration_title_for_gcal}&dates=#{datetime_for_gcal}&details=#{details_for_gcal}&location=#{location_for_gcal}&trp=false&sprop=https:/make.20liters.org/&sprop=name:#{name_for_gcal}"
   end
 
   def format_changed_time_range(start_time, end_time)

@@ -1,20 +1,39 @@
 # frozen_string_literal: true
 
 class Supplier < ApplicationRecord
-  acts_as_paranoid
+  include Discard::Model
   require 'uri'
 
   has_many :parts
   has_many :materials
 
-  validates :name, presence: true
+  validates_presence_of :name
   validate :valid_url?
   validates :email, :poc_email, format: { with: /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\z/i }, allow_blank: true
 
-  scope :active, -> { where(deleted_at: nil) }
+  # rails_admin scope "active" sounds better than "kept"
+  scope :active, -> { kept }
+
   scope :without_parts, -> { left_outer_joins(:parts).where(parts: { id: nil }) }
   scope :without_materials, -> { left_outer_joins(:materials).where(materials: { id: nil }) }
   scope :without_items, -> { without_parts.without_materials }
+
+  def address_block
+    area_is_present = city.present? || state.present? || province.present? || zip.present?
+
+    full_address = address1.present? || address2.present? ? "#{address1} #{address2}".squish : ''
+    full_address += '<br />' if full_address.present? && area_is_present
+
+    full_area = city.present? ? "#{city}, " : ''
+    full_area += "#{state} #{province}".squish if state.present? || province.present?
+    full_area += " #{zip}" if zip.present?
+
+    full_address += full_area unless full_area.blank?
+    full_address += '<br />' if full_address.present? && country.present?
+    full_address += country if country.present?
+
+    full_address&.html_safe
+  end
 
   def valid_url?
     # Allow nil
@@ -35,13 +54,5 @@ class Supplier < ApplicationRecord
     else
       true
     end
-  end
-
-  def related_items(items)
-    ary = []
-    items.each do |i|
-      ary << i if i.supplier == self
-    end
-    ary
   end
 end

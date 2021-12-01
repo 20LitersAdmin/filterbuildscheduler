@@ -1,0 +1,44 @@
+// custom values
+
+// styling for show pages only
+body.rails_admin[data-action="show"] {
+  div.fieldset {
+    display: flex;
+    flex-flow: row wrap;
+    h4 {
+      width: 100%;
+    }
+
+    dl {
+      width: 100%;
+      margin-top: 0;
+      margin-bottom: 20px;
+      display: flex;
+      flex-wrap: wrap;
+
+      dt {
+        // labels overtop of dd.well
+        // without height set to fit-content, they
+        // cover up the dd.well underneath it, making,
+        // for example, links un-clickable
+        height: fit-content;
+        z-index: 0;
+      }
+
+      .well {
+        padding: 22px 5px 5px;
+        margin-right: 15px;
+        // Limit long text fields
+        max-width: 30%;
+
+        &.full-width {
+          max-width: 100%;
+        }
+
+        ul {
+          padding-left: 1em;
+        }
+      }
+    }
+  }
+}

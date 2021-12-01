@@ -1,0 +1,16 @@
+-# frozen_string_literal: true
+
+%tr
+  %td
+    - if current_user&.can_manage_leaders?
+      = link_to 'Manage', leaders_event_path(table), class: 'btn yellow'
+    - else
+      = link_to 'Lead', event_path(table, leader: true), class: 'btn yellow'
+  %td= table.title
+  %td= table.technology.name
+  %td= table.format_date_only
+  %td= table.format_time_only
+  %td= table.location.name
+  %td= table.total_registered
+  %td= table.leaders_names_full
+  %td= table.max_leaders - table.leaders_registered.count

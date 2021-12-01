@@ -14,18 +14,20 @@ class RegistrationMailerPreview < ActionMailer::Preview
     event = Event.last
     event.start_time = Time.new(2017, 11, 8, 16, 0, 0, '-05:00')
     event.end_time = Time.new(2017, 11, 8, 21, 0, 0, '-05:00')
-    event.technology_id = 2
     event.location_id = 2
-    event.is_private = true
 
     RegistrationMailer.event_changed(Registration.last, event)
   end
 
   def event_cancelled
-    RegistrationMailer.event_cancelled(Registration.last.id)
+    reg = Registration.last
+    reg.update_columns(guests_registered: 2)
+    RegistrationMailer.event_cancelled(reg)
   end
 
   def event_results
-    RegistrationMailer.event_results(Registration.last)
+    reg = Event.with_results.last.registrations.last
+    reg.update_columns(guests_attended: 2)
+    RegistrationMailer.event_results(reg)
   end
 end

@@ -5,6 +5,6 @@ FactoryBot.define do
     frequency { 'monthly' }
     occurrences { 3 }
     replicate_leaders { false }
-    association :initiator, factory: :admin
+    association :user, factory: :admin
   end
 end

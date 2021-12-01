@@ -1,0 +1,39 @@
+-# frozen_string_literal: true
+
+.col-sm-6
+  = f.input :technologies_built, label: 'Filters built (but not boxed): ', min_max: true
+.col-sm-6
+  = f.input :boxes_packed, label: 'Boxes packed (ready to ship): ', min_max: true
+.col-sm-6
+  = f.input :number_registered, disabled: true, label: 'Total Registered (Builders and Leaders):', input_html: { value: @event.registrations.sum(:guests_registered) + @event.registrations.count }
+.col-sm-6
+  = f.input :attendance, label: 'Total Attendance (Builders and Leaders):'
+.row
+  - if @event.registrations.kept.count.positive?
+    .col-xs-2
+      %a#btn_check_all.btn.blue.btn-check{ href: '#' }
+        %span.fa-stack
+          = icon('fa', 'check', class: 'fa-stack-1x')
+          = icon('far', 'square', class: 'fa-stack-2x')
+        %span.btn-text all
+      %a#btn_uncheck_all.btn.blue.btn-check{ href: '#' }
+        %span.fa-stack
+          = icon('fa', 'square', class: 'fa-stack-1x')
+          = icon('far', 'square', class: 'fa-stack-2x')
+        %span.btn-text all
+
+  %div{ class: @event.registrations.kept.count.positive? ? 'col-xs-10' : 'col-xs-12' }
+    %h3
+      Registration-based attendance:
+      %span#attendance_counter 0
+= f.simple_fields_for :registrations, @event.registrations.kept.joins(:user).order('users.lname') do |r|
+  .row
+    .col-xs-6
+      = r.input :attended, label: "#{r.object.user.name} (with #{r.object.guests_registered} guests)", input_html: { tabindex: '-1' }
+    .col-xs-4.mt-10
+      Guests attended:
+    .col-xs-2.mt-5
+      = r.input :guests_attended, label: false
+  .row.thin
+    .col-xs-12
+      %hr/

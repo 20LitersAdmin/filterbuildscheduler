@@ -31,7 +31,7 @@
           <tr>
             <th>Leaders (duplicated)</th>
             <td>
-              <%= human_number(@events.map(&:leaders_attended).sum) %>
+              <%= human_number(@events.map(&:number_of_leaders_attended).sum) %>
             </td>
           </tr>
           <tr>
@@ -43,7 +43,7 @@
           <tr>
             <th>Builders (duplicated)</th>
             <td>
-              <%= human_number(@events.map(&:builders_attended).sum) %>
+              <%= human_number(@events.map(&:number_of_builders_attended).sum) %>
             </td>
           </tr>
           <tr>
@@ -98,13 +98,13 @@
               <%= human_float(@events.map(&:length).sum) %>
             </th>
             <th>
-              <%= human_number(@events.map(&:leaders_attended).sum) %>
+              <%= human_number(@events.map(&:number_of_leaders_attended).sum) %>
             </th>
             <th>
               <%= human_float(@events.map(&:leaders_hours).sum) %>
             </th>
             <th>
-              <%= human_number(@events.map(&:builders_attended).sum) %>
+              <%= human_number(@events.map(&:number_of_builders_attended).sum) %>
             </th>
             <th>
               <%= human_float(@events.map(&:builders_hours).sum) %>

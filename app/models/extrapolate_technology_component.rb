@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class ExtrapolateTechnologyComponent < ApplicationRecord
-  acts_as_paranoid
+  # acts_as_paranoid
 
   belongs_to :component, inverse_of: :extrapolate_technology_components
   belongs_to :technology, inverse_of: :extrapolate_technology_components
@@ -9,18 +9,19 @@ class ExtrapolateTechnologyComponent < ApplicationRecord
   validates :component_id, :technology_id, :components_per_technology, presence: true
   validates :components_per_technology, numericality: { greater_than: 0 }
 
-  scope :active, -> { where(deleted_at: nil) }
+  # scope :active, -> { where(deleted_at: nil) }
+  scope :required, -> { where(required: true) }
 
   def component
     return unless component_id.present?
 
-    Component.with_deleted.find(component_id)
+    Component.find(component_id)
   end
 
   def technology
     return unless technology_id.present?
 
-    Technology.with_deleted.find(technology_id)
+    Technology.find(technology_id)
   end
 
   def component_price

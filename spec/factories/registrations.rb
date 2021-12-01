@@ -6,20 +6,20 @@ FactoryBot.define do
     event
     attended { false }
     guests_registered { Random.rand(0..5) }
-  end
 
-  factory :registration_attended, class: Registration do
-    user
-    event
-    attended { true }
-    guests_registered { Random.rand(0..5) }
-    guests_attended { Random.rand(0..5) }
-  end
+    factory :registration_attended do
+      attended { true }
+      guests_attended { Random.rand(0..5) }
+    end
 
-  factory :registration_leader, class: Registration do
-    user
-    event
-    leader { true }
-    guests_registered { Random.rand(0..3) }
+    factory :registration_leader do
+      leader { true }
+    end
+
+    factory :registration_leader_attended do
+      attended { true }
+      leader { true }
+      guests_attended { Random.rand(0..5) }
+    end
   end
 end

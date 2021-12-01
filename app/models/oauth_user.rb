@@ -5,7 +5,6 @@ class OauthUser < ApplicationRecord
 
   validates :oauth_id, :oauth_token, uniqueness: true, allow_blank: true
 
-  scope :with_deleted, -> {}
   scope :to_sync, -> { where(sync_emails: true) }
   scope :ordered_by_id, -> { order(:id) }
 
@@ -41,16 +40,20 @@ class OauthUser < ApplicationRecord
   end
 
   def oauth_expired?
+    return true if oauth_expires_at.nil?
+
     oauth_expires_at < Time.now
   end
 
   def oauth_remaining
+    return 0 if oauth_expires_at.nil?
+
     ((oauth_expires_at - Time.now) / 1.minutes).to_i
   end
 
   def email_service
     update_columns(oauth_error_message: nil) if oauth_error_message.present?
-    # https://github.com/googleapis/google-api-ruby-client/blob/master/generated/google/apis/gmail_v1/service.rb
+    # https://github.com/googleapis/google-api-ruby-client/blob/main/generated/google-apis-gmail_v1/lib/google/apis/gmail_v1/service.rb
     @service = Google::Apis::GmailV1::GmailService.new
     @service.authorization = authorization
 

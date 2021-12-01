@@ -1,0 +1,9 @@
+-# frozen_string_literal: true
+.col-xs-4
+  .panel.panel-default
+    .panel-heading
+      %h4= action[:title]
+    .panel-body
+      %ul
+        - action[:links].each do |link|
+          %li= link_to link[:name], "#{action[:base_uri]}#{link[:link]}"

@@ -1,0 +1,18 @@
+-# frozen_string_literal: true
+.no-print
+  %h4 Printing instructions:
+  %ul
+    %li Print from Google Chrome
+    %li Under "More Settings", set Margins to "None"
+    %li Use Avery 8136 labels (4"x2", 10 per page), lay face-up in Operations Xerox 7120
+.labels_page
+  .top-gutter
+  - 5.times do
+    .left-gutter
+    .label-4x2
+      = render partial: @label
+    .center-gutter
+    .label-4x2
+      = render partial: @label
+    .right-gutter
+  .bottom-gutter

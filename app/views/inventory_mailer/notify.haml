@@ -1,0 +1,33 @@
+-# frozen_string_literal: true
+
+.whole{ style: 'position: relative; min-height: 1px; padding-left: 15px; padding-right: 15px; float: left; width: 100%;' }
+  %h2 An inventory was just finalized
+  %p{ style: 'margin-bottom: 6px' }
+    %strong Here are the details:
+  %h3{ style: 'margin-bottom: 6px;' }= @inventory.name
+  %p
+    Finalized by: #{@user.name}
+.whole{ style: 'position: relative; min-height: 1px; padding-left: 15px; padding-right: 15px; float: left; width: 100%;' }
+  %h3
+    %strong #{@inventory.history.size} items were #{@inventory.verb_past_tense}.
+.whole{ style: 'position: relative; min-height: 1px; padding-left: 15px; padding-right: 15px; float: left; width: 100%;' }
+.whole{ style: 'position: relative; min-height: 1px; padding-left: 15px; padding-right: 15px; float: left; width: 100%;' }
+  %h3
+    %strong Reorder Items:
+
+  %table{ style: 'border: 1px solid #4a4a4a; border-collapse: collapse;' }
+    %thead
+      %tr{ style: 'border: 1px solid #4a4a4a; border-collapse: collapse;' }
+        %th{ style: 'text-align: left; border: 1px solid #4a4a4a; border-collapse: collapse; padding: 6px;' }
+          Item
+        %th{ style: 'text-align: center; border: 1px solid #4a4a4a; border-collapse: collapse; padding: 6px;' }
+          Available
+        %th{ style: 'text-align: center; border: 1px solid #4a4a4a; border-collapse: collapse; padding: 6px;' }
+          Minimum
+        %th{ style: 'text-align: center; border: 1px solid #4a4a4a; border-collapse: collapse; padding: 6px;' }
+          Weeks to deliver
+    %tbody
+      = render partial: 'reorder', collection: @items_below_minimum
+
+.whole{ style: 'position: relative; min-height: 1px; padding-left: 15px; padding-right: 15px; float: left; width: 50%; text-align: center; margin-top: 32px;' }
+  = link_to 'See the full inventory', inventory_url(@inventory), class: 'btn yellow', target: '_blank', style: 'display: inline-block; margin-bottom: 0; font-weight: normal; text-align: center; vertical-align: middle; border: 1px solid transparent; white-space: nowrap; padding: 6px 12px; font-size: 14px; text-decoration: none; color: #4a4a4a; background-color: #fce000; border-color: ##fcc900;'

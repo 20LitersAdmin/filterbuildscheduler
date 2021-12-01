@@ -4,6 +4,7 @@ class RegistrationPolicy < ApplicationPolicy
   attr_reader :user, :registration
 
   def initialize(user, registration)
+    super
     @user = user
     @registration = registration
   end
@@ -13,26 +14,50 @@ class RegistrationPolicy < ApplicationPolicy
   end
 
   def destroy?
-    user&.admin_or_leader? || registration.user == user
-  end
-
-  def update?
-    user&.admin_or_leader? || registration.user == user
-  end
-
-  def index?
-    user&.admin_or_leader?
-  end
-
-  def new?
-    user&.admin_or_leader?
+    edit?
   end
 
   def edit?
-    user&.admin_or_leader? || registration.user == user
+    user&.can_edit_events? || registration.user == user
+  end
+
+  def index?
+    new?
+  end
+
+  def messenger?
+    new?
+  end
+
+  def new?
+    user&.can_edit_events?
+  end
+
+  def reconfirm?
+    new?
+  end
+
+  def reconfirms?
+    new?
+  end
+
+  def restore?
+    new?
+  end
+
+  def restore_all?
+    new?
+  end
+
+  def sender?
+    new?
   end
 
   def show?
-    user&.admin_or_leader?
+    edit?
+  end
+
+  def update?
+    edit?
   end
 end

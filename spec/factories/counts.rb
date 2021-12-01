@@ -1,24 +1,26 @@
 # frozen_string_literal: true
 
 FactoryBot.define do
-  factory :count_comp, class: Count do
+  factory :count do
     inventory
-    component
-    loose_count { Random.rand(0..130) }
-    unopened_boxes_count { Random.rand(0..30) }
-  end
-
-  factory :count_part, class: Count do
-    inventory
-    part
+    item factory: :part
     loose_count { Random.rand(6..130) }
     unopened_boxes_count { Random.rand(6..30) }
-  end
 
-  factory :count_mat, class: Count do
-    inventory
-    material
-    loose_count { Random.rand(0..130) }
-    unopened_boxes_count { Random.rand(0..30) }
+    factory :count_tech do
+      item factory: :technology
+    end
+
+    factory :count_comp do
+      item factory: :component
+    end
+
+    factory :count_mat do
+      item factory: :material
+    end
+
+    factory :count_submitted do
+      user
+    end
   end
 end

@@ -3,195 +3,184 @@
 require 'rails_helper'
 
 RSpec.describe Count, type: :model do
-  let(:inventory)  { create :inventory }
-  let(:part)       { create :part }
-  let(:count_part) { create :count_part, part: part, inventory: inventory }
-  let(:count_comp) { create :count_comp, inventory: inventory }
-  let(:count_mat)  { create :count_mat, inventory: inventory }
+  let(:count) { create :count }
 
-  let(:technology) { create :technology }
-  let(:tech_part)  { create :tech_part, technology: technology, part: part }
+  describe 'must be valid' do
+    let(:no_inv)    { build :count, inventory_id: nil }
+    let(:no_loose)  { build :count, loose_count: nil }
+    let(:no_box)    { build :count, unopened_boxes_count: nil }
 
-  let(:count_part2) { create :count_part, part: part, inventory: inventory }
-  let(:part2)       { create :part, quantity_per_box: 10 }
-
-  let(:part_w_min)      { create :part, minimum_on_hand: 300 }
-  let(:tech_part_w_min) { create :tech_part, technology: technology, part: part_w_min, parts_per_technology: 1 }
-  let(:count_part_low)  { create :count_part, loose_count: 150, unopened_boxes_count: 1, part: part_w_min }
-  let(:count_part_high) { create :count_part, loose_count: 550, unopened_boxes_count: 12, part: part_w_min }
-  
-
-  describe "must be valid" do
-    let(:no_inv)    { build :count_part, inventory_id: nil }
-    let(:no_loose)  { build :count_part, loose_count: nil, inventory: inventory }
-    let(:no_box)    { build :count_part, unopened_boxes_count: nil, inventory: inventory }
-    let(:no_extrap) { build :count_part, extrapolated_count: nil, inventory: inventory }
-
-    it "in order to save" do
-      expect { no_inv.save!(validate: false) }.to raise_error ActiveRecord::NotNullViolation
-      expect { no_loose.save!(validate: false) }.to raise_error ActiveRecord::NotNullViolation
-      expect { no_box.save!(validate: false) }.to raise_error ActiveRecord::NotNullViolation
-      expect { no_extrap.save!(validate: false) }.to raise_error ActiveRecord::NotNullViolation
+    it 'in order to save' do
+      expect { no_inv.save!(validate: false) }
+        .to raise_error ActiveRecord::NotNullViolation
+      expect { no_loose.save!(validate: false) }
+        .to raise_error ActiveRecord::NotNullViolation
+      expect { no_box.save!(validate: false) }
+        .to raise_error ActiveRecord::NotNullViolation
     end
   end
 
-  describe "#item" do
-    it "can return the associated model" do
-      expect(count_part.item).to be_kind_of(Part)
-      expect(count_comp.item).to be_kind_of(Component)
-      expect(count_mat.item).to be_kind_of(Material)
+  describe '#available' do
+    let(:part) { create :part, quantity_per_box: 10 }
+    let(:count2) { create :count, item: part, unopened_boxes_count: 5, loose_count: 10 }
+
+    it 'calculates the number of items available' do
+      expect(count2.available).to eq(60)
     end
   end
 
-  describe "#name" do
-    it "returns the associated model's name value" do
-      expect(count_part2.name).to eq(part.name)
+  describe '#box_count' do
+    let(:part) { create :part, quantity_per_box: 10 }
+    let(:count2) { create :count, item: part, unopened_boxes_count: 5, loose_count: 10 }
+
+    it 'calculates the individual items based upon the quantity_per_box of the associated item' do
+      expect(count2.box_count).to eq(50)
     end
   end
 
-  describe "#type" do
-    it "returns a string indicating the item" do
-      expect(count_part.type).to eq("part")
-      expect(count_comp.type).to eq("component")
-      expect(count_mat.type).to eq("material")
+  describe '#history_hash_for_inventory' do
+    it 'returns a hash' do
+      expect(count.history_hash_for_inventory.class).to eq Hash
+    end
+
+    it 'includes item_name' do
+      expect(count.history_hash_for_inventory[:item_name]).to eq count.item.name
     end
   end
 
-  describe "#tech_names" do
-    it "returns a string of 'not associated' if there is no technologies assicated with the item" do
-      expect(count_part.tech_names).to eq("not associated")
+  describe '#history_hash_for_item' do
+    it 'returns a hash' do
+      expect(count.history_hash_for_item.class).to eq Hash
     end
 
-    it "returns a string that lists the associated technologies" do
-      count_part2.item.technologies << technology
-      expect(count_part2.tech_names).to eq(technology.name)
-    end
-  end
-
-  describe "#box_count" do
-    let(:count_part3) { create :count_part, part: part2, unopened_boxes_count: 5 }
-
-    it "calculates the individual items based upon the quantity_per_box of the associated item" do
-      expect(count_part3.box_count).to eq(50)
+    it 'includes inv_type' do
+      expect(count.history_hash_for_item[:inv_type]).to eq count.inventory.type
     end
   end
 
-  describe "#available" do
-    let(:count_part3) { create :count_part, part: part2, unopened_boxes_count: 5, loose_count: 10 }
-    
-    it "calculates the number of items available" do
-      expect(count_part3.available).to eq(60)
-    end
-  end
+  describe '#link_text' do
+    let(:count_submitted) { create :count_submitted }
+    let(:count_partial_box) { create :count, partial_box: true }
+    let(:count_partial_loose) { create :count, partial_loose: true }
 
-  describe "#diff_from_previous" do
-    let(:inventory_prev) { build :inventory, date: Date.today - 2.days }
-    let(:count_part_prev) { build :count_part, part: part, inventory: inventory_prev, loose_count: count_part2.loose_count - 5, unopened_boxes_count: count_part2.unopened_boxes_count - 4 }
-    
-    it "returns an error when no field is provided" do
-      expect { count_part.diff_from_previous }.to raise_error(ArgumentError)
-    end
-
-    it "returns the current count if there is no previous inventory" do
-      count_part2
-
-      expect(count_part2.diff_from_previous("loose")).to eq(count_part2.loose_count)
-      expect(count_part2.diff_from_previous("box")).to eq(count_part2.unopened_boxes_count)
-    end
-
-    it "returns the diff from the previous count" do
-      inventory_prev.save
-      count_part_prev.save
-      count_part2
-
-      expect(count_part2.diff_from_previous("loose")).to eq(5)
-      expect(count_part2.diff_from_previous("box")).to eq(4)
-    end
-  end
-
-  context 'inventory-related specs:' do
-    let(:inventory_way_prev) { create :inventory, date: Date.today - 20.days }
-    let(:inventory_prev)     { create :inventory, date: Date.today - 2.days }
-    let(:count_part_prev)    { create :count_part, part: part, inventory: inventory_prev }
-    
-    describe '#previous_inventory' do
-      it 'returns the last inventory where the date is before the current inventory' do
-        inventory_prev
-
-        expect(count_part.previous_inventory).to eq inventory_prev
+    context 'when count has a user_id' do
+      it 'returns Edit' do
+        expect(count_submitted.link_text).to eq 'Edit'
       end
     end
 
-    describe '#previous_count' do
-      it 'returns the same count from the previous inventory' do
-        count_part_prev
-
-        expect(count_part.previous_count).to eq count_part_prev
+    context 'when count.partial_box is true' do
+      it 'returns Loose Count' do
+        expect(count_partial_box.link_text).to eq 'Loose Count'
       end
     end
 
-    describe '#previous_loose' do
-      it 'returns the loose_count value from the previous_count' do
-        count_part_prev
-
-        expect(count_part.previous_loose).to eq count_part_prev.loose_count
+    context 'when count.partial_loose is true' do
+      it 'returns Box Count' do
+        expect(count_partial_loose.link_text).to eq 'Box Count'
       end
     end
 
-    describe '#previous_box' do
-      it 'returns the unopened_boxes_count value from the previous_count' do
-        count_part_prev
-        
-        expect(count_part.previous_box).to eq count_part_prev.unopened_boxes_count
+    context 'when count is unsubmitted' do
+      context 'and inventory is receiving' do
+        let(:inventory_rec) { create :inventory_rec }
+        let(:count2) { create :count, inventory: inventory_rec }
+
+        it 'returns "Receive"' do
+          expect(count2.link_text).to eq 'Receive'
+        end
+      end
+
+      context 'and inventory is shipping' do
+        let(:inventory_ship) { create :inventory_ship }
+        let(:count2) { create :count, inventory: inventory_ship }
+
+        it 'returns "Ship"' do
+          expect(count2.link_text).to eq 'Ship'
+        end
+      end
+
+      context 'and inventory is manual' do
+        let(:inventory_man) { create :inventory }
+        let(:count2) { create :count, inventory: inventory_man }
+
+        it 'returns "Count"' do
+          expect(count2.link_text).to eq 'Count'
+        end
+      end
+
+      context 'and inventory is event' do
+        let(:inventory_event) { create :inventory_event }
+        let(:count2) { create :count, inventory: inventory_event }
+
+        it 'returns "Adjust"' do
+          expect(count2.link_text).to eq 'Adjust'
+        end
       end
     end
   end
 
-  describe "#total" do
-    let(:count_part3) { create :count_part, part: part2, inventory: inventory, unopened_boxes_count: 5, loose_count: 10, extrapolated_count: 100 }
-    
-    it "returns a string of 'Not Finalized' if the inventory isn't complete" do
-      expect(count_part.total).to eq("Not Finalized")
+  describe '#link_class' do
+    context 'when count has a user_id' do
+      let(:count_submitted) { create :count_submitted }
+
+      it 'returns blue' do
+        expect(count_submitted.link_class).to eq 'blue'
+      end
     end
 
-    it "returns the available and extrapolated_count if the inventory is complete" do
-      inventory.update(completed_at: Time.now)
-      expect(count_part3.total).to eq(160)
-    end
-  end
+    context 'when count.partial_box is true' do
+      let(:count_partial_box) { create :count, partial_box: true }
 
-  describe "#sort_by_user" do
-    let(:user) { create :user }
-    let(:count_part3) { create :count_part, user: user}
-    
-    it "returns 1 if user_id.present?" do
-      expect(count_part.sort_by_user).to eq(0)
-      expect(count_part3.sort_by_user).to eq(1)
-    end
-  end
-
-  describe "#reorder?" do
-    
-    it "returns false if the item is a component" do
-      expect(count_comp.reorder?).to be_falsey
+      it 'returns "empty"' do
+        expect(count_partial_box.link_class).to eq 'empty'
+      end
     end
 
-    it "returns true if the part needs to be reordered" do
-      expect(count_part_low.reorder?).to eq true
+    context 'when count.partial_loose is true' do
+      let(:count_partial_loose) { create :count, partial_loose: true }
+
+      it 'returns "empty"' do
+        expect(count_partial_loose.link_class).to eq 'empty'
+      end
+    end
+
+    context 'when count has not been submitted' do
+      it 'returns "yellow"' do
+        expect(count.link_class).to eq 'yellow'
+      end
     end
   end
 
-  describe "#weeks_to_out" do
-    let(:count_part_out) { create :count_part, loose_count: 0, unopened_boxes_count: 0 }
+  describe '#sort_by_status' do
+    context 'when count has a user_id' do
+      let(:count_submitted) { create :count_submitted }
 
-    it "returns 0 if loose_count and box_count are 0" do
-      expect(count_part_out.weeks_to_out).to eq 0
+      it 'returns 2' do
+        expect(count_submitted.sort_by_status).to eq 2
+      end
     end
 
-    it "returns a float that represents the weeks until the product runs out" do
-      part_w_min.save
-      tech_part_w_min.save
-      expect(count_part_high.weeks_to_out).to eq 2248.0
+    context 'when count.partial_box is true' do
+      let(:count_partial_box) { create :count, partial_box: true }
+
+      it 'returns 1' do
+        expect(count_partial_box.sort_by_status).to eq 1
+      end
+    end
+
+    context 'when count.partial_loose is true' do
+      let(:count_partial_loose) { create :count, partial_loose: true }
+
+      it 'returns 1' do
+        expect(count_partial_loose.sort_by_status).to eq 1
+      end
+    end
+
+    context 'when count has not been submitted' do
+      it 'returns 0' do
+        expect(count.sort_by_status).to eq 0
+      end
     end
   end
 end

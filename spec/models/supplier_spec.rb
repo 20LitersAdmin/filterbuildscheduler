@@ -4,17 +4,16 @@ require 'rails_helper'
 
 RSpec.describe Supplier, type: :model do
   let(:supplier) { create :supplier }
-  let(:no_url_scheme) { build :supplier, url: "wwww.noscheme.com" }
-  let(:no_url_host) { build :supplier, url: "https://" }
-  let(:bad_url) { build :supplier, url: "http://www.creeds-blog.blogspot.net.info.biz" }
+  let(:no_url_scheme) { build :supplier, url: 'wwww.noscheme.com' }
+  let(:no_url_host) { build :supplier, url: 'https://' }
+  let(:bad_url) { build :supplier, url: 'http://www.creeds-blog.blogspot.net.info.biz' }
 
-  describe "must be valid" do
+  describe 'must be valid' do
     let(:no_name) { build :supplier, name: nil }
-    let(:bad_email) { build :supplier, email: "not an email AT gmail DOT com" }
-    let(:bad_poc_email) { build :supplier, poc_email: "heythere.gmail.com" }
+    let(:bad_email) { build :supplier, email: 'not an email AT gmail DOT com' }
+    let(:bad_poc_email) { build :supplier, poc_email: 'heythere.gmail.com' }
 
-
-    it "in order to save" do
+    it 'in order to save' do
       expect(supplier.save).to eq true
       expect { no_name.save!(validate: false) }.to raise_error ActiveRecord::NotNullViolation
       expect(bad_email.save).to be_falsey
@@ -25,24 +24,41 @@ RSpec.describe Supplier, type: :model do
     end
   end
 
-  describe "#valid_url?" do
+  describe '#address_block' do
+    it 'calls html_safe' do
+      allow_any_instance_of(String).to receive(:html_safe)
+
+      expect_any_instance_of(String).to receive(:html_safe)
+
+      supplier.address_block
+    end
+
+    it 'formats a complete address' do
+      expect(supplier.address_block).to include supplier.address1
+      expect(supplier.address_block).to include supplier.address2
+      expect(supplier.address_block).to include supplier.city
+      expect(supplier.address_block).to include supplier.state
+      expect(supplier.address_block).to include supplier.zip
+    end
+  end
+
+  describe '#valid_url?' do
     let(:no_url) { create :supplier, url: nil }
 
-    it "allows nil values" do
+    it 'allows nil values' do
       expect(no_url.valid_url?).to be true
     end
 
-    it "needs a host" do
+    it 'needs a host' do
       expect(no_url_host.valid_url?).to be_falsey
     end
 
-    it "needs a host with less than 3 periods" do
+    it 'needs a host with less than 3 periods' do
       expect(bad_url.valid_url?).to be_falsey
     end
 
-    it "needs a valid scheme" do
+    it 'needs a valid scheme' do
       expect(no_url_scheme.valid_url?).to be_falsey
     end
-
   end
 end

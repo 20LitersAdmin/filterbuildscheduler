@@ -1,0 +1,26 @@
+-# frozen_string_literal: true
+
+- item = @count.item
+
+#counts_edit.col-xs-12{ 'data-type': @inventory.type_for_params }
+  .row
+    .col-xs-12
+      = render partial: 'labels/label', locals: { label: Label.new(item.label_hash) }
+  .row
+    = simple_form_for [@inventory, @count], remote: true do |f|
+      = f.error_notification
+      - if item.only_loose?
+        = render partial: 'edit_only_loose', locals: { f: f, item: item }
+      - elsif @count.partial_loose?
+        = render partial: 'edit_partial_loose', locals: { f: f, item: item }
+      - elsif @count.partial_box?
+        = render partial: 'edit_partial_box', locals: { f: f, item: item }
+      - elsif @count.user_id.present?
+        = render partial: 'edit_counted', locals: { f: f, item: item }
+      - else # full form
+        = render partial: 'edit_uncounted', locals: { f: f, item: item }
+
+      .col-xs-12
+        = f.submit 'Submit', class: 'btn yellow fullwidth'
+
+  %button.btn.empty.fullwidth{ 'aria-label': 'Close', 'data-dismiss': 'modal', type: 'button' } Back

@@ -6,77 +6,81 @@ class EventPolicy < ApplicationPolicy
   def initialize(user, event)
     @user = user
     @event = event
+    super
+  end
+
+  def attendance?
+    create?
   end
 
   def create?
-    user&.admin_or_leader?
+    user&.can_edit_events?
   end
 
   def destroy?
-    user&.admin_or_leader?
+    create?
   end
 
-  def update?
-    user&.admin_or_leader?
+  def edit?
+    create?
+  end
+
+  def lead?
+    create?
+  end
+
+  def leaders?
+    user&.can_manage_leaders?
+  end
+
+  def leader_unregister?
+    leaders?
+  end
+
+  def leader_register?
+    leaders?
+  end
+
+  def messenger?
+    create?
   end
 
   def new?
-    user&.admin_or_leader?
+    create?
+  end
+
+  def poster?
+    show?
+  end
+
+  def replicate?
+    create?
+  end
+
+  def replicator?
+    create?
   end
 
   def show?
     if event.in_the_past?
-      if user&.is_admin?
+      if user&.can_edit_events?
         true
-      elsif user&.is_leader? && user&.leading?(event)
-        # only show it if the leader led the event
-        true
-      else # anonymous users and builders can't see past events
+      else
+        # anonymous users and builders can't see past events
         false
       end
-    else # future events can always be seen by everyone
+    else
+      # future events can always be seen by everyone
       true
     end
   end
 
-  def edit?
-    user&.admin_or_leader?
-  end
-
-  def cancelled?
-    user&.admin_or_leader?
-  end
-
-  def closed?
-    user&.is_admin?
-  end
-
-  def lead?
-    user&.admin_or_leader?
-  end
-
-  def leaders?
-    user&.is_admin?
-  end
-
-  def leader_unregister?
-    user&.is_admin?
-  end
-
-  def leader_register?
-    user&.is_admin?
-  end
-
-  def restore?
-    user&.admin_or_leader?
-  end
-
-  def messenger?
-    user&.admin_or_leader?
-  end
-
   def sender?
-    user&.admin_or_leader?
+    create?
+  end
+
+  def update?
+    create?
   end
 
   class Scope
@@ -94,6 +98,5 @@ class EventPolicy < ApplicationPolicy
         Event.non_private
       end
     end
-
   end
 end

@@ -1,8 +1,7 @@
 # frozen_string_literal: true
 
 class ReportController < ApplicationController
-  def index
-  end
+  def index; end
 
   def volunteers
     start_year = Date.today.month >= 7 ? Date.today.year - 1 : Date.today.year

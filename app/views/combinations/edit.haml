@@ -1,0 +1,44 @@
+-# frozen_string_literal: true
+
+.container#combinations_edit
+  .row
+    .col-xs-4
+      - if @all_technologies
+        %h5 In these Technologies:
+        %ul
+          - @all_technologies.each do |tech|
+            %li= link_to tech.name, combination_path(tech.uid)
+    .col-xs-4
+      - if @parents&.any?
+        %h5 Parent assemblies:
+        %ul
+          - @parents.each do |parent|
+            %li= link_to parent.name, combination_path(parent.uid)
+    .col-xs-4.right-align
+      = link_to 'Back', combination_path(@combination.uid), class: 'btn yellow'
+  .row.spacer-top
+    .col-xs-12.admin-div
+      %h4  EDIT Assemblies for #{@combination.uid}: #{@combination.name} (#{@combination.available_count} available)
+    .col-xs-12
+      %table.table.edit_combination_tbl{ id: "edit_combination_tbl_#{@combination.uid}" }
+        %thead
+          %tr
+            %th{ colspan: 2 } #{@combination.uid}: #{@combination.name} (#{@combination.available_count} available)
+            %th # per
+            %th
+              - if @combination.image.attached?
+                %img{ src: url_for(@combination.image), height: '60' }
+            %th.right-align
+              = link_to 'New', new_combination_assembly_path(@combination.uid), remote: true, class: 'btn yellow'
+            %th.right-align
+        %tbody
+          = render partial: 'assembly_edit', collection: @assemblies
+
+  #edit_assembly_modal.modal.fade{ role: 'dialog', 'tab-index': '-1' }
+    .modal-dialog{ role: 'document' }
+      .modal-content
+        .modal-header
+          %button.close{ 'aria-label': 'Close', 'data-dismiss': 'modal', type: 'button' }
+            %span{ 'aria-hidden': 'true' } ×
+        #assembly_modal_body.modal-body.row
+          %p Oops! Something broke.

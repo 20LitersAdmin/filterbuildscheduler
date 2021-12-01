@@ -1,0 +1,14 @@
+-# frozen_string_literal: true
+
+.emphasis-div.center-align
+  %h2 Registration Full.
+  - if current_user&.can_lead_event?(@event) || current_user&.is_admin?
+    %p You can edit the event to allow more people if you need to.
+    %p But this is not recommended. Event maximums are set for a reason.
+  - else
+    %h4
+      Too many builders means too much standing around, so we have capped this event at #{pluralize(@event.max_registrations, 'person')}.
+    %p
+      %a{ href: "mailto:filterbuild@20liters.org?subject=Event #{@event.title} on #{@event.start_time.to_date} is full" } Email us
+      if you have any questions, or go back to the event list and check out our other dates.
+= link_to 'Back', root_path, class: 'btn yellow fullwidth'

@@ -1,0 +1,35 @@
+-# frozen_string_literal: true
+
+= simple_form_for [@event, @registration] do |f|
+  = f.error_notification
+  = f.hidden_field :form_source, value: 'self'
+  %h4
+    = current_user.name
+    | #{current_user.email}
+  = link_to('Not you?', destroy_user_session_path, method: :delete, class: 'btn empty')
+  - if current_user.can_lead_event?(@event)
+    %div
+      = f.label :leader, 'Register as Leader?'
+      = f.check_box :leader
+  %div
+    %p
+      Room for #{pluralize(@event.registrations_remaining - 1, 'more guest')}
+    = f.input :guests_registered, label: 'Additional Guests (excluding you)', input_html: { min: 0, max: @event.registrations_remaining - 1 }
+    = f.input :accommodations, label: 'Notes', as: :text
+  - if !@registration.waiver_accepted?
+    %div
+      %h4
+        = f.check_box :accept_waiver, required: true
+        %strong
+          Accept the
+          %a#waiver_click{ data: { target: '#waiverModal', toggle: 'modal' } }
+            = f.label :accept_waiver, 'Waiver and Release'
+  - else
+    = f.hidden_field :accept_waiver, value: '1'
+    %div
+      %h5
+        Review the
+        %a.waiver_click{ data: { target: '#waiverModal', toggle: 'modal' } }
+          Waiver and Release
+        (accepted on #{current_user.signed_waiver_on.strftime('%-m/%-d/%Y')})
+  = f.submit 'Register', class: 'btn yellow fullwidth'

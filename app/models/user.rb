@@ -1,7 +1,17 @@
 # frozen_string_literal: true
 
 class User < ApplicationRecord
-  acts_as_paranoid
+  include Discard::Model
+
+  # SCHEMA NOTES: Roles:
+  # is_admin
+  # is_leader
+  # does_inventory # (inventoryist)
+  # is_scheduler
+  # is_data_manager
+  # is_oauth_admin
+  # none of the above == builder
+  # not signed in == anon user
 
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable
@@ -23,19 +33,21 @@ class User < ApplicationRecord
   # setter: user.trainee!
   enum leader_type: %i[trainee helper primary]
 
-  scope :leaders,               -> { where(is_leader: true) }
-  scope :admins,                -> { where(is_admin: true) }
-  scope :notify,                -> { where(send_notification_emails: true) }
-  scope :notify_inventory,      -> { where(send_inventory_emails: true) }
-  scope :builders,              -> { where(is_admin: false, is_leader: false, does_inventory: false, send_notification_emails: false, send_inventory_emails: false) }
-  scope :non_builders,          -> { where(is_admin: true).or(where(is_leader: true)).or(where(does_inventory: true)).or(where(send_notification_emails: true)).or(where(send_inventory_emails: true)) }
-  scope :for_monthly_report,    -> { builders.where(email_opt_out: false).where('created_at >= ?', Date.today.beginning_of_month) }
+  validates :fname, :lname, :email, presence: true
+  validates_confirmation_of :password
+
+  # rails_admin scope "active" sounds better than "kept"
+  scope :active, -> { kept }
+
+  scope :leaders,               -> { kept.where(is_leader: true) }
+  scope :inventoryists,         -> { kept.where(does_inventory: true) }
+  scope :admins,                -> { kept.where(is_admin: true) }
+  scope :notify,                -> { kept.where(send_notification_emails: true) }
+  scope :notify_inventory,      -> { kept.where(send_inventory_emails: true) }
+  scope :builders,              -> { kept.where(is_admin: false, is_leader: false, does_inventory: false, send_notification_emails: false, send_inventory_emails: false) }
+  scope :non_builders,          -> { kept.where('is_admin = TRUE OR is_leader = TRUE OR does_inventory = TRUE OR send_notification_emails = TRUE OR send_inventory_emails = TRUE') }
   scope :with_registrations,    -> { joins(:registrations).uniq }
   scope :without_registrations, -> { left_outer_joins(:registrations).where(registrations: { id: nil }) }
-
-  validates :fname, :lname, :email, presence: true
-
-  validates_confirmation_of :password
 
   before_save :ensure_authentication_token, :check_phone_format
 
@@ -46,15 +58,17 @@ class User < ApplicationRecord
 
   after_save :update_kindful, if: ->(user) { user.saved_change_to_fname? || user.saved_change_to_lname? || user.saved_change_to_email? || user.saved_change_to_email_opt_out? || user.saved_change_to_phone? }
 
-  scope :active, -> { where(deleted_at: nil) }
-
   def admin_or_leader?
-    is_admin? || is_leader?
+    is_admin? ||
+      is_leader? ||
+      does_inventory? ||
+      is_scheduler? ||
+      is_data_manager?
   end
 
   def availability
     # [['All hours', 0], ['Business hours', 1], ['After hours', 2]]
-    return 'Not a leader' unless is_leader?
+    return unless is_leader?
 
     return 'All hours' if available_business_hours? && available_after_hours?
 
@@ -80,16 +94,40 @@ class User < ApplicationRecord
 
   def available_events
     if admin_or_leader?
-      Event.all
+      Event.kept
     else
       # finds public events OR events the user has registered for
-      Event.distinct.joins('LEFT JOIN registrations ON registrations.event_id = events.id')
+      Event.kept.distinct.joins('LEFT JOIN registrations ON registrations.event_id = events.id')
            .where('is_private = false OR registrations.user_id = ?', id)
     end
   end
 
   def can_do_inventory?
-    does_inventory? || is_admin? || send_inventory_emails?
+    is_admin? ||
+      does_inventory? ||
+      is_data_manager?
+  end
+
+  def can_view_inventory?
+    can_do_inventory? ||
+      send_inventory_emails?
+  end
+
+  def can_edit_events?
+    is_admin? ||
+      is_leader? ||
+      is_scheduler? ||
+      is_data_manager?
+  end
+
+  def can_manage_leaders?
+    is_admin? || is_scheduler?
+  end
+
+  def can_manage_users?
+    is_admin? ||
+      is_scheduler? ||
+      is_data_manager?
   end
 
   def can_lead_event?(event)
@@ -102,25 +140,49 @@ class User < ApplicationRecord
     # this allows for a form field that handles page redirects based on values: 'admin', 'self'
   end
 
+  def email_domain
+    # this can be simple because it is only trying to match against Constants::Email::INTERNAL_DOMAINS
+    # see OauthUserPolicy#in?
+    email[/@\w+/i]
+  end
+
   def email_opt_in
     # KindfulClient wants email_opt_in, not email_opt_out
-    email_opt_out? ? false : true
+    !email_opt_out?
+  end
+
+  def events_attended
+    applicable_event_ids = registrations.past.kept.attended.map(&:event_id)
+
+    Event.where(id: applicable_event_ids)
+  end
+
+  def events_led
+    return Event.none unless is_leader?
+
+    applicable_event_ids = registrations.past.kept.attended.leaders.map(&:event_id)
+
+    Event.where(id: applicable_event_ids)
+  end
+
+  def events_skipped
+    applicable_event_ids = registrations.past.kept.where(attended: false).map(&:event_id)
+
+    Event.where(id: applicable_event_ids)
   end
 
   def has_no_password
     !encrypted_password.present?
   end
 
-  def latest_event
-    if registrations.count.positive?
-      registrations.includes(:event).order('events.start_time DESC').first.event.full_title
-    else
-      'No Event'
-    end
+  def has_password
+    encrypted_password.present?
   end
 
   def leading?(event)
-    Registration.where(user: self, event: event, leader: true).present?
+    return false unless is_leader?
+
+    registrations.kept.leaders.where(event: event).present?
   end
 
   def name
@@ -128,60 +190,98 @@ class User < ApplicationRecord
   end
 
   def password_required?
+    # Devise: make password optional
     false
   end
 
   def registered?(event)
-    Registration.where(user: self, event: event).present?
+    Registration.kept.where(user: self, event: event).present?
   end
 
-  def self.to_csv
-    attributes = %w[fname lname email]
-    CSV.generate(headers: true) do |csv|
-      csv << attributes
+  def role_ary
+    # rails_admin users#index and #show
+    ary = []
+    ary << 'Admin' if is_admin
+    ary << 'Leader' if is_leader
+    ary << 'Inventoryist' if does_inventory
+    ary << 'Scheduler' if is_scheduler
+    ary << 'Data Manager' if is_data_manager
+    ary << 'Oauth Admin' if is_oauth_admin
 
-      all.each do |u|
-        csv << u.attributes.values_at(*attributes)
-      end
+    ary << 'Builder' if ary.blank?
+
+    ary
+  end
+
+  def role
+    # rails_admin users#index
+    role_ary.to_sentence
+  end
+
+  def role_html
+    # rails_admin users#show
+    block = '<ul>'
+    role_ary.each do |r|
+      block += "<li>#{r}</li>"
     end
+
+    block += '</ul>'
+    block.html_safe
+  end
+
+  def send_reset_password_email
+    # RailsAdmin custom form field with custom partial
+    # custom partial links to UsersController#admin_password_reset
+    # which fires Devise#send_reset_password_instructions
   end
 
   def total_volunteer_hours
-    registrations.attended.includes(:event).map { |r| r.event.length }.sum
+    registrations.kept
+                 .attended
+                 .includes(:event)
+                 .map { |r| r.event.length }
+                 .sum
+  end
+
+  def total_leader_hours
+    return 0 unless is_leader?
+
+    registrations.kept
+                 .attended
+                 .leaders
+                 .includes(:event)
+                 .map { |r| r.event.length }
+                 .sum
   end
 
   def total_guests
     registrations.attended.map(&:guests_attended).sum
   end
 
-  def events_led_between(start_date: nil, end_date: nil)
-    return unless is_leader?
+  def techs_qualified
+    return unless is_leader? && technologies.any?
 
-    applicable_event_ids = registrations.attended.joins(:event).map(&:event_id)
-
-    if start_date.present? && end_date.present?
-      Event.where(end_time: start_date..end_date).where(id: applicable_event_ids).order(start_time: :asc)
-    elsif start_date.present?
-      Event.where('start_time >= ?', start_date).where(id: applicable_event_ids).order(start_time: :asc)
-    elsif end_date.present?
-      Event.where('end_time <= ?', end_date).where(id: applicable_event_ids).order(start_time: :asc)
-    else
-      Event.where(id: applicable_event_ids).order(start_time: :asc)
+    ary = []
+    technologies.list_worthy.order(:name).pluck(:name, :owner).each do |tech|
+      ary << "#{tech[0]} (#{tech[1]})"
     end
+
+    ary
+  end
+
+  def techs_qualified_html
+    return unless is_leader? && technologies.any?
+
+    str = '<ul>'
+    techs_qualified.each do |tech|
+      str += "<li>#{tech}</li>"
+    end
+    str += '</ul>'
+
+    str.html_safe
   end
 
   private
-
-  def generate_authentication_token
-    loop do
-      token = Devise.friendly_token
-      break token unless User.where(authentication_token: token).first
-    end
-  end
-
-  def update_kindful
-    KindfulClient.new.import_user(self)
-  end
 
   def ensure_authentication_token
     self.authentication_token = generate_authentication_token if authentication_token.blank?
@@ -190,5 +290,17 @@ class User < ApplicationRecord
   def check_phone_format
     # Remove any non-numbers, and any symbols that aren't part of [(,),-,.,+]
     phone.gsub!(/[^\d,(,),+,\s,.,-]/, '') if phone.present? && phone.match('^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$').nil?
+  end
+
+  def generate_authentication_token
+    loop do
+      token = Devise.friendly_token
+      # return token unless it's already been assigned to some user
+      break token unless User.where(authentication_token: token).first
+    end
+  end
+
+  def update_kindful
+    KindfulClient.new.import_user(self)
   end
 end

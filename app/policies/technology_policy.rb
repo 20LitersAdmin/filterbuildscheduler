@@ -1,18 +1,44 @@
 # frozen_string_literal: true
 
-class TechnologyPolicy
+class TechnologyPolicy < ApplicationPolicy
   attr_reader :user, :technology
 
   def initialize(user, technology)
     @user = user
     @technology = technology
+
+    super
   end
 
   def index?
-    user&.can_do_inventory?
+    user&.admin_or_leader?
   end
 
   def items?
-    user&.can_do_inventory?
+    index?
+  end
+
+  def prices?
+    index?
+  end
+
+  def label?
+    index?
+  end
+
+  def assemble?
+    index?
+  end
+
+  def labels?
+    index?
+  end
+
+  def labels_select?
+    index?
+  end
+
+  def donation_list?
+    index?
   end
 end

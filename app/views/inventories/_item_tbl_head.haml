@@ -1,0 +1,10 @@
+-# frozen_string_literal: true
+%tr
+  %th{ data: { priority: 1 } } Item
+  %th{ data: { priority: 2 } } UID
+  %th{ data: { priority: 3 } } Supplier
+  - if @date. != Date.today
+    %th.center-align{ data: { priority: 2 } } Loose count
+    %th.center-align{ data: { priority: 2 } } Box count
+  %th.center-align{ data: { priority: 3 } } Quantity/box
+  %th.center-align{ data: { priority: 1 } } Available

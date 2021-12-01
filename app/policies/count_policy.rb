@@ -1,15 +1,11 @@
 # frozen_string_literal: true
 
-class CountPolicy
+class CountPolicy < ApplicationPolicy
   attr_reader :user, :count
 
   def initialize(user, count)
     @user = user
     @count = count
-  end
-
-  def polled_index?
-    user&.can_do_inventory?
   end
 
   def create?

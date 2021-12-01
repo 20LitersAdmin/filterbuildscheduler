@@ -1,0 +1,23 @@
+-# frozen_string_literal: true
+
+.whole{ style: 'position: relative; min-height: 1px;float: left; width: 100%;' }
+  %h3{ style: 'margin: 6px auto;' }= event.title
+  %p
+    %strong Location:
+    %br/
+    = location.name
+    %br/
+    = location.address1
+    %br/
+    - if location.address2.present?
+      = location.address2
+      %br/
+    = location.city
+    , #{location.state}#{location.zip}
+.whole{ style: 'position: relative; min-height: 1px; float: left; width: 100%;' }
+  - if event.leaders_names.present?
+    %p{ style: 'margin-bottom: 6px;' }
+      %strong
+        = pluralize event.leaders_registered.size, 'leader'
+        \:
+    %p{ style: 'margin-top: 6px' }= event.leaders_names_full

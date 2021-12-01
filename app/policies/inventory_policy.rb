@@ -1,35 +1,37 @@
 # frozen_string_literal: true
 
-class InventoryPolicy
+class InventoryPolicy < ApplicationPolicy
   attr_reader :user, :inventory
 
   def initialize(user, inventory)
     @user = user
     @inventory = inventory
+
+    super
   end
 
   def index?
-    user&.can_do_inventory?
-  end
-
-  def create?
-    user&.can_do_inventory?
+    user&.can_view_inventory?
   end
 
   def new?
     user&.can_do_inventory?
   end
 
-  def edit?
-    user&.can_do_inventory?
+  def create?
+    new?
   end
 
-  def show?
-    user&.can_do_inventory?
+  def edit?
+    new?
   end
 
   def update?
-    user&.can_do_inventory?
+    new?
+  end
+
+  def show?
+    index?
   end
 
   def destroy?
@@ -37,27 +39,14 @@ class InventoryPolicy
   end
 
   def order?
-    user&.can_do_inventory?
+    index?
   end
 
   def order_all?
-    user&.can_do_inventory?
-  end
-
-  def status?
-    user&.admin_or_leader? || user&.can_do_inventory?
+    index?
   end
 
   def paper?
-    user&.admin_or_leader? || user&.can_do_inventory?
-  end
-
-  def labels?
-    user&.admin_or_leader? || user&.can_do_inventory?
-  end
-
-  def financials?
-    user&.can_do_inventory?
+    index?
   end
 end
-

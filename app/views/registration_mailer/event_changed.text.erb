@@ -1,0 +1,44 @@
+Hello <%= @recipient.fname %>,
+
+The filter build event that you registered for has changed.
+<% if @registration.guests_registered&.positive? %>
+You registered to bring <%= pluralize(@registration.guests_registered, 'guest') %>.
+Please share this information with them.
+<% end %>
+
+Here's what changed:
+====================
+<% if @start_time || @end_time %>
+* The time was changed:
+-- Original:
+<%= format_changed_time_range(@event.start_time_was, @event.end_time_was) %>
+-- Now:
+<%= format_changed_time_range(@event.start_time, @event.end_time) %>
+
+<% end %>
+<% if @location_id %>
+* The location was changed:
+-- Original:
+<%= @location_was.name %>
+-- Now:
+<%= @location.name %>
+
+<% end %>
+** Need to change or cancel your registration? **
+No worries, just copy and paste this link into your browser:
+<%= edit_event_registration_url(@event, @registration, user_token: @recipient.authentication_token, user_email: @recipient.email) %>
+
+Here are all the details:
+====================
+<%= render partial: 'details' %>
+
+* Calendars: *
+While we can't delete the old calendar appointment for you, we have created a new one. Use the link below to add this to your Google Calendar. Use the attached iCal for other calendar types.
+
+Google Calendar link: <%= url_for_registration_gcal %>
+
+* Have a question? *
+Just reply to this email.
+
+If you want to register for a different build, please visit the site:
+https://make.20liters.org

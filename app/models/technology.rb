@@ -1,130 +1,114 @@
 # frozen_string_literal: true
 
 class Technology < ApplicationRecord
-  acts_as_paranoid
+  include Discard::Model
+  include Itemable
+
+  # SCHEMA notes
+  # #history is a JSON store of historical inventory counts: { date.iso8601 => { loose: 99, box: 99, available: 99 } }
+  # #quantities is a JSON store of the total number (integer / float) needed of each item [Component, Part, Material]: { item.uid => 99, item.uid => 99 }
 
   has_and_belongs_to_many :users
 
-  has_many :extrapolate_technology_components, dependent: :destroy, inverse_of: :technology
-  has_many :components, through: :extrapolate_technology_components
-  accepts_nested_attributes_for :extrapolate_technology_components, allow_destroy: true
+  has_one_attached :image, dependent: :purge
+  has_one_attached :display_image, dependent: :purge
+  attr_accessor :remove_image, :remove_display_image
 
-  has_many :extrapolate_technology_parts, dependent: :destroy, inverse_of: :technology
-  has_many :parts, through: :extrapolate_technology_parts
-  accepts_nested_attributes_for :extrapolate_technology_parts, allow_destroy: true
+  has_many :assemblies, as: :combination, dependent: :destroy, inverse_of: :combination
+  accepts_nested_attributes_for :assemblies, allow_destroy: true
 
-  has_many :extrapolate_technology_materials, dependent: :destroy, inverse_of: :technology
-  has_many :materials, through: :extrapolate_technology_materials
-  accepts_nested_attributes_for :extrapolate_technology_materials, allow_destroy: true
+  has_many :components, through: :assemblies, source: :item, source_type: 'Component'
+  has_many :parts, through: :assemblies, source: :item, source_type: 'Part'
 
-  scope :active, -> { where(deleted_at: nil) }
-  scope :status_worthy, -> { where('monthly_production_rate > ?', 0).order(monthly_production_rate: 'desc') }
-  scope :list_worthy, -> { where(list_worthy: true).order(:name) }
+  validates_presence_of :name, :short_name
 
-  # fake scope
-  def self.finance_worthy
+  before_save :process_images, if: -> { attachment_changes.any? }
+  after_save { image.purge if remove_image == '1' }
+  after_save { display_image.purge if remove_display_image == '1' }
+
+  # Exists in ActiveStorage already
+  # scope :with_attached_image, -> { joins(:image_attachment) }
+  scope :without_attached_image, -> { where.missing(:image_attachment) }
+
+  # rails_admin scope "active" sounds better than "kept"
+  scope :active, -> { kept }
+
+  scope :status_worthy, -> { kept.where('monthly_production_rate > ?', 0).order(monthly_production_rate: 'desc') }
+  scope :list_worthy, -> { kept.where(list_worthy: true) }
+  scope :finance_worthy, -> { kept.where.not(price_cents: 0).order(:name) }
+
+  def all_components
+    # .components will find 1st-level children but not all descendents
+    # so use the hash of all items stored in the quantities JSONB field
+    uids = quantities.keys.grep(/^C[0-9]{3}/)
     ary = []
-    Technology.all.each do |technology|
-      ary << technology if technology.price.positive?
-    end
-    ary
+    uids.each { |u| ary << u.tr('C', '').to_i }
+    Component.kept.where(id: ary)
   end
 
-  def leaders
-    users.where(is_leader: true)
+  def all_parts
+    # .parts will find 1st-level children but not all descendents
+    # so use the hash of all items stored in the quantities JSONB field
+    uids = quantities.keys.grep(/^P[0-9]{3}/)
+    ary = []
+    uids.each { |u| ary << u.tr('P', '').to_i }
+    Part.kept.where(id: ary)
   end
 
-  def primary_component
-    # find the component related to this technology that represents the completed tech
-    components.where(completed_tech: true).first
+  def materials
+    uids = quantities.keys.grep(/^M[0-9]{3}/)
+    ary = []
+    uids.each { |u| ary << u.tr('M', '').to_i }
+    # NOTE: `.kept` is intentionally not included
+    Material.where(id: ary)
   end
 
-  def price
-    return Money.new(0) if primary_component.nil?
+  def owner_acronym
+    owner.scan(/\b(\d+|\w)/).join
+  end
 
-    primary_component.price
+  def results_worthy?
+    people.positive? &&
+      lifespan_in_years.positive? &&
+      liters_per_day.positive?
   end
 
   def short_name_w_owner
     "#{short_name} (#{owner_acronym})"
   end
 
-  def event_tech_goals_within(num = 0)
-    events = Event.future.within_days(num).where(technology: self)
+  private
 
-    events.map(&:item_goal).sum
+  def name_underscore
+    # remove bad characters like commas etc
+    # remove excess spaces
+    # replace spaces with underscores
+    # lowercase any capital letters
+    name.gsub(/[^a-zA-Z0-9\s]/, '')
+        .squish
+        .tr(' ', '_')
+        .downcase
   end
 
-  def owner_acronym
-    owner.gsub(/([a-z]|\s)/, '')
-  end
+  def process_images
+    attachment_changes.each do |ac|
+      target = ac[0]
+      file = attachment_changes[target].attachable
 
-  def produceable
-    inventory = Inventory.latest_completed
+      # In RSpec, this is always a hash
+      file = file[:io].path if file.instance_of?(Hash) && Rails.env.test?
 
-    # narrow the inventory counts down to just related to this technology
-    counts_aoh = []
-    inventory.counts.each do |c|
-      counts_aoh << { type: c.type, id: c.item.id, name: c.name, produce_tech: c.can_produce_x_tech, required: c.item.required?, available: c.available, makeable: 0, produceable: 0 } if c.item.technology == self
+      next if file.instance_of?(Hash)
+
+      processed_image = ImageProcessing::MiniMagick
+                        .source(File.open(file))
+                        .resize_to_limit(600, 600)
+                        .convert('png')
+                        .call
+
+      image_name = "#{name_underscore}_#{target}_#{Date.today.iso8601}.png"
+
+      public_send(target).attach(io: File.open(processed_image.path), filename: image_name, content_type: 'image/png')
     end
-
-    mats_aoh = []
-    parts_aoh = []
-    comps_aoh = []
-    counts_aoh.each do |hsh|
-      case hsh[:type]
-      when 'material'
-        mats_aoh << { id: hsh[:id], available: hsh[:available], makeable: 0, produceable: 0 }
-      when 'part'
-        parts_aoh << { id: hsh[:id], available: hsh[:available], makeable: 0, produceable: 0 }
-      when 'component'
-        comps_aoh << { id: hsh[:id], available: hsh[:available], makeable: 0, produceable: 0 }
-      end
-    end
-
-    # how many parts can be made from available materials?
-    mats_aoh.each do |mat|
-      parts_aoh.each do |part|
-        emp = ExtrapolateMaterialPart.where(material_id: mat[:id]).where(part_id: part[:id]).first
-        part[:makeable] = mat[:available] * emp.parts_per_material unless emp.nil?
-        part[:produceable] = part[:available] + part[:makeable]
-      end
-    end
-
-    # how many components can be made from available && makeable parts?
-    parts_aoh.each do |part|
-      comps_aoh.each do |comp|
-        ecp = ExtrapolateComponentPart.where(part_id: part[:id]).where(component_id: comp[:id]).first
-        comp[:makeable] = part[:produceable] / ecp.parts_per_component unless ecp.nil?
-        comp[:produceable] = comp[:available] + comp[:makeable]
-      end
-    end
-
-    # rebuild the counts_aoh with the new information && disregard the not required ones
-    tech_items_aoh = []
-
-    counts_aoh.each do |count|
-      case count[:type]
-      when 'material'
-        count[:produceable] = count[:available]
-      when 'part'
-        parts_aoh.each do |part|
-          if count[:id] == part[:id]
-            count[:makeable] = part[:makeable]
-            count[:produceable] = part[:produceable]
-          end
-        end
-      when 'component'
-        comps_aoh.each do |comp|
-          if count[:id] == comp[:id]
-            count[:makeable] = comp[:makeable]
-            count[:produceable] = comp[:produceable]
-          end
-        end
-      end
-      tech_items_aoh << count if count[:required]
-    end
-
-    tech_items_aoh.sort_by! { |hsh| hsh[:produceable] }
   end
 end

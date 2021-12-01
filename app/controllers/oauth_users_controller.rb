@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class OauthUsersController < ApplicationController
-  before_action :find_and_authorize_user, only: %i[status manual update]
+  before_action :find_and_authorize_user, only: %i[status show manual update delete]
 
   layout 'blank', only: [:update]
 
@@ -42,34 +42,49 @@ class OauthUsersController < ApplicationController
     @emails = @oauth_user.emails.ordered
   end
 
+  def show
+    redirect_to auth_status_path(@oauth_user)
+  end
+
   def manual
     @emails = @oauth_user.emails.synced.ordered
   end
 
   def update
+    # from #manual:
+    #   can submit :manual_query
+    # from #status
+    #   can submit :sync_emails
     @oauth_user.update(oauth_user_params)
 
     if oauth_user_params[:manual_query].present?
       begin
-        GmailClient.new(@oauth_user).delay.batch_get_queried_messages(query: oauth_user_params[:manual_query])
+        GmailClient.new(@oauth_user).delay(queue: 'gmail_client').batch_get_queried_messages(query: oauth_user_params[:manual_query])
       rescue Signet::AuthorizationError => e
         @error = e
       end
 
       if @error
         respond_to do |format|
-          format.js { render 'error' }
+          format.js { render 'error', layout: 'blank' }
         end
       else
         respond_to do |format|
-          format.js { render 'querying' }
+          format.js { render 'querying', layout: 'blank' }
         end
       end
     else
       respond_to do |format|
-        format.js { render 'update' }
+        format.js { render 'update', layout: 'blank' }
       end
     end
+  end
+
+  def delete
+    @oauth_user.destroy
+
+    flash[:notice] = 'Deleted Oauth User and associated emails.'
+    redirect_to auth_index_path
   end
 
   private

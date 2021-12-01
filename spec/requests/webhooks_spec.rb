@@ -39,5 +39,4 @@ RSpec.describe 'Webhooks', type: :request do
       expect_any_instance_of(KindfulClient).to_not receive(:import_transaction)
     end
   end
-
 end

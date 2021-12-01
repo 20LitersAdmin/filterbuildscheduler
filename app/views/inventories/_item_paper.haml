@@ -1,0 +1,16 @@
+-# frozen_string_literal: true
+
+- label_col_class = item_paper.only_loose? ? 'loose-column-full' : 'loose-column'
+
+.label-column
+  = render partial: 'labels/label', locals: { label: Label.new(item_paper.label_hash) }
+%div{ class: label_col_class }
+  %p Loose:
+  %p
+    %i Previous: #{human_number item_paper.loose_count, display_zero: true}
+- unless item_paper.only_loose?
+  .box-column
+    %p Box:
+    %p
+      %i Previous: #{human_number item_paper.box_count, display_zero: true}
+

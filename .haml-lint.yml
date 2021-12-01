@@ -3,7 +3,11 @@ linters:
     max: 900
   IdNames:
     style: 'snake_case'
+  ClassesBeforeIds:
+    EnforcedStyle: 'id'
   InlineStyles:
+    enabled: false
+  IdNames:
     enabled: false
 
   RuboCop:
@@ -13,3 +17,4 @@ linters:
       - Layout/TrailingEmptyLines
       - Lint/Void
       - Metrics/BlockLength
+      - Bundler/GemVersion

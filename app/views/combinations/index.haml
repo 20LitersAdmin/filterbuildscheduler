@@ -1,0 +1,16 @@
+-# frozen_string_literal: true
+
+.container
+  .row
+    .col-xs-12
+      %h3 Choose a Technology for a list of all items:
+  .row
+    .col-xs-12
+      %table#list_item_tbl.table.table-striped
+        %thead
+          %tr
+            %th Name
+            %th Image
+            %th Owner
+        %tbody
+          = render(partial: 'technology', collection: @techs)

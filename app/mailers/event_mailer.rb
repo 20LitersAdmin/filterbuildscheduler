@@ -52,10 +52,10 @@ class EventMailer < ApplicationMailer
     @user = user
 
     @event.changes.each_pair { |k, v| instance_variable_set("@#{k}", v) }
-    @technology = Technology.with_deleted.find(@event.technology_id)
-    @technology_was = Technology.with_deleted.find(@event.technology_id_was)
-    @location = Location.with_deleted.find(@event.location_id)
-    @location_was = Location.with_deleted.find(@event.location_id_was)
+    @technology = Technology.find(@event.technology_id)
+    @technology_was = Technology.find(@event.technology_id_was)
+    @location = Location.find(@event.location_id)
+    @location_was = Location.find(@event.location_id_was)
 
     @recipients = User.notify.map(&:email)
     @summary = '[20 Liters] ' + @event.title + ': ' + @technology.name
@@ -80,12 +80,12 @@ class EventMailer < ApplicationMailer
     mail(to: @recipients, subject: '[20 Liters] NOTICE: Build Event Changed')
   end
 
-  def cancelled(event_id, current_user)
-    @event = Event.with_deleted.find(event_id)
+  def cancelled(event, current_user)
+    @event = event
     @user = current_user
     @recipients = User.notify.map(&:email)
-    @location = Location.with_deleted.find(@event.location_id)
-    @registrations = @event.registrations.with_deleted
+    @location = @event.location
+    @num_of_builders = @event.registrations.builders.size
 
     if @event.leaders_registered.count == 1
       @leader_count_text = 'The leader was:'
@@ -120,6 +120,7 @@ class EventMailer < ApplicationMailer
     @user = initiator
     @recipients = User.notify.map(&:email)
     @subject = "[20 Liters] #{events.size} #{events.size > 1 ? 'events' : 'event'} were created as replicas"
+
     mail(to: @recipients, subject: @subject)
   end
 end

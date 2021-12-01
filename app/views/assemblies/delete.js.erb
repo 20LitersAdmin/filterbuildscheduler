@@ -1,0 +1,10 @@
+// remove this row from the DOM table
+<% if @msg_type == 'success' %>
+  $("tr#assembly_<%= @assembly.id %>").remove();
+<% end %>
+
+// clear out any old flash messages
+$('.main div.alert').remove();
+
+// fake a flash message
+$('.main').prepend('<div class="alert fade in <%= @msg_type %>"><button class="close" data-dismiss="alert">x</button><%= @message %></div>');

@@ -1,0 +1,17 @@
+#assemblies_show {
+
+
+  .list_item_tbl {
+    border-bottom: 1px solid #ddd;
+    td.left-border {
+      border-left: 1px solid #ddd;
+      border-bottom: 1px solid #ddd;
+      // background-color: red;
+    }
+
+    td.no-bottom-border {
+      border-bottom: none;
+      border-top: none;
+    }
+  }
+}
