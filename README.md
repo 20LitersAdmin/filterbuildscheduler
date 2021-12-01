@@ -1,15 +1,6 @@
 # README
 ## Slim Down Inventory project
 
-* Run & fix tests
-  - Concern test is green
-  - Helper test is green
-  - Job tests are green
-  - Model tests are green
-  - Request test is green
-  - Service tests are green
-  - System tests are yellow (264 tests, 18 pending)
-
 ## After 1st deploy:
 - Heroku needs redis: https://blog.heroku.com/real_time_rails_implementing_websockets_in_rails_5_with_action_cable#deploying-our-application-to-heroku
 - migrate the dB (which runs the necessary jobs)
@@ -77,3 +68,61 @@
 2. Inventories#index -> Inventories#history has @item.history_series kickchart, which lays available, box, and loose on the same axis. Should probably not be.
   - Three separate charts, maybe?
   - Three separate axes, but might be confusing: https://www.chartjs.org/docs/latest/axes/
+
+
+### system spec policy checking:
+```
+context 'when visited by a' do
+  it 'anon user, it redirects to sign-in page' do
+    visit url
+
+    expect(page).to have_content 'You need to sign in first'
+    expect(page).to have_content 'Sign in'
+  end
+
+  it 'builder, it redirects to home page' do
+    sign_in create :user
+    visit url
+
+    expect(page).to have_content 'You don\'t have permission'
+    expect(page).to have_content 'Upcoming Builds'
+  end
+
+  it 'leader, it redirects to home page' do
+    sign_in create :leader
+    visit url
+
+    expect(page).to have_content 'You don\'t have permission'
+    expect(page).to have_content 'Upcoming Builds'
+  end
+
+  it 'inventoryist, it shows the page' do
+    sign_in create :inventoryist
+    visit url
+
+    expect(page).to have_content 'Something'
+  end
+
+  it 'scheduler, it redirects to home page' do
+    sign_in create :scheduler
+    visit url
+
+    expect(page).to have_content 'You don\'t have permission'
+    expect(page).to have_content 'Upcoming Builds'
+  end
+
+  it 'data_manager, it shows the page' do
+    sign_in create :data_manager
+    visit url
+
+    expect(page).to have_content 'Something'
+  end
+
+  it 'admin, it shows the page' do
+    sign_in create :admin
+    visit url
+
+    expect(page).to have_content 'Something'
+  end
+end
+```

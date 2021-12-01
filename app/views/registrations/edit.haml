@@ -1,5 +1,7 @@
 -# frozen_string_literal: true
 
+- path = @btn_admin ? event_registration_path(@registration.event, @registration, admin: true) : event_registration_path(@registration.event, @registration)
+
 .col-xs-12.col-md-6.col-md-offset-3
   %h2= @event.full_title
   %hr/
@@ -8,8 +10,7 @@
     You registered on #{@registration.created_at.strftime('%-m/%-d/%Y')}
   = simple_form_for [@event, @registration] do |f|
     = f.error_notification
-    - if @btn_admin
-      = f.hidden_field :form_source, value: 'admin'
+    = f.hidden_field :form_source, value: 'admin' if @btn_admin
     .form-inputs
       = f.simple_fields_for @user do |u|
         = u.input :email_opt_out, inline_label: 'Opt out of emails?'
@@ -17,6 +18,6 @@
       = f.input :accommodations, autofocus: true, as: :text, label: 'Notes'
     .form-actions
       = f.button :submit, 'Update', class: 'btn yellow fullwidth'
-      = link_to 'Cancel Registration', event_registration_path(@registration.event, @registration, admin: true), data: {:confirm => 'Are you sure?'}, :method => :delete, class: 'btn red fullwidth'
+      = link_to 'Cancel Registration', path, data: { confirm: 'Are you sure?' }, method: :delete, class: 'btn red fullwidth'
   %br/
   = link_to 'Back', :back, class: 'btn blue fullwidth'

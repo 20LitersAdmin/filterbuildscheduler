@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'Visiting Events', type: :system do
+RSpec.describe 'Showing Events', type: :system do
   context 'in the future that are' do
     it 'public can be visited' do
       event = create(:event, is_private: false)
