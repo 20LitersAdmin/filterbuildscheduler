@@ -71,7 +71,7 @@ RSpec.describe 'Combinations#edit' do
     end
 
     it 'create an assembly' do
-      item = create :component
+      item = create :component, name: 'FactoryBot comp'
 
       click_link 'New'
 
@@ -81,7 +81,7 @@ RSpec.describe 'Combinations#edit' do
 
       find('#assembly_quantity').click
 
-      expect(page).to have_css 'select#assembly_item_id'
+      expect(page).to have_css('select#assembly_item_id', wait: 3)
 
       select item.name, from: 'assembly_item_id'
 
@@ -89,7 +89,7 @@ RSpec.describe 'Combinations#edit' do
 
       click_submit
 
-      expect(page).to have_content 'Assembly created!'
+      expect(page).to have_content('Assembly created!', wait: 3)
 
       expect(Assembly.last.quantity).to eq 2
       expect(Assembly.last.item).to eq item

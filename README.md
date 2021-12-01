@@ -2,6 +2,7 @@
 ## Slim Down Inventory project
 
 ## After 1st deploy:
+- production run rails db:migrate
 - Heroku needs redis: https://blog.heroku.com/real_time_rails_implementing_websockets_in_rails_5_with_action_cable#deploying-our-application-to-heroku
 - migrate the dB (which runs the necessary jobs)
 - remove extrap models
