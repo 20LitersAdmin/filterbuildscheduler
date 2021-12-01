@@ -54,7 +54,7 @@ RSpec.describe QuantityAndDepthCalculationJob, type: :job do
     it 'calls assemblies_loop' do
       job.technology = technology
 
-      expect(job).to receive(:assemblies_loop).with(assemblies)
+      expect(job).to receive(:assemblies_loop).with(technology.assemblies)
 
       job.loop_technology
     end
