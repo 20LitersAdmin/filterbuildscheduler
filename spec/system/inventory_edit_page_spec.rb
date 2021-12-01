@@ -175,7 +175,7 @@ RSpec.describe 'Inventory edit page', type: :system do
       expect(page).to have_content Count.third.item.name
     end
 
-    fit 'submit counts' do
+    it 'submit counts' do
       expect(page).to have_content "Edit #{inventory.name}"
 
       # partial box submit
@@ -185,7 +185,7 @@ RSpec.describe 'Inventory edit page', type: :system do
       click_button('Submit Box Count')
 
       # wait for CountsController#update.js.erb to clear the  modal
-      expect(page).to have_css('#count_modal_body', visible: false, text: 'cleared', wait: 10)
+      expect(page).to have_css('#count_modal_body', visible: false, text: 'cleared', wait: 3)
 
       # partial loose submit
       find("div#count_#{Count.second.id} a.count-btn").click
@@ -194,7 +194,7 @@ RSpec.describe 'Inventory edit page', type: :system do
       click_button('Submit Loose Count')
 
       # wait for CountsController#update.js.erb to clear the  modal
-      expect(page).to have_css('#count_modal_body', visible: false, text: 'cleared', wait: 10)
+      expect(page).to have_css('#count_modal_body', visible: false, text: 'cleared', wait: 3)
 
       # full submit
       find("div#count_#{Count.third.id} a.count-btn").click
@@ -203,9 +203,9 @@ RSpec.describe 'Inventory edit page', type: :system do
 
       click_button('Submit')
 
-      expect(page).to have_css("div#count_#{Count.first.id} a.count-btn", text: 'Loose Count', wait: 10)
-      expect(page).to have_css("div#count_#{Count.second.id} a.count-btn", text: 'Box Count', wait: 10)
-      expect(page).to have_css("div#count_#{Count.third.id} a.count-btn", text: 'Edit', wait: 10)
+      expect(page).to have_css("div#count_#{Count.first.id} a.count-btn", text: 'Loose Count', wait: 3)
+      expect(page).to have_css("div#count_#{Count.second.id} a.count-btn", text: 'Box Count', wait: 3)
+      expect(page).to have_css("div#count_#{Count.third.id} a.count-btn", text: 'Edit', wait: 3)
 
       expect(Count.first.unopened_boxes_count).to eq 5
       expect(Count.second.loose_count).to eq 50
