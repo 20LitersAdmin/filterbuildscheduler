@@ -10,5 +10,7 @@ test:
 
 production:
   adapter: redis
-  url: REDIS_URL
+  url: <%= ENV.fetch("REDIS_URL") { "redis://localhost:6379/1" } %>
   channel_prefix: build-planner_production
+  ssl_params:
+      verify_mode: <%= OpenSSL::SSL::VERIFY_NONE %>

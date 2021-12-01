@@ -6,17 +6,6 @@ orbs:
   browser-tools: circleci/browser-tools@1.1
 
 jobs:
-  # build:
-  #   docker:
-  #     - image: cimg/ruby:3.0.2-browsers
-
-
-  #   steps:
-  #     - browser-tools/install-chrome
-  #     - browser-tools/install-chromedriver
-  #     - checkout
-  #     - ruby/install-deps
-
   test:
     parallelism: 3
     docker:
@@ -27,6 +16,8 @@ jobs:
           POSTGRES_USER: chiperific
           POSTGRES_DB: build_planner_test
           POSTGRES_PASSWORD: ""
+
+      - image: circleci/redis:5-alpine
 
     environment:
       BUNDLE_JOBS: '3'
@@ -56,7 +47,4 @@ workflows:
   version: 2
   just_test:
     jobs:
-      # - build
       - test
-          # requires:
-            # - build
