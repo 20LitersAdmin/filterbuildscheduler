@@ -231,6 +231,7 @@ $(document).on("turbolinks:load", function(){
 
   $('.datatable-leaders').DataTable({
     retrieve: true,
+    paging: false,
     order: [[0, "asc"]],
     responsive: true,
     autoWidth: false,
@@ -264,15 +265,7 @@ $(document).on("turbolinks:load", function(){
           columns: [0, 1, 2, 3, 5, 7, 8]
         }
       }
-    ],
-    language: {
-      paginate: {
-        first: "&#8676",
-        previous: "&#8592",
-        next: "&#8594",
-        last: "&#8677"
-      }
-    }
+    ]
   });
 
   $('.datatable-label-chooser').DataTable({

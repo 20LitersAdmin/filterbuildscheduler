@@ -30,8 +30,7 @@
             %th.no-print Leader Type
             %th Qualified
             %th Notes
-            - if current_user.is_admin?
-              %th.no-print
+            %th.no-print
             %th.no-print
         %tbody= render partial: 'leader', collection: @leaders
 
