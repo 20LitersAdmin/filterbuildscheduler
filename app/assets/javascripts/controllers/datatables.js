@@ -231,6 +231,7 @@ $(document).on("turbolinks:load", function(){
 
   $('.datatable-leaders').DataTable({
     retrieve: true,
+    paging: false,
     order: [[0, "asc"]],
     responsive: true,
     autoWidth: false,

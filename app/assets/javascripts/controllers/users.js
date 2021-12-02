@@ -63,23 +63,31 @@ function emailDirtyToggle() {
 
   $(document).on("click", "a#contactor_email", function(){
     var emailInput = document.getElementById("contactor_email_list");
+    var emails = emailInput.value;
+    var countCommas = ((emails.match(/,/g) || []).length) + 1;
 
-    $("input#contactor_email_list").attr("type", "text");
-    emailInput.select();
-    emailInput.setSelectionRange(0, 99999); // for mobile devices
-
-    document.execCommand("copy");
-    $("input#contactor_email_list").attr("type", "hidden");
-
-    countCommas = (emailInput.value.match(/,/g) || []).length;
-    count = countCommas + 1;
-    lang = "Copied " + count + " emails to the clipboard.";
-
-    alert(lang);
+    navigator.clipboard.writeText(emails).then(function(){
+      alert(`Copied ${countCommas} emails to the clipboard.`);
+    }, function(promise, reason) {
+      console.log(`Tried to copy emails to clipboard, didn't work.`);
+    });
 
     event.preventDefault();
     false;
   });
+
+  $(document).on("click", "a.copy-email", function(){
+    var email = this.dataset.copy;
+
+    navigator.clipboard.writeText(email).then(function(){
+      alert(`Copied ${email} to clipboard.`);
+    }, function() {
+      console.log(`Tried to copy email to clipboard, didn't work.`);
+    });
+
+    event.preventDefault();
+    false;
+  })
 
   $(document).on("change", "select.avail-select", function() {
     var select = $(this);
