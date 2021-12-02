@@ -81,9 +81,10 @@ RailsAdmin.config do |config|
   config.model 'User' do
     weight 0
     list do
-      scopes %i[builders leaders inventoryists admins active discarded]
+      scopes %i[builders leaders inventoryists data_managers schedulers admins active discarded]
       sort_by 'lname, fname'
-      field :name
+      field :fname
+      field :lname
       field :email
       field :primary_location
       field :registrations do
