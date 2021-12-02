@@ -264,15 +264,7 @@ $(document).on("turbolinks:load", function(){
           columns: [0, 1, 2, 3, 5, 7, 8]
         }
       }
-    ],
-    language: {
-      paginate: {
-        first: "&#8676",
-        previous: "&#8592",
-        next: "&#8594",
-        last: "&#8677"
-      }
-    }
+    ]
   });
 
   $('.datatable-label-chooser').DataTable({
