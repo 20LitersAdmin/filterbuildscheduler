@@ -1,8 +1,5 @@
 # README
 ## Quick fixes:
-- /leaders has no Edit button unless is_admin
-- /leaders "Email" mailto: not working
-- /leaders is not showing all records
 - rails_admin user is searching by email and location, not name??
 
 ### Policies:

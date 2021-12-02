@@ -23,4 +23,4 @@
   %td.no-print
     = link_to 'Edit', rails_admin.edit_path(model_name: 'user', id: leader.id), class: 'btn blue', target: '_blank'
   %td.no-print
-    = mail_to leader.email, 'Email', class: 'btn yellow', target: '_blank'
+    = link_to 'Copy Email', '#!', class: 'btn yellow copy-email', data: { copy: leader.email }
