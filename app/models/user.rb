@@ -45,7 +45,7 @@ class User < ApplicationRecord
   scope :notify,                -> { kept.where(send_notification_emails: true) }
   scope :notify_inventory,      -> { kept.where(send_inventory_emails: true) }
   scope :builders,              -> { kept.where(is_admin: false, is_leader: false, does_inventory: false, send_notification_emails: false, send_inventory_emails: false) }
-  scope :non_builders,          -> { kept.where('is_admin = TRUE OR is_leader = TRUE OR does_inventory = TRUE OR send_notification_emails = TRUE OR send_inventory_emails = TRUE') }
+  scope :non_builders,          -> { kept.where('is_admin = TRUE OR is_leader = TRUE OR does_inventory = TRUE OR is_scheduler = TRUE OR is_data_manager = TRUE') }
   scope :with_registrations,    -> { joins(:registrations).uniq }
   scope :without_registrations, -> { left_outer_joins(:registrations).where(registrations: { id: nil }) }
 

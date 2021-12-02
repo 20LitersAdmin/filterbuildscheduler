@@ -1,5 +1,31 @@
 # README
+## Quick fixes:
+- /leaders has no Edit button unless is_admin
+- /leaders "Email" mailto: not working
+- /leaders is not showing all records
+- rails_admin user is searching by email and location, not name??
+
+### Policies:
+- Prevent some user types from accessing some parts of rails_admin?
+
+- Rails_admin#user#edit
+  - prevent some fields from being visible based on user type?
+    - only admins can create admins
+
+- Rails_admin#destroyable
+  - only available to full admins?
+
+- User.non_builders scope is missing new roles
+- RailsAdmin#users has no filters for new roles
+
 ### Should do:
+- rails_admin pjax screws up browser back and forward buttons
+
+- paper inventory should sort
+  - by tech, and traverse up tree for each tech
+  - Alphabetical by UID or name
+
+
 - easy-print report for setup crew:
   - every component and their subs w/ current counts
 
