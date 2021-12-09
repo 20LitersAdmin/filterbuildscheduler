@@ -23,6 +23,28 @@ RSpec.describe Location, type: :model do
     end
   end
 
+  describe 'can be destroyed' do
+    it 'when associated with a user' do
+      leader = create(:leader, primary_location_id: location.id)
+
+      expect { location.destroy }
+        .to change { Location.all.size }
+        .by(-1)
+
+      expect(leader.reload.technologies).not_to include location
+    end
+
+    it 'when associated with an event' do
+      event = create(:event, location: location)
+
+      expect { location.destroy }
+        .to change { Location.all.size }
+        .by(-1)
+
+      expect(event.reload.location).to eq nil
+    end
+  end
+
   describe '#one_liner' do
     it 'concatentates the city, state and zip' do
       expect(location.one_liner).to include location.city

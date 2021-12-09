@@ -27,6 +27,8 @@ class Technology < ApplicationRecord
   after_save { image.purge if remove_image == '1' }
   after_save { display_image.purge if remove_display_image == '1' }
 
+  before_destroy :manage_dependent_events
+
   # Exists in ActiveStorage already
   # scope :with_attached_image, -> { joins(:image_attachment) }
   scope :without_attached_image, -> { where.missing(:image_attachment) }
@@ -79,6 +81,10 @@ class Technology < ApplicationRecord
   end
 
   private
+
+  def manage_dependent_events
+    events.update_all(technology_id: nil)
+  end
 
   def name_underscore
     # remove bad characters like commas etc
