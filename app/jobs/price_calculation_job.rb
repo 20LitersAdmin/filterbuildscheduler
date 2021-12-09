@@ -23,7 +23,7 @@ class PriceCalculationJob < ApplicationJob
     # then loop over assemblies to update the combination price
     sum_prices_for_assembly_combinations
 
-    puts '========================= FINISHED QuantityAndDepthCalculationJob ========================='
+    puts '========================= FINISHED PriceCalculationJob ========================='
 
     ActiveRecord::Base.logger.level = 0
   end
@@ -49,14 +49,15 @@ class PriceCalculationJob < ApplicationJob
     # get summed as we traverse upwards towards the roots
     puts 'Looping over Assemblies to set their prices and their combination\'s price'
     Assembly.descending.each do |a|
-      # reclaculates a.price_cents on before_save
-      a.save
-      a.reload
+      # skip callbacks to avoid an infinite loop of triggering this job
+
+      a_price_cents = a.item.price_cents * a.quantity
+      # re-calculate the price_cents
+      a.update_columns(price_cents: a_price_cents)
 
       c = a.combination
-      # skip callbacks to avoid an infinite loop of triggering this job
       # c.price_cents + a.price_cents is sorta just +=
-      c.update_columns(price_cents: c.price_cents + a.price_cents)
+      c.update_columns(price_cents: c.price_cents + a_price_cents)
     end
   end
 end
