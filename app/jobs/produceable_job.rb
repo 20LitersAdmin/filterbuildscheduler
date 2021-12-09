@@ -17,38 +17,30 @@ class ProduceableJob < ApplicationJob
 
     # item.available_count + item.can_be_produced indicates how many combination.can_be_prodced.
 
-    puts 'set :can_be_produced to nil for all Components, and Technologies'
     # this way I can check for un-touched records
     Component.kept.update_all(can_be_produced: nil)
     Technology.kept.update_all(can_be_produced: nil)
 
     # start with materials as they are always the bottom of the list
     # Materials can go up because parts only rely on one material
-
-    puts 'loop over all materials to set their parts\' produceable value'
     Material.kept.with_parts.each do |material|
       loop_parts(material)
     end
 
     # make sure parts that aren't made from materials have their produceable amount set
-    puts 'set remaining part\'s produceable value to 0'
     Part.kept.not_made_from_material.update_all(can_be_produced: 0)
 
     # Assembly.part_items + Assembly.component_items == Assembly.all
 
     # Assembly.part_items are naturally lower nodes
-    puts 'loop over all Assembly.part_items'
     Assembly.without_price_only.part_items.each do |a|
       calculate_for_combination(a)
     end
 
     # Assembly.component_items are naturally higher nodes
-    puts 'loop over all Assembly.component_items'
     Assembly.without_price_only.component_items.each do |a|
       calculate_for_combination(a)
     end
-
-    puts 'check for any Components and Technologies that are still can_be_produced: nil'
 
     Component.kept.where(can_be_produced: nil).update_all(can_be_produced: 0)
     Technology.kept.where(can_be_produced: nil).update_all(can_be_produced: 0)

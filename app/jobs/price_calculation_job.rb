@@ -10,8 +10,6 @@ class PriceCalculationJob < ApplicationJob
     ActiveRecord::Base.logger.level = 1
 
     puts '========================= Starting PriceCalculationJob ========================='
-
-    puts 'Setting Technology, Component, and Part#made_from_material prices to 0'
     # skip callbacks to avoid an infinite loop of triggering this job
     Technology.update_all(price_cents: 0)
     Component.update_all(price_cents: 0)
@@ -23,13 +21,12 @@ class PriceCalculationJob < ApplicationJob
     # then loop over assemblies to update the combination price
     sum_prices_for_assembly_combinations
 
-    puts '========================= FINISHED QuantityAndDepthCalculationJob ========================='
+    puts '========================= FINISHED PriceCalculationJob ========================='
 
     ActiveRecord::Base.logger.level = 0
   end
 
   def set_prices_for_parts_made_from_materials
-    puts 'Setting prices for Parts made from Materials'
     Part.made_from_material.each do |part|
       q_from_m = part.quantity_from_material
       if q_from_m.zero? || q_from_m.nil?
@@ -47,16 +44,16 @@ class PriceCalculationJob < ApplicationJob
   def sum_prices_for_assembly_combinations
     # starting with the "lowest" nodes is crucial to make sure prices
     # get summed as we traverse upwards towards the roots
-    puts 'Looping over Assemblies to set their prices and their combination\'s price'
     Assembly.descending.each do |a|
-      # reclaculates a.price_cents on before_save
-      a.save
-      a.reload
+      # skip callbacks to avoid an infinite loop of triggering this job
+
+      a_price_cents = a.item.price_cents * a.quantity
+      # re-calculate the price_cents
+      a.update_columns(price_cents: a_price_cents)
 
       c = a.combination
-      # skip callbacks to avoid an infinite loop of triggering this job
       # c.price_cents + a.price_cents is sorta just +=
-      c.update_columns(price_cents: c.price_cents + a.price_cents)
+      c.update_columns(price_cents: c.price_cents + a_price_cents)
     end
   end
 end
