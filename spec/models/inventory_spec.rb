@@ -133,12 +133,6 @@ RSpec.describe Inventory, type: :model do
         .and_return(1)
     end
 
-    it 'fires on after_update' do
-      expect(inventory).to receive(:run_produceable_job)
-
-      inventory.update(date: Date.yesterday)
-    end
-
     context 'when inventory.completed_at is nil' do
       it "doesn't fire" do
         expect(inventory.completed_at).to eq nil
@@ -149,7 +143,7 @@ RSpec.describe Inventory, type: :model do
 
         expect(ar_relation).not_to receive(:delete_all)
 
-        inventory.__send__(:run_produceable_job)
+        inventory.run_produceable_job
       end
     end
 
@@ -157,7 +151,7 @@ RSpec.describe Inventory, type: :model do
       it 'fires and queues up an instance of ProduceableJob' do
         inventory.completed_at = Time.now
 
-        expect { inventory.__send__(:run_produceable_job) }
+        expect { inventory.run_produceable_job }
           .to have_enqueued_job(ProduceableJob)
       end
     end
@@ -171,7 +165,7 @@ RSpec.describe Inventory, type: :model do
 
       expect(ar_relation).to receive(:delete_all)
 
-      inventory.__send__(:run_produceable_job)
+      inventory.run_produceable_job
     end
   end
 
@@ -187,17 +181,11 @@ RSpec.describe Inventory, type: :model do
         .and_return(1)
     end
 
-    it 'fires on after_update' do
-      expect(inventory).to receive(:run_count_transfer_job)
-
-      inventory.update(date: Date.yesterday)
-    end
-
     context 'when inventory.completed_at is nil' do
       it "doesn't fire" do
         expect(inventory.completed_at).to eq nil
 
-        expect { inventory.__send__(:run_count_transfer_job) }
+        expect { inventory.run_count_transfer_job }
           .not_to have_enqueued_job(CountTransferJob)
       end
     end
@@ -206,7 +194,7 @@ RSpec.describe Inventory, type: :model do
       it 'fires and queues up an instance of CountTransfer job' do
         inventory.completed_at = Time.now
 
-        expect { inventory.__send__(:run_count_transfer_job) }
+        expect { inventory.run_count_transfer_job }
           .to have_enqueued_job(CountTransferJob)
       end
     end
@@ -219,7 +207,7 @@ RSpec.describe Inventory, type: :model do
 
       expect(ar_relation).to receive(:delete_all)
 
-      inventory.__send__(:run_count_transfer_job)
+      inventory.run_count_transfer_job
     end
   end
 end

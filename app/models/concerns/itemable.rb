@@ -27,7 +27,12 @@ module Itemable
 
     after_save :run_price_calculation_job, if: -> { saved_change_to_price_cents? }
 
-    after_update :run_produceable_job, if: -> { saved_change_to_loose_count? || saved_change_to_box_count? || saved_change_to_quantity_per_box? }
+    # CountTransferJob calls item.save so this queues up too many jobs
+    # These things already trigger ProduceableJob:
+    # - CRUDing an assembly
+    # - Completing an inventory
+
+    # after_update :run_produceable_job, if: -> { saved_change_to_loose_count? || saved_change_to_box_count? || saved_change_to_quantity_per_box? }
   end
 
   def all_technologies
