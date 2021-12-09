@@ -23,7 +23,7 @@ RSpec.describe 'Destroying a discarded event', type: :system do
         .to raise_error ActiveRecord::RecordNotFound
     end
 
-    fit 'can be deleted from show' do
+    it 'can be deleted from show' do
       visit rails_admin.show_path(model_name: 'event', id: @event.id)
 
       expect(page).to have_content @event.title
