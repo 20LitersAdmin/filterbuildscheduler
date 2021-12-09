@@ -78,15 +78,19 @@ class InventoriesController < ApplicationController
     # @inventory only gets updated once, on complete, no incremental updates
     @inventory.completed_at = Time.now.localtime
 
-    # If completed_at is present, Inventory#after_update triggers:
-    # ProduceableJob
-    # CountTransferJob
     @inventory.save
+
+    # This used to be Inventory#after_save
+    # but the job calls @inventory.save, so it always triggered itself infinitely
+    @inventory.reload.run_count_transfer_job
 
     # NOTE: the unless is probably unnecessary as event-based inventories don't hit the update action, but just being overly cautious
     InventoryMailer.notify(@inventory, current_user).deliver_later unless @inventory.event_based?
 
     flash[:success] = 'Inventory complete! All completed counts have been transferred to their items.'
+
+    # This used to be Inventory#after_save
+    @inventory.run_produceable_job
 
     redirect_to inventories_path
   end
