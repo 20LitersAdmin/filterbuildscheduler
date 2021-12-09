@@ -9,6 +9,7 @@ class Technology < ApplicationRecord
   # #quantities is a JSON store of the total number (integer / float) needed of each item [Component, Part, Material]: { item.uid => 99, item.uid => 99 }
 
   has_and_belongs_to_many :users
+  has_many :events
 
   has_one_attached :image, dependent: :purge
   has_one_attached :display_image, dependent: :purge
