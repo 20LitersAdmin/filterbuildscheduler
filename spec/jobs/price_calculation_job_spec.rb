@@ -92,7 +92,7 @@ RSpec.describe PriceCalculationJob, type: :job do
         allow(ar_relation).to receive(:each).and_yield(assembly)
       end
 
-      fit 'calls assembly.update_columns to recalculate price_cents' do
+      it 'calls assembly.update_columns to recalculate price_cents' do
         # Itemable has an after_save that triggers PriceCalculationJob
         # while probably not bad for testing, worth skipping callbacks
         part.update_columns(price_cents: 40)
