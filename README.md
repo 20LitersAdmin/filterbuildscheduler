@@ -62,7 +62,7 @@
   - supplier_rails_admin_manage (c, u, di, r, de)
 
   - technology_rails_admin_views
-  - technology_rails_admin_manage (c, u, di, r, de)
+  - technology_rails_admin_manage (c, u, di, r)
 
   - user_rails_admin_views
   - user_rails_admin_manage (c, u, di, r, de)

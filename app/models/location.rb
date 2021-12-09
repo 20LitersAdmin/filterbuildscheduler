@@ -20,6 +20,8 @@ class Location < ApplicationRecord
   before_save :process_image, if: -> { attachment_changes.any? }
   after_save { image.purge if remove_image == '1' }
 
+  before_destroy :manage_dependents
+
   def one_liner
     "#{city}, #{state} #{zip}"
   end
@@ -47,6 +49,12 @@ class Location < ApplicationRecord
   end
 
   private
+
+  def manage_dependents
+    events.update_all(location_id: nil)
+
+    users.update_all(primary_location_id: nil)
+  end
 
   def name_underscore
     name.tr(' ', '').underscore

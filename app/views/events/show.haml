@@ -44,13 +44,14 @@
             %h2 The Filter
             %h3= @event.technology.name
             %p= @event.technology.public_description
-          - else
             %h2 The Age Limits
-          - if @event.technology.family_friendly
-            %h4 Family-friendly! Ages 4 - 104!
+            - if @event.technology.family_friendly
+              %h4 Family-friendly! Ages 4 - 104!
+            - else
+              %h4 Grown-up event
+              %i Ages 12+ for safety reasons
           - else
-            %h4 Grown-up event
-            %i Ages 12+ for safety reasons
+            %h3 No Technology selected.
         - if @tech_img.present?
           .col-xs-4.tech-img-div
             = image_tag @tech_img, class: 'tech-img'
@@ -60,14 +61,17 @@
           %h2 The Details
           %h4= @event.format_time_range
         %div{ class: (@location_img.present? ? 'col-xs-8' : 'col-xs-12') }
-          %h4= @location.name
-          %div= @location.address1
-          - if @location.address2
-            %div= @location.address2
-          %div= @location.one_liner
-          - if @location.instructions
-            %div= @location.instructions
-          = link_to('Map', @location.map_url, class: 'btn blue fullwidth', target: '_blank') if @location.map_url.present?
+          - if @event.location
+            %h4= @location.name
+            %div= @location.address1
+            - if @location.address2
+              %div= @location.address2
+            %div= @location.one_liner
+            - if @location.instructions
+              %div= @location.instructions
+            = link_to('Map', @location.map_url, class: 'btn blue fullwidth', target: '_blank') if @location.map_url.present?
+          - else
+            %h3 No location set.
         - if @location_img.present?
           .col-xs-4
             %a{ data: { target: '#photoModal', toggle: 'modal' } }

@@ -16,9 +16,35 @@ RSpec.describe Technology, type: :model do
     it 'in order to save' do
       expect(technology.save).to eq true
 
-      expect { no_name.save!(validate: false) }.to raise_error ActiveRecord::NotNullViolation
-      expect { no_people.save!(validate: false) }.to raise_error ActiveRecord::NotNullViolation
-      expect { no_lifespan.save!(validate: false) }.to raise_error ActiveRecord::NotNullViolation
+      expect { no_name.save!(validate: false) }
+        .to raise_error ActiveRecord::NotNullViolation
+      expect { no_people.save!(validate: false) }
+        .to raise_error ActiveRecord::NotNullViolation
+      expect { no_lifespan.save!(validate: false) }
+        .to raise_error ActiveRecord::NotNullViolation
+    end
+  end
+
+  describe 'can be destroyed' do
+    it 'when associated with a user' do
+      leader = create(:leader)
+      leader.technologies << technology
+
+      expect { technology.destroy }
+        .to change { Technology.all.size }
+        .by(-1)
+
+      expect(leader.reload.technologies).not_to include technology
+    end
+
+    it 'when associated with an event' do
+      event = create(:event, technology: technology)
+
+      expect { technology.destroy }
+        .to change { Technology.all.size }
+        .by(-1)
+
+      expect(event.reload.technology).to eq nil
     end
   end
 

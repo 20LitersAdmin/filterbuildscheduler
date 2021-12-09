@@ -9,6 +9,7 @@ class Technology < ApplicationRecord
   # #quantities is a JSON store of the total number (integer / float) needed of each item [Component, Part, Material]: { item.uid => 99, item.uid => 99 }
 
   has_and_belongs_to_many :users
+  has_many :events
 
   has_one_attached :image, dependent: :purge
   has_one_attached :display_image, dependent: :purge
@@ -25,6 +26,8 @@ class Technology < ApplicationRecord
   before_save :process_images, if: -> { attachment_changes.any? }
   after_save { image.purge if remove_image == '1' }
   after_save { display_image.purge if remove_display_image == '1' }
+
+  before_destroy :manage_dependent_events
 
   # Exists in ActiveStorage already
   # scope :with_attached_image, -> { joins(:image_attachment) }
@@ -78,6 +81,10 @@ class Technology < ApplicationRecord
   end
 
   private
+
+  def manage_dependent_events
+    events.update_all(technology_id: nil)
+  end
 
   def name_underscore
     # remove bad characters like commas etc
