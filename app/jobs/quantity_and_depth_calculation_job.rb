@@ -15,14 +15,11 @@ class QuantityAndDepthCalculationJob < ApplicationJob
 
     Technology.list_worthy.each do |technology|
       @technology = technology
-      puts "== Starting #{@technology.name} =="
       loop_technology
 
       @technology.reload.quantities.each do |k, v|
         insert_into_item_quantities(k, v)
       end
-
-      puts "== FINISHED #{@technology.name} =="
     end
 
     puts '========================= FINISHED QuantityAndDepthCalculationJob ========================='
@@ -114,12 +111,10 @@ class QuantityAndDepthCalculationJob < ApplicationJob
   end
 
   def set_all_assembly_depths_to_zero
-    puts 'Setting all Assembly depths to 0'
     Assembly.update_all depth: 0
   end
 
   def set_all_item_quantities_to_zero
-    puts 'Setting all Component, Part and Material quantities to 0'
     Component.update_all quantities: {}
     Part.update_all quantities: {}
     Material.update_all quantities: {}
