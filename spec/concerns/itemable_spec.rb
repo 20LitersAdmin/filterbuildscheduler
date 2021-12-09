@@ -263,17 +263,6 @@ RSpec.shared_examples Itemable do
   end
 
   describe '#run_produceable_job' do
-    context 'when loose_count, box_count or quantity_per_box were changed' do
-      it 'fires on after_update' do
-        expect(item).to receive(:run_produceable_job).exactly(3).times
-
-        item.update(loose_count: 5)
-        item.update(box_count: 4)
-        item.update(quantity_per_box: 150)
-        item.update(name: 'Yowza')
-      end
-    end
-
     it 'calls delete_all on existing ProduceableJobs that haven\'t run yet' do
       ar_relation = instance_double ActiveRecord::Relation
       allow(Delayed::Job).to receive(:where).with(queue: 'produceable', locked_at: nil).and_return(ar_relation)
