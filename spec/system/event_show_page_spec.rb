@@ -30,6 +30,22 @@ RSpec.describe 'Showing Events', type: :system do
       expect(page).to have_content 'Registration Full.'
       expect(page).not_to have_button 'Register'
     end
+
+    it 'without a technology can be visited' do
+      event = create(:event, technology: nil)
+
+      visit event_path event
+
+      expect(page).to have_content event.full_title
+    end
+
+    it 'without a location can be visited' do
+      event = create(:event, technology: nil)
+
+      visit event_path event
+
+      expect(page).to have_content event.full_title
+    end
   end
 
   context 'past tense, anon user' do
@@ -128,8 +144,6 @@ RSpec.describe 'Showing Events', type: :system do
       expect(page).to have_button 'Register'
     end
   end
-
-  # next 2 shouldn't have register as leader checkbox
 
   context 'future tense, builder, not registered' do
     let(:event) { create :event }

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_11_10_182021) do
+ActiveRecord::Schema.define(version: 2021_12_09_140524) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -143,8 +143,8 @@ ActiveRecord::Schema.define(version: 2021_11_10_182021) do
     t.integer "max_leaders"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "location_id", null: false
-    t.integer "technology_id", null: false
+    t.integer "location_id"
+    t.integer "technology_id"
     t.boolean "is_private", default: false, null: false
     t.integer "item_goal", default: 0, null: false
     t.integer "technologies_built", default: 0, null: false
