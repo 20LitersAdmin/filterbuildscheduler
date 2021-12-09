@@ -3,8 +3,8 @@
 class Event < ApplicationRecord
   include Discard::Model
 
-  belongs_to :location
-  belongs_to :technology
+  belongs_to :location, optional: true
+  belongs_to :technology, optional: true
   has_one :inventory
   has_many :registrations, dependent: :destroy
   accepts_nested_attributes_for :registrations

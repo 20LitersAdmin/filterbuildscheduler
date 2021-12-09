@@ -3,7 +3,6 @@
 require 'rails_helper'
 
 RSpec.describe Event, type: :model do
-  # let(:technology) { create :technology }
   let(:event) { create :event }
   let(:complete_event) { create :complete_event }
 
@@ -33,9 +32,6 @@ RSpec.describe Event, type: :model do
     let(:no_boxespacked)        { build :event, boxes_packed: nil }
 
     it 'in order to save' do
-      expect(no_location.save).to be_falsey
-      expect(no_technology.save).to be_falsey
-
       expect(unsaved_event.save).to eq true
       expect(no_starttime.save).to be_falsey
       expect(no_endtime.save).to be_falsey
@@ -53,6 +49,14 @@ RSpec.describe Event, type: :model do
         .to raise_error ActiveRecord::NotNullViolation
       expect { no_itemgoal.save!(validate: false) }
         .to raise_error ActiveRecord::NotNullViolation
+    end
+
+    it 'doesn\'t need a technology' do
+      expect(no_technology.save).to eq true
+    end
+
+    it 'doesn\'t need a location' do
+      expect(no_location.save).to eq true
     end
   end
 
