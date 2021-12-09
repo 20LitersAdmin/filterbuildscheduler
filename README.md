@@ -16,6 +16,8 @@
 - RailsAdmin#users has no filters for new roles
 
 ### Should do:
+- Assembly: edit: affects_price_only boolean
+
 - rails_admin pjax screws up browser back and forward buttons
 
 - paper inventory should sort

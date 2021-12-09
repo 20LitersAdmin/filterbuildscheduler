@@ -12,13 +12,12 @@ class EmailSyncJob < ApplicationJob
     OauthUser.to_sync.each do |o|
       a_size = Email.all.size
       a_sent = Email.synced.size
-      puts "-+-+ Syncing for #{o.name}"
 
       gc = GmailClient.new(o)
 
       # bail if Oauth failure
       if gc.oauth_fail.present?
-        puts "-+-+ FAIL: #{gc.oauth_fail}"
+        puts "-+-+ #{o.name} FAIL: #{gc.oauth_fail}"
         next
       end
 
@@ -29,12 +28,9 @@ class EmailSyncJob < ApplicationJob
 
       o.update_column(:last_email_sync, Time.now)
 
-      puts "-+-+ Results for #{o.name}:"
-      puts "-+-+-+ Created #{b_size} emails"
-      puts "-+-+-+ Synced #{b_sent} notes to Kindful"
+      puts "-+-+ Results for #{o.name}: Created #{b_size} emails. Synced #{b_sent} notes to Kindful"
     end
 
-    puts '-+ Removing stale emails'
     e_size = Email.stale.size
     Email.stale.destroy_all
     puts "-+ Removed #{e_size} stale emails."
