@@ -10,35 +10,23 @@ class TechnologyPolicy < ApplicationPolicy
     super
   end
 
-  def index?
+  def donation_list?
     user&.admin_or_leader?
   end
 
-  def items?
-    index?
-  end
-
-  def prices?
-    index?
-  end
-
   def label?
-    index?
-  end
-
-  def assemble?
-    index?
+    donation_list?
   end
 
   def labels?
-    index?
+    donation_list?
   end
 
   def labels_select?
-    index?
+    donation_list?
   end
 
-  def donation_list?
-    index?
+  def status?
+    user&.can_manage_data?
   end
 end

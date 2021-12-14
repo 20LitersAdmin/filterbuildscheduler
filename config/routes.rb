@@ -69,6 +69,7 @@ Rails.application.routes.draw do
   end
 
   # Technologies resources:
+  get 'technologies/:id/status', to: 'technologies#status', as: 'technology_status'
   get 'donation_list', to: 'technologies#donation_list', as: 'donation_list'
   get 'label/:uid', to: 'technologies#label', as: 'label'
   get 'labels', to: 'technologies#labels', as: 'labels'
