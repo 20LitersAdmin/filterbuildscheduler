@@ -1,0 +1,20 @@
+-# frozen_string_literal: true
+
+#technologies_status.container
+  .row
+    .col-xs-12
+      = form_tag technology_status_path(@technology), method: :get do
+        = label_tag 'goal', 'Goal:'
+        = number_field_tag 'goal', @goal
+        = submit_tag 'Set Goal', name: nil, class: 'btn btn-sm yellow'
+  .row
+    .col-xs-12
+      %table.table
+        %thead
+          %tr
+            %th{ colspan: 6 } #{@technology.uid}: #{@technology.name} (#{@technology.available_count} available; #{@technology.can_be_produced} produceable)
+            %th Goal: #{human_number @goal}
+            %th.right-align Have
+            %th.right-align Still need
+        %tbody
+          = render partial: 'assembly', collection: @assemblies, locals: { nesting: 0 }
