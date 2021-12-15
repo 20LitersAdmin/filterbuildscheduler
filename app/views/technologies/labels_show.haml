@@ -6,18 +6,32 @@
   %ul
     %li Print from Google Chrome
     %li Under "More Settings", set Margins to "None"
-    %li There is no way to select a specific paper tray, so either remove all other paper from printer or open all other paper trays
     %li Use Avery 8136 labels (4"x2", 10 per page), lay face-up in Operations Xerox 7120
 
-- @ary.in_groups_of(10, false) do |batch|
+-# One full page of labels for each item
+- @ary.each do |item|
   .labels_page
     .top-gutter
-    - batch.in_groups_of(2, false) do |item_a, item_b|
+    - 5.times do
       .left-gutter
       .label-4x2
-        = render partial: 'labels/label', locals: { label: item_a }
+        = render partial: 'labels/label', object: item
       .center-gutter
       .label-4x2
-        = render partial: 'labels/label', locals: { label: item_b } unless item_b.nil?
+        = render partial: 'labels/label', object: item
       .right-gutter
     .bottom-gutter
+
+-# One label
+-# - @ary.in_groups_of(10, false) do |batch|
+-#   .labels_page
+-#     .top-gutter
+-#     - batch.in_groups_of(2, false) do |item_a, item_b|
+-#       .left-gutter
+-#       .label-4x2
+-#         = render partial: 'labels/label', locals: { label: item_a }
+-#       .center-gutter
+-#       .label-4x2
+-#         = render partial: 'labels/label', locals: { label: item_b } unless item_b.nil?
+-#       .right-gutter
+-#     .bottom-gutter
