@@ -14,9 +14,9 @@
       %table.table
         %thead
           %tr
-            %th{ colspan: 6 } #{@technology.uid}: #{@technology.name} (#{@technology.available_count} available; #{@technology.can_be_produced} produceable)
+            %th{ colspan: 6 } #{@technology.uid}: #{@technology.name} (#{@technology.available_count} available; #{@remainder} remaining)
             %th Goal: #{human_number @goal}
-            %th.right-align Have
+            %th.right-align Available
             %th.right-align Still need
         %tbody
-          = render partial: 'assembly', collection: @assemblies, locals: { nesting: 0 }
+          = render partial: 'assembly', collection: @assemblies, locals: { nesting: 0, remainder: @remainder }

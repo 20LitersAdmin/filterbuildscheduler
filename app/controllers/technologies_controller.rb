@@ -71,6 +71,8 @@ class TechnologiesController < ApplicationController
 
     @goal = params[:goal].presence&.to_i || 0
 
+    @remainder = [@goal - @technology.available_count, 0].max
+
     @assemblies = @technology.assemblies.without_price_only.ascending
   end
 
