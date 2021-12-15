@@ -69,7 +69,7 @@ class TechnologiesController < ApplicationController
   def status
     authorize @technology = Technology.find(params[:id])
 
-    @goal = params[:goal].presence&.to_i || 0
+    @goal = params[:goal].presence&.to_i || @technology.default_goal
 
     @remainder = [@goal - @technology.available_count, 0].max
 
