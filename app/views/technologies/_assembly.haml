@@ -6,31 +6,27 @@
   item = assembly.item
   item_type = assembly.item_type
   available = item.available_count
-  need = assembly.quantity * @goal
-  highlight = 'color: red; font-weight: bolder; border: solid 2px red' if (available < need) && item_type != 'Component'
-  total = item.price * need
-
+  need = assembly.quantity * remainder
+  new_remainder = [need - available, 0].max
+  highlight = 'color: red; font-weight: bolder; border: solid 2px red' if (available < need)
 %tr
   - if nesting.positive?
     %td{ colspan: nesting }
   %td.right-align
-    #{item.uid}
+    #{item.uid.to_s}
   %td{ colspan: 5 - nesting }
     = item.name
-
   %td
     = item.supplier&.name unless item_type == 'Component'
     - if item_type == 'Part' && item.made_from_material?
       %span
         %em
           (from #{item.material.name})
-  %td.right-align
+  %td.right-align{ style: "#{highlight}" }
     = human_number available
   %td.right-align
-    TODO:
-    = need - available
-
+    = human_number(new_remainder) # unless item_type == 'Component'
 
 - if item_type == 'Component' && item.sub_assemblies.any?
-  = render partial: 'assembly', collection: item.sub_assemblies.ascending, locals: { nesting: nesting += 1 }
+  = render partial: 'assembly', collection: item.sub_assemblies.ascending, locals: { nesting: nesting += 1, remainder: new_remainder }
 
