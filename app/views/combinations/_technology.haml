@@ -4,6 +4,6 @@
     = link_to combination_path(technology.uid), class: 'btn empty' do
       #{technology.uid}: #{technology.short_name} #{technology.name}
   %td
-    = link_to human_number(technology.available_count), technology_status_path(technology.id), class: 'btn blue'
+    = link_to human_number(technology.available_count), technology_status_path(technology.id)
   %td
     = technology.owner
