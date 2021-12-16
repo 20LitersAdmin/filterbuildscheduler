@@ -122,6 +122,11 @@ class User < ApplicationRecord
       is_data_manager?
   end
 
+  def can_manage_data?
+    is_admin? ||
+      is_data_manager?
+  end
+
   def can_manage_leaders?
     is_admin? || is_scheduler?
   end

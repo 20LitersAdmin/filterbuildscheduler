@@ -1,10 +1,8 @@
 # frozen_string_literal: true
 
 class TechnologiesController < ApplicationController
-  before_action :set_technology, only: %i[items prices]
-  before_action :set_bom_items, only: %i[items prices]
-
   def donation_list
+    authorize Technology
     @quantity = params[:q].present? ? params[:q].to_i : 1
     @quantity_val = params[:q].to_i if params[:q].present?
 
@@ -65,6 +63,17 @@ class TechnologiesController < ApplicationController
     @print_navbar = true
 
     render 'labels_show'
+  end
+
+  # TODO: this should be temp, merge functionality with Order && OrderAll
+  def status
+    authorize @technology = Technology.find(params[:id])
+
+    @goal = params[:goal].presence&.to_i || @technology.default_goal
+
+    @remainder = [@goal - @technology.available_count, 0].max
+
+    @assemblies = @technology.assemblies.without_price_only.ascending
   end
 
   private

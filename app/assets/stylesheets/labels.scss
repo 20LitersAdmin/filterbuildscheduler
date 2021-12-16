@@ -15,30 +15,36 @@
   // left gutter | label | center gutter | label | right gutter
   grid-template-columns: 0.155in 4in 0.19in 4in 0.155in;
   // top gutter | labels x 5 | bottom gutter
-  grid-template-rows: 0.5in repeat(5, 2in) 0.5in;
+  grid-template-rows: 0.5625in repeat(5, 2in) 0.4375in;
   gap: 0;
+  outline: 1px dotted;
 
   .top-gutter {
     grid-column: 1 / 6;
     grid-row: 1;
+    outline: 1px dotted;
   }
 
   .bottom-gutter {
     grid-column: 1 / 6;
     grid-row: 7;
     page-break-after: always;
+    outline: 1px dotted;
   }
 
   .left-gutter {
     grid-column-start: 1;
+    outline: 1px dotted;
   }
 
   .center-gutter {
     grid-column-start: 3;
+    outline: 1px dotted;
   }
 
   .right-gutter {
     grid-column-start: 5;
+    outline: 1px dotted;
   }
 
   // can't use .label because of Bootstrap
@@ -97,6 +103,12 @@
 
 @media print {
   .labels_page {
+    outline: none;
+
+    div[class*="-gutter"] {
+      outline: none;
+    }
+
     .label-4x2 {
       outline: none;
     }
