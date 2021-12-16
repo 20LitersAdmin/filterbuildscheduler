@@ -286,6 +286,10 @@ RailsAdmin.config do |config|
       label 'Admin notes'
     end
 
+    configure :description do
+      label 'Inventory description'
+    end
+
     list do
       scopes %i[active discarded]
       sort_by :name
@@ -309,34 +313,12 @@ RailsAdmin.config do |config|
         field :list_worthy do
           label 'Show on lists'
         end
-        field :owner
-        field :people do
-          label 'People served'
-        end
-        field :lifespan_in_years
-        field :liters_per_day
         field :discarded_at, :date
-        field :info_url do
-          formatted_value do
-            fa_external_link(bindings[:view], value)
-          end
-        end
-        field :monthly_production_rate do
-          label 'Should produce per month'
-        end
-      end
-
-      group 'Images and Descriptions' do
-        field :image, :active_storage
-        field :display_image, :active_storage
-        field :public_description
-        field :description do
-          label 'Inventory description'
-        end
-        field :comments
       end
 
       group 'Inventory info' do
+        field :description
+        field :image, :active_storage
         field :available_count, :delimited
         field :only_loose
         field :loose_count, :delimited do
@@ -361,14 +343,39 @@ RailsAdmin.config do |config|
             bindings[:object].below_minimum
           end
         end
+        field :default_goal do
+          label 'Default production goal for cycle'
+        end
       end
 
       group 'Build info' do
+        field :display_image, :active_storage
+        field :info_url do
+          formatted_value do
+            fa_external_link(bindings[:view], value)
+          end
+        end
+        field :public_description
         field :family_friendly
         field :ideal_build_length
         field :ideal_group_size
         field :ideal_leaders
-        field :unit_rate
+        field :monthly_production_rate do
+          label 'Should produce per month'
+        end
+        field :unit_rate do
+          label 'Average built per builder per hour'
+        end
+      end
+
+      group 'More details' do
+        field :comments
+        field :owner
+        field :people do
+          label 'People served'
+        end
+        field :lifespan_in_years
+        field :liters_per_day
       end
 
       group 'History' do
@@ -384,30 +391,25 @@ RailsAdmin.config do |config|
         end
         field :name
         field :short_name
-        field :image, :active_storage
-        field :display_image, :active_storage
-
+        field :price, :money do
+          read_only true
+          help 'Calculated from parts and materials'
+        end
         field :list_worthy do
           help 'Un-check to hide from Inventory and Build dropboxes'
         end
-        field :info_url
+        field :discarded_at, :date do
+          help 'Discarding hides this technology from use'
+          read_only true
+        end
       end
 
       group 'Inventory info' do
         active false
-        field :description do
-          label 'Inventory description'
-        end
+        field :description
+        field :image, :active_storage
         field :available_count, :delimited do
           help 'Calculated total available'
-          read_only true
-        end
-        field :available_count, :delimited do
-          help 'Calculated total available'
-          read_only true
-        end
-        field :can_be_produced, :delimited do
-          help 'Calculated number that can be made'
           read_only true
         end
         field :only_loose do
@@ -420,35 +422,40 @@ RailsAdmin.config do |config|
           help 'Current box count'
         end
         field :quantity_per_box
+        field :can_be_produced, :delimited do
+          help 'Calculated number that can be made'
+          read_only true
+        end
         field :minimum_on_hand do
           help 'Minimum inventory level to maintain'
+        end
+        field :default_goal do
+          help 'Default production goal for cycle'
         end
       end
 
       group 'Build info' do
         active false
+        field :display_image, :active_storage
+        field :info_url
+        field :public_description
         field :family_friendly do
-          help 'Builds are good for young kids?'
+          help 'Builds are suitable for young kids?'
         end
         field :ideal_build_length
         field :ideal_group_size
         field :ideal_leaders
         field :monthly_production_rate do
-          help 'Need produced every month'
+          help 'Should produce per month'
         end
         field :unit_rate do
-          help 'Average that can be built per builder per hour'
+          help 'Average built per builder per hour'
         end
       end
 
       group 'More details' do
         active false
-        field :public_description
         field :comments
-        field :price, :money do
-          read_only true
-          help 'Calculated from parts and materials'
-        end
         field :owner
         field :people do
           help '# of people served by each'
@@ -458,10 +465,6 @@ RailsAdmin.config do |config|
         end
         field :liters_per_day do
           help 'Liters produced from one'
-        end
-        field :discarded_at, :date do
-          help 'Discarding hides this technology from use'
-          read_only true
         end
       end
     end

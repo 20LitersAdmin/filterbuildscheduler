@@ -1,0 +1,23 @@
+-# frozen_string_literal: true
+
+-# TODO: this should be temp, merge functionality with Order && OrderAll
+
+#technologies_status.container
+  .row
+    .col-xs-12
+      = form_tag technology_status_path(@technology), method: :get do
+        = label_tag 'goal', 'Goal:'
+        = number_field_tag 'goal', @goal
+        = submit_tag 'Set Goal', name: nil, class: 'btn btn-sm yellow'
+  .row
+    .col-xs-12
+      %table.table
+        %thead
+          %tr
+            %th{ colspan: 7 } #{@technology.uid}: #{@technology.name} (#{@technology.available_count} available; #{@remainder} remaining)
+            %th Goal: #{human_number @goal}
+            -# %th.right-align Need
+            %th.right-align Available
+            %th.right-align Remainder
+        %tbody
+          = render partial: 'assembly', collection: @assemblies, locals: { nesting: 0, remainder: @remainder }
