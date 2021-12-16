@@ -15,7 +15,7 @@
   // left gutter | label | center gutter | label | right gutter
   grid-template-columns: 0.155in 4in 0.19in 4in 0.155in;
   // top gutter | labels x 5 | bottom gutter
-  grid-template-rows: 0.5in repeat(5, 2in) 0.5in;
+  grid-template-rows: 0.5625in repeat(5, 2in) 0.4375in;
   gap: 0;
   outline: 1px dotted;
 
