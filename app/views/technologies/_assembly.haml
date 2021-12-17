@@ -8,7 +8,7 @@
   available = item.available_count
   need = assembly.quantity * remainder
   new_remainder = [need - available, 0].max
-  highlight = 'color: red; font-weight: bolder; border: solid 2px red' if available < need
+  highlight = 'color: red; font-weight: bolder; border: solid 2px red' if available < need && item_type != 'Component'
 
 %tr
   - if nesting.positive?
