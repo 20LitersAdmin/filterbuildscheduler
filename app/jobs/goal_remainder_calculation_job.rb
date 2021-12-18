@@ -33,7 +33,7 @@ class GoalRemainderCalculationJob < ApplicationJob
     in_parent_available = parent_available * assembly.quantity
     new_goal_remainder = item.goal_remainder - in_parent_available
 
-    item.update_columns(goal_remainder: new_goal_remainder)
+    item.update_columns(goal_remainder: [new_goal_remainder, 0].max)
 
     return unless item.has_sub_assemblies?
 
@@ -50,16 +50,11 @@ class GoalRemainderCalculationJob < ApplicationJob
       # using .to_f and .ceil as #process_technology does would round up
       # the number of materials used to produce parent items,
       # which would in turn short the number in goal_remainder
-      material_in_parent_available = in_parent_available / item.quantity_from_material
+      material_in_parent_available = (item.available_count + in_parent_available) / item.quantity_from_material
 
       material_new_goal_remainder = material.goal_remainder - material_in_parent_available
 
-      byebug if material.uid == 'M006'
-      # when item.uid == 'P067' material_in_parent_available ~= 11
-      # when item.uid == 'P068' material_in_parent_available ~= 24
-      # when item.uid == 'P069' material_in_parent_available ~= 27
-
-      material.update_columns(goal_remainder: material_new_goal_remainder)
+      material.update_columns(goal_remainder: [material_new_goal_remainder, 0].max)
     else
       # Components with sub_assemblies
       item.assemblies.without_price_only.each do |sub_assembly|
