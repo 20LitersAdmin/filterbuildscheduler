@@ -4,9 +4,8 @@
   item = assembly.item
   item_type = assembly.item_type
   available = item.available_count
-  need = assembly.quantity * remaining_need
-  new_remaining_need = [need - available, 0].max
-  highlight = 'color: red; font-weight: bolder; border: solid 2px red' if available < need && item_type != 'Component'
+  goal_remainder = item.goal_remainder
+  highlight = 'color: red; font-weight: bolder; border: solid 2px red' if goal_remainder > available && !item.has_sub_assemblies?
 
 %tr
   - if nesting.positive?
@@ -17,14 +16,10 @@
     = item.name
   %td
     = item.supplier&.name unless item_type == 'Component'
-  %td.right-align
-    = human_number need
   %td.right-align{ style: highlight }
     = human_number available
-  %td.right-align
-    = human_number new_remaining_need
-  %td.right-align
-    = human_number item.goal_remainder
-= render partial: 'assembly', collection: item.sub_assemblies.ascending, locals: { nesting: nesting += 1, remaining_need: new_remaining_need } if item_type == 'Component' && item.sub_assemblies.any?
-= render partial: 'material', object: item.material, locals: { nesting: nesting += 1, remaining_need: new_remaining_need, part: item } if item_type == 'Part' && item.material.present?
+  %td.right-align{ style: highlight }
+    = human_number goal_remainder
+= render partial: 'assembly', collection: item.sub_assemblies.ascending, locals: { nesting: nesting += 1 } if item_type == 'Component' && item.sub_assemblies.any?
+= render partial: 'material', object: item.material, locals: { nesting: nesting += 1, part: item } if item_type == 'Part' && item.material.present?
 

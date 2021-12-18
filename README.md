@@ -1,12 +1,7 @@
 # README
 ## GOALS branch:
-How to keep materials & parts that are used more than once from not double-dipping?
-- loop through each Technology.with_set_goal as tech
-  -x calcluate how many techs are still needed as remainder
-  -x get all UIDs via tech.quantities
-  -x loop through each UID and do remainder * value as needed
-    -x dB: set needed minus available_count as item.goal_remainder
-  - loop through each assembly and subtract (combination.available_count * assembly.quantity) from item.goal_remainder
+- check failing tests for GoalReaminderJob
+- integrate item.goal_remainder into /order && /order_all pages
 
 ## Quick fixes:
 - rails_admin user is searching by email and location, not name??

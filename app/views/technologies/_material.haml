@@ -1,9 +1,8 @@
 -# frozen_string_literal: true
 :ruby
   available = material.available_count
-  need = (remaining_need / part.quantity_from_material.to_f).ceil
-  new_remaining_need = [need - available, 0].max
-  highlight = 'color: red; font-weight: bolder; border: solid 2px red' if available < need
+  goal_remainder = material.goal_remainder
+  highlight = 'color: red; font-weight: bolder; border: solid 2px red' if goal_remainder > available
 
 %tr
   - if nesting.positive?
@@ -14,11 +13,7 @@
     = material.name
   %td
     = material.supplier&.name
-  %td.right-align
-    = human_number need
   %td.right-align{ style: highlight }
     = human_number available
-  %td.right-align
-    = human_number new_remaining_need
-  %td.right-align
-    = human_number material.goal_remainder
+  %td.right-align{ style: highlight }
+    = human_number goal_remainder
