@@ -17,9 +17,8 @@
     = item.name
   %td
     = item.supplier&.name unless item_type == 'Component'
-  -#
-    %td.right-align
-      = human_number need
+  %td.right-align
+    = human_number need
   %td.right-align{ style: highlight }
     = human_number available
   %td.right-align

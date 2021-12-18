@@ -10,6 +10,9 @@ class Component < ApplicationRecord
   # assembly_path wants to call @item.assemblies regardless of whether the @item is a Technology or Component
   alias_attribute :assemblies, :sub_assemblies
 
+  # Technology.components && Component.components can react the same
+  # alias_attribute :components, :sub_components
+
   has_many :super_assemblies, -> { where item_type: 'Component' }, class_name: 'Assembly', foreign_key: :item_id, dependent: :destroy
   has_many :sub_assemblies, -> { where combination_type: 'Component' }, class_name: 'Assembly', foreign_key: :combination_id, dependent: :destroy
 
