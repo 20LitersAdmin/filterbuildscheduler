@@ -65,7 +65,6 @@ class TechnologiesController < ApplicationController
     render 'labels_show'
   end
 
-  # TODO: this should be temp, merge functionality with Order && OrderAll
   def status
     authorize @technology = Technology.find(params[:id])
 

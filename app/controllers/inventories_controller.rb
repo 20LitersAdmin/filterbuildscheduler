@@ -91,6 +91,7 @@ class InventoriesController < ApplicationController
 
     # This used to be Inventory#after_save
     @inventory.run_produceable_job
+    @inventory.run_goal_remainder_calculation_job
 
     redirect_to inventories_path
   end

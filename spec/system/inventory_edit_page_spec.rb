@@ -215,11 +215,14 @@ RSpec.describe 'Inventory edit page', type: :system do
     end
 
     it 'finalize the inventory' do
-      allow(CountTransferJob).to receive(:perform_later).with(@inventory).and_call_original
+      allow(InventoryMailer).to receive(:notify).and_call_original
 
       click_link 'Finalize'
 
+      expect(ProduceableJob).to receive(:perform_later)
       expect(CountTransferJob).to receive(:perform_later).with(@inventory)
+      expect(GoalRemainderCalculationJob).to receive(:perform_later)
+      expect(InventoryMailer).to receive(:notify).with(@inventory, @user)
 
       click_button 'Finalize Inventory'
 

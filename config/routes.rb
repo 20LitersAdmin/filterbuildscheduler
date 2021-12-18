@@ -69,7 +69,6 @@ Rails.application.routes.draw do
   end
 
   # Technologies resources:
-  # TODO: status should be temp, merge functionality with Order && OrderAll
   get 'technologies/:id/status', to: 'technologies#status', as: 'technology_status'
 
   get 'donation_list', to: 'technologies#donation_list', as: 'donation_list'

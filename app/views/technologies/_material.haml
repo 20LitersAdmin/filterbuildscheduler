@@ -14,9 +14,12 @@
     = material.name
   %td
     = material.supplier&.name
-  -# %td.right-align
-  -#   = human_number need
+  -#
+    %td.right-align
+      = human_number need
   %td.right-align{ style: highlight }
     = human_number available
   %td.right-align
-    = human_number(new_remainder)
+    = human_number new_remainder
+  %td.right-align
+    = human_number material.goal_remainder
