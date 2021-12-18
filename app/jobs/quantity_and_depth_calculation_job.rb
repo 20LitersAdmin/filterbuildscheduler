@@ -28,7 +28,7 @@ class QuantityAndDepthCalculationJob < ApplicationJob
   end
 
   def loop_technology
-    # clear out any past quantity history
+    # clear out any historical quantities
     @technology.quantities = {}
 
     # these arrays get populated via the assemblies_loop
@@ -93,14 +93,15 @@ class QuantityAndDepthCalculationJob < ApplicationJob
 
   def loop_parts_for_materials(part_ids)
     Part.where(id: part_ids).each do |part|
-      next if part.quantity_from_material.zero?
+      next unless part.quantity_from_material.positive?
 
       # technology.quantities[part.uid] will already exist
       # because assemblies_loop gathers part ids into @part_ids_made_from_material
       # which is then passed to here
       parts_per_technology = @technology.quantities[part.uid]
 
-      material_per_technology = parts_per_technology / part.quantity_from_material
+      # ensure this floats as parts_per_technology is usually < part.quantity_from_material
+      material_per_technology = parts_per_technology / part.quantity_from_material.to_f
 
       if @technology.quantities[part.material.uid].present?
         @technology.quantities[part.material.uid] += material_per_technology

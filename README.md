@@ -1,6 +1,17 @@
 # README
+## GOALS branch:
+How to keep materials & parts that are used more than once from not double-dipping?
+- loop through each Technology.with_set_goal as tech
+  -x calcluate how many techs are still needed as remainder
+  -x get all UIDs via tech.quantities
+  -x loop through each UID and do remainder * value as needed
+    -x dB: set needed minus available_count as item.goal_remainder
+  - loop through each assembly and subtract (combination.available_count * assembly.quantity) from item.goal_remainder
+
 ## Quick fixes:
 - rails_admin user is searching by email and location, not name??
+
+- rails_admin: Items: add read_only goal_remainder
 
 ### Policies:
 - Prevent some user types from accessing some parts of rails_admin?
@@ -24,8 +35,8 @@
   - by tech, and traverse up tree for each tech
   - Alphabetical by UID or name
 
-
 - easy-print report for setup crew:
+  - select a single tech (99% its SAM3, once every 18 months it'll be RWHS, MOF or Handpump)
   - every component and their subs w/ current counts
 
 - is Oauth Email syncing causing the R14 Memory Quota Exceeded issue?
