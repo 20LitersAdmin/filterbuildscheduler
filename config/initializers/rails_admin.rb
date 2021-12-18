@@ -295,13 +295,25 @@ RailsAdmin.config do |config|
       sort_by :name
       field :name
       field :short_name
-      field :owner
+      field :owner do
+        column_width 80
+      end
       field :price, :money do
         formatted_value { bindings[:object].price }
+        column_width 80
       end
-      field :family_friendly
-      field :ideal_build_length
-      field :ideal_group_size
+      field :family_friendly do
+        column_width 80
+      end
+      field :ideal_build_length do
+        column_width 80
+      end
+      field :ideal_group_size do
+        column_width 80
+      end
+      field :default_goal do
+        column_width 80
+      end
     end
 
     show do
