@@ -70,7 +70,7 @@ class TechnologiesController < ApplicationController
 
     @goal = params[:goal].presence&.to_i || @technology.default_goal
 
-    @remainder = [@goal - @technology.available_count, 0].max
+    @remaining_need = [@goal - @technology.available_count, 0].max
 
     @assemblies = @technology.assemblies.without_price_only.ascending
   end

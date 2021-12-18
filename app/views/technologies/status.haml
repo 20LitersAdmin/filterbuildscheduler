@@ -12,11 +12,11 @@
       %table.table
         %thead
           %tr
-            %th{ colspan: 7 } #{@technology.uid}: #{@technology.name} (#{@technology.available_count} available; #{@remainder} remaining)
+            %th{ colspan: 7 } #{@technology.uid}: #{@technology.name} (#{@technology.available_count} available; #{@remaining_need} remaining)
             %th Goal: #{human_number @goal}
             %th.right-align Need
             %th.right-align Available
-            %th.right-align Remainder (live)
-            %th.right-align Remainder (calc'd)
+            %th.right-align Rem. Need (live)
+            %th.right-align Rem. Need (calc'd)
         %tbody
-          = render partial: 'assembly', collection: @assemblies, locals: { nesting: 0, remainder: @remainder }
+          = render partial: 'assembly', collection: @assemblies, locals: { nesting: 0, remaining_need: @remaining_need }
