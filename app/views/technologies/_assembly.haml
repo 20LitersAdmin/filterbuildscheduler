@@ -1,7 +1,5 @@
 -# frozen_string_literal: true
 
--# TODO: this should be temp, merge functionality with Order && OrderAll
-
 :ruby
   item = assembly.item
   item_type = assembly.item_type
@@ -19,12 +17,15 @@
     = item.name
   %td
     = item.supplier&.name unless item_type == 'Component'
-  -# %td.right-align
-  -#   = human_number need
+  -#
+    %td.right-align
+      = human_number need
   %td.right-align{ style: highlight }
     = human_number available
   %td.right-align
-    = human_number(new_remainder) # unless item_type == 'Component'
+    = human_number new_remainder
+  %td.right-align
+    = human_number item.goal_remainder
 = render partial: 'assembly', collection: item.sub_assemblies.ascending, locals: { nesting: nesting += 1, remainder: new_remainder } if item_type == 'Component' && item.sub_assemblies.any?
 = render partial: 'material', object: item.material, locals: { nesting: nesting += 1, remainder: new_remainder, part: item } if item_type == 'Part' && item.material.present?
 
