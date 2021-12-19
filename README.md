@@ -1,6 +1,11 @@
 # README
+## GOALS branch:
+- integrate item.goal_remainder into /order && /order_all pages
+
 ## Quick fixes:
 - rails_admin user is searching by email and location, not name??
+
+- rails_admin: Items: add read_only goal_remainder
 
 ### Policies:
 - Prevent some user types from accessing some parts of rails_admin?
@@ -24,8 +29,8 @@
   - by tech, and traverse up tree for each tech
   - Alphabetical by UID or name
 
-
 - easy-print report for setup crew:
+  - select a single tech (99% its SAM3, once every 18 months it'll be RWHS, MOF or Handpump)
   - every component and their subs w/ current counts
 
 - is Oauth Email syncing causing the R14 Memory Quota Exceeded issue?

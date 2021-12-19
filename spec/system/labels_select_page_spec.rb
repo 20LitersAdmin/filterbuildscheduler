@@ -22,23 +22,23 @@ RSpec.describe 'Selected labels page', type: :system do
   it 'displays a page with labels' do
     expect(page).to have_current_path('/labels_select')
     expect(page).to have_content 'Printing instructions:'
-    expect(page).to have_css 'div.label-4x2', count: 12
+    expect(page).to have_css 'div.label-4x2', count: 120
   end
 
-  it 'displays one label per item' do
+  it 'displays 10 labels per item' do
     expect(page).to have_current_path('/labels_select')
-    expect(page).to have_content(Part.first.uid).once
-    expect(page).to have_content(Part.second.uid).once
-    expect(page).to have_content(Part.third.uid).once
-    expect(page).to have_content(Material.first.uid).once
-    expect(page).to have_content(Material.second.uid).once
-    expect(page).to have_content(Material.third.uid).once
-    expect(page).to have_content(Component.first.uid).once
-    expect(page).to have_content(Component.second.uid).once
-    expect(page).to have_content(Component.third.uid).once
-    expect(page).to have_content(Technology.first.uid).once
-    expect(page).to have_content(Technology.second.uid).once
-    expect(page).to have_content(Technology.third.uid).once
+    expect(page).to have_content(Part.first.uid).exactly(10).times
+    expect(page).to have_content(Part.second.uid).exactly(10).times
+    expect(page).to have_content(Part.third.uid).exactly(10).times
+    expect(page).to have_content(Material.first.uid).exactly(10).times
+    expect(page).to have_content(Material.second.uid).exactly(10).times
+    expect(page).to have_content(Material.third.uid).exactly(10).times
+    expect(page).to have_content(Component.first.uid).exactly(10).times
+    expect(page).to have_content(Component.second.uid).exactly(10).times
+    expect(page).to have_content(Component.third.uid).exactly(10).times
+    expect(page).to have_content(Technology.first.uid).exactly(10).times
+    expect(page).to have_content(Technology.second.uid).exactly(10).times
+    expect(page).to have_content(Technology.third.uid).exactly(10).times
   end
 
   it 'displays the print navbar' do

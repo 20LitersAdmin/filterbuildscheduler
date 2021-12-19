@@ -65,13 +65,12 @@ class TechnologiesController < ApplicationController
     render 'labels_show'
   end
 
-  # TODO: this should be temp, merge functionality with Order && OrderAll
   def status
     authorize @technology = Technology.find(params[:id])
 
     @goal = params[:goal].presence&.to_i || @technology.default_goal
 
-    @remainder = [@goal - @technology.available_count, 0].max
+    @remaining_need = [@goal - @technology.available_count, 0].max
 
     @assemblies = @technology.assemblies.without_price_only.ascending
   end

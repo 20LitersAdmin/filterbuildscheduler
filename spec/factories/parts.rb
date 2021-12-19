@@ -10,7 +10,7 @@ FactoryBot.define do
     factory :part_from_material do
       material
       made_from_material { true }
-      quantity_from_material { 0.25 }
+      quantity_from_material { 5 }
     end
   end
 end

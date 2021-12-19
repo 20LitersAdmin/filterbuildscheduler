@@ -33,28 +33,28 @@ RSpec.describe 'Order supplies page', type: :system do
       sign_in create(:inventoryist)
       visit order_inventories_path
 
-      expect(page).to have_content 'items need to be ordered:'
+      expect(page).to have_content 'items below minimums'
     end
 
     it 'users who receive inventory emails shows the page' do
       sign_in create(:user, send_inventory_emails: true)
       visit order_inventories_path
 
-      expect(page).to have_content 'items need to be ordered:'
+      expect(page).to have_content 'items below minimums'
     end
 
     it 'admins shows the page' do
       sign_in create(:admin)
       visit order_inventories_path
 
-      expect(page).to have_content 'items need to be ordered:'
+      expect(page).to have_content 'items below minimums'
     end
 
     it 'data_managers shows the page' do
       sign_in create(:data_manager)
       visit order_inventories_path
 
-      expect(page).to have_content 'items need to be ordered:'
+      expect(page).to have_content 'items below minimums'
     end
 
     it 'schedulers redirects to the home page' do
