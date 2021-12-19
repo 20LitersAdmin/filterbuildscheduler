@@ -1,6 +1,5 @@
 # README
 ## GOALS branch:
-- check failing tests for GoalReaminderJob
 - integrate item.goal_remainder into /order && /order_all pages
 
 ## Quick fixes:

@@ -253,11 +253,5 @@ RSpec.describe Part, type: :model do
       part.valid?
       expect(part.quantity_from_material).to eq 1.0
     end
-
-    it 'leaves quantity_from_material as nil' do
-      expect(part.quantity_from_material).to eq nil
-      part.valid?
-      expect(part.quantity_from_material).to eq nil
-    end
   end
 end
