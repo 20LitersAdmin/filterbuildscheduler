@@ -150,6 +150,12 @@ hr.bar {
     float: left;
   }
 
+  // put float-left and float-right inside this div
+  // to make them share horizontal space:
+  .clear-both {
+    clear: both;
+  }
+
   .bold-text {
     font-weight: 700;
   }

@@ -1,9 +1,13 @@
 -# frozen_string_literal: true
 %tr
   %td
-    = link_to combination_path(technology.uid), class: 'btn empty' do
-      #{technology.uid}: #{technology.short_name} #{technology.name}
+    #{technology.uid_and_name} (#{technology.short_name})
   %td
-    = link_to human_number(technology.available_count), technology_status_path(technology.id)
+    = link_to 'Assemblies', combination_path(technology.uid), class: 'btn empty'
+    = link_to 'Status', technology_status_path(technology.id), class: 'btn yellow'
   %td
-    = technology.owner
+    = human_number technology.quantities.size
+  %td
+    = human_number technology.available_count
+  %td
+    = human_number technology.default_goal - technology.available_count

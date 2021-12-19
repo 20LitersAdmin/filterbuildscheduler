@@ -3,14 +3,16 @@
 .container
   .row
     .col-xs-12
-      %h3 Choose a Technology for a list of all items:
+      %h3 Technologies:
   .row
     .col-xs-12
       %table#list_item_tbl.table.table-striped
         %thead
           %tr
             %th Name
+            %th
+            %th # of Items
             %th On-hand
-            %th Owner
+            %th Goal Remainder
         %tbody
           = render(partial: 'technology', collection: @techs)
