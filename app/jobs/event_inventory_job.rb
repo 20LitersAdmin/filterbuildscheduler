@@ -160,7 +160,7 @@ class EventInventoryJob < ApplicationJob
     # Assume whole materials are used, which can lead to the part count needing to be adjusted upwards - to compensate for the material producing more parts than are needed to satisfy the remainder
     material = part.material
     part_quantity_from_material = part.quantity_from_material
-    material_needed = (parts_needed / part_quantity_from_material).ceil
+    material_needed = (parts_needed / part_quantity_from_material.to_f).ceil
     material_loose = material.loose_count
 
     if material_loose >= material_needed

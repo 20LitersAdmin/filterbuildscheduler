@@ -56,6 +56,15 @@ class Inventory < ApplicationRecord
     CountTransferJob.perform_later(self)
   end
 
+  def run_goal_remainder_calculation_job
+    return unless completed_at.present?
+
+    # Delete any jobs that exist, but haven't started, in favor of this new job
+    Delayed::Job.where(queue: 'goal_remainder', locked_at: nil).delete_all
+
+    GoalRemainderCalculationJob.perform_later
+  end
+
   def technologies
     # inventory#new form field for bypassing technologies
   end

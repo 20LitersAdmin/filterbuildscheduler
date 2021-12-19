@@ -18,7 +18,8 @@ class Technology < ApplicationRecord
   has_many :assemblies, as: :combination, dependent: :destroy, inverse_of: :combination
   accepts_nested_attributes_for :assemblies, allow_destroy: true
 
-  has_many :components, through: :assemblies, source: :item, source_type: 'Component'
+  # TODO: doesn't actually work
+  # has_many :components, through: :assemblies, source: :item, source_type: 'Component'
   has_many :parts, through: :assemblies, source: :item, source_type: 'Part'
 
   validates_presence_of :name, :short_name
@@ -26,6 +27,7 @@ class Technology < ApplicationRecord
   before_save :process_images, if: -> { attachment_changes.any? }
   after_save { image.purge if remove_image == '1' }
   after_save { display_image.purge if remove_display_image == '1' }
+  after_save :run_goal_remainder_calculation_job, if: -> { saved_change_to_default_goal }
 
   before_destroy :manage_dependent_events
 
@@ -39,6 +41,7 @@ class Technology < ApplicationRecord
   scope :status_worthy, -> { kept.where('monthly_production_rate > ?', 0).order(monthly_production_rate: 'desc') }
   scope :list_worthy, -> { kept.where(list_worthy: true) }
   scope :finance_worthy, -> { kept.where.not(price_cents: 0).order(:name) }
+  scope :with_set_goal, -> { kept.where.not(default_goal: 0) }
 
   def all_components
     # .components will find 1st-level children but not all descendents
@@ -117,5 +120,12 @@ class Technology < ApplicationRecord
 
       public_send(target).attach(io: File.open(processed_image.path), filename: image_name, content_type: 'image/png')
     end
+  end
+
+  def run_goal_remainder_calculation_job
+    # Delete any jobs that exist, but haven't started, in favor of this new job
+    Delayed::Job.where(queue: 'goal_remainder', locked_at: nil).delete_all
+
+    GoalRemainderCalculationJob.perform_later
   end
 end
