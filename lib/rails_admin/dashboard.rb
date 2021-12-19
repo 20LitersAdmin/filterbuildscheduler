@@ -84,7 +84,7 @@ module RailsAdmin
               base_uri: '/',
               links: [
                 { name: 'Edit/Update Technologies', link: 'admin/technology' },
-                { name: 'Manage Assemblies', link: 'combinations' },
+                { name: 'Manage Assemblies / Status', link: 'combinations' },
                 { name: 'Print Labels', link: 'labels' },
                 { name: 'Donation List', link: 'donation_list' },
                 { name: 'Order Items', link: 'inventories/order_all' }
