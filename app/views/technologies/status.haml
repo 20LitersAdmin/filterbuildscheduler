@@ -2,6 +2,9 @@
 
 #technologies_status.container
   .row
+    .col-xs-12.right-align
+      = link_to 'Tech List', combinations_path, class: 'btn empty'
+  .row
     .col-xs-12
       = form_tag technology_status_path(@technology), method: :get do
         = label_tag 'goal', 'Goal:'

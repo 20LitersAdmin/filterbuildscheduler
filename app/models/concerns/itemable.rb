@@ -123,7 +123,7 @@ module Itemable
   end
 
   def uid_and_name
-    "#{uid} #{name}"
+    "#{uid}: #{name}"
   end
 
   private
