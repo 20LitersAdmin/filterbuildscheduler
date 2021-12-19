@@ -2,7 +2,7 @@
 
 class InventoriesController < ApplicationController
   before_action :set_inventory, only: %i[show edit update destroy]
-  before_action :authorize_inventory, only: %i[order order_all]
+  before_action :authorize_inventory, only: %i[order order_all order_goal]
 
   def index
     # NOTE: After creating an inventory, user is redirected to InventoriesController#index
@@ -152,6 +152,30 @@ class InventoriesController < ApplicationController
 
     @items = [parts, materials].flatten(1).uniq
     @suppliers = [parts.map(&:supplier).uniq, materials.map(&:supplier).uniq].flatten.uniq.compact
+
+    @items_w_no_supplier = @items.select { |item| item.supplier.nil? }
+  end
+
+  def order_goal
+    @technologies = Technology.list_worthy
+
+    @technologies_select = @technologies.map { |t| [t.name, t.id] }
+
+    @selected_tech = @technologies.find(params[:tech]) if params[:tech].present?
+
+    if @selected_tech
+      @selected_tech_id = @selected_tech.id
+      @selected_tech_uid = @selected_tech.uid
+
+      parts = Part.has_goal_remainder.orderable.select { |part| part.quantities.keys.include?(@selected_tech_uid) }
+      materials = Material.has_goal_remainder.select { |m| m.quantities.keys.include?(@selected_tech_uid) }
+    else
+      parts = Part.has_goal_remainder.orderable
+      materials = Material.has_goal_remainder
+    end
+
+    @items = [parts, materials].flatten(1).uniq
+    @suppliers = [parts.map(&:supplier).uniq, materials.map(&:supplier).uniq].flatten(1).uniq.compact
 
     @items_w_no_supplier = @items.select { |item| item.supplier.nil? }
   end

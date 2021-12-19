@@ -1,15 +1,12 @@
 -# frozen_string_literal: true
 %tr
   %th{ data: { priority: 1 } } Item
-  %th{ data: { priority: 2 } } UID
-  %th{ data: { priority: 2 } } Tech
   - if @locator == 'item'
     %th{ data: { priority: 2 } } Supplier
+  %th.center-align.small-text{ data: { priority: 3 } } Wks deliv.
   %th.center-align{ data: { priority: 3 } } Avail
-  %th.center-align{ data: { priority: 4 } } Min
-  %th.center-align{ data: { priority: 3 } } Wks to deliver
+  %th.center-align{ data: { priority: 1 } } Need
   %th.center-align{ data: { priority: 2 } } Unit cost
-  %th.center-align{ data: { priority: 3 } } Last Order
   %th.center-align{ data: { priority: 1 } } Order Qnty
   %th.center-align{ data: { priority: 1 } } Ttl cost
   %th.center-align{ data: { priority: 1 } } Order?

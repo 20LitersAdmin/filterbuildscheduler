@@ -18,6 +18,7 @@ module Itemable
     monetize :price_cents, allow_nil: true, numericality: { greater_than_or_equal_to: 0 }
 
     scope :below_minimums, -> { kept.where(below_minimum: true) }
+    scope :has_goal_remainder, -> { kept.where('goal_remainder > 0') }
 
     before_save :set_below_minimum
 
@@ -119,6 +120,10 @@ module Itemable
     end
 
     ary
+  end
+
+  def uid_and_name
+    "#{uid} #{name}"
   end
 
   private
