@@ -4,13 +4,13 @@
   #sticky.row
     .col-xs-12.col-sm-8
       %h2#title
-        #{@items.count} items below minimums#{' for ' if @selected_tech}#{@selected_tech&.name}:
+        #{@items.count} items needed to reach goals#{' for ' if @selected_tech}#{@selected_tech&.name}:
     .col-xs-12.col-sm-4.right-align.match-h2
       = link_to 'View All', order_all_inventories_path, class: 'btn empty use-load-screen'
-      = link_to 'For Goal', order_goal_inventories_path, class: 'btn empty use-load-screen'
+      = link_to 'Only Low', order_inventories_path, class: 'btn empty use-load-screen'
     = render partial: 'order_admin_div'
   .row.spacer-bottom.spacer-top.well
-    = form_tag order_inventories_path, method: 'get', class: 'form-inline', enforce_utf8: false do
+    = form_tag order_goal_inventories_path, method: 'get', class: 'form-inline', enforce_utf8: false do
       .col-xs-12.col-sm-6.form-group
         %label{ for: 'tech' } Technology:
         = select_tag 'tech', options_for_select(@technologies_select, @selected_tech_id), { id: 'tech', class: 'form-control', include_blank: true }

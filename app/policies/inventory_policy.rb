@@ -46,6 +46,10 @@ class InventoryPolicy < ApplicationPolicy
     index?
   end
 
+  def order_goal?
+    index?
+  end
+
   def paper?
     index?
   end

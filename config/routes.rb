@@ -80,6 +80,7 @@ Rails.application.routes.draw do
     collection do
       get 'history'
       get 'order_all'
+      get 'order_goal'
       get 'order'
       get 'paper'
     end
