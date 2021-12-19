@@ -1,7 +1,4 @@
 # README
-## GOALS branch:
-- integrate item.goal_remainder into /order && /order_all pages
-
 ## Quick fixes:
 - rails_admin user is searching by email and location, not name??
 

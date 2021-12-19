@@ -1,10 +1,14 @@
 -# frozen_string_literal: true
-- tech_names_and_quantities = order_tbl.quantities_with_tech_names_short
 
 %tr{ id: order_tbl.uid }
   %td.small-text
     - if current_user.is_admin?
-      = link_to order_tbl.uid_and_name, rails_admin.edit_path(model_name: order_tbl.model_name.name, id: order_tbl.id), target: '_blank'
+      .clear-both
+        .float-left
+          = link_to order_tbl.uid_and_name, rails_admin.edit_path(model_name: order_tbl.model_name.name, id: order_tbl.id)
+        .float-right
+          = link_to order_tbl.order_url, target: '_blank', rel: 'noopener noreferrer' do
+            = icon 'fas', 'external-link-alt'
     - else
       = order_tbl.uid_and_name
   - if @locator == 'item'

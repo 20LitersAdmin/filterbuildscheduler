@@ -33,7 +33,7 @@ RSpec.describe 'Combinations#index' do
       sign_in create :inventoryist
       visit combinations_path
 
-      expect(page).to have_content 'Choose a Technology for a list of all items:'
+      expect(page).to have_content 'Technologies:'
     end
 
     it 'scheduler, it redirects to home page' do
@@ -48,14 +48,14 @@ RSpec.describe 'Combinations#index' do
       sign_in create :data_manager
       visit combinations_path
 
-      expect(page).to have_content 'Choose a Technology for a list of all items:'
+      expect(page).to have_content 'Technologies:'
     end
 
     it 'admin, it shows the page' do
       sign_in create :admin
       visit combinations_path
 
-      expect(page).to have_content 'Choose a Technology for a list of all items:'
+      expect(page).to have_content 'Technologies:'
     end
   end
 
@@ -64,7 +64,7 @@ RSpec.describe 'Combinations#index' do
     sign_in create :admin
     visit combinations_path
 
-    expect(page).to have_content 'Choose a Technology for a list of all items:'
+    expect(page).to have_content 'Technologies:'
     expect(page).to have_css('table#list_item_tbl tbody tr', count: 3)
   end
 end
