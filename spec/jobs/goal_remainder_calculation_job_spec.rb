@@ -10,99 +10,165 @@ RSpec.describe GoalRemainderCalculationJob, type: :job do
   end
 
   describe '#perform' do
-    it 'calls set_all_item_goal_remainders_to_zero' do
-      expect(job).to receive(:set_all_item_goal_remainders_to_zero)
+    context 'when called with a technology' do
+      let(:technology) { create :technology }
 
-      job.perform
-    end
+      it 'calls set_all_tech_items_goal_remainders_to_zero' do
+        expect(job).to receive(:set_all_tech_items_goal_remainders_to_zero).with(technology)
 
-    context 'when a technology\'s goal is 0' do
-      let(:technology_no_goal) { create :technology, default_goal: 0 }
+        job.perform(technology)
+      end
 
-      it 'does nothing to that technology' do
-        expect(technology_no_goal).not_to receive(:default_goal)
+      it 'calls process_technology with the given technology' do
+        expect(job).to receive(:process_technology).with(technology)
 
-        expect(job).not_to receive(:loop_assemblies).with(technology_no_goal, anything)
-
-        job.perform
+        job.perform(technology)
       end
     end
 
-    context 'for each technology with a goal' do
-      context 'and a positive remainder' do
-        let(:technology_w_remainder) { create :technology, default_goal: 20, available_count: 12 }
+    context 'when called without a technology' do
+      it 'calls set_all_item_goal_remainders_to_zero' do
+        expect(job).to receive(:set_all_item_goal_remainders_to_zero)
 
-        it 'calls loop_assemblies' do
-          expect(job).to receive(:loop_assemblies).with(technology_w_remainder, 8)
+        job.perform
+      end
+
+      context 'for any technology without a set goal' do
+        let(:technology) { create :technology, default_goal: 0 }
+
+        it 'does nothing' do
+          technology
+
+          expect(job).not_to receive(:process_technology).with(technology)
 
           job.perform
         end
       end
 
-      context 'and a non-positive remainder' do
-        let(:technology_no_remainder) { create :technology, default_goal: 20, available_count: 22 }
+      context 'for each technology with a set goal' do
+        let(:technologies) { create_list :technology, 3, default_goal: Random.rand(40..140) }
 
-        it 'does not call loop_assemblies' do
-          expect(job).not_to receive(:loop_assemblies).with(technology_no_remainder, anything)
+        it 'calls process_technology with that technology' do
+          technologies.each do |tech|
+            expect(job).to receive(:process_technology).with(tech)
+          end
+
+          job.perform
         end
       end
     end
   end
 
-  describe '#loop_assemblies' do
-    let(:combination) { create :technology, default_goal: 20, available_count: 8 }
+  describe '#process_assembly' do
+    let(:item) { create :part, goal_remainder: 100 }
+    let(:assembly) { create :assembly, item: item, quantity: 2 }
 
-    context 'when the new remainder is not positive' do
-      let(:assemblies) { create_list :assembly_tech, 2, combination: combination, item: create(:component, available_count: 900) }
-
-      it 'doesn\'t call set_item_goal_remainder' do
-        assemblies
-
-        expect(job).not_to receive(:set_item_goal_remainder)
-
-        job.loop_assemblies(combination, 12)
+    context 'when the new_goal_remainder is positive' do
+      it 'sets the item\'s goal_remainder to new_goal_remainder' do
+        expect { job.process_assembly(assembly, 30) }
+          .to change { item.reload.goal_remainder }
+          .from(100).to(40)
       end
     end
 
-    context 'when the new remainder is positive' do
-      let(:assemblies) { create_list :assembly_tech, 2, combination: combination, item: create(:component, available_count: 2) }
+    context 'when the new_goal_remainder is negative' do
+      it 'sets the item\'s goal_remainder to 0' do
+        expect { job.process_assembly(assembly, 55) }
+          .to change { item.reload.goal_remainder }
+          .from(100).to(0)
+      end
+    end
 
-      it 'calls set_item_goal_remainder' do
-        assemblies
+    context 'when the item is a Part made from a material' do
+      let(:material) { create :material, goal_remainder: 8 }
+      let(:part) { create :part_from_material, material: material, quantity_from_material: 5, available_count: 12, goal_remainder: 10 }
+      let(:part_assembly) { create :assembly, item: part, quantity: 1 }
 
-        expect(job).to receive(:set_item_goal_remainder).exactly(2).times
+      context 'when the material_new_goal_remainder is positive' do
+        it 'sets the material\'s goal_remainder to material_new_goal_remainder' do
+          # in_parent_available = 20 * 1
+          # material_in_parent_available = (12 + 20) / 5
+          # material_new_goal_remainder = 8 - 6
+          expect { job.process_assembly(part_assembly, 20) }
+            .to change { material.reload.goal_remainder }
+            .from(8).to(2)
+        end
+      end
 
-        job.loop_assemblies(combination, 12)
+      context 'when the material_new_goal_remainder is negative' do
+        it 'sets the material\'s goal_remainder to 0' do
+          expect { job.process_assembly(part_assembly, 90) }
+            .to change { material.reload.goal_remainder }
+            .from(8).to(0)
+        end
       end
     end
 
     context 'when the item is a Component and has sub-assemblies' do
-      let(:component) { create :component }
-      let(:assembly) { create :assembly_tech, combination: combination, item: component }
-      let(:sub_assembly) { create :assembly, combination: component }
+      let(:component) { create :component, goal_remainder: 40 }
+      let(:comp_assembly) { create :assembly, item: component, quantity: 1 }
+      let(:comp_sub_assemblies) { create_list :assembly, 3, combination: component }
 
-      it 'calls loop_components with the item' do
-        assembly
-        sub_assembly
+      it 'calls process_assembly for each sub assembly' do
+        allow(job).to receive(:process_assembly).with(comp_assembly, anything).and_call_original
 
-        allow(job).to receive(:loop_assemblies).with(combination, 12).and_call_original
+        comp_sub_assemblies.each do |asbly|
+          expect(job).to receive(:process_assembly).with(asbly, anything)
+        end
 
-        expect(job).to receive(:loop_assemblies).with(component, anything)
+        job.process_assembly(comp_assembly, 14)
+      end
+    end
+  end
 
-        job.loop_assemblies(combination, 12)
+  describe '#process_technology' do
+    context 'when a technology\'s goal is less than or equal to it\'s available_count' do
+      let(:technology_no_goal) { create :technology, default_goal: 0, available_count: 1 }
+      let(:assembly) { create :assembly, combination: technology_no_goal }
+
+      it 'does nothing to that technology' do
+        expect(technology_no_goal).not_to receive(:quantities)
+
+        expect(job).not_to receive(:process_assembly).with(assembly, anything)
+
+        job.process_technology(technology_no_goal)
       end
     end
 
-    context 'when the item is a Part and is made from a material' do
-      let(:part) { create :part_from_material }
-      let(:assembly) { create :assembly_tech, combination: combination, item: part }
+    context 'when a technology\'s goal is greater than it\'s available_count' do
+      let(:technology) { create :technology, default_goal: 30, available_count: 20 }
+      let(:assemblies) { create_list :assembly_tech, 3, combination: technology, quantity: 1 }
 
-      it 'calls set_material_goal_remainder' do
-        assembly
+      it 'sets item\'s goal_remainder to the max value possible' do
+        # build technology.quantities
+        assemblies.each do |asbly|
+          technology.quantities[asbly.item.uid] = asbly.quantity
+        end
+        technology.save
 
-        expect(job).to receive(:set_material_goal_remainder).with(part, anything)
+        # stub out the loop of tech.assemblies.without_price_only
+        # so process_assembly doesn't morph
+        allow(job).to receive(:process_assembly).and_return(true)
 
-        job.loop_assemblies(combination, 12)
+        job.process_technology(technology)
+
+        assemblies.each do |asbly|
+          expect(asbly.item.reload.goal_remainder).to eq 10
+        end
+      end
+
+      it 'calls process_assembly on each assembly' do
+       # build technology.quantities
+       assemblies.each do |asbly|
+         technology.quantities[asbly.item.uid] = asbly.quantity
+       end
+       technology.save
+
+        assemblies.each do |asbly|
+          expect(job).to receive(:process_assembly).with(asbly, 0)
+        end
+
+        job.process_technology(technology)
       end
     end
   end
@@ -131,24 +197,39 @@ RSpec.describe GoalRemainderCalculationJob, type: :job do
     end
   end
 
-  describe '#set_item_goal_remainder' do
-    let(:item) { create :component, goal_remainder: 12 }
+  describe '#set_all_tech_items_goal_remainders_to_zero' do
+    let(:technology) { create :technology, default_goal: 30, available_count: 20 }
+    let(:assemblies) { create_list :assembly_tech, 3, combination: technology, quantity: 1 }
 
-    it 'sets the item\'s goal_remainder to a new value' do
-      expect { job.set_item_goal_remainder(item, 4) }
-        .to change { item.reload.goal_remainder }
-        .from(12).to(16)
+    context 'for items related to the given technology' do
+      it 'sets the goal_remainder to 0' do
+        # build technology.quantities
+        assemblies.each do |asbly|
+          technology.quantities[asbly.item.uid] = asbly.quantity
+          asbly.item.update_columns(goal_remainder: 20)
+        end
+        technology.save
+
+        expect { job.set_all_tech_items_goal_remainders_to_zero(technology) }
+          .to change { Component.all.pluck(:goal_remainder) }
+          .from([20, 20, 20]).to([0, 0, 0])
+      end
     end
-  end
 
-  describe '#set_material_goal_remainder' do
-    let(:material) { create :material, goal_remainder: 1, available_count: 1 }
-    let(:part) { create :part_from_material, material: material, quantity_from_material: 2.5 }
+    context 'for items unrelated to the given technology' do
+      let(:component) { create :component, goal_remainder: 45 }
 
-    it 'sets the material\'s goal_remainder to a new value' do
-      expect { job.set_material_goal_remainder(part, 6) }
-        .to change { material.reload.goal_remainder }
-        .from(1).to(4)
+      it 'doesn\'t change their goal_remainders' do
+        # build technology.quantities
+        assemblies.each do |asbly|
+          technology.quantities[asbly.item.uid] = asbly.quantity
+          asbly.item.update_columns(goal_remainder: 20)
+        end
+        technology.save
+
+        expect { job.set_all_tech_items_goal_remainders_to_zero(technology) }
+          .not_to change { component.goal_remainder }
+      end
     end
   end
 end
