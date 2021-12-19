@@ -37,19 +37,13 @@ class GoalRemainderCalculationJob < ApplicationJob
 
     return unless item.has_sub_assemblies?
 
-    combined_available = item.available_count + in_parent_available
-
     if assembly.item_type == 'Part'
       # Parts made from materials
-
       material = item.material
 
       # keeping both numbers as integers under-values how many materials
       # are in parent items, which keeps the number in goal_remainder rounded up,
       # providing overage.
-      # using .to_f and .ceil as #process_technology does would round up
-      # the number of materials used to produce parent items,
-      # which would in turn short the number in goal_remainder
       material_in_parent_available = (item.available_count + in_parent_available) / item.quantity_from_material
 
       material_new_goal_remainder = material.goal_remainder - material_in_parent_available
@@ -57,6 +51,8 @@ class GoalRemainderCalculationJob < ApplicationJob
       material.update_columns(goal_remainder: [material_new_goal_remainder, 0].max)
     else
       # Components with sub_assemblies
+      combined_available = item.available_count + in_parent_available
+
       item.assemblies.without_price_only.each do |sub_assembly|
         process_assembly(sub_assembly, combined_available)
       end
@@ -65,7 +61,12 @@ class GoalRemainderCalculationJob < ApplicationJob
 
   def process_technology(tech)
     # Already have more than needed? leave every down-tree item with a goal_reaminder of 0 and move on
-    return if tech.available_count >= tech.default_goal
+    if tech.available_count >= tech.default_goal
+      puts "=+= #{tech.name} has already completed the goal =+="
+      return
+    end
+
+    puts "=+= processing for #{tech.name} =+="
 
     remaining_need = tech.default_goal - tech.available_count
 
@@ -73,6 +74,8 @@ class GoalRemainderCalculationJob < ApplicationJob
       # set all item goal_remainders based on quantity per technology,
       # ignoring the available count of any parents for the moment
       item = uid.objectify_uid
+
+      # byebug
 
       item.update_columns(goal_remainder: (remaining_need * quantity).ceil - item.available_count)
     end
