@@ -5,7 +5,7 @@ require 'rails_helper'
 RSpec.describe EventInventoryJob, type: :job do
   let(:job) { EventInventoryJob.new }
   let(:technology) { create :technology, quantity_per_box: 10 }
-  let(:event) { create :complete_event, technology: technology }
+  let(:event) { create :complete_event_technology, technology: technology }
 
   it 'queues as event_inventory' do
     expect(job.queue_name).to eq 'event_inventory'

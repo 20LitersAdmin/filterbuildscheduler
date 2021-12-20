@@ -153,16 +153,16 @@ RSpec.describe GoalRemainderCalculationJob, type: :job do
         job.process_technology(technology)
 
         assemblies.each do |asbly|
-          expect(asbly.item.reload.goal_remainder).to eq 10
+          expect(asbly.item.reload.goal_remainder).to eq 30
         end
       end
 
       it 'calls process_assembly on each assembly' do
-       # build technology.quantities
-       assemblies.each do |asbly|
-         technology.quantities[asbly.item.uid] = asbly.quantity
-       end
-       technology.save
+        # build technology.quantities
+        assemblies.each do |asbly|
+          technology.quantities[asbly.item.uid] = asbly.quantity
+        end
+        technology.save
 
         assemblies.each do |asbly|
           expect(job).to receive(:process_assembly).with(asbly, 0)
