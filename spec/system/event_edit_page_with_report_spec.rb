@@ -81,7 +81,7 @@ RSpec.describe 'To create an event report', type: :system do
     end
 
     it 'complete events still have an event report section' do
-      completed_event = create(:complete_event)
+      completed_event = create(:complete_event_technology)
       visit edit_event_path completed_event
 
       expect(page).to have_content completed_event.title
