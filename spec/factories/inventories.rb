@@ -17,7 +17,7 @@ FactoryBot.define do
 
     factory :inventory_event do
       manual { false }
-      event factory: :complete_event
+      event factory: :complete_event_technology
     end
   end
 end
