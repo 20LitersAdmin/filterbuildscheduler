@@ -62,6 +62,7 @@ module RailsAdmin
               base_uri: '/',
               links: [
                 { name: 'Create new build event', link: 'events/new' },
+                { name: 'Events Needing Reports', link: 'admin/event?model_name=event&scope=needs_report' },
                 { name: 'Closed Events', link: 'admin/event?model_name=event&scope=closed' },
                 { name: 'Cancelled Events', link: 'admin/event?model_name=event&scope=discarded' },
                 { name: 'Reports', link: 'report' }
