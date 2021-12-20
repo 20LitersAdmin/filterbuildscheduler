@@ -13,6 +13,7 @@ FactoryBot.define do
     unit_rate { 1 }
     owner { Faker::Company.name }
     people { 5 }
+    quantity_per_box { 30 }
     lifespan_in_years { 10 }
     liters_per_day { 100 }
   end

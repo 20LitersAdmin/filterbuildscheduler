@@ -4,7 +4,8 @@ require 'rails_helper'
 
 RSpec.describe Event, type: :model do
   let(:event) { create :event }
-  let(:complete_event) { create :complete_event }
+  let(:complete_event) { create :complete_event_technology }
+  let(:complete_event_impact) { create :complete_event_impact }
 
   let(:no_starttime)        { build :event, start_time: nil, end_time: nil }
   let(:no_endtime)          { build :event, end_time: nil }
@@ -30,6 +31,7 @@ RSpec.describe Event, type: :model do
     let(:no_itemgoal)           { build :event, item_goal: nil }
     let(:no_technologiesbuilt)  { build :event, technologies_built: nil }
     let(:no_boxespacked)        { build :event, boxes_packed: nil }
+    let(:no_impact_results)     { build :event, impact_results: nil }
 
     it 'in order to save' do
       expect(unsaved_event.save).to eq true
@@ -44,6 +46,7 @@ RSpec.describe Event, type: :model do
 
       expect(no_technologiesbuilt.save).to be_falsey
       expect(no_boxespacked.save).to be_falsey
+      expect(no_impact_results.save).to be_falsey
 
       expect { no_privacy.save!(validate: false) }
         .to raise_error ActiveRecord::NotNullViolation
@@ -424,7 +427,7 @@ RSpec.describe Event, type: :model do
   describe '#results_people' do
     context 'when technology.people == 0' do
       let(:tech_no_ppl) { create :technology, people: 0 }
-      let(:event2) { create :complete_event, technology: tech_no_ppl }
+      let(:event2) { create :complete_event_technology, technology: tech_no_ppl }
 
       it 'returns 0' do
         expect(event2.results_people).to eq(0)
@@ -438,14 +441,14 @@ RSpec.describe Event, type: :model do
     end
 
     it 'returns the number of people served * technology_results' do
-      expect(complete_event.results_people).to eq(155)
+      expect(complete_event.results_people).to eq(300)
     end
   end
 
   describe '#results_timespan' do
     context 'when technology.lifespan_in_years == 0' do
       let(:tech_no_lifespan) { create :technology, lifespan_in_years: 0 }
-      let(:event2) { create :complete_event, technology: tech_no_lifespan }
+      let(:event2) { create :complete_event_technology, technology: tech_no_lifespan }
 
       it 'returns 0' do
         expect(event2.results_timespan).to eq(0)
@@ -466,7 +469,7 @@ RSpec.describe Event, type: :model do
   describe '#results_liters_per_day' do
     context 'when technology.results_liters_per_day == 0' do
       let(:tech_no_liters) { create :technology, liters_per_day: 0 }
-      let(:event2) { create :complete_event, technology: tech_no_liters }
+      let(:event2) { create :complete_event_technology, technology: tech_no_liters }
 
       it 'returns 0' do
         expect(event2.results_liters_per_day).to eq(0)
@@ -480,7 +483,7 @@ RSpec.describe Event, type: :model do
     end
 
     it 'returns the liters per day * technology_results' do
-      expect(complete_event.results_liters_per_day).to eq(3_100)
+      expect(complete_event.results_liters_per_day).to eq(6_000)
     end
   end
 
@@ -533,7 +536,7 @@ RSpec.describe Event, type: :model do
     end
 
     context 'when inventory is not present and a meaningful value or change exists for technologies_built or boxes_packed' do
-      let(:new_complete_event) { build :complete_event }
+      let(:new_complete_event) { build :complete_event_technology }
 
       it 'returns true' do
         expect(new_complete_event.should_create_inventory?).to eq true
@@ -545,22 +548,40 @@ RSpec.describe Event, type: :model do
     context 'when emails_sent? is false, attendance is positive, registrations exist, technology_results are positive and technology is results_worthy' do
       let(:reg_comp_a) { create :registration_attended, event: complete_event }
       let(:reg_comp_b) { create :registration_attended, event: complete_event }
+      let(:reg_comp_c) { create :registration_attended, event: complete_event_impact }
+      let(:reg_comp_d) { create :registration_attended, event: complete_event_impact }
 
       it 'returns true' do
         reg_comp_a
         reg_comp_b
+        reg_comp_c
+        reg_comp_d
+
         expect(complete_event.should_send_results_emails?).to eq true
+        expect(complete_event_impact.should_send_results_emails?).to eq true
       end
     end
   end
 
   describe '#technology_results' do
-    it 'must be complete to run' do
-      expect(event.technology_results).to eq(0)
+    context 'when event is incomplete' do
+      it 'returns 0' do
+        expect(event.incomplete?).to eq true
+
+        expect(event.technology_results).to eq 0
+      end
     end
 
-    it 'returns the number of individual technologies produced' do
-      expect(complete_event.technology_results).to eq(31)
+    context 'when impact_results is greater than technologies completed' do
+      it 'returns impact_results' do
+        expect(complete_event_impact.technology_results).to eq complete_event_impact.impact_results
+      end
+    end
+
+    context 'when technologies completed is greater than impact_results' do
+      it 'returns technologies completed' do
+        expect(complete_event.technology_results).to eq (complete_event.boxes_packed * complete_event.technology.quantity_per_box) + complete_event.technologies_built
+      end
     end
   end
 
