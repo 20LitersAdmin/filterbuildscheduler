@@ -87,15 +87,19 @@
   }
 }
 
-.event-new {
+.event-new, .event-edit {
   @media (min-width: 768px) {
     .form-matcher {
       margin-top: 26px;
     }
+
+    .form-hint-matcher {
+      margin-top: 14px;
+    }
   }
 
   @media (max-width: 767px) {
-    .form-matcher {
+    .form-matcher, .form-hint-matcher {
       margin-bottom: 12px;
       width: 100%;
     }

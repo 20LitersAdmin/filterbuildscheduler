@@ -1,9 +1,15 @@
 -# frozen_string_literal: true
 
+.col-sm-12
+  .row
+    .col-sm-6
+      = f.input :impact_results
+    .col-sm-6.form-hint-matcher
+      %p.help-block Use number provided in first box from Impact Results section of event report.
 .col-sm-6
-  = f.input :technologies_built, label: 'Filters built (but not boxed): ', min_max: true
+  = f.input :technologies_built, label: '# of Loose Items produced: ', min_max: true, hint: 'Event Results section of event report.'
 .col-sm-6
-  = f.input :boxes_packed, label: 'Boxes packed (ready to ship): ', min_max: true
+  = f.input :boxes_packed, label: '# of Boxes completed: ', min_max: true, hint: 'Event Results section of event report.'
 .col-sm-6
   = f.input :number_registered, disabled: true, label: 'Total Registered (Builders and Leaders):', input_html: { value: @event.registrations.sum(:guests_registered) + @event.registrations.count }
 .col-sm-6
