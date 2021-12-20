@@ -286,6 +286,7 @@ class EventsController < ApplicationController
                                   :is_private,
                                   :description,
                                   :item_goal,
+                                  :impact_results,
                                   :technologies_built,
                                   :boxes_packed,
                                   :attendance,
