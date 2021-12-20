@@ -16,7 +16,7 @@ class Event < ApplicationRecord
 
   validates :min_registrations, :max_registrations, :min_leaders, :max_leaders, presence: true, numericality: { only_integer: true, greater_than: 0 }
 
-  validates :technologies_built, :boxes_packed, :attendance, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
+  validates :technologies_built, :boxes_packed, :impact_results, :attendance, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
 
   validate :dates_are_valid?
   validate :registrations_are_valid?
@@ -59,7 +59,9 @@ class Event < ApplicationRecord
     return false if new_record?
     return false unless start_time < Time.zone.now
 
-    attendance.positive? || (boxes_packed.positive? || technologies_built.positive?)
+    attendance.positive? ||
+      impact_results.positive? ||
+      (boxes_packed.positive? || technologies_built.positive?)
   end
 
   def does_not_need_leaders?(scope = '')
@@ -286,17 +288,19 @@ class Event < ApplicationRecord
   end
 
   def should_send_results_emails?
+    # technology_results checks for complete?
+
     !emails_sent? &&
+      technology_results.positive? &&
       attendance.positive? &&
       registrations.kept.any? &&
-      technology_results.positive? &&
       technology.results_worthy?
   end
 
   def technology_results
     return 0 if incomplete?
 
-    (boxes_packed * technology.quantity_per_box) + technologies_built
+    [(boxes_packed * technology.quantity_per_box) + technologies_built, impact_results].max
   end
 
   def total_registered
