@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_12_18_043750) do
+ActiveRecord::Schema.define(version: 2021_12_20_171700) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -156,6 +156,7 @@ ActiveRecord::Schema.define(version: 2021_12_18_043750) do
     t.string "contact_email"
     t.boolean "emails_sent", default: false
     t.datetime "reminder_sent_at"
+    t.integer "impact_results", default: 0, null: false
     t.index ["discarded_at"], name: "index_events_on_discarded_at"
   end
 

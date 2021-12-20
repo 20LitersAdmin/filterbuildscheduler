@@ -22,11 +22,18 @@ FactoryBot.define do
       end_time { start_time + 3.hours }
     end
 
-    factory :complete_event do
+    factory :complete_event_technology do
       start_time { Faker::Time.backward(days: 4).beginning_of_day + 9.hours }
       end_time { start_time + 3.hours }
       technologies_built { 30 }
       boxes_packed { 1 }
+      attendance { 20 }
+    end
+
+    factory :complete_event_impact do
+      start_time { Faker::Time.backward(days: 4).beginning_of_day + 9.hours }
+      end_time { start_time + 3.hours }
+      impact_results { 30 }
       attendance { 20 }
     end
 
