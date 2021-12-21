@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class EventsController < ApplicationController
-  before_action :find_stale
   before_action :set_event,
                 only: %i[
                   attendance
@@ -212,7 +211,7 @@ class EventsController < ApplicationController
   end
 
   def update
-    # this also marks checked registrations as attended
+    # this also sets submitted registrations as attended
     @event.assign_attributes(event_params)
 
     admins_notified = nil
@@ -301,11 +300,6 @@ class EventsController < ApplicationController
                                        :frequency,
                                        :occurrences,
                                        :replicate_leaders
-  end
-
-  def find_stale
-    @cancelled_events = Event.discarded
-    @closed_events = Event.closed
   end
 
   def set_event
