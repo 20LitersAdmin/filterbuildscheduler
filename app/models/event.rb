@@ -59,9 +59,7 @@ class Event < ApplicationRecord
     return false if new_record?
     return false unless start_time < Time.zone.now
 
-    attendance.positive? ||
-      impact_results.positive? ||
-      (boxes_packed.positive? || technologies_built.positive?)
+    attendance.positive? || technology_results.positive?
   end
 
   def does_not_need_leaders?(scope = '')
@@ -298,9 +296,7 @@ class Event < ApplicationRecord
   end
 
   def technology_results
-    return 0 if incomplete?
-
-    [(boxes_packed * technology.quantity_per_box) + technologies_built, impact_results].max
+    [(boxes_packed.to_i * technology.quantity_per_box.to_i) + technologies_built.to_i, impact_results.to_i].max
   end
 
   def total_registered
