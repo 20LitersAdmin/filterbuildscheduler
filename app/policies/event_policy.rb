@@ -62,17 +62,8 @@ class EventPolicy < ApplicationPolicy
   end
 
   def show?
-    if event.in_the_past?
-      if user&.can_edit_events?
-        true
-      else
-        # anonymous users and builders can't see past events
-        false
-      end
-    else
-      # future events can always be seen by everyone
-      true
-    end
+    # future events can always be seen by everyone
+    event.in_the_future? || user&.can_edit_events?
   end
 
   def sender?

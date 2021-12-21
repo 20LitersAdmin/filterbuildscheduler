@@ -50,7 +50,7 @@
       = render partial: 'events/report_fields', locals: { f: f }
     = f.submit 'Submit', class: 'btn yellow fullwidth'
     - if @event.should_allow_results_emails_to_be_sent?
-      = f.button :submit, name: 'send_report', value: 'Submit & Email Results', class: 'btn blue fullwidth'
+      = f.submit 'Submit & Email Results', name: 'send_report', class: 'btn blue fullwidth'
     - unless @event.new_record?
       .row
         .col-xs-4
