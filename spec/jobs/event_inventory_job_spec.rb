@@ -39,12 +39,14 @@ RSpec.describe EventInventoryJob, type: :job do
     end
 
     context 'when technology has sufficient count' do
-      it 'calls create_technology_count_only and returns true' do
+      it 'calls create_technology_count_only and returns' do
         # Factorybot event produces 30 loose, 1 box
         technology.update(loose_count: 31, box_count: 2)
 
         expect(job).to receive(:create_technology_count_only)
-        expect(job.perform(event)).to eq true
+        expect(job).not_to receive(:loop_assemblies)
+
+        job.perform(event)
       end
     end
 
@@ -67,12 +69,13 @@ RSpec.describe EventInventoryJob, type: :job do
       end
     end
 
-    it 'calls inventory.update to trigger CountTransferJob' do
+    it 'calls inventory.run_count_transfer_job to trigger CountTransferJob' do
       inv_double = instance_double Inventory
       allow(event).to receive(:create_inventory).and_return(inv_double)
+      allow(inv_double).to receive(:update).and_return(inv_double)
       allow(job).to receive(:create_count).and_return(true)
 
-      expect(inv_double).to receive(:update)
+      expect(inv_double).to receive_message_chain(:reload, :run_count_transfer_job)
 
       job.perform(event)
     end

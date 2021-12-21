@@ -46,8 +46,8 @@ class EventInventoryJob < ApplicationJob
       loop_assemblies(@technology, @technology_remainder)
     end
 
-    # run @inventory.update to trigger CountTransfer job:
     @inventory.update(completed_at: Time.now)
+    @inventory.reload.run_count_transfer_job
   end
 
   def create_count(item, loose_count, box_count)
