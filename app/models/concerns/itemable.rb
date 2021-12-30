@@ -13,6 +13,7 @@ module Itemable
   # price
   # label
   # can_be_produced (except Material)
+  # goal_remainder (except Technology)
 
   included do
     monetize :price_cents, allow_nil: true, numericality: { greater_than_or_equal_to: 0 }

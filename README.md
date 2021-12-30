@@ -1,9 +1,5 @@
 # README
 ## Quick fixes:
-- rails_admin user is searching by email and location, not name??
-
-- rails_admin: Items: add read_only goal_remainder
-
 - CountTransferJob / item history: Receiving and Shipping inventories are showing the change, not the new totals (see M008 for example)
 
 ### Policies:
