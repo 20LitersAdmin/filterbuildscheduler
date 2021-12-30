@@ -66,8 +66,8 @@ class HistoryJson < RailsAdmin::Config::Fields::Base
 
   register_instance_option :formatted_value do
     html_response = ['<ul>']
-    value.reverse_each do |date, available|
-      html_response << "<li>#{date}: #{available}</li>"
+    value.reverse_each do |date, hash|
+      html_response << "<li>#{date}: #{hash['available']}</li>"
     end
     html_response << ['</ul>']
 
@@ -81,6 +81,6 @@ class HistoryLineChart < RailsAdmin::Config::Fields::Base
   register_instance_option :formatted_value do
     extend Chartkick::Helper
 
-    line_chart value, curve: false, width: '800px', label: 'Available', thousands: ',', colors: ['#FCE000', '#9BB4C8', '#4A4A4A']
+    line_chart value, curve: false, width: '600px', label: 'Available', thousands: ',', colors: ['#FCE000', '#9BB4C8', '#4A4A4A']
   end
 end

@@ -552,6 +552,7 @@ RailsAdmin.config do |config|
       end
 
       group 'History' do
+        field :history, :history_json
         field :history_series, :line_chart
       end
     end
@@ -712,6 +713,7 @@ RailsAdmin.config do |config|
       end
 
       group 'History' do
+        field :history, :history_json
         field :history_series, :line_chart
       end
     end
@@ -880,6 +882,7 @@ RailsAdmin.config do |config|
       end
 
       group 'History' do
+        field :history, :history_json
         field :history_series, :line_chart
       end
     end
