@@ -6,8 +6,6 @@
 
 - CountTransferJob / item history: Receiving and Shipping inventories are showing the change, not the new totals (see M008 for example)
 
-- user: see what events they've atteded via RailsAdmin user show (only if they are a Builder)
-
 ### Policies:
 - Prevent some user types from accessing some parts of rails_admin?
 
