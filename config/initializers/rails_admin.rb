@@ -129,6 +129,10 @@ RailsAdmin.config do |config|
           pretty_value { precise(value) }
         end
         field :total_guests
+
+        field :events_list do
+          label 'Last 5 events'
+        end
       end
 
       group 'Leader Stats' do
