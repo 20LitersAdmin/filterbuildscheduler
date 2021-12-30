@@ -1,4 +1,7 @@
 # README
+## Issues:
+- Shipping inventory, when submitting positive numbers doesn't submit, but also doesn't display an error.
+
 ## Quick fixes:
 - CountTransferJob / item history: Receiving and Shipping inventories are showing the change, not the new totals (see M008 for example)
 
