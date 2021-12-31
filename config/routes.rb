@@ -71,7 +71,13 @@ Rails.application.routes.draw do
   # Technologies resources:
   get 'technologies/:id/status', to: 'technologies#status', as: 'technology_status'
 
+  # Technologies#item_lists is index page for lists:
+  # donation_list
+  # setup_list - default to SAM3, show counts, by Component
+  # item_list - Item names alphabetically with UID (find UID by name)
+  get 'lists', to: 'technologies#item_lists', as: 'item_lists'
   get 'donation_list', to: 'technologies#donation_list', as: 'donation_list'
+
   get 'label/:uid', to: 'technologies#label', as: 'label'
   get 'labels', to: 'technologies#labels', as: 'labels'
   post 'labels_select', to: 'technologies#labels_select', as: 'labels_select'

@@ -87,8 +87,9 @@ module RailsAdmin
                 { name: 'Edit/Update Technologies', link: 'admin/technology' },
                 { name: 'Manage Assemblies / Status', link: 'combinations' },
                 { name: 'Print Labels', link: 'labels' },
-                { name: 'Donation List', link: 'donation_list' },
-                { name: 'Order Items', link: 'inventories/order_all' }
+                { name: 'Item Lists', link: 'lists' },
+                { name: 'Order Items', link: 'inventories/order_all' },
+                { name: 'Goal Items', link: 'inventories/order_goal' }
               ]
             }
 
@@ -106,18 +107,7 @@ module RailsAdmin
               ]
             }
 
-            # add specific blocks based upon permissions
-            # using current_user variable
-            # options:
-            # scheduler_links,
-            # leader_links,
-            # data_manager_links,
-            # inventory_links,
-            # event_management,
-            # technology_management,
-            # user_management,
-            # email_management
-
+            # add specific blocks based upon permissions using current_user variable
             instances = []
 
             if current_user.is_admin?
