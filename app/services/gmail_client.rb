@@ -56,16 +56,12 @@ class GmailClient
 
     @skipped_ids = []
 
-    if ids.size > 10
+    if ids.size > 100
       # paged_responses uses `@service.fetch_all` which can return more than 100 messages
       # however, the `@service.batch` for `get_user_message()` is limited to 100 messages
       # so, spit the IDs into arrays of 99 or less.
 
-      # TESTING: maybe the Heroku R14 memory leaks are due to this???
-      # if ids.size > 100
-      # ids.each_slice(99).to_a.each { |chunk_ids| batch_get_messages(chunk_ids) }
-
-      ids.in_groups_of(10).each { |chunk_ids| batch_get_messages(chunk_ids) }
+      ids.in_groups_of(99).each { |chunk_ids| batch_get_messages(chunk_ids) }
     else
       batch_get_messages(ids)
     end
