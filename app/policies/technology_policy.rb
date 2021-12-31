@@ -11,22 +11,34 @@ class TechnologyPolicy < ApplicationPolicy
   end
 
   def donation_list?
+    item_lists?
+  end
+
+  def item_list?
+    item_lists?
+  end
+
+  def item_lists?
     user&.admin_or_leader?
   end
 
   def label?
-    donation_list?
+    item_lists?
   end
 
   def labels?
-    donation_list?
+    item_lists?
   end
 
   def labels_select?
-    donation_list?
+    item_lists?
   end
 
   def status?
     user&.can_manage_data?
+  end
+
+  def setup_list?
+    item_lists?
   end
 end

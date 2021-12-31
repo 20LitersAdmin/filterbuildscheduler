@@ -50,6 +50,181 @@ $(document).on("turbolinks:load", function(){
     }
   });
 
+  $('.datatable-inventory-search').DataTable({
+    retrieve: true,
+    order: [],
+    paging: false,
+    responsive: true,
+    autoWidth: false,
+    info: false,
+    dom: "ft"
+  });
+
+  $('.datatable-item-list').DataTable({
+    retrieve: true,
+    order: [[0, "asc"]],
+    pageLength: -1,
+    responsive: true,
+    autoWidth: false,
+    info: false,
+    dom:
+      "<'col-xs-12 no-overflow center' B>" +
+      "t",
+    buttons: [ 'copy', 'csv', 'excel', 'print' ]
+  });
+
+  $('.datatable-label-chooser').DataTable({
+    retrieve: true,
+    order: [[0, "asc"]],
+    lengthMenu: [[25, 50, 100, -1], [25, 50, 100, "All"] ],
+    pageLength: -1,
+    responsive: true,
+    autoWidth: false,
+    info: false,
+    columnDefs: [
+      { "orderable": false, "targets": 1 }
+    ],
+    dom:
+      "<'col-xs-4 no-overflow'l>"+
+      "<'col-xs-8 no-overflow'f>"+
+      "t",
+    columns: [
+      null, null,
+      { "orderDataType": "dom-checkbox", "orderSequence": [ "desc" ] }
+    ]
+  });
+
+  $('.datatable-leaders').DataTable({
+    retrieve: true,
+    paging: false,
+    order: [[0, "asc"]],
+    responsive: true,
+    autoWidth: false,
+    info: false,
+    dom:
+      "<'col-xs-12 no-overflow center' B>"+
+      "<'col-xs-12 no-overflow'f>"+
+      "t",
+    buttons: [
+      {
+        extend: 'copy',
+        exportOptions: {
+          columns: [0, 1, 2, 3, 5, 7, 8]
+        }
+      },
+      {
+        extend: 'csv',
+        exportOptions: {
+          columns: [0, 1, 2, 3, 5, 7, 8]
+        }
+      },
+      {
+        extend: 'excel',
+        exportOptions: {
+          columns: [0, 1, 2, 3, 5, 7, 8]
+        }
+      },
+      {
+        extend: 'print',
+        exportOptions: {
+          columns: [0, 1, 2, 3, 5, 7, 8]
+        }
+      }
+    ]
+  });
+
+  $('.datatable-order-events').DataTable({
+    retrieve: true,
+    order: [[1, "desc"]],
+    pageLength: 25,
+    lengthMenu: [[25, 50, 100, -1], [25, 50, 100, "All"] ],
+    responsive: true,
+    autoWidth: false,
+    info: false,
+    dom:
+      "<'col-xs-12 no-overflow center' B>"+
+      "<'col-xs-4 no-overflow'l>"+
+      "<'col-xs-8 no-overflow'f>"+
+      "t"+
+      "<'col-xs-8'p>",
+    buttons: [ 'copy', 'csv', 'excel', 'print' ],
+    language: {
+      paginate: {
+        first: "&#8676",
+        previous: "&#8592",
+        next: "&#8594",
+        last: "&#8677"
+      }
+    }
+  });
+
+  $('.datatable-order-events-slim').DataTable({
+    retrieve: true,
+    order: [[1, "desc"]],
+    paging: false,
+    responsive: true,
+    autoWidth: false,
+    info: false,
+    dom:
+      "<'col-xs-4 no-overflow'l>"+
+      "<'col-xs-8 no-overflow'f>"+
+      "t"+
+      "<'col-xs-8'p>"
+  });
+
+  $('.datatable-order-item').DataTable({
+    retrieve: true,
+    order: [[0, "asc"]],
+    pageLength: -1,
+    lengthMenu: [[25, 50, 100, -1], [25, 50, 100, "All"] ],
+    responsive: true,
+    autoWidth: false,
+    info: false,
+    dom:
+      "<'col-xs-12 no-overflow center' B>"+
+      "<'col-xs-4 no-overflow'l>"+
+      "<'col-xs-8 no-overflow'f>"+
+      "t"+
+      "<'col-xs-8'p>",
+    buttons: [ 'copy', 'csv', 'excel', 'print' ],
+    language: {
+      paginate: {
+        first: "&#8676",
+        previous: "&#8592",
+        next: "&#8594",
+        last: "&#8677"
+      }
+    },
+    columns: [
+      null, null, null, null, null, null, null, null,
+      { "orderDataType": "dom-checkbox", "orderSequence": [ "desc" ] }
+    ]
+  });
+
+  $('.datatable-order-supplier').DataTable({
+    retrieve: true,
+    order: [[0, "asc"]],
+    responsive: true,
+    autoWidth: false,
+    info: false,
+    dom:
+      "t"+
+      "<'col-xs-12 no-overflow center' B>",
+    buttons: [ 'copy', 'csv', 'excel', 'print' ],
+    language: {
+      paginate: {
+        first: "&#8676",
+        previous: "&#8592",
+        next: "&#8594",
+        last: "&#8677"
+      }
+    },
+    columns: [
+      null, null, null, null, null, null, null,
+      { "orderDataType": "dom-checkbox", "orderSequence": [ "desc" ] }
+    ]
+  });
+
   $('.datatable-paging').DataTable({
     order: [[0, "asc"]],
     lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"] ],
@@ -135,167 +310,5 @@ $(document).on("turbolinks:load", function(){
     columnDefs: [
       { "orderable": false, "targets": -1 }
     ]
-  });
-
-  $('.datatable-order-item').DataTable({
-    retrieve: true,
-    order: [[0, "asc"]],
-    pageLength: -1,
-    lengthMenu: [[25, 50, 100, -1], [25, 50, 100, "All"] ],
-    responsive: true,
-    autoWidth: false,
-    info: false,
-    dom:
-      "<'col-xs-12 no-overflow center' B>"+
-      "<'col-xs-4 no-overflow'l>"+
-      "<'col-xs-8 no-overflow'f>"+
-      "t"+
-      "<'col-xs-8'p>",
-    buttons: [ 'copy', 'csv', 'excel', 'print' ],
-    language: {
-      paginate: {
-        first: "&#8676",
-        previous: "&#8592",
-        next: "&#8594",
-        last: "&#8677"
-      }
-    },
-    columns: [
-      null, null, null, null, null, null, null, null,
-      { "orderDataType": "dom-checkbox", "orderSequence": [ "desc" ] }
-    ]
-  });
-
-  $('.datatable-order-supplier').DataTable({
-    retrieve: true,
-    order: [[0, "asc"]],
-    responsive: true,
-    autoWidth: false,
-    info: false,
-    dom:
-      "t"+
-      "<'col-xs-12 no-overflow center' B>",
-    buttons: [ 'copy', 'csv', 'excel', 'print' ],
-    language: {
-      paginate: {
-        first: "&#8676",
-        previous: "&#8592",
-        next: "&#8594",
-        last: "&#8677"
-      }
-    },
-    columns: [
-      null, null, null, null, null, null, null,
-      { "orderDataType": "dom-checkbox", "orderSequence": [ "desc" ] }
-    ]
-  });
-
-  $('.datatable-order-events').DataTable({
-    retrieve: true,
-    order: [[1, "desc"]],
-    pageLength: 25,
-    lengthMenu: [[25, 50, 100, -1], [25, 50, 100, "All"] ],
-    responsive: true,
-    autoWidth: false,
-    info: false,
-    dom:
-      "<'col-xs-12 no-overflow center' B>"+
-      "<'col-xs-4 no-overflow'l>"+
-      "<'col-xs-8 no-overflow'f>"+
-      "t"+
-      "<'col-xs-8'p>",
-    buttons: [ 'copy', 'csv', 'excel', 'print' ],
-    language: {
-      paginate: {
-        first: "&#8676",
-        previous: "&#8592",
-        next: "&#8594",
-        last: "&#8677"
-      }
-    }
-  });
-
-  $('.datatable-order-events-slim').DataTable({
-    retrieve: true,
-    order: [[1, "desc"]],
-    paging: false,
-    responsive: true,
-    autoWidth: false,
-    info: false,
-    dom:
-      "<'col-xs-4 no-overflow'l>"+
-      "<'col-xs-8 no-overflow'f>"+
-      "t"+
-      "<'col-xs-8'p>"
-  });
-
-  $('.datatable-leaders').DataTable({
-    retrieve: true,
-    paging: false,
-    order: [[0, "asc"]],
-    responsive: true,
-    autoWidth: false,
-    info: false,
-    dom:
-      "<'col-xs-12 no-overflow center' B>"+
-      "<'col-xs-12 no-overflow'f>"+
-      "t",
-    buttons: [
-      {
-        extend: 'copy',
-        exportOptions: {
-          columns: [0, 1, 2, 3, 5, 7, 8]
-        }
-      },
-      {
-        extend: 'csv',
-        exportOptions: {
-          columns: [0, 1, 2, 3, 5, 7, 8]
-        }
-      },
-      {
-        extend: 'excel',
-        exportOptions: {
-          columns: [0, 1, 2, 3, 5, 7, 8]
-        }
-      },
-      {
-        extend: 'print',
-        exportOptions: {
-          columns: [0, 1, 2, 3, 5, 7, 8]
-        }
-      }
-    ]
-  });
-
-  $('.datatable-label-chooser').DataTable({
-    retrieve: true,
-    order: [[0, "asc"]],
-    lengthMenu: [[25, 50, 100, -1], [25, 50, 100, "All"] ],
-    pageLength: -1,
-    responsive: true,
-    autoWidth: false,
-    info: false,
-    columnDefs: [
-      { "orderable": false, "targets": 1 }
-    ],
-    dom:
-      "<'col-xs-4 no-overflow'l>"+
-      "<'col-xs-8 no-overflow'f>"+
-      "t",
-    columns: [
-      null, null,
-      { "orderDataType": "dom-checkbox", "orderSequence": [ "desc" ] }
-    ]
-  });
-
-  $('.datatable-inventory-search').DataTable({
-    retrieve: true,
-    order: [],
-    paging: false,
-    responsive: true,
-    autoWidth: false,
-    info: false,
-    dom: "ft"
   });
 });

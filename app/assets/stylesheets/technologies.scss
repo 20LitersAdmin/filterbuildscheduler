@@ -6,3 +6,9 @@
     width: 100%;
   }
 }
+
+#setup_list {
+  .row.flex {
+    page-break-inside: avoid;
+  }
+}

@@ -70,8 +70,11 @@ Rails.application.routes.draw do
 
   # Technologies resources:
   get 'technologies/:id/status', to: 'technologies#status', as: 'technology_status'
+  get 'lists', to: 'technologies#item_lists', as: 'item_lists'
+  get 'lists/donation_list', to: 'technologies#donation_list', as: 'donation_list'
+  get 'lists/items', to: 'technologies#item_list', as: 'item_list'
+  get 'lists/setup', to: 'technologies#setup_list', as: 'setup_list'
 
-  get 'donation_list', to: 'technologies#donation_list', as: 'donation_list'
   get 'label/:uid', to: 'technologies#label', as: 'label'
   get 'labels', to: 'technologies#labels', as: 'labels'
   post 'labels_select', to: 'technologies#labels_select', as: 'labels_select'

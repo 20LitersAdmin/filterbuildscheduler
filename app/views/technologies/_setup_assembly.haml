@@ -1,0 +1,21 @@
+-# frozen_string_literal: true
+
+
+:ruby
+  item = setup_assembly.item
+  item_type = setup_assembly.item_type
+  available = item.available_count
+  available_text = item.only_loose? ? available : "#{human_number available} (#{human_number item.box_count, display_zero: true} boxes, #{human_number item.loose_count, display_zero: true} loose)"
+  goal_remainder = item.goal_remainder
+  highlight = 'color: red; font-weight: bolder; border: solid 2px red' if goal_remainder > available && !item.has_sub_assemblies?
+
+-# UID | Name | Available | boxes, loose | Produceable | goal remainder
+%tr
+  %td
+    = item.uid_and_name
+  %td.right-align{ style: highlight }
+    = available_text
+  %td.right-align
+    = human_number item.can_be_produced
+  %td.right-align{ style: highlight }
+    = human_number goal_remainder

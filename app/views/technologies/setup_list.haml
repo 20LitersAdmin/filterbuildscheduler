@@ -1,0 +1,41 @@
+-# frozen_string_literal: true
+
+#setup_list.container
+  .row
+    .col-xs-10
+      %h3 Filter Build Setup list
+      %p Printed #{Date.today.to_s(:long)}
+    .col-xs-2.no-print
+      = link_to 'Back to lists', item_lists_path, class: 'btn yellow'
+  .row.flex
+    .col-xs-2.image-container
+      = image_tag @technology.image, class: 'img-responsive'
+      %i
+        %strong All counts are approximate
+    .col-xs-10
+      %table.table.table-striped.setup-table
+        %thead
+          %tr
+            %th= @technology.uid_and_name
+            %th.right-align #{human_number @technology.available_count} available
+            %th.right-align #{human_number @technology.can_be_produced} produceable
+            %th.right-align Still need #{human_number @technology.default_goal - @technology.available_count}
+        %tbody
+          = render partial: 'setup_assembly', collection: @assemblies
+
+  - @components.each do |component|
+    .row.flex
+      .col-xs-2.image-container
+        = image_tag component.image, class: 'img-responsive'
+        %i
+          %strong All counts are approximate
+      .col-xs-10
+        %table.table.table-striped.setup-table
+          %thead
+            %tr
+              %th= component.uid_and_name
+              %th.right-align #{human_number component.available_count} available
+              %th.right-align #{human_number component.can_be_produced} produceable
+              %th.right-align Still need #{human_number component.goal_remainder}
+          %tbody
+            = render partial: 'setup_assembly', collection: component.assemblies

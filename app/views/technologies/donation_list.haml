@@ -3,9 +3,11 @@
   .row
     .col-xs-4.col-md-2
       = image_tag 'logo-horizontal-417-208.png', class: 'poster-logo'
-    .col-md-8
+    .col-xs-6.col-md-9
       %h3 Donation List:
       %p This is a list of materials and parts we use to construct our filter and rainwater harvesting technologies. We purchase these items from suppliers for retail price when we cannot secure donations.
+    .col-xs-2.col-md-1
+      = link_to 'Back to lists', item_lists_path, class: 'btn yellow'
   .row.no-print.admin-div
     .col-xs-12
       = form_tag donation_list_path, method: 'get', class: 'form-inline' do
