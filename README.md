@@ -1,8 +1,9 @@
 # README
-## Quick fixes:
-- rails_admin user is searching by email and location, not name??
+## Issues:
+- Shipping inventory, when submitting positive numbers doesn't submit, but also doesn't display an error.
 
-- rails_admin: Items: add read_only goal_remainder
+## Quick fixes:
+- CountTransferJob / item history: Receiving and Shipping inventories are showing the change, not the new totals (see M008 for example)
 
 ### Policies:
 - Prevent some user types from accessing some parts of rails_admin?
