@@ -4,6 +4,10 @@
   font-family: 'DINPro-Regular', sans-serif;
 }
 
+.row.flex {
+  display: flex;
+}
+
 abbr, acronym {
   border-bottom: 0px !important;
 }
