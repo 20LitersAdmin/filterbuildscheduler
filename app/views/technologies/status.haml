@@ -15,7 +15,7 @@
       %table.table
         %thead
           %tr
-            %th{ colspan: 7 } #{@technology.uid}: #{@technology.name} (#{@technology.available_count} available; #{@remaining_need} remaining)
+            %th{ colspan: 7 } #{@technology.uid_and_name} (#{@technology.available_count} available; #{@remaining_need} remaining)
             %th Goal: #{human_number @goal}
             %th.right-align Available
             %th.right-align Needed

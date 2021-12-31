@@ -94,6 +94,9 @@ class TechnologiesController < ApplicationController
   def setup_list
     # default to SAM3, show counts, by Component
     @technology = Technology.find(3)
+    @assemblies = @technology.assemblies.without_price_only.ascending
+
+    @components = @technology.all_components.order(:id)
   end
 
   private

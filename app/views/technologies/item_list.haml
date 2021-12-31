@@ -9,7 +9,7 @@
   .row
     .col
       %table.table.table-striped.datatable-item-list
-        %caption Printed on #{Date.today.iso8601}
+        %caption Printed #{Date.today.to_s(:long)}
         %thead
           %th Item Name
           %th UID
