@@ -13,6 +13,7 @@ module Itemable
   # price
   # label
   # can_be_produced (except Material)
+  # goal_remainder (except Technology)
 
   included do
     monetize :price_cents, allow_nil: true, numericality: { greater_than_or_equal_to: 0 }
@@ -79,11 +80,29 @@ module Itemable
   def history_series
     return [] if history.empty?
 
-    [
-      { name: 'Available', data: history_only('available') },
-      { name: 'Loose Count', data: history_only('loose') },
-      { name: 'Box Count', data: history_only('box') }
-    ]
+    if only_loose?
+      [
+        { name: 'Available', data: history_only('available') }
+      ]
+    else
+      [
+        { name: 'Available', data: history_only('available') },
+        { name: 'Loose Count', data: history_only('loose') },
+        { name: 'Box Count', data: history_only('box') }
+      ]
+    end
+  end
+
+  def history_hash_for_self(inventory_type)
+    # this method is similar to Count#history_hash_for_item
+    # However, counts for Shipping, Receiving and Event inventories only show the change, not the new _count values, which makes the item's history series incorrect
+    # used by CountTransferJob#transfer_auto_count
+    {
+      inv_type: inventory_type,
+      loose: loose_count,
+      box: box_count,
+      available: available_count
+    }
   end
 
   def label_hash

@@ -172,6 +172,17 @@ class User < ApplicationRecord
     Event.where(id: applicable_event_ids)
   end
 
+  def events_list
+    str = '<ul>'
+    events.complete.limit(5).each do |event|
+      event_link = ActionController::Base.helpers.link_to event.full_title_w_year, Rails.application.routes.url_helpers.event_path(event.id)
+      str += "<li>#{event_link}</li>"
+    end
+    str += '</ul>'
+
+    str.html_safe
+  end
+
   def events_skipped
     applicable_event_ids = registrations.past.kept.where(attended: false).map(&:event_id)
 

@@ -129,6 +129,10 @@ RailsAdmin.config do |config|
           pretty_value { precise(value) }
         end
         field :total_guests
+
+        field :events_list do
+          label 'Last 5 events'
+        end
       end
 
       group 'Leader Stats' do
@@ -502,7 +506,12 @@ RailsAdmin.config do |config|
       end
       field :name
       field :price, :money
-      field :available_count
+      field :available_count, :delimited do
+        column_width 80
+      end
+      field :goal_remainder, :delimited do
+        column_width 80
+      end
     end
 
     show do
@@ -537,12 +546,13 @@ RailsAdmin.config do |config|
         field :minimum_on_hand
         field :can_be_produced, :delimited do
           help 'Calculated can be produced from sub items'
-          read_only true
         end
+        field :goal_remainder, :delimited
         field :discarded_at, :date
       end
 
       group 'History' do
+        field :history, :history_json
         field :history_series, :line_chart
       end
     end
@@ -593,6 +603,10 @@ RailsAdmin.config do |config|
           help 'Calculated can be produced from sub items'
           read_only true
         end
+        field :goal_remainder, :delimited do
+          help 'Calculated remainder needed to reach Technoloy goals'
+          read_only true
+        end
       end
     end
   end
@@ -632,11 +646,9 @@ RailsAdmin.config do |config|
       end
       field :price, :money
       field :available_count, :delimited do
-        label 'Available'
         column_width 80
       end
-      field :below_minimum, :true_is_bad do
-        label 'Low?'
+      field :goal_remainder, :delimited do
         column_width 80
       end
       field :made_from_material, :false_is_invisible do
@@ -677,6 +689,7 @@ RailsAdmin.config do |config|
           help 'Calculated can be produced from sub items'
           read_only true
         end
+        field :goal_remainder, :delimited
         field :discarded_at, :date
       end
       group 'Supplier Info' do
@@ -700,6 +713,7 @@ RailsAdmin.config do |config|
       end
 
       group 'History' do
+        field :history, :history_json
         field :history_series, :line_chart
       end
     end
@@ -745,6 +759,10 @@ RailsAdmin.config do |config|
         field :quantity_per_box
         field :available_count, :delimited do
           help 'Calculated total available'
+          read_only true
+        end
+        field :goal_remainder, :delimited do
+          help 'Calculated remainder needed to reach Technoloy goals'
           read_only true
         end
       end
@@ -802,7 +820,9 @@ RailsAdmin.config do |config|
         end
       end
       field :available_count, :delimited do
-        label 'Available'
+        column_width 80
+      end
+      field :goal_remainder, :delimited do
         column_width 80
       end
       field :below_minimum, :true_is_bad do
@@ -823,6 +843,7 @@ RailsAdmin.config do |config|
       end
       group 'Inventory Info' do
         field :available_count, :delimited
+        field :goal_remainder, :delimited
         field :only_loose
         field :loose_count, :delimited do
           visible do
@@ -861,6 +882,7 @@ RailsAdmin.config do |config|
       end
 
       group 'History' do
+        field :history, :history_json
         field :history_series, :line_chart
       end
     end
@@ -903,6 +925,10 @@ RailsAdmin.config do |config|
         end
         field :minimum_on_hand
         field :below_minimum do
+          read_only true
+        end
+        field :goal_remainder, :delimited do
+          help 'Calculated remainder needed to reach Technoloy goals'
           read_only true
         end
       end

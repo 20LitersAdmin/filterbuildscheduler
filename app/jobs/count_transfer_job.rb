@@ -40,7 +40,8 @@ class CountTransferJob < ApplicationJob
     item.box_count += count.unopened_boxes_count
     item.available_count += count.available
 
-    item.history[@inventory.date.iso8601] = count.history_hash_for_item
+    # Counts for Shipping, Receiving and Event inventories only show the change, not the new _count values, which makes the item's history series incorrect.
+    item.history[@inventory.date.iso8601] = item.history_hash_for_self(@inventory.type)
 
     if @receiving
       item.last_received_at = Time.now.localtime
@@ -48,7 +49,6 @@ class CountTransferJob < ApplicationJob
     end
 
     item.save
-
     @inventory.history[item.uid] = count.history_hash_for_inventory
   end
 
@@ -59,6 +59,8 @@ class CountTransferJob < ApplicationJob
     item.loose_count = count.loose_count
     item.box_count = count.unopened_boxes_count
     item.available_count = count.available
+
+    # using the count values to cast into the Inventory history JSON saves is possible here because the count values override the item's counts.
     item.history[@inventory.date.iso8601] = count.history_hash_for_item
     item.save
 
