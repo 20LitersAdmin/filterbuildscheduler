@@ -2,9 +2,6 @@
 ## Issues:
 - Shipping inventory, when submitting positive numbers doesn't submit, but also doesn't display an error.
 
-## Quick fixes:
-- CountTransferJob / item history: Receiving and Shipping inventories are showing the change, not the new totals (see M008 for example)
-
 ### Policies:
 - Prevent some user types from accessing some parts of rails_admin?
 
@@ -16,7 +13,6 @@
   - only available to full admins?
 
 - User.non_builders scope is missing new roles
-- RailsAdmin#users has no filters for new roles
 
 ### Should do:
 - Assembly: edit: affects_price_only boolean
@@ -30,8 +26,6 @@
 - easy-print report for setup crew:
   - select a single tech (99% its SAM3, once every 18 months it'll be RWHS, MOF or Handpump)
   - every component and their subs w/ current counts
-
-- is Oauth Email syncing causing the R14 Memory Quota Exceeded issue?
 
 - Inventory "undo" button? Maybe just for most recent? Or just for @inventory.event_based?
 
@@ -84,10 +78,6 @@
 1. Ability to pause / cancel registration emails
   - Using a suppress_emails? field?
   - `scope :pre_reminders, -> { where(reminder_sent_at: nil, suppress_reminder_emails: false) }`
-
-2. Inventories#index -> Inventories#history has @item.history_series kickchart, which lays available, box, and loose on the same axis. Should probably not be.
-  - Three separate charts, maybe?
-  - Three separate axes, but might be confusing: https://www.chartjs.org/docs/latest/axes/
 
 
 ### system spec policy checking:
