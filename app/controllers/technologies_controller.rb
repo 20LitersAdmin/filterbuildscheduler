@@ -1,8 +1,11 @@
 # frozen_string_literal: true
 
 class TechnologiesController < ApplicationController
+  before_action :authorize_tech_class, except: %i[status]
+  before_action :authorize_technology, only: %i[status]
+
   def donation_list
-    authorize Technology
+    # Table of parts and materials, filterable by technology
     @quantity = params[:q].present? ? params[:q].to_i : 1
     @quantity_val = params[:q].to_i if params[:q].present?
 
@@ -25,8 +28,24 @@ class TechnologiesController < ApplicationController
     @items.flatten!(1)
   end
 
+  def item_list
+    # Item names alphabetically with UID (find UID by name)
+    technologies = Technology.list_worthy.pluck(:uid, :name)
+    components =   Component.active.order(:name).pluck(:uid, :name)
+    parts =        Part.active.order(:name).pluck(:uid, :name)
+    materials =    Material.active.order(:name).pluck(:uid, :name)
+
+    @items = [technologies, components, parts, materials].flatten(1)
+  end
+
+  def item_lists
+    # index of item lists:
+    # donation_list - parts and materials, filterable by technology
+    # setup_list - default to SAM3, show counts, by Component
+    # item_list - Item names alphabetically with UID (find UID by name)
+  end
+
   def label
-    authorize Technology
     # page to print a full page of labels for one item
     @item = params[:uid].objectify_uid
 
@@ -37,17 +56,16 @@ class TechnologiesController < ApplicationController
   end
 
   def labels
-    authorize Technology
     # page to select multiple items to print individual lables
-    @technologies = Technology.list_worthy.pluck(:uid, :name)
-    @components =   Component.active.order(:name).pluck(:uid, :name)
-    @parts =        Part.active.order(:name).pluck(:uid, :name)
-    @materials =    Material.active.order(:name).pluck(:uid, :name)
+    technologies = Technology.list_worthy.pluck(:uid, :name)
+    components =   Component.active.order(:name).pluck(:uid, :name)
+    parts =        Part.active.order(:name).pluck(:uid, :name)
+    materials =    Material.active.order(:name).pluck(:uid, :name)
+
+    @items = [technologies, components, parts, materials].flatten(1)
   end
 
   def labels_select
-    authorize Technology
-
     if broad_set_params.empty?
       redirect_to labels_path
       flash[:danger] = 'No labels selected for printing.'
@@ -66,8 +84,6 @@ class TechnologiesController < ApplicationController
   end
 
   def status
-    authorize @technology = Technology.find(params[:id])
-
     @goal = params[:goal].presence&.to_i || @technology.default_goal
 
     @remaining_need = [@goal - @technology.available_count, 0].max
@@ -75,7 +91,23 @@ class TechnologiesController < ApplicationController
     @assemblies = @technology.assemblies.without_price_only.ascending
   end
 
+  def setup_list
+    # default to SAM3, show counts, by Component
+    @technology = Technology.find(3)
+    @assemblies = @technology.assemblies.without_price_only.ascending
+
+    @components = @technology.all_components.order(:id)
+  end
+
   private
+
+  def authorize_tech_class
+    authorize Technology
+  end
+
+  def authorize_technology
+    authorize @technology = Technology.find(params[:id])
+  end
 
   def broad_set_params
     # used for labels_select and donation_list

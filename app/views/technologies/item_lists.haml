@@ -1,0 +1,22 @@
+-# frozen_string_literal: true
+#item_lists.container
+  .row
+    .col
+      %h3 Item Lists:
+  .row
+    .col
+      %table.table.table-striped
+        %thead
+          %tr
+            %th Name
+            %th Description
+        %tbody
+          %tr
+            %td= link_to 'Donation List', donation_list_path, class: 'btn btn-sm blue'
+            %td Can be provided to donors and suppliers to assist with gaining donated items and checking prices
+          %tr
+            %td= link_to 'Item List', item_list_path, class: 'btn btn-sm blue'
+            %td All items alphabetical by name, useful for looking up an item's UID
+          %tr
+            %td= link_to 'Setup List', setup_list_path, class: 'btn btn-sm blue'
+            %td Defaults to SAM3. Lists components and their sub-assemblies. Useful for Setup crew.
