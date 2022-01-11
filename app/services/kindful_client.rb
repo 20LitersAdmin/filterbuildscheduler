@@ -16,7 +16,7 @@ class KindfulClient
     # and remove campaign_id and fund_id and fund_name values
     @kindful_email = {
       campaign_id: '247247',
-      campaign_name: 'General',
+      campaign_name: 'Contributions',
       fund_id: '25946',
       fund_name: 'Contributions 40100'
     }
@@ -51,26 +51,31 @@ class KindfulClient
   # action methods:
 
   def import_transaction(transaction)
+    # used by WebhooksController#stripe, which calls this method if the stripe data is for a CauseVox transaction
     set_host
     self.class.post(import_host, { headers: headers, body: contact_w_transaction(transaction) })
   end
 
   def import_user(user)
+    # used by User#update_kindful, which fires on after_save when contact fields have changed
     set_host
     self.class.post(import_host, { headers: headers, body: contact(user) })
   end
 
   def import_company_w_email_note(email_address, email, direction, company_name)
+    # used by Email#send_to_kindful, when the email_address matches to an organization record
     set_host
     self.class.post(import_host, { headers: headers, body: company_w_email_note(email_address, email, direction, company_name) })
   end
 
   def import_user_w_email_note(email_address, email, direction)
+    # used by Email#send_to_kindful, when the email_address does not match to an organization record
     set_host
     self.class.post(import_host, { headers: headers, body: contact_w_email_note(email_address, email, direction) })
   end
 
   def import_user_w_note(registration)
+    # used by EventsController#update, when event report is submitted, all event.registrations.attended records call this
     set_host
     self.class.post(import_host, { headers: headers, body: contact_w_note(registration) })
   end
@@ -83,6 +88,7 @@ class KindfulClient
   end
 
   def query_organizations
+    # queries Kindful's API to get a list of companies
     set_host
     response = self.class.post(query_host, { headers: headers, body: organizations_query })
 
@@ -100,10 +106,11 @@ class KindfulClient
     recreate_organizations
   end
 
-  # body methods
+  ### body methods:
 
   def contact(user)
     # create or update contact in Kindful
+    # from import_user
     # add to 'Vol: Filter Builder group'
     group_name = 'Vol: Filter Builder'
 
@@ -132,8 +139,9 @@ class KindfulClient
   end
 
   def company_w_email_note(email_address, email, direction, company_name)
+    # used by EmailSyncJob
     # create or update company
-    # add note record linked to company
+    # add email as note record linked to company
     # direction: 'Received Email' || 'Sent Email'
     {
       data_format: 'contact_with_note',
@@ -168,8 +176,9 @@ class KindfulClient
   end
 
   def contact_w_email_note(email_address, email, direction)
+    # used by EmailSyncJob
     # create or update contact
-    # add note record linked to contact
+    # add email as note record linked to contact
     # direction: 'Received Email' || 'Sent Email'
     {
       data_format: 'contact_with_note',
@@ -203,8 +212,9 @@ class KindfulClient
   end
 
   def contact_w_note(registration)
+    # from import_user_w_note(registration)
     # create or update contact
-    # add a note about event attendance
+    # adds a note about filter build event attendance
 
     role = registration.leader? ? 'Leader:' : 'Builder:'
 
@@ -244,6 +254,9 @@ class KindfulClient
   end
 
   def contact_w_transaction(opts)
+    # from import_transaction
+    # creates or updates a contact
+    # creates a transaction (CauseVox transaction)
     {
       data_format: 'contact_with_transaction',
       action_type: 'create',
@@ -282,6 +295,8 @@ class KindfulClient
   end
 
   def organizations_query
+    # from query_organizations
+    # returns a collection of organizations with emails
     {
       query:
         [
@@ -301,14 +316,17 @@ class KindfulClient
   end
 
   def import_host
+    # endpoint for importing data
     "#{@host}/imports"
   end
 
   def email_host(email)
+    # endpoint for checking if an email exists in Kindful
     "https://app.kindful.com/api/v1/contacts/email_exist?email=#{email}"
   end
 
   def query_host
+    # endpoint for querying data
     "#{@host}/contacts/query"
   end
 
