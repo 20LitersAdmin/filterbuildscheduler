@@ -1,0 +1,10 @@
+-# frozen_string_literal: true
+
+.container.setup-edit
+  .row
+    .col-sm-8.col-sm-offset-2
+      %h2.headeing Setup for #{@event.full_title_w_time}
+    .col-sm-2.right-align
+      = link_to 'Back to Setup List', setup_events_path, class: 'btn btn-sm yellow'
+  .row
+    = render partial: 'form'
