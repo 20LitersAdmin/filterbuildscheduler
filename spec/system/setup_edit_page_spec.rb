@@ -78,7 +78,7 @@ RSpec.describe 'Setup#Edit', type: :system do
       visit edit_event_setup_path(event, setup)
     end
 
-    fit 'by filling out the form' do
+    it 'by filling out the form' do
       fill_in 'setup_date', with: event.start_time - 2.hours
       click_submit
 
