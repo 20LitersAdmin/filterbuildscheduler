@@ -5,6 +5,9 @@ task send_reminders: :environment do
   puts 'Scheduling Registration Reminders'
   RegistrationReminderJob.perform_now
   puts 'Done.'
+  puts 'Scheduling Setup Reminders'
+  SetupReminderJob.perform_now
+  puts 'Done.'
 end
 
 task sync_emails: :environment do

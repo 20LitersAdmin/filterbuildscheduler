@@ -308,6 +308,8 @@ ActiveRecord::Schema.define(version: 2022_01_26_181857) do
     t.bigint "event_id", null: false
     t.bigint "creator_id", null: false
     t.datetime "date"
+    t.datetime "reminder_sent_at"
+    t.string "reminder_sent_to", default: [], array: true
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["creator_id"], name: "index_setups_on_creator_id"
