@@ -19,6 +19,7 @@ Rails.application.routes.draw do
 
   get 'info', to: 'pages#info', as: 'info'
   get 'leaders', to: 'users#leaders', as: 'leaders'
+  get 'setup_crew', to: 'users#setup_crew', as: 'setup_crew'
 
   resources :combinations, only: %i[index show edit], param: :uid, constraints: { uid: Constants::UID::URL_REGEX } do
     # A common controller for Technology & Component
@@ -42,11 +43,15 @@ Rails.application.routes.draw do
   resources :events do
     collection do
       get 'lead'
+      get 'setup'
     end
     member do
       get 'attendance'
       get 'leader_register'
       get 'leader_unregister'
+      get 'setup_create'
+      get 'setup_register'
+      get 'setup_unregister'
       get 'leaders'
       get 'poster'
       get 'replicate'
@@ -54,6 +59,7 @@ Rails.application.routes.draw do
       # uses JS to show occurrences on /replicator
       get 'replicate_occurrences'
     end
+    resources :setups
     resources :registrations do
       collection do
         get 'messenger'

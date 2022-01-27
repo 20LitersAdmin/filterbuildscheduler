@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_12_20_171700) do
+ActiveRecord::Schema.define(version: 2022_01_26_181857) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -304,6 +304,23 @@ ActiveRecord::Schema.define(version: 2021_12_20_171700) do
     t.index ["user_id", "event_id"], name: "index_registrations_on_user_id_and_event_id", unique: true
   end
 
+  create_table "setups", force: :cascade do |t|
+    t.bigint "event_id", null: false
+    t.bigint "creator_id", null: false
+    t.datetime "date"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["creator_id"], name: "index_setups_on_creator_id"
+    t.index ["event_id"], name: "index_setups_on_event_id"
+  end
+
+  create_table "setups_users", id: false, force: :cascade do |t|
+    t.bigint "setup_id", null: false
+    t.bigint "user_id", null: false
+    t.index ["setup_id", "user_id"], name: "index_setups_users_on_setup_id_and_user_id", unique: true
+    t.index ["user_id", "setup_id"], name: "index_setups_users_on_user_id_and_setup_id", unique: true
+  end
+
   create_table "suppliers", force: :cascade do |t|
     t.string "name", null: false
     t.string "url"
@@ -403,6 +420,7 @@ ActiveRecord::Schema.define(version: 2021_12_20_171700) do
     t.boolean "is_scheduler", default: false
     t.boolean "is_data_manager", default: false
     t.boolean "is_oauth_admin", default: false
+    t.boolean "is_setup_crew", default: false, null: false
     t.index ["authentication_token"], name: "index_users_on_authentication_token", unique: true
     t.index ["discarded_at"], name: "index_users_on_discarded_at"
     t.index ["email"], name: "index_users_on_email", unique: true
@@ -416,4 +434,6 @@ ActiveRecord::Schema.define(version: 2021_12_20_171700) do
   add_foreign_key "events", "technologies"
   add_foreign_key "registrations", "events"
   add_foreign_key "registrations", "users"
+  add_foreign_key "setups", "events"
+  add_foreign_key "setups", "users", column: "creator_id"
 end

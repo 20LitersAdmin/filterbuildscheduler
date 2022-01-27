@@ -11,6 +11,7 @@ class Event < ApplicationRecord
 
   has_many :users, through: :registrations
   has_one :inventory
+  has_one :setup
 
   validates_presence_of :start_time, :end_time, :title
 
@@ -34,6 +35,7 @@ class Event < ApplicationRecord
       .having('count(registrations.leader IS TRUE) < events.max_leaders')
       .group('events.id').future
   }
+  scope :needs_setup, -> { future.where.not(id: Setup.select(:event_id).uniq) }
 
   scope :needs_report,    -> { kept.where('start_time <= ?', Time.now).where(attendance: 0).order(start_time: :desc) }
   scope :non_private,     -> { kept.where(is_private: false) }
@@ -112,6 +114,10 @@ class Event < ApplicationRecord
 
   def full_title_w_year
     "#{start_time.strftime('%-m/%-d/%y')} - #{title}"
+  end
+
+  def full_title_w_time
+    "#{start_time.strftime('%-m/%-d %-l:%M%P')} - #{title}"
   end
 
   def has_begun?

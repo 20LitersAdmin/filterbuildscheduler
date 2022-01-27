@@ -81,7 +81,7 @@ RailsAdmin.config do |config|
   config.model 'User' do
     weight 0
     list do
-      scopes %i[builders leaders inventoryists data_managers schedulers admins active discarded]
+      scopes %i[builders leaders inventoryists data_managers schedulers setup_crew admins active discarded]
       sort_by 'lname, fname'
       field :fname
       field :lname
@@ -209,6 +209,9 @@ RailsAdmin.config do |config|
         field :does_inventory
         field :send_inventory_emails do
           help 'Will get an email everytime an inventory is complete'
+        end
+        field :is_setup_crew do
+          help 'Sets up the space for Events in advance'
         end
         field :is_scheduler do
           help 'Schedules Build Leaders for Events'

@@ -1,0 +1,17 @@
+-# frozen_string_literal: true
+
+%tr
+  %td= table_setup.title
+  %td{ 'data-sort' => table_setup.start_time.to_date.iso8601 }= table_setup.format_date_only
+  %td= table_setup.format_time_only
+  %td= table_setup.location.name
+  %td= table_setup.total_registered
+  %td
+    = human_datetime table_setup.setup&.date
+    - if table_setup&.setup
+      - if current_user&.can_manage_leaders?
+        = link_to 'Edit', edit_event_setup_path(table_setup, table_setup.setup), class: 'btn yellow'
+      - else
+        = link_to 'Join', event_setup_path(table_setup, table_setup.setup, user: current_user), clss: 'btn yellow'
+    - else
+      = link_to 'Schedule', new_event_setup_path(table_setup), class: 'btn yellow'
