@@ -15,7 +15,14 @@ class SetupsController < ApplicationController
     authorize @setup = Setup.new(event: @event, creator: current_user)
 
     if @setup.update(setup_params)
-      @setup.users << current_user if @setup.users.empty?
+      if @setup.users.empty?
+        @setup.users << current_user
+        SetupMailer.notify(@setup, current_user).deliver_later if @setup.in_the_future?
+      elsif @setup.in_the_future?
+        @setup.users.each do |user|
+          SetupMailer.notify(@setup, user).deliver_later
+        end
+      end
       flash[:success] = 'Setup event create.'
       redirect_to setup_events_path
     else
@@ -26,7 +33,17 @@ class SetupsController < ApplicationController
   def edit; end
 
   def update
+    # only send SetupMailer#notify emails to users added, not to already existing users
+    old_ids = @setup.user_ids
+    new_ids = setup_params[:user_ids].reject!(&:empty?).map(&:to_i) - old_ids
+
     if @setup.update(setup_params)
+      if @setup.in_the_future? && new_ids.any?
+        new_ids.each do |id|
+          SetupMailer.notify(@setup, User.setup_crew.find(id)).deliver_later
+        end
+      end
+
       flash[:success] = 'Setup event updated.'
       redirect_to setup_events_path
     else
@@ -47,6 +64,7 @@ class SetupsController < ApplicationController
       @setup.users.push(current_user)
       @flash_type = :success
       @flash_message = 'You are now registered to setup!'
+      SetupMailer.notify(@setup, current_user).deliver_later if @setup.in_the_future?
     when 'deregister'
       @setup.users.delete(current_user)
       @flash_type = :notice

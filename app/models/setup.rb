@@ -9,12 +9,21 @@ class Setup < ApplicationRecord
 
   validate :date_must_be_before_event
 
+  scope :pre_reminders, -> { where(reminder_sent_at: nil) }
+  scope :days_from_now, ->(num) { where(date: (Time.now + num.days).beginning_of_day..(Time.now + num.days).end_of_day) }
+
   def crew
     if users.any?
       users.pluck(:fname).to_sentence
     else
       'NO ONE'
     end
+  end
+
+  def in_the_future?
+    return false unless date.present?
+
+    date > Time.zone.now
   end
 
   def summary

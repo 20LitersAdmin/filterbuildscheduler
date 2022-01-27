@@ -21,7 +21,7 @@
                   %td= u.check_box
                   %td= u.object.name
 
-
+    - if current_user&.can_manage_setup_crew? && @setup.persisted?
       .row
         .col-xs-4
           = f.submit 'Submit', class: 'btn yellow fullwidth'

@@ -1,9 +1,5 @@
 # README
 ## Setup Crew:
-- System runs a job that sends emails
-  - System can email setup crew a confirmation to the setup crew member with a calendar appointment
-  - System can email a reminder about setting up to the setup crew member 2.days in advance
-
 - System has a model test for Setup
 - System has a system test for events/setup
   - see events & setups
@@ -14,7 +10,9 @@
 - System has a system test for events/:id/setups/new
   - as admin / scheduler
   - as setup_crew
-
+- System has a test for SetupMailer.notify
+- System has a test for SetupMailer.remind
+  - including a timing test (2 days in the future)
 
 - volunteer report: include event setups with a standard hour setting (e.g 1.5 hours)
 
