@@ -10,7 +10,7 @@ class SetupPolicy < ApplicationPolicy
   end
 
   def new?
-    user&.can_manage_setup_crew? || user&.is_setup_crew?
+    user&.can_view_setup?
   end
 
   def create?
@@ -18,7 +18,7 @@ class SetupPolicy < ApplicationPolicy
   end
 
   def edit?
-    user&.can_manage_setup_crew?
+    user&.can_manage_users?
   end
 
   def update?
@@ -26,10 +26,10 @@ class SetupPolicy < ApplicationPolicy
   end
 
   def destroy?
-    user&.can_manage_setup_crew?
+    user&.can_manage_users?
   end
 
   def register?
-    user&.is_setup_crew?
+    user&.can_view_setup?
   end
 end

@@ -34,6 +34,10 @@ class Setup < ApplicationRecord
     end
   end
 
+  def title
+    "#{date.strftime('%a, %-m/%-d %-l:%M%P')}: #{crew}"
+  end
+
   def end_time
     return unless date.present?
 

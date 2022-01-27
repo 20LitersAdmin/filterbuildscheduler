@@ -62,7 +62,7 @@ class EventPolicy < ApplicationPolicy
   end
 
   def setup?
-    user&.can_do_inventory?
+    user&.can_view_setup?
   end
 
   def show?

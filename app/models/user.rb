@@ -121,6 +121,15 @@ class User < ApplicationRecord
       send_inventory_emails?
   end
 
+  def can_view_setup?
+    is_admin? ||
+      is_setup_crew? ||
+      does_inventory? ||
+      is_leader? ||
+      is_scheduler? ||
+      is_data_manager?
+  end
+
   def can_edit_events?
     is_admin? ||
       is_leader? ||
@@ -134,10 +143,6 @@ class User < ApplicationRecord
   end
 
   def can_manage_leaders?
-    is_admin? || is_scheduler?
-  end
-
-  def can_manage_setup_crew?
     is_admin? || is_scheduler?
   end
 

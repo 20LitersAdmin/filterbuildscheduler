@@ -1,10 +1,5 @@
 # README
 ## Setup Crew:
-- System has a model test for Setup
-- System has a system test for events/setup
-  - see events & setups
-  - as admin / scheduler: create, edit, destroy
-  - as setup_crew: create, register, deregister, deregister and destroy
 - System has a system test for events/:id/setups/:id/edit
   - only for admin / scheduler
 - System has a system test for events/:id/setups/new
