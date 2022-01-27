@@ -2,18 +2,20 @@
 
 class SetupsController < ApplicationController
   before_action :set_event
-  before_action :set_setup, only: %i[edit update]
+  before_action :set_setup, only: %i[edit update register destroy]
   before_action :set_crew_members, only: %i[new create edit update]
 
   def show; end
 
   def new
-    @setup = Setup.new(event: @event)
+    authorize @setup = Setup.new(event: @event)
   end
 
   def create
-    @setup = Setup.new(event: @event, creator: current_user)
+    authorize @setup = Setup.new(event: @event, creator: current_user)
+
     if @setup.update(setup_params)
+      @setup.users << current_user if @setup.users.empty?
       flash[:success] = 'Setup event create.'
       redirect_to setup_events_path
     else
@@ -32,7 +34,33 @@ class SetupsController < ApplicationController
     end
   end
 
-  def destroy; end
+  def destroy
+    @setup.destroy
+
+    flash[:success] = 'Setup event deleted'
+    redirect_to setup_events_path
+  end
+
+  def register
+    case params[:record_action]
+    when 'register'
+      @setup.users.push(current_user)
+      @flash_type = :success
+      @flash_message = 'You are now registered to setup!'
+    when 'deregister'
+      @setup.users.delete(current_user)
+      @flash_type = :notice
+      @flash_message = 'You cancelled your registration for this setup.'
+
+      if @setup.users.empty?
+        @setup.destroy
+        @flash_message = 'You cancelled this setup event.'
+      end
+    end
+
+    flash[@flash_type] = @flash_message
+    redirect_to setup_events_path
+  end
 
   private
 
