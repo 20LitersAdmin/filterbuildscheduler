@@ -1,13 +1,13 @@
 # README
 ## Setup Crew:
-- System has a system test for events/:id/setups/:id/edit
-  - only for admin / scheduler
-- System has a system test for events/:id/setups/new
-  - as admin / scheduler
-  - as setup_crew
+- System has a system test for generating SetupMailer.notify
+  - from EventsController#Setup (only for self)
+  - from SetupsController#edit (only new users)
+  - from SetupsController#new (as admin vs setup_crew)
 - System has a test for SetupMailer.notify
 - System has a test for SetupMailer.remind
   - including a timing test (2 days in the future)
+- System has a test for SetupReminderJob
 
 - volunteer report: include event setups with a standard hour setting (e.g 1.5 hours)
 
