@@ -1,20 +1,9 @@
 # README
 ## Setup Crew:
-- Setup crew member can see a list of upcoming events without setup
-  - new object to associate user and event? "Prep" "Setup"
-    - Event has_one Setup
-    - User has_many Setups
-- Setup crew member can "register" to setup for an event, and provide a datetime
-  - volunteer report: include event setups with a standard hour setting (e.g 1.5 hours)
-
-- Setup crew member can see a list of upcoming events with setup, and the datetime of the prep
-  - e.g 'Linda is scheduled to setup at #{datetime}'
-  - Setup crew member can "register" to help setup
-
 - System can email setup crew a confirmation to the setup crew member with a calendar appointment
-- System can email setup crew a reminder about setting up to the setup crew member
+- System can email a reminder about setting up to the setup crew member 2.days in advance
 
-
+- volunteer report: include event setups with a standard hour setting (e.g 1.5 hours)
 
 ## Issues:
 - Shipping inventory, when submitting positive numbers doesn't submit, but also doesn't display an error.

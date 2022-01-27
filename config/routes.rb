@@ -49,9 +49,6 @@ Rails.application.routes.draw do
       get 'attendance'
       get 'leader_register'
       get 'leader_unregister'
-      get 'setup_create'
-      get 'setup_register'
-      get 'setup_unregister'
       get 'leaders'
       get 'poster'
       get 'replicate'
@@ -59,7 +56,11 @@ Rails.application.routes.draw do
       # uses JS to show occurrences on /replicator
       get 'replicate_occurrences'
     end
-    resources :setups
+    resources :setups do
+      member do
+        get 'register'
+      end
+    end
     resources :registrations do
       collection do
         get 'messenger'

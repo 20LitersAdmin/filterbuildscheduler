@@ -5,22 +5,33 @@
     .row
       .col-xs-12
         = f.error_notification
-        = f.input :date, as: :string, label: 'Date and time for setup:', input_html: { class: 'datetimepicker', value: time_for_form(f.object.date) }
+        %h4
+          %strong Pick a date and time to setup for this filter build:
+        = f.input :date, as: :string, label: false, input_html: { class: 'datetimepicker', value: time_for_form(f.object.date) }
         = "Setup event created by #{@setup.creator.name}" if @setup.persisted?
-    .row
-      .col-xs-12
-        %h4 Setup crew members attending:
-      .col-xs-12
-        %table.table.table-striped
-          %tbody
-            = f.collection_check_boxes :user_ids, @setup_crew_members, :id, :name, label: nil do |u|
-              %tr
-                %td= u.check_box
-                %td= u.object.name
+    - if current_user&.can_manage_setup_crew?
+      .row
+        .col-xs-12
+          %h4 Setup crew members attending:
+        .col-xs-12
+          %table.table.table-striped
+            %tbody
+              = f.collection_check_boxes :user_ids, @setup_crew_members, :id, :name, label: nil do |u|
+                %tr
+                  %td= u.check_box
+                  %td= u.object.name
 
 
-    .row
-      .col-xs-6
-        = f.submit 'Submit', class: 'btn yellow'
-      .col-xs-6
-        = link_to 'Cancel', setup_events_path, class: 'btn blue'
+      .row
+        .col-xs-4
+          = f.submit 'Submit', class: 'btn yellow fullwidth'
+        .col-xs-4
+          = link_to 'Cancel', setup_events_path, class: 'btn blue fullwidth'
+        .col-xs-4
+          = link_to 'Delete', event_setup_path(@event, @setup), method: :delete, class: 'btn red fullwidth'
+    - else
+      .row
+        .col-xs-6
+          = f.submit 'Submit', class: 'btn yellow fullwidth'
+        .col-xs-6
+          = link_to 'Cancel', setup_events_path, class: 'btn blue fullwidth'
