@@ -61,6 +61,10 @@ class EventPolicy < ApplicationPolicy
     create?
   end
 
+  def setup?
+    user&.can_do_inventory?
+  end
+
   def show?
     # future events can always be seen by everyone
     event.in_the_future? || user&.can_edit_events?

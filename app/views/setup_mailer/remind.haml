@@ -1,0 +1,16 @@
+-# frozen_string_literal: true
+
+.whole{ style: 'position: relative; min-height: 1px; padding-left: 15px; padding-right: 15px; float: left; width: 100%;' }
+  %p Hello #{@user.fname},
+  %p Here's a reminder that your setup event is coming up soon.
+  %p
+    %strong The details:
+  %ul
+    %li Setup is on #{@setup.date.strftime('%a, %-m/%-d')} at #{@setup.date.strftime('%-l:%M%P')}
+    %li For the filter build on #{@event.start_time.strftime('%a, %-m/%-d')} at #{@event.start_time.strftime('%-l:%M%P')}
+    %li Location: #{@location.name}, #{@location.addr_one_liner}
+    %li Setup crew: #{@setup.crew}
+
+.whole{ style: 'position: relative; min-height: 1px; padding-left: 15px; padding-right: 15px; float: left; width: 100%;' }
+  %p Change of plans? Want to setup for more events? Just click below to access the site:
+  = link_to 'Filter Builds Setup List', setup_events_url, class: 'btn yellow', target: '_blank', style: 'display: inline-block; margin-bottom: 0; font-weight: normal; text-align: center; vertical-align: middle; border: 1px solid transparent; white-space: nowrap; padding: 6px 12px; font-size: 14px; text-decoration: none; color: #4a4a4a; background-color: #fce000; border-color: ##fcc900;'
