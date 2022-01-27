@@ -6,7 +6,7 @@ module MailerHelper
   end
 
   def location_for_gcal
-    @event.location.addr_one_liner.gsub(' ', '%20')
+    @event.location.addr_one_liner.gsub(' ', '%20').gsub('#', '')
   end
 
   def event_title_for_gcal
@@ -21,8 +21,16 @@ module MailerHelper
     @event.privacy_humanize.gsub(' ', '%20')
   end
 
+  def details_for_setup_gcal
+    @setup.summary.gsub(' ', '%20')
+  end
+
   def datetime_for_gcal
-    @event.start_time.utc.strftime('%Y%m%dT%H%M%SZ') + '/' + @event.end_time.utc.strftime('%Y%m%dT%H%M%SZ')
+    "#{@event.start_time.utc.strftime('%Y%m%dT%H%M%SZ')}/#{@event.end_time.utc.strftime('%Y%m%dT%H%M%SZ')}"
+  end
+
+  def setup_datetime_for_gcal
+    "#{@setup.date.utc.strftime('%Y%m%dT%H%M%SZ')}/#{@setup.end_time.utc.strftime('%Y%m%dT%H%M%SZ')}"
   end
 
   def url_for_event_gcal
@@ -31,6 +39,10 @@ module MailerHelper
 
   def url_for_registration_gcal
     "https://www.google.com/calendar/event?action=TEMPLATE&text=#{registration_title_for_gcal}&dates=#{datetime_for_gcal}&details=#{details_for_gcal}&location=#{location_for_gcal}&trp=false&sprop=https:/make.20liters.org/&sprop=name:#{name_for_gcal}"
+  end
+
+  def url_for_setup_gcal
+    "https://www.google.com/calendar/event?action=TEMPLATE&text=#{'Filter Build Setup'.gsub(' ', '%20')}&dates=#{setup_datetime_for_gcal}&details=#{details_for_setup_gcal}&location=#{location_for_gcal}&trp=false&sprop=https:/make.20liters.org/&sprop=name:#{name_for_gcal}"
   end
 
   def format_changed_time_range(start_time, end_time)

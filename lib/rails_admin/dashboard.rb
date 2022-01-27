@@ -36,6 +36,14 @@ module RailsAdmin
                 { name: 'Sign Up To Lead', link: 'events/lead' }
               ]
             }
+            setup_crew_links = {
+              title: 'Setup Crew Links',
+              base_uri: '/',
+              links: [
+                { name: 'View Filter Build Events', link: 'events' },
+                { name: 'Sign Up To Setup', link: 'events/setup' }
+              ]
+            }
             data_manager_links = {
               title: 'Data Manager Links',
               base_uri: '/',
@@ -115,6 +123,7 @@ module RailsAdmin
               instances = [
                 scheduler_links,
                 leader_links,
+                setup_crew_links,
                 data_manager_links,
                 inventory_links,
                 event_management,
@@ -128,6 +137,7 @@ module RailsAdmin
               instances << data_manager_links if current_user.is_data_manager?
 
               instances << leader_links if current_user.is_leader?
+              instances << setup_crew_links if current_user.is_setup_crew?
 
               instances << inventory_links if current_user.does_inventory
 

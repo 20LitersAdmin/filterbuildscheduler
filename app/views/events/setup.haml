@@ -1,0 +1,15 @@
+-# frozen_string_literal: true
+
+.container.event-lead
+  .event-container
+    %h2.heading Upcoming Events for Setup
+    - if @events.any?
+      %table#events_leaders_table.table.table-striped.datatable-search
+        %thead
+          %tr
+            %th{ 'data-priority' => '1' } Event
+            %th{ 'data-priority' => '1' } Date
+            %th{ 'data-priority' => '1' } Time
+            %th{ 'data-priority' => '1' } Location
+            %th{ 'data-priority' => '1' } Setup
+        %tbody= render partial: 'table_setup', collection: @events

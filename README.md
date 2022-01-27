@@ -1,4 +1,21 @@
 # README
+## Setup Crew:
+- System has a model test for Setup
+- System has a system test for events/setup
+  - see events & setups
+  - as admin / scheduler: create, edit, destroy
+  - as setup_crew: create, register, deregister, deregister and destroy
+- System has a system test for events/:id/setups/:id/edit
+  - only for admin / scheduler
+- System has a system test for events/:id/setups/new
+  - as admin / scheduler
+  - as setup_crew
+- System has a test for SetupMailer.notify
+- System has a test for SetupMailer.remind
+  - including a timing test (2 days in the future)
+
+- volunteer report: include event setups with a standard hour setting (e.g 1.5 hours)
+
 ## Issues:
 - Shipping inventory, when submitting positive numbers doesn't submit, but also doesn't display an error.
 

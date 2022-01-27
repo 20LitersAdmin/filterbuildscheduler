@@ -9,9 +9,9 @@ class EventMailer < ApplicationMailer
     @user = user
     @recipients = User.notify.map(&:email)
     @location = event.location
-    @summary = '[20 Liters] ' + event.title + ': ' + event.technology.name
+    @summary = "[20 Liters] #{event.title}: #{event.technology.name}"
     @description = event.privacy_humanize
-    @attachment_title = '20Liters_filterbuild_' + @event.start_time.strftime("%Y%m%dT%H%M") + '.ical'
+    @attachment_title = "20Liters_filterbuild_#{@event.start_time.strftime('%Y%m%dT%H%M')}.ical"
 
     if @event.leaders_registered.count == 1
       @leader_count_text = 'The leader is:'

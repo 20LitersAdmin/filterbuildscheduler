@@ -191,6 +191,13 @@ class EventsController < ApplicationController
     end
   end
 
+  def setup
+    @user = current_user
+    @events = Event.future
+
+    authorize Event
+  end
+
   def show
     # TODO: Check that discarded technologies and locations still show up
     @registration = @event.registrations.active.where(user: current_user).first_or_initialize

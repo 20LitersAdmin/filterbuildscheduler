@@ -10,6 +10,7 @@ class User < ApplicationRecord
   # is_scheduler
   # is_data_manager
   # is_oauth_admin
+  # is_setup_crew
   # none of the above == builder
   # not signed in == anon user
 
@@ -27,6 +28,8 @@ class User < ApplicationRecord
   has_and_belongs_to_many :technologies
   has_many :counts
   belongs_to :primary_location, class_name: 'Location', primary_key: 'id', foreign_key: 'primary_location_id', optional: true
+  has_many :created_setups, class_name: 'Setup', foreign_key: 'creator_id'
+  has_and_belongs_to_many :setups
 
   # maps to User(leader_type: integer)
   # getter: user.trainee?
@@ -44,6 +47,7 @@ class User < ApplicationRecord
   scope :data_managers,         -> { kept.where(is_data_manager: true) }
   scope :inventoryists,         -> { kept.where(does_inventory: true) }
   scope :leaders,               -> { kept.where(is_leader: true) }
+  scope :setup_crew,            -> { kept.where(is_setup_crew: true) }
   scope :notify,                -> { kept.where(send_notification_emails: true) }
   scope :notify_inventory,      -> { kept.where(send_inventory_emails: true) }
   scope :non_builders,          -> { kept.where('is_admin = TRUE OR is_leader = TRUE OR does_inventory = TRUE OR is_scheduler = TRUE OR is_data_manager = TRUE') }
@@ -65,7 +69,8 @@ class User < ApplicationRecord
       is_leader? ||
       does_inventory? ||
       is_scheduler? ||
-      is_data_manager?
+      is_data_manager? ||
+      is_setup_crew?
   end
 
   def availability
@@ -107,7 +112,8 @@ class User < ApplicationRecord
   def can_do_inventory?
     is_admin? ||
       does_inventory? ||
-      is_data_manager?
+      is_data_manager? ||
+      is_setup_crew?
   end
 
   def can_view_inventory?
@@ -128,6 +134,10 @@ class User < ApplicationRecord
   end
 
   def can_manage_leaders?
+    is_admin? || is_scheduler?
+  end
+
+  def can_manage_setup_crew?
     is_admin? || is_scheduler?
   end
 
@@ -225,6 +235,7 @@ class User < ApplicationRecord
     ary << 'Scheduler' if is_scheduler
     ary << 'Data Manager' if is_data_manager
     ary << 'Oauth Admin' if is_oauth_admin
+    ary << 'Setup Crew' if is_setup_crew
 
     ary << 'Builder' if ary.blank?
 
