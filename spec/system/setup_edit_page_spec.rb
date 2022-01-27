@@ -89,6 +89,8 @@ RSpec.describe 'Setup#Edit', type: :system do
       let(:setup_crew) { create_list :setup_crew, 3 }
 
       it 'registers setup crew members to the setup event' do
+        setup_crew
+
         expect(setup.users).to eq []
         visit edit_event_setup_path(event, setup)
 
