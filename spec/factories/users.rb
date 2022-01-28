@@ -23,6 +23,10 @@ FactoryBot.define do
       is_scheduler { true }
     end
 
+    factory :setup_crew do
+      is_setup_crew { true }
+    end
+
     factory :data_manager do
       is_data_manager { true }
     end

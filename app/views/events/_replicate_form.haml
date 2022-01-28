@@ -18,7 +18,7 @@
         = f.input :frequency, collection: %w[weekly monthly], label: false
       .col-xs-12.col-sm-6
         %h4 Indicate how many events to create:
-        = f.input :occurrences, as: :integer, label: false
+        = f.input :occurrences, as: :integer, label: false, input_html: { min: '0', step: '1' }
     - if @event.leaders_registered.any?
       .row
         %h4 Replicate leader registrations?

@@ -44,6 +44,7 @@ Rails.application.routes.draw do
     collection do
       get 'lead'
       get 'setup'
+      get 'replicate_occurrences'
     end
     member do
       get 'attendance'
@@ -54,7 +55,6 @@ Rails.application.routes.draw do
       get 'replicate'
       put 'replicator'
       # uses JS to show occurrences on /replicator
-      get 'replicate_occurrences'
     end
     resources :setups do
       member do
