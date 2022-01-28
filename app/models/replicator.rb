@@ -108,7 +108,6 @@ class Replicator
   def check_for_errors
     errors.add(:frequency, message: "must be either 'weekly' or 'monthly'") unless %w[monthly weekly].include?(frequency)
     errors.add(:occurrences, message: 'must be present and positive') unless occurrences.to_i.positive?
-    # errors.add(:event_id, message: 'must be present') if event_id.blank?
     errors.add(:start_time, message: 'must be present') if start_time.blank?
     errors.add(:end_time, message: 'must be present') if end_time.blank?
   end

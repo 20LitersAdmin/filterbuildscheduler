@@ -277,7 +277,7 @@ RSpec.describe Event, type: :model do
       reg_leader_b
       reg_leader_c
 
-      expect(complete_event.leaders_hours).to eq(3 * event.length)
+      expect(complete_event.leaders_hours).to eq(3 * complete_event.length)
     end
   end
 
