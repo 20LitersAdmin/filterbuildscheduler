@@ -7,7 +7,7 @@ class Setup < ApplicationRecord
 
   validates_presence_of :event_id, :creator_id, :date
 
-  validate :date_must_be_before_event
+  validate :date_must_be_before_event, if: :dates_present?
 
   scope :pre_reminders, -> { where(reminder_sent_at: nil) }
   scope :days_from_now, ->(num) { where(date: (Time.now + num.days).beginning_of_day..(Time.now + num.days).end_of_day) }
@@ -30,15 +30,26 @@ class Setup < ApplicationRecord
     if date.to_date == event.start_time.to_date
       "Setup on #{date.strftime('%a, %-m/%-d')} at #{date.strftime('%-l:%M%P')} for Filter Build at #{event.start_time.strftime('%-l:%M%P')} "
     else
-      "Setup on #{date.strftime('%a, %-m/%-d')} for #{event.start_time.strftime('%-m/%-d')} Filter Build"
+      "Setup on #{date.strftime('%a, %-m/%-d')} at #{date.strftime('%-l:%M%P')} for #{event.start_time.strftime('%-m/%-d')} Filter Build"
     end
   end
 
+  def title
+    "#{date.strftime('%a, %-m/%-d %-l:%M%P')}: #{crew}"
+  end
+
   def end_time
+    return unless date.present?
+
     date + 1.hour
   end
 
   private
+
+  def dates_present?
+    date.present? &&
+      event&.start_time.present?
+  end
 
   def date_must_be_before_event
     errors.add(:date, 'Must be before event') if event.start_time < date

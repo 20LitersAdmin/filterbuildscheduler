@@ -539,7 +539,7 @@ RSpec.describe User, type: :model do
         create :registration_attended, event: event, user: user
       end
 
-      expect(user.total_volunteer_hours).to eq 9.0
+      expect(user.total_volunteer_hours).to eq user.events.map(&:length).sum
     end
   end
 
@@ -556,7 +556,7 @@ RSpec.describe User, type: :model do
 
     context 'when user is_leader' do
       it 'returns a float of the length of all events led' do
-        expect(@leader.total_leader_hours).to eq 9
+        expect(@leader.total_leader_hours).to eq @leader.events.map(&:length).sum
       end
     end
 

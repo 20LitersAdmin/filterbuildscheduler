@@ -9,7 +9,7 @@
           %strong Pick a date and time to setup for this filter build:
         = f.input :date, as: :string, label: false, input_html: { class: 'datetimepicker', value: time_for_form(f.object.date) }
         = "Setup event created by #{@setup.creator.name}" if @setup.persisted?
-    - if current_user&.can_manage_setup_crew?
+    - if current_user&.can_manage_users?
       .row
         .col-xs-12
           %h4 Setup crew members attending:
@@ -21,7 +21,7 @@
                   %td= u.check_box
                   %td= u.object.name
 
-    - if current_user&.can_manage_setup_crew? && @setup.persisted?
+    - if current_user&.can_manage_users? && @setup.persisted?
       .row
         .col-xs-4
           = f.submit 'Submit', class: 'btn yellow fullwidth'

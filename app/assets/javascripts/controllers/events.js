@@ -39,9 +39,10 @@ $(document).on('turbolinks:load', function() {
     var endTime = $('#replicator_end_time').val();
     var frequency = $('#replicator_frequency').val();
     var occurrences = $('#replicator_occurrences').val();
-    url = window.location.pathname + "_occurrences?s=" + startTime + "&e=" + endTime + "&f=" + frequency + "&o=" + occurrences
+    var base_path =
+    url = window.location.origin + "/events/replicate_occurrences?s=" + startTime + "&e=" + endTime + "&f=" + frequency + "&o=" + occurrences
 
-    if(frequency != "") {
+    if(frequency != "" && occurrences != "") {
       $.ajax({url: url}).done(function(response) {
         var target = $('ol#occurrences')
         $.each(response, function(i,hsh){

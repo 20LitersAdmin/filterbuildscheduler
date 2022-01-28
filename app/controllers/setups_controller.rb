@@ -23,7 +23,7 @@ class SetupsController < ApplicationController
           SetupMailer.notify(@setup, user).deliver_later
         end
       end
-      flash[:success] = 'Setup event create.'
+      flash[:success] = 'Setup event created.'
       redirect_to setup_events_path
     else
       render 'new'
