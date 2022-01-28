@@ -121,7 +121,7 @@ RSpec.describe 'Event edit page', type: :system do
     expect(event.start_time).to eq dup_event.start_time
   end
 
-  it 'allows for replicating', js: true do
+  fit 'allows for replicating', js: true do
     sign_in create(:admin)
     visit edit_event_path event
 

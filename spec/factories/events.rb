@@ -3,8 +3,8 @@
 FactoryBot.define do
   factory :event do
     title { Faker::Games::Zelda.unique.game }
-    start_time { Faker::Time.between_dates(from: Time.now + 10.days, to: Time.now + 20.days, period: :afternoon) }
-    end_time { start_time + 3.hours }
+    start_time { Faker::Time.between_dates(from: Time.now + 10.days, to: Time.now + 20.days, period: :morning) }
+    end_time { start_time + 2.hours }
     min_leaders { 1 }
     max_leaders { 2 }
     min_registrations { 5 }
@@ -18,7 +18,7 @@ FactoryBot.define do
     end
 
     factory :past_event do
-      start_time { Faker::Time.between_dates(from: Time.now - 20.days, to: Time.now - 10.days, period: :afternoon) }
+      start_time { Faker::Time.between_dates(from: Time.now - 25.days, to: Time.now - 15.days, period: :afternoon) }
       end_time { start_time + 3.hours }
     end
 

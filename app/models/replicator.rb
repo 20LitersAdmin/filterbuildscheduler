@@ -3,8 +3,7 @@
 class Replicator
   include ActiveModel::Model
 
-  attr_accessor :event_id,
-                :start_time,
+  attr_accessor :start_time,
                 :end_time,
                 :frequency,
                 :interval,
@@ -12,13 +11,11 @@ class Replicator
                 :replicate_leaders,
                 :user
 
-  def go!
+  def go!(base_event)
     check_for_errors
     return false if errors.any?
 
     morph_params
-
-    base_event = Event.find(event_id)
 
     error_ary = []
     replicated_events = []
@@ -63,7 +60,7 @@ class Replicator
 
       replicated_events << event.reload
 
-      # auto-register leaders
+      # auto-register leaders if box is checked
       event.registrations << base_event.registrations.leaders if replicate_leaders
     end
 
@@ -109,11 +106,8 @@ class Replicator
   def check_for_errors
     errors.add(:frequency, message: "must be either 'weekly' or 'monthly'") unless %w[monthly weekly].include?(frequency)
     errors.add(:occurrences, message: 'must be present and positive') unless occurrences.to_i.positive?
-    errors.add(:event_id, message: 'must be present') if event_id.blank?
+    # errors.add(:event_id, message: 'must be present') if event_id.blank?
     errors.add(:start_time, message: 'must be present') if start_time.blank?
     errors.add(:end_time, message: 'must be present') if end_time.blank?
-    errors.add(:user, message: 'must be present') if user.blank?
-
-    errors.add(:replicate_leaders, message: 'must be either true or false') unless [true, false, 'true', 'false', 0, 1, nil].include? replicate_leaders
   end
 end

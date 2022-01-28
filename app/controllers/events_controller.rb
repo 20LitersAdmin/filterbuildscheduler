@@ -159,14 +159,15 @@ class EventsController < ApplicationController
     @replicator = Replicator.new
   end
 
-  # AJAX from #replicate view, shows recurring dates as a list on the page
+  # /events/replicate_occurrences
+  # AJAX from #replicate and #replicator (on error) views, shows recurring dates as a list on the page
   def replicate_occurrences
     return render(json: 'missing param', status: :unprocessable_entity) if params[:f].blank? || params[:s].blank? || params[:e].blank? || params[:o].blank?
 
     replicator = Replicator.new
 
     replicator.tap do |r|
-      r.event_id = Integer(params[:id])
+      # r.event_id = Integer(params[:id])
       r.start_time = Time.parse(params[:s])
       r.end_time = Time.parse(params[:e])
       r.frequency = params[:f]
@@ -179,10 +180,9 @@ class EventsController < ApplicationController
   def replicator
     @replicator = Replicator.new(replicator_params)
 
-    @replicator.event_id = @event.id
     @replicator.user = current_user
 
-    if @replicator.go!
+    if @replicator.go!(@event)
       flash[:success] = 'Event was successfully replicated!'
       redirect_to root_path
     else
