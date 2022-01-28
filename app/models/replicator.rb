@@ -24,7 +24,9 @@ class Replicator
       starting = start_time + indx.public_send(interval.to_sym)
       ending = end_time + indx.public_send(interval.to_sym)
 
-      if starting == base_event.start_time
+      # TESTING EDGE CASE: base_event.start_time has a random value for seconds
+      # Seconds value is being set from Faker::Time, so just ignore seconds
+      if starting.change(sec: 0) == base_event.start_time.change(sec: 0)
         error_ary << { indx => 'Duplicate event skipped' }
         next
       end
