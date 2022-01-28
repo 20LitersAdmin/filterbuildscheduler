@@ -14,17 +14,17 @@ FactoryBot.define do
 
     factory :recent_event do
       start_time { Faker::Time.between_dates(from: Time.now - 4.days, to: Time.now - 2.days, period: :afternoon) }
-      end_time { start_time + 3.hours }
+      end_time { start_time + 2.hours }
     end
 
     factory :past_event do
       start_time { Faker::Time.between_dates(from: Time.now - 25.days, to: Time.now - 15.days, period: :afternoon) }
-      end_time { start_time + 3.hours }
+      end_time { start_time + 2.hours }
     end
 
     factory :complete_event_technology do
       start_time { Faker::Time.between_dates(from: Time.now - 4.days, to: Time.now - 2.days, period: :afternoon) }
-      end_time { start_time + 3.hours }
+      end_time { start_time + 2.hours }
       technologies_built { 30 }
       boxes_packed { 1 }
       attendance { 20 }
@@ -32,14 +32,14 @@ FactoryBot.define do
 
     factory :complete_event_impact do
       start_time { Faker::Time.between_dates(from: Time.now - 4.days, to: Time.now - 2.days, period: :afternoon) }
-      end_time { start_time + 3.hours }
+      end_time { start_time + 2.hours }
       impact_results { 30 }
       attendance { 20 }
     end
 
     factory :event_upcoming do
       start_time { Faker::Time.between_dates(from: Time.now + 2.days, to: Time.now + 4.days, period: :afternoon) }
-      end_time { start_time + 3.hours }
+      end_time { start_time + 2.hours }
     end
   end
 end

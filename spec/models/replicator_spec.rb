@@ -4,10 +4,9 @@ require 'rails_helper'
 
 RSpec.describe Replicator, type: :model do
   let(:base_event) { create :event }
-  let(:replicator) { build :replicator, event_id: base_event.id, start_time: base_event.start_time, end_time: base_event.end_time }
+  let(:replicator) { build :replicator, start_time: base_event.start_time, end_time: base_event.end_time }
 
   it 'has attributes' do
-    expect(Replicator.attribute_method?(:event_id)).to eq true
     expect(Replicator.attribute_method?(:start_time)).to eq true
     expect(Replicator.attribute_method?(:end_time)).to eq true
     expect(Replicator.attribute_method?(:frequency)).to eq true
@@ -21,14 +20,14 @@ RSpec.describe Replicator, type: :model do
     allow(replicator).to receive(:check_for_errors).and_call_original
 
     expect(replicator).to receive(:check_for_errors)
-    replicator.go!
+    replicator.go!(base_event)
   end
 
   it 'calls morph_params on go!' do
     allow(replicator).to receive(:morph_params).and_call_original
 
     expect(replicator).to receive(:morph_params)
-    replicator.go!
+    replicator.go!(base_event)
   end
 
   describe '#go!' do
@@ -38,12 +37,12 @@ RSpec.describe Replicator, type: :model do
     end
 
     it 'returns false if attributes have errors' do
-      replicator.event_id = nil
+      replicator.frequency = 'whenever'
       replicator.check_for_errors
 
       expect(replicator.errors.any?).to eq true
 
-      expect(replicator.go!).to eq false
+      expect(replicator.go!(base_event)).to eq false
     end
 
     context 'when errors exist' do
@@ -51,7 +50,7 @@ RSpec.describe Replicator, type: :model do
         expect(Rails.logger).to receive(:warn)
 
         # replicator's first occurrence matches the base event's dates and so will be logged
-        replicator.go!
+        replicator.go!(base_event)
       end
     end
 
@@ -59,7 +58,7 @@ RSpec.describe Replicator, type: :model do
       expect(replicator.occurrences).to eq 3
 
       # replicator's first occurrence matches the base event's dates and so will be skipped
-      expect { replicator.go! }
+      expect { replicator.go!(base_event) }
         .to change { Event.count }
         .by(2)
     end
@@ -70,7 +69,7 @@ RSpec.describe Replicator, type: :model do
 
       expect(EventMailer).to receive(:replicated)
 
-      replicator.go!
+      replicator.go!(base_event)
     end
   end
 
@@ -131,12 +130,6 @@ RSpec.describe Replicator, type: :model do
       end
     end
 
-    context 'when event_id is not present' do
-      it 'adds an error' do
-        expect(@bad_replicator.errors[:event_id][0]).to eq 'must be present'
-      end
-    end
-
     context 'when start_time is not present' do
       it 'adds an error' do
         expect(@bad_replicator.errors[:start_time][0]).to eq 'must be present'
@@ -146,12 +139,6 @@ RSpec.describe Replicator, type: :model do
     context 'when end_time is not present' do
       it 'adds an error' do
         expect(@bad_replicator.errors[:end_time][0]).to eq 'must be present'
-      end
-    end
-
-    context 'when replicate_leaders is not a boolean or castable' do
-      it 'adds an error' do
-        expect(@bad_replicator.errors[:replicate_leaders][0]).to eq 'must be either true or false'
       end
     end
   end
