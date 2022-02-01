@@ -66,6 +66,7 @@ RSpec.describe 'Events#lead' do
 
     it 'shows only future events needing leaders' do
       future_event_need_leaders
+      leader_reg
       future_event
       past_event
 

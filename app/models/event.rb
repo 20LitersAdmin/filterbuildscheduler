@@ -43,7 +43,7 @@ class Event < ApplicationRecord
   def self.needs_leaders
     # Temp replacement of buggy scope
     id_ary = []
-    future.includes(:registrations).map { |e| id_ary << e.id if e.registrations.leaders.size < e.max_leaders }
+    future.includes(:registrations).map { |e| id_ary << e.id if e.number_of_leaders_registered < e.max_leaders }
 
     Event.where(id: id_ary)
 
@@ -190,7 +190,6 @@ class Event < ApplicationRecord
   end
 
   def leaders_need_vs_want
-
     "#{[min_leaders - number_of_leaders_registered, 0].max} / #{max_leaders}"
   end
 
