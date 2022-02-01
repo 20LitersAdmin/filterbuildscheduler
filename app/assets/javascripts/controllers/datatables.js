@@ -133,6 +133,33 @@ $(document).on("turbolinks:load", function(){
     ]
   });
 
+  $('.datatable-events-lead').DataTable({
+    retrieve: true,
+    paging: false,
+    order: [[2, "asc"]],
+    responsive: true,
+    autoWidth: false,
+    info: false,
+    dom:
+      "<'col-xs-12 no-overflow center' B>"+
+      "<'col-xs-4 no-overflow'l>"+
+      "<'col-xs-8 no-overflow'f>"+
+      "t"+
+      "<'col-xs-8'p>",
+    buttons: [ 'copy', 'csv', 'excel', 'print' ],
+    columnDefs: [
+      { "targets": [ 0, 3], "orderable": false  }
+    ],
+    language: {
+      paginate: {
+        first: "&#8676",
+        previous: "&#8592",
+        next: "&#8594",
+        last: "&#8677"
+      }
+    }
+  });
+
   $('.datatable-order-events').DataTable({
     retrieve: true,
     order: [[1, "desc"]],
