@@ -7,10 +7,10 @@
     - else
       = link_to 'Lead', event_path(table, leader: true), class: 'btn yellow'
   %td= table.title
+  %td{ data: { sort: table.start_time.to_i } }= table.format_date_only
   %td= table.technology.name
-  %td= table.format_date_only
   %td= table.format_time_only
   %td= table.location.name
   %td= table.total_registered
-  %td= table.leaders_names_full
-  %td= table.max_leaders - table.leaders_registered.count
+  %td= table.leader_count_and_names
+  %td= table.leaders_need_vs_want

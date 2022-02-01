@@ -155,8 +155,14 @@ class Event < ApplicationRecord
     end_time <= Time.zone.now
   end
 
+  def leader_count_and_names
+    return '' unless number_of_leaders_registered.positive?
+
+    "#{number_of_leaders_registered}: #{leaders_names_first_last_initial}"
+  end
+
   def leaders_have_vs_needed
-    "#{registrations.leaders.size} of #{max_leaders}"
+    "#{leaders_registered.size} of #{max_leaders}"
   end
 
   def leaders_names
@@ -167,12 +173,25 @@ class Event < ApplicationRecord
                  .join(', ')
   end
 
+  def leaders_names_first_last_initial
+    return unless leaders_registered.present?
+
+    registrations.kept.leaders
+                 .map { |r| r.user.name_li }
+                 .join(', ')
+  end
+
   def leaders_names_full
     return unless leaders_registered.present?
 
     registrations.kept.leaders
                  .map { |r| r.user.name }
                  .join(', ')
+  end
+
+  def leaders_need_vs_want
+
+    "#{[min_leaders - number_of_leaders_registered, 0].max} / #{max_leaders}"
   end
 
   def leaders_registered
