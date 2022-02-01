@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class UsersController < ApplicationController
-  before_action :find_and_authorize_user, only: %i[show edit update delete availability leader_type edit_leader_notes comm_update]
+  before_action :find_and_authorize_user, only: %i[show edit update delete availability leader_type edit_leader_notes comm_update admin_password_reset]
 
   def show
     flash[:warning] = 'You haven\'t set your password yet, please do so now.' if @user.has_no_password
