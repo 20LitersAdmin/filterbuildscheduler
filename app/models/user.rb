@@ -222,6 +222,10 @@ class User < ApplicationRecord
     "#{fname} #{lname}"
   end
 
+  def name_li
+    "#{fname} #{lname[0]}"
+  end
+
   def password_required?
     # Devise: make password optional
     false

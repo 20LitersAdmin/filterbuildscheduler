@@ -13,6 +13,7 @@
 
 ## Issues:
 - Shipping inventory, when submitting positive numbers doesn't submit, but also doesn't display an error.
+- RailsAdmin#events index won't sort date
 
 ### Policies:
 - Prevent some user types from accessing some parts of rails_admin?

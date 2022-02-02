@@ -29,12 +29,7 @@ class Event < ApplicationRecord
   scope :closed,          -> { kept.where('start_time <= ?', Time.now).order(start_time: :desc) }
   scope :complete,        -> { past.where('attendance != 0 OR technologies_built != 0 OR boxes_packed != 0') }
   scope :future,          -> { kept.where('end_time > ?', Time.now).order(start_time: :asc) }
-  scope :needs_leaders,   -> {
-    select('events.*')
-      .left_joins(:registrations)
-      .having('count(registrations.leader IS TRUE) < events.max_leaders')
-      .group('events.id').future
-  }
+
   scope :needs_setup, -> { future.where.not(id: Setup.select(:event_id).uniq) }
 
   scope :needs_report,    -> { kept.where('start_time <= ?', Time.now).where(attendance: 0).order(start_time: :desc) }
@@ -44,6 +39,22 @@ class Event < ApplicationRecord
   scope :with_attendance, -> { kept.where.not(attendance: 0) }
   scope :with_results,    -> { kept.where('technologies_built != 0 OR boxes_packed != 0') }
   scope :within_days,     ->(num) { kept.where('start_time <= ?', Time.now + num.days) }
+
+  def self.needs_leaders
+    # Temp replacement of buggy scope
+    id_ary = []
+    future.includes(:registrations).map { |e| id_ary << e.id if e.number_of_leaders_registered < e.max_leaders }
+
+    Event.where(id: id_ary)
+
+    # buggy scope was:
+    # scope :needs_leaders,   -> {
+    #   select('events.*')
+    #     .left_joins(:registrations)
+    #     .having('count(registrations.leader IS TRUE) < events.max_leaders')
+    #     .group('events.id').future
+    # }
+  end
 
   def builders_hours
     number_of_builders_attended * length
@@ -144,8 +155,14 @@ class Event < ApplicationRecord
     end_time <= Time.zone.now
   end
 
+  def leader_count_and_names
+    return '' unless number_of_leaders_registered.positive?
+
+    "#{number_of_leaders_registered}: #{leaders_names_first_last_initial}"
+  end
+
   def leaders_have_vs_needed
-    "#{registrations.leaders.size} of #{max_leaders}"
+    "#{leaders_registered.size} of #{max_leaders}"
   end
 
   def leaders_names
@@ -156,12 +173,24 @@ class Event < ApplicationRecord
                  .join(', ')
   end
 
+  def leaders_names_first_last_initial
+    return unless leaders_registered.present?
+
+    registrations.kept.leaders
+                 .map { |r| r.user.name_li }
+                 .join(', ')
+  end
+
   def leaders_names_full
     return unless leaders_registered.present?
 
     registrations.kept.leaders
                  .map { |r| r.user.name }
                  .join(', ')
+  end
+
+  def leaders_need_vs_want
+    "#{[min_leaders - number_of_leaders_registered, 0].max} / #{max_leaders}"
   end
 
   def leaders_registered
