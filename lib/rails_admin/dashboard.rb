@@ -40,8 +40,10 @@ module RailsAdmin
               title: 'Setup Crew Links',
               base_uri: '/',
               links: [
-                { name: 'View Filter Build Events', link: 'events' },
-                { name: 'Sign Up To Setup', link: 'events/setup' }
+                { name: 'Sign Up To Setup', link: 'events/setup' },
+                { name: 'Filter Build Setup Item List', link: 'lists/setup' },
+                { name: 'Items by Name and UID', link: 'lists/items' },
+                { name: 'View Filter Build Events', link: 'events' }
               ]
             }
             data_manager_links = {
