@@ -59,7 +59,7 @@ RSpec.describe KindfulClient do
 
   describe 'import_company_w_email_note' do
     it 'takes email data from a company and sends it to Kindful' do
-      company = FactoryBot.create(:organization)
+      company = FactoryBot.build(:organization)
       oauth_user = FactoryBot.create(:oauth_user)
       email = FactoryBot.build(:email, oauth_user_id: oauth_user.id, to: [company.email])
       allow(email).to receive(:send_to_kindful).and_return(email)
