@@ -14,26 +14,44 @@ class KindfulClient
     # easy way to change which campaign and fund are linked for body methods
     # NOTE: If Kindful is still changing the names of campaigns on import, try match_by: { campaign: 'name' }
     # and remove campaign_id and fund_id and fund_name values
+
+    # SANDBOX settings
     @kindful_email = {
-      campaign_id: '247247',
       campaign_name: 'Contributions',
-      fund_id: '25946',
       fund_name: 'Contributions 40100'
     }
 
     @kindful_filter_build = {
-      campaign_id: '338482',
       campaign_name: 'Filter Builds',
-      fund_id: '25946',
       fund_name: 'Contributions 40100'
     }
 
     @kindful_causevox = {
-      campaign_id: '270572',
       campaign_name: 'CauseVox Transactions',
-      fund_id: '27452',
       fund_name: 'Special Events 40400'
     }
+
+    # Production settings
+    # @kindful_email = {
+    #   campaign_id: '247247',
+    #   campaign_name: 'Contributions',
+    #   fund_id: '25946',
+    #   fund_name: 'Contributions 40100'
+    # }
+
+    # @kindful_filter_build = {
+    #   campaign_id: '338482',
+    #   campaign_name: 'Filter Builds',
+    #   fund_id: '25946',
+    #   fund_name: 'Contributions 40100'
+    # }
+
+    # @kindful_causevox = {
+    #   campaign_id: '270572',
+    #   campaign_name: 'CauseVox Transactions',
+    #   fund_id: '27452',
+    #   fund_name: 'Special Events 40400'
+    # }
 
     set_host
   end
@@ -48,8 +66,7 @@ class KindfulClient
     super(url, opts) unless Rails.env.test?
   end
 
-  # action methods:
-
+  ### action methods:
   def import_transaction(transaction)
     # used by WebhooksController#stripe, which calls this method if the stripe data is for a CauseVox transaction
     set_host
@@ -65,11 +82,12 @@ class KindfulClient
   def import_company_w_email_note(email_address, email, direction, company_name)
     # used by Email#send_to_kindful, when the email_address matches to an organization record
     set_host
+
     self.class.post(import_host, { headers: headers, body: company_w_email_note(email_address, email, direction, company_name) })
   end
 
   def import_user_w_email_note(email_address, email, direction)
-    # used by Email#send_to_kindful, when the email_address does not match to an organization record
+    # used by Email#send_to_kindful, when the email_address *does not* match to an organization record
     set_host
     self.class.post(import_host, { headers: headers, body: contact_w_email_note(email_address, email, direction) })
   end
@@ -107,7 +125,6 @@ class KindfulClient
   end
 
   ### body methods:
-
   def contact(user)
     # create or update contact in Kindful
     # from import_user
@@ -148,17 +165,17 @@ class KindfulClient
       action_type: 'update',
       data_type: 'json',
       match_by: {
-        contact: 'company_name_email',
-        campaign: 'id',
-        fund: 'id'
+        campaign: 'name',
+        fund: 'name',
+        contact: 'company_name_email'
       },
       data: [
         {
-          id: email.id.to_s,
+          # id: email.id.to_s,
           company_name: company_name,
           email: email_address,
           country: 'US',
-          note_id: email.message_id.to_s,
+          note_id: email.message_id,
           note_time: email.datetime,
           note_subject: email.subject,
           note_body: email.body,
@@ -166,10 +183,8 @@ class KindfulClient
           note_type: direction,
           note_sender_name: email.oauth_user.name,
           note_sender_email: email.oauth_user.email,
-          campaign_id: @kindful_email[:campaign_id],
-          campaign_name: @kindful_email[:campaign_name],
-          fund_id: @kindful_email[:fund_id],
-          fund_name: @kindful_email[:fund_name]
+          campaign: @kindful_email[:campaign_name],
+          fund: @kindful_email[:fund_name]
         }
       ]
     }.to_json
@@ -186,12 +201,12 @@ class KindfulClient
       data_type: 'json',
       match_by: {
         contact: 'email',
-        campaign: 'id',
-        fund: 'id'
+        campaign: 'name',
+        fund: 'name'
       },
       data: [
         {
-          id: email.id.to_s,
+          # id: email.id.to_s,
           email: email_address,
           country: 'US',
           note_id: email.message_id.to_s,
@@ -202,10 +217,8 @@ class KindfulClient
           note_type: direction,
           note_sender_name: email.oauth_user.name,
           note_sender_email: email.oauth_user.email,
-          campaign_id: @kindful_email[:campaign_id],
-          campaign_name: @kindful_email[:campaign_name],
-          fund_id: @kindful_email[:fund_id],
-          fund_name: @kindful_email[:fund_name]
+          campaign: @kindful_email[:campaign_name],
+          fund: @kindful_email[:fund_name]
         }
       ]
     }.to_json
@@ -228,12 +241,12 @@ class KindfulClient
       data_type: 'json',
       match_by: {
         contact: 'first_name_last_name_email',
-        campaign: 'id',
-        fund: 'id'
+        campaign: 'name',
+        fund: 'name'
       },
       data: [
         {
-          id: registration.user.id.to_s,
+          # id: registration.user.id.to_s,
           first_name: registration.user.fname,
           last_name: registration.user.lname,
           email: registration.user.email,
@@ -244,10 +257,8 @@ class KindfulClient
           note_time: registration.event.end_time.to_s,
           note_subject: subject,
           note_type: 'Event',
-          campaign_id: @kindful_filter_build[:campaign_id],
-          campaign_name: @kindful_filter_build[:campaign_name],
-          fund_id: @kindful_filter_build[:fund_id],
-          fund_name: @kindful_filter_build[:fund_name]
+          campaign: @kindful_filter_build[:campaign_name],
+          fund: @kindful_filter_build[:fund_name]
         }
       ]
     }.to_json
@@ -263,8 +274,8 @@ class KindfulClient
       data_type: 'json',
       match_by: {
         contact: 'first_name_last_name_email',
-        campaign: 'id',
-        fund: 'id'
+        campaign: 'name',
+        fund: 'name'
       },
       data: [
         {
@@ -285,10 +296,8 @@ class KindfulClient
           stripe_charge_id: opts[:id],
           transaction_type: opts[:source][:funding],
           card_type: opts[:source][:brand],
-          campaign_id: @kindful_causevox[:campaign_id],
-          campaign_name: @kindful_causevox[:campaign_name],
-          fund_id: @kindful_causevox[:fund_id],
-          fund_name: @kindful_causevox[:fund_name]
+          campaign: @kindful_causevox[:campaign_name],
+          fund: @kindful_causevox[:fund_name]
          }
       ]
     }.to_json

@@ -13,10 +13,19 @@ class Email < ApplicationRecord
   scope :stale, -> { where('datetime < ?', Time.now - 14.days) }
   scope :synced, -> { where.not(sent_to_kindful_on: nil) }
 
-  def self.from_gmail(response, body_data, oauth_user)
-    # TODO: trim body_data if too large?
-    # might be causing Heroku R14 memory overflow issue
+  def self.cleanup_text(text)
+    return if text.nil?
 
+    text.gsub(/[<>\\"]/, '')
+  end
+
+  def self.email_address_from_text(text)
+    return if text.nil?
+
+    text.scan(Constants::Email::REGEX)
+  end
+
+  def self.from_gmail(response, body_data, oauth_user)
     message_id = cleanup_text response.payload
                                       .headers
                                       .select { |header| header.name.downcase == 'message-id' }
@@ -77,7 +86,7 @@ class Email < ApplicationRecord
           kf.import_user_w_email_note(email_address, self, direction)
         end
 
-      next if response.nil? || response['status'] == 'error'
+      next if !response.ok? || response&.body.nil? || response&.body&.empty?
 
       temp_matched_emails << email_address
       temp_job_ids << response['id']
@@ -86,18 +95,6 @@ class Email < ApplicationRecord
     update_columns(sent_to_kindful_on: Time.now, matched_emails: temp_matched_emails, kindful_job_id: temp_job_ids) if temp_matched_emails.any?
 
     reload
-  end
-
-  def self.cleanup_text(text)
-    return if text.nil?
-
-    text.gsub(/[<>\\"]/, '')
-  end
-
-  def self.email_address_from_text(text)
-    return if text.nil?
-
-    text.scan(Constants::Email::REGEX)
   end
 
   def sync_msg
@@ -117,6 +114,8 @@ class Email < ApplicationRecord
   def synced_data
     attributes.slice('id', 'oauth_user_id', 'sent_to_kindful_on', 'matched_emails', 'kindful_job_id', 'gmail_id', 'message_id')
   end
+
+  private
 
   def deny_internal_messages
     return false if from.blank? || to.blank?
