@@ -171,7 +171,6 @@ RSpec.describe KindfulClient do
       user1.save
       registration = FactoryBot.create(:registration_attended, user: user1)
       contact_json = JSON.parse client.contact_w_note(registration)
-      expect(contact_json['data'][0]['id']).to eq user1.id.to_s
       expect(contact_json['data'][0]['note_id']).to eq registration.id.to_s
     end
   end

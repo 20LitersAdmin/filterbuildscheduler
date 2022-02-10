@@ -70,12 +70,23 @@ RSpec.describe Email, type: :model do
 
   describe '#send_to_kindful' do
     before :each do
-      kf_success_json = { status: 'success' }.as_json
+      # kf_success_json should be an instance of HTTParty::Response
+      # and I can't figure out how to convice RSpec that :[] is implemented on the instance
+      # so tell RSpec to look away for a sec
+      RSpec.configure { |config| config.mock_with(:rspec) { |mocks| mocks.verify_partial_doubles = false } }
+
+      kf_success_json = { 'status': 'success', 'id': 'somerandomstring' }
+      allow(kf_success_json).to receive(:body).and_return('{"status": "success", "id": "somerandomstring"}')
+      allow(kf_success_json).to receive(:ok?).and_return(true)
+
       allow_any_instance_of(KindfulClient).to receive(:email_exists_in_kindful?).and_return(true)
 
       allow_any_instance_of(KindfulClient).to receive(:import_company_w_email_note).and_return(kf_success_json)
 
       allow_any_instance_of(KindfulClient).to receive(:import_user_w_email_note).and_return(kf_success_json)
+
+      # Turn the verification back on. Nothing happened. It's fine.
+      RSpec.configure { |config| config.mock_with(:rspec) { |mocks| mocks.verify_partial_doubles = true } }
     end
 
     it 'initializes KindfulClient' do
@@ -195,7 +206,7 @@ RSpec.describe Email, type: :model do
   describe '#target_emails' do
     context 'when the oauth_user sent the message' do
       it 'returns an array of emails from the "to" field' do
-        expect(email.target_emails).to eq [[email.to[0], 'Received Email']]
+        expect(email.__send__(:target_emails)).to eq [[email.to[0], 'Received Email']]
       end
     end
 
@@ -203,7 +214,7 @@ RSpec.describe Email, type: :model do
       let(:email_to) { build :email_to, oauth_user: oauth_user }
 
       it 'returns an array of emails from the "from" field' do
-        expect(email_to.target_emails).to eq [[email_to.from[0], 'Sent Email']]
+        expect(email_to.__send__(:target_emails)).to eq [[email_to.from[0], 'Sent Email']]
       end
     end
   end

@@ -86,7 +86,7 @@ class Email < ApplicationRecord
           kf.import_user_w_email_note(email_address, self, direction)
         end
 
-      next if response.body.nil? || response.body.empty? || response['status'] == 'error'
+      next if !response.ok? || response&.body.nil? || response&.body&.empty?
 
       temp_matched_emails << email_address
       temp_job_ids << response['id']
