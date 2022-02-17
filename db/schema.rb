@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_01_26_181857) do
+ActiveRecord::Schema.define(version: 2022_02_17_171731) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -379,6 +379,7 @@ ActiveRecord::Schema.define(version: 2022_01_26_181857) do
     t.integer "minimum_on_hand", default: 0, null: false
     t.text "description"
     t.integer "default_goal", default: 0, null: false
+    t.integer "goal_remainder", default: 0
     t.index ["discarded_at"], name: "index_technologies_on_discarded_at"
   end
 
