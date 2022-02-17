@@ -67,8 +67,7 @@ class Part < ApplicationRecord
     # received_at is within 2 weeks of ordered_at and ordered_quantity is greater than received_quantity
     return true if partial_received?
 
-    last_received_at.nil? ||
-      last_ordered_at > last_received_at
+    last_ordered_at > last_received_at
   end
 
   def partial_received?
