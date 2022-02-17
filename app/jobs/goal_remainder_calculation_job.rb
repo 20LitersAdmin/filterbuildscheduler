@@ -6,12 +6,16 @@ class GoalRemainderCalculationJob < ApplicationJob
   def perform(technology = nil)
     ActiveRecord::Base.logger.level = 1
 
+    # even if the job is called with a specific technology, it must have a default goal to run
+    return false if technology.present? && !technology.default_goal.positive?
+
     puts '========================= Starting GoalRemainderCalculationJob ========================='
 
     # Job can be called with a specific technology to only change related items
     # or with no specific tech to change all items
     if technology.present?
       set_all_tech_items_goal_remainders_to_zero(technology)
+
       process_technology(technology)
     else
       set_all_item_goal_remainders_to_zero
@@ -27,11 +31,15 @@ class GoalRemainderCalculationJob < ApplicationJob
   end
 
   def process_assembly(assembly, parent_available)
-    # first pass through every item,
     item = assembly.item
 
     in_parent_available = parent_available * assembly.quantity
     new_goal_remainder = item.goal_remainder - in_parent_available
+
+    ## assembly.affects_price_only?:
+    # These items are not part of a complete unit until later on (e.g. buckets and lids are added to the shipping container, not stored with every complete SAM3)
+    # so we need to add back the combination.available_count * assembly.quantity
+    new_goal_remainder += (assembly.combination.available_count * assembly.quantity) if assembly.affects_price_only?
 
     item.update_columns(goal_remainder: [new_goal_remainder, 0].max)
 
@@ -68,19 +76,25 @@ class GoalRemainderCalculationJob < ApplicationJob
 
     puts "=+= processing for #{tech.name} =+="
 
-    remaining_need = tech.default_goal - tech.available_count
+    tech.update_columns(goal_remainder: tech.default_goal - tech.available_count)
+
+    remaining_need = tech.reload.goal_remainder
 
     tech.quantities.each do |uid, quantity|
       # set all item goal_remainders based on quantity per technology,
       # ignoring the available count of any parents for the moment
       item = uid.objectify_uid
 
-      # byebug
-
-      item.update_columns(goal_remainder: (remaining_need * quantity).ceil - item.available_count)
+      # for items that are used in multiple technologies, increase the goal_remainder instead of overwriting it
+      if item.goal_remainder.zero?
+        item.update_columns(goal_remainder: (remaining_need * quantity).ceil - item.available_count)
+      else
+        # don't subtract the available_count as this was done the first time, when item.goal_remainder == 0
+        item.update_columns(goal_remainder: item.goal_remainder + (remaining_need * quantity))
+      end
     end
 
-    tech.assemblies.without_price_only.each do |assembly|
+    tech.assemblies.each do |assembly|
       # since all items' goal_remainders are already set to the max remaining_need, pass 0 available here
       process_assembly(assembly, 0)
     end

@@ -16,5 +16,6 @@ FactoryBot.define do
     quantity_per_box { 30 }
     lifespan_in_years { 10 }
     liters_per_day { 100 }
+    default_goal { 42 }
   end
 end

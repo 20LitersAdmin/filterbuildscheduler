@@ -68,33 +68,56 @@ RSpec.describe Part, type: :model do
   end
 
   describe '#on_order?' do
-    context 'when last_order_at.present?' do
-      before :each do
-        part.last_ordered_at = Time.now - 1.day
-      end
-
-      context 'and last_received_at.nil? OR last_ordered_at > last_received_at' do
-        it 'returns true' do
-          expect(part.last_received_at).to eq nil
-          expect(part.on_order?).to eq true
-
-          part.last_received_at = Time.now - 10.days
-          expect(part.on_order?).to eq true
-        end
-      end
-
-      context 'but !last_received_at.nil? OR !(last_ordered_at > last_received_at)' do
-        it 'returns false' do
-          part.last_received_at = Time.now
-          expect(part.on_order?).to eq false
-        end
-      end
-    end
-
-    context 'when last_order_at.nil?' do
+    # early returns:
+    context 'when last_ordered_at is not present' do
       it 'returns false' do
         expect(part.last_ordered_at).to eq nil
         expect(part.on_order?).to eq false
+      end
+    end
+
+    context 'when last_received_at is nil' do
+      it 'returns true' do
+        part.last_ordered_at = Time.now - 2.days
+        expect(part.last_ordered_at.present?).to eq true
+        expect(part.last_received_at.nil?).to eq true
+        expect(part.on_order?).to eq true
+      end
+    end
+
+    context 'when partial_received? is true' do
+      it 'returns true' do
+        part.last_ordered_at = Time.now - 2.days
+        part.last_ordered_quantity = 200
+        part.last_received_at = Time.now - 1.day
+        part.last_received_quantity = 50
+        expect(part.last_ordered_at.present?).to eq true
+        expect(part.last_received_at.nil?).to eq false
+        expect(part.partial_received?).to eq true
+
+        expect(part.on_order?).to eq true
+      end
+    end
+
+    context 'when last_ordered_at is present, last_received_at is not nil, and partial_received is false' do
+      before :each do
+        part.last_ordered_at = Time.now - 2.days
+        part.last_received_at = Time.now - 1.year
+      end
+
+      context 'when last_ordered_at > last_received_at' do
+        it 'returns true' do
+          expect(part.last_ordered_at > part.last_received_at).to eq true
+          expect(part.on_order?).to eq true
+        end
+      end
+
+      context 'when last_ordered_at <= last_received_at' do
+        it 'returns false' do
+          part.last_ordered_at = Time.now - 2.years
+          expect(part.last_ordered_at <= part.last_received_at).to eq true
+          expect(part.on_order?).to eq false
+        end
       end
     end
   end
