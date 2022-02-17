@@ -59,7 +59,28 @@ class Part < ApplicationRecord
   end
 
   def on_order?
-    last_ordered_at.present? && (last_received_at.nil? || last_ordered_at > last_received_at)
+    return false unless last_ordered_at.present?
+
+    return true if last_received_at.nil?
+
+    ## partial order received, still waiting for the rest:
+    # received_at is within 2 weeks of ordered_at and ordered_quantity is greater than received_quantity
+    return true if partial_received?
+
+    last_received_at.nil? ||
+      last_ordered_at > last_received_at
+  end
+
+  def partial_received?
+    return false unless last_ordered_at.present? && last_received_at.present?
+
+    (0..1_209_600).include?(last_received_at - last_ordered_at) && last_received_quantity < last_ordered_quantity
+  end
+
+  def partial_order_remainder
+    return 0 unless on_order? && partial_received?
+
+    last_ordered_quantity - last_received_quantity
   end
 
   def reorder_total_cost
