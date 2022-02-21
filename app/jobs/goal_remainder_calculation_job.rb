@@ -110,7 +110,7 @@ class GoalRemainderCalculationJob < ApplicationJob
     # keeping both numbers as integers under-values how many materials
     # are in parent parts, which keeps the number in goal_remainder rounded up,
     # providing overage.
-    available_in_part = part.available_count / part.quantity_from_material
+    available_in_part = part.available_count / part.quantity_from_material.to_f
 
     new_goal_remainder = [current_goal_remainder - available_in_part, 0].max
 
