@@ -18,6 +18,7 @@
             %th{ colspan: 7 } #{@technology.uid_and_name} (#{@technology.available_count} available; #{@remaining_need} remaining)
             %th Goal: #{human_number @goal}
             %th.right-align Available
+            %th.right-align # Per
             %th.right-align Needed
         %tbody
           = render partial: 'assembly', collection: @assemblies, locals: { nesting: 0, remaining_need: @remaining_need }

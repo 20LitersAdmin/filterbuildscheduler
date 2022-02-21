@@ -13,7 +13,9 @@
     = material.name
   %td
     = material.supplier&.name
-  %td.right-align{ style: highlight }
+  %td.right-align
     = human_number available
+  %td.right-align
+    = human_float 1 / part.quantity_from_material.to_f
   %td.right-align{ style: highlight }
     = human_number goal_remainder
