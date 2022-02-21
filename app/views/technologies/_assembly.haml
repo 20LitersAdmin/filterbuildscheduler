@@ -16,8 +16,10 @@
     = item.name
   %td
     = item.supplier&.name unless item_type == 'Component'
-  %td.right-align{ style: highlight }
+  %td.right-align
     = human_number available
+  %td.right-align
+    = human_number assembly.quantity
   %td.right-align{ style: highlight }
     = human_number goal_remainder
 = render partial: 'assembly', collection: item.sub_assemblies.ascending, locals: { nesting: nesting += 1 } if item_type == 'Component' && item.sub_assemblies.any?
