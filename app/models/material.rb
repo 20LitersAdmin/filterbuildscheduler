@@ -24,6 +24,11 @@ class Material < ApplicationRecord
   after_save { image.purge if remove_image == '1' }
   after_save :escalate_price, if: -> { saved_change_to_price_cents? }
 
+  def assemblies
+    # GoalRemainderCalculationJob wants materials to respond to #assemblies.size.positive?
+    []
+  end
+
   def on_order?
     return false unless last_ordered_at.present?
 

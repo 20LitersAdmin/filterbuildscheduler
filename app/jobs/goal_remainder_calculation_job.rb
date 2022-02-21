@@ -41,12 +41,15 @@ class GoalRemainderCalculationJob < ApplicationJob
     # so we need to add back the combination.available_count * assembly.quantity
     new_goal_remainder += (assembly.combination.available_count * assembly.quantity) if assembly.affects_price_only?
 
-    item.update_columns(goal_remainder: [new_goal_remainder, 0].max)
+    # byebug if item.instance_of?(Part) && item.id == 96
+
+    # used to re-add item.goal_remainder
+    item.update_columns(goal_remainder: [item.goal_remainder, new_goal_remainder, 0].max) unless new_goal_remainder == item.goal_remainder
 
     return unless item.has_sub_assemblies?
 
     if assembly.item_type == 'Part'
-      # Parts made from materials
+      # Parts made from materials (part.has_sub_assemblies? === part.made_from_material? )
       material = item.material
 
       # keeping both numbers as integers under-values how many materials
@@ -68,7 +71,7 @@ class GoalRemainderCalculationJob < ApplicationJob
   end
 
   def process_technology(tech)
-    # Already have more than needed? leave every down-tree item with a goal_reaminder of 0 and move on
+    # Already have more than needed? leave every down-tree item with a goal_remainder of 0 and move on
     if tech.available_count >= tech.default_goal
       puts "=+= #{tech.name} has already completed the goal =+="
       return
@@ -85,13 +88,22 @@ class GoalRemainderCalculationJob < ApplicationJob
       # ignoring the available count of any parents for the moment
       item = uid.objectify_uid
 
-      # for items that are used in multiple technologies, increase the goal_remainder instead of overwriting it
-      if item.goal_remainder.zero?
-        item.update_columns(goal_remainder: (remaining_need * quantity).ceil - item.available_count)
-      else
-        # don't subtract the available_count as this was done the first time, when item.goal_remainder == 0
-        item.update_columns(goal_remainder: item.goal_remainder + (remaining_need * quantity))
-      end
+      new_goal_remainder =
+        if item.goal_remainder.zero?
+          if item.assemblies.size.positive?
+            # Allow goal_remainder to be negative for items that are used by multiple assemblies
+            (remaining_need * quantity).ceil - item.available_count
+          else
+            [(remaining_need * quantity).ceil - item.available_count, 0].max
+          end
+        else
+          # don't subtract the available_count as this was done the first time, when item.goal_remainder == 0
+          item.goal_remainder + (remaining_need * quantity)
+        end
+
+      # byebug if item.instance_of?(Part) && item.id == 96
+
+      item.update_columns(goal_remainder: new_goal_remainder)
     end
 
     tech.assemblies.each do |assembly|
