@@ -67,4 +67,10 @@ $(document).on("turbolinks:load", function(){
     // TODO: this should fail if "Target=_blank"
     $("#load_screen").show();
   });
+
+  $(document).on("click", "#print_btn", function() {
+    // global print button function
+    event.preventDefault;
+    window.print();
+  })
 });
