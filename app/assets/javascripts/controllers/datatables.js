@@ -33,12 +33,35 @@ $(document).on("turbolinks:load", function(){
   $('.datatable-export').DataTable({
     retrieve: true,
     order: [[0, "asc"]],
+    pageLength: -1,
     responsive: true,
     autoWidth: false,
     info: false,
     dom:
       "t"+
       "<'col-xs-12 no-overflow center' B>",
+    buttons: [ 'copy', 'csv', 'excel', 'print' ],
+    language: {
+      paginate: {
+        first: "&#8676",
+        previous: "&#8592",
+        next: "&#8594",
+        last: "&#8677"
+      }
+    }
+  });
+
+  $('.datatable-tech-quantities').DataTable({
+    retrieve: true,
+    order: [[1, "asc"]],
+    pageLength: -1,
+    responsive: true,
+    autoWidth: false,
+    info: false,
+    dom:
+      "<'col-xs-12 no-overflow center no-print' B>"+
+      "t"+
+      "<'col-xs-12 no-overflow center no-print' B>",
     buttons: [ 'copy', 'csv', 'excel', 'print' ],
     language: {
       paginate: {

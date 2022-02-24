@@ -34,6 +34,10 @@ class TechnologyPolicy < ApplicationPolicy
     item_lists?
   end
 
+  def quantities?
+    status?
+  end
+
   def status?
     user&.can_manage_data?
   end

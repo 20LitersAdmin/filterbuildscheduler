@@ -1,0 +1,35 @@
+-# frozen_string_literal: true
+
+#technologies_status.container
+  .row.no-print
+    .col-xs-12.right-align
+      = link_to 'Tech List', combinations_path, class: 'btn empty'
+  .row
+    .col-xs-12
+      %h3.no-print Parts & Quantities List
+      %h3.no-screen Bill of Materials for #{@technology.uid_and_name}
+    .col-xs-12.no-print
+      %p All parts used to make #{@technology.name}s are listed below. This is helpful for packing kits of supplies for Builders, Specialists, or off-site builds.
+      %p
+        %a#print_btn.btn.btn-sm.yellow{ alt: 'Print', href: '#' } Print BOM
+        Use this button to print off a Bill of Material view which omits the 'Needed' and 'Aavailable' columns. Use one of the export buttons below to export or print the table as shown.
+    .col-xs-12.no-screen
+      %p A list of all parts needed to assemble a #{@technology.name}. Refer to the Build Manual for instructions.
+  .row.no-print
+    .col-xs-12
+      = form_tag technology_quantities_path(@technology), method: :get do
+        = label_tag 'produce', 'Produce:'
+        = number_field_tag 'produce', @produce
+        = submit_tag 'Set Production', name: nil, class: 'btn btn-sm yellow'
+  .row
+    .col-xs-12
+      %table.table.datatable-tech-quantities
+        %thead
+          %tr
+            %th #{@technology.name} (#{@technology.available_count} available; #{@remaining_need} remaining)
+            %th= @technology.uid
+            %th.right-align # Per
+            %th.right-align.no-print Needed
+            %th.right-align.no-print Available
+        %tbody
+          = render partial: 'quantity', collection: @quantities
