@@ -46,6 +46,7 @@ RailsAdmin.config do |config|
     Inventory
     OauthUser
     Organization
+    Setups
   ].freeze
 
   excluded_models.each do |excluded_model|
@@ -397,6 +398,10 @@ RailsAdmin.config do |config|
         field :liters_per_day
       end
 
+      group 'Items' do
+        field :quantities, :quantities_json
+      end
+
       group 'History' do
         field :history_series, :line_chart
       end
@@ -552,6 +557,10 @@ RailsAdmin.config do |config|
         end
         field :goal_remainder, :delimited
         field :discarded_at, :date
+      end
+
+      group 'Quantities' do
+        field :quantities, :quantities_json
       end
 
       group 'History' do
@@ -713,6 +722,10 @@ RailsAdmin.config do |config|
         field :last_ordered_quantity, :delimited
         field :last_received_at, :date
         field :last_received_quantity, :delimited
+      end
+
+      group 'Quantities:' do
+        field :quantities, :quantities_json
       end
 
       group 'History' do
@@ -882,6 +895,10 @@ RailsAdmin.config do |config|
         field :last_ordered_quantity, :delimited
         field :last_received_at, :date
         field :last_received_quantity, :delimited
+      end
+
+      group 'Quantities:' do
+        field :quantities, :quantities_json
       end
 
       group 'History' do

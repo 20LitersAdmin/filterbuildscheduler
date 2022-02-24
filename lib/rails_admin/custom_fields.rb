@@ -75,6 +75,21 @@ class HistoryJson < RailsAdmin::Config::Fields::Base
   end
 end
 
+class QuantitiesJson < RailsAdmin::Config::Fields::Base
+  RailsAdmin::Config::Fields::Types.register(:quantities_json, self)
+
+  register_instance_option :formatted_value do
+    html_response = ['<ul>']
+    value.each do |uid, quantity|
+      item = uid.objectify_uid
+      html_response << "<li>#{item.uid_and_name}: #{quantity}</li>"
+    end
+    html_response << ['</ul>']
+
+    html_response.join.html_safe
+  end
+end
+
 class HistoryLineChart < RailsAdmin::Config::Fields::Base
   RailsAdmin::Config::Fields::Types.register(:line_chart, self)
 
