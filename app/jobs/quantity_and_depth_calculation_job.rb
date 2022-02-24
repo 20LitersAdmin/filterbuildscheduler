@@ -15,7 +15,7 @@ class QuantityAndDepthCalculationJob < ApplicationJob
 
     Technology.list_worthy.each do |technology|
       @technology = technology
-      loop_technology
+      process_technology
 
       @technology.reload.quantities.each do |k, v|
         insert_into_item_quantities(k, v)
@@ -27,44 +27,50 @@ class QuantityAndDepthCalculationJob < ApplicationJob
     ActiveRecord::Base.logger.level = 0
   end
 
-  def loop_technology
+  def process_technology
     # clear out any historical quantities
     @technology.quantities = {}
 
-    # these arrays get populated via the assemblies_loop
-    @component_ids = []
+    # this array gets populated via the assemblies_loop
     @part_ids_made_from_material = []
 
     # this counter is used to set the Assembly#depth needed for accurate PriceCalculationJob results
     @counter = 0
     assemblies_loop(@technology.assemblies)
 
-    loop_parts_for_materials(@part_ids_made_from_material.uniq)
+    loop_parts_for_materials if @part_ids_made_from_material.any?
 
     @technology.save
   end
 
-  def assemblies_loop(assemblies)
+  def assemblies_loop(assemblies, parent_quantity = 1)
+    # reset the hash to avoid infinite looping
+    components_hash = {}
+
+    puts "Starting assemblies loop for #{@technology.name}"
     assemblies.each do |a|
       # only set the depth to the counter if it's bigger than the existing value
       # this ensures that components or parts shared by multiple assemblies only
       # get pushed lower (via a bigger number) and not accidentally raised higher (via a smaller number)
       a.update_columns(depth: @counter) if @counter > a.depth
-      insert_into_quantity(a)
 
-      @component_ids << a.item_id if a.item_type == 'Component'
+      new_quantity = parent_quantity * a.quantity
+
+      insert_into_quantity(a.item.uid, new_quantity)
+
+      components_hash[a.item_id] = new_quantity if a.item_type == 'Component'
 
       @part_ids_made_from_material << a.item_id if a.item_type == 'Part' && a.item&.made_from_material?
     end
 
-    loop_components(@component_ids) if @component_ids.any?
+    loop_components(components_hash) if components_hash.any?
   end
 
-  def insert_into_quantity(assembly)
-    if @technology.quantities[assembly.item.uid].present?
-      @technology.quantities[assembly.item.uid] += assembly.quantity
+  def insert_into_quantity(uid, quantity)
+    if @technology.quantities[uid].present?
+      @technology.quantities[uid] += quantity
     else
-      @technology.quantities[assembly.item.uid] = assembly.quantity
+      @technology.quantities[uid] = quantity
     end
   end
 
@@ -78,26 +84,25 @@ class QuantityAndDepthCalculationJob < ApplicationJob
     item.save
   end
 
-  def loop_components(component_ids)
-    components = Component.where(id: component_ids)
-    # reset the array to avoid infinite looping
-    @component_ids = []
+  def loop_components(components_hash)
+    puts "Starting loop_components for #{@technology.name}"
+    components = Component.where(id: components_hash.keys)
     @counter += 1
 
     components.each do |c|
-      assemblies_loop(c.sub_assemblies)
+      assemblies_loop(c.sub_assemblies, components_hash[c.id])
     end
 
     @counter -= 1
   end
 
-  def loop_parts_for_materials(part_ids)
-    Part.where(id: part_ids).each do |part|
+  def loop_parts_for_materials
+    Part.where(id: @part_ids_made_from_material.uniq).each do |part|
       next unless part.quantity_from_material.positive?
 
       # technology.quantities[part.uid] will already exist
       # because assemblies_loop gathers part ids into @part_ids_made_from_material
-      # which is then passed to here
+      # which is then accessed here
       parts_per_technology = @technology.quantities[part.uid]
 
       # ensure this floats as parts_per_technology is usually < part.quantity_from_material
