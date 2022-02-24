@@ -73,6 +73,17 @@ class Technology < ApplicationRecord
     owner.scan(/\b(\d+|\w)/).join
   end
 
+  def parts_quantities
+    uids = quantities.keys.grep(/^P[0-9]{3}/).sort
+    ary = []
+    uids.each do |uid|
+      part = uid.objectify_uid
+      ary << { uid: uid, name: part.name, quantity: quantities[uid], available: part.available_count }
+    end
+
+    ary.sort_by { |rec| rec[:name] }
+  end
+
   def results_worthy?
     people.positive? &&
       lifespan_in_years.positive? &&

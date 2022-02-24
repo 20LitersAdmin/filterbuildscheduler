@@ -2,7 +2,7 @@
 
 class TechnologiesController < ApplicationController
   before_action :authorize_tech_class, except: %i[status]
-  before_action :authorize_technology, only: %i[status]
+  before_action :authorize_technology, only: %i[status quantities]
 
   def donation_list
     # Table of parts and materials, filterable by technology
@@ -83,7 +83,17 @@ class TechnologiesController < ApplicationController
     render 'labels_show'
   end
 
+  def quantities
+    # A table view of the @technology.quantities JSON hash, a list of all parts used to assemble the given technology
+    @produce = params[:produce].presence&.to_i || @technology.default_goal
+
+    @remaining_need = [@produce - @technology.available_count, 0].max
+
+    @quantities = @technology.parts_quantities
+  end
+
   def status
+    # A list of components, parts and materials with current counts displayed as a nested loop of assemblies
     @goal = params[:goal].presence&.to_i || @technology.default_goal
 
     @remaining_need = [@goal - @technology.available_count, 0].max
