@@ -17,7 +17,7 @@
             = link_to 'Home', root_path, class: 'use-load-screen'
           %li= link_to 'Admin', '/admin' if current_user&.admin_or_leader?
           %li
-            %a#print_btn{ alt: 'Print', href: 'javascript:window.print()' }
+            %a#print_btn{ alt: 'Print', href: '#' }
               = icon('fa', 'print')
               Print
       - else

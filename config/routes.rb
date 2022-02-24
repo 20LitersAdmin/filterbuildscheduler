@@ -77,6 +77,7 @@ Rails.application.routes.draw do
 
   # Technologies resources:
   get 'technologies/:id/status', to: 'technologies#status', as: 'technology_status'
+  get 'technologies/:id/quantities', to: 'technologies#quantities', as: 'technology_quantities'
   get 'lists', to: 'technologies#item_lists', as: 'item_lists'
   get 'lists/donation_list', to: 'technologies#donation_list', as: 'donation_list'
   get 'lists/items', to: 'technologies#item_list', as: 'item_list'

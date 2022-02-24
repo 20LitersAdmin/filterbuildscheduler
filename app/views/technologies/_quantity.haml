@@ -1,0 +1,8 @@
+-# frozen_string_literal: true
+
+%tr
+  %td= quantity[:name]
+  %td= quantity[:uid]
+  %td.right-align= quantity[:quantity]
+  %td.right-align.no-print= quantity[:quantity] * @produce
+  %td.right-align.no-print= quantity[:available]

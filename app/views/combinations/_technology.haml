@@ -5,6 +5,7 @@
   %td
     = link_to 'Assemblies', combination_path(technology.uid), class: 'btn empty'
     = link_to 'Status', technology_status_path(technology.id), class: 'btn yellow'
+    = link_to 'Parts & Quantities', technology_quantities_path(technology.id), class: 'btn blue'
   %td
     = human_number technology.quantities.size
   %td

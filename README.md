@@ -11,6 +11,10 @@
   - Almost nothing is actually "only loose"
 - Fix issues with printed inventory: some items overlap
 
+- Technologies: show quantities in rails_admin show view:
+  * table: [ uid.objectify_uid.name | quantity ]
+
+
 ## Setup Crew:
 - System has a system test for generating SetupMailer.notify
   - from EventsController#Setup (only for self)
