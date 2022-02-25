@@ -262,16 +262,16 @@ RSpec.shared_examples Itemable do
     end
   end
 
-  describe '#run_produceable_job' do
-    it 'calls delete_all on existing ProduceableJobs that haven\'t run yet' do
+  describe '#run_update_jobs' do
+    it 'calls delete_all on existing ProduceableJobs and GoalRemainderCalculationJobs that haven\'t run yet' do
       ar_relation = instance_double ActiveRecord::Relation
       allow(Delayed::Job).to receive(:where).and_return(ar_relation)
       allow(ar_relation).to receive(:delete_all)
 
-      expect(Delayed::Job).to receive(:where).with(queue: 'produceable', locked_at: nil)
+      expect(Delayed::Job).to receive(:where).with(queue: %w[produceable goal_remainder], locked_at: nil)
       expect(ar_relation).to receive(:delete_all)
 
-      item.__send__(:run_produceable_job)
+      item.__send__(:run_update_jobs)
     end
 
     it 'queues up a ProduceableJob' do
@@ -279,11 +279,8 @@ RSpec.shared_examples Itemable do
 
       expect(ProduceableJob).to receive(:perform_later)
 
-      item.__send__(:run_produceable_job)
+      item.__send__(:run_update_jobs)
     end
-  end
-
-  describe '#run_update_jobs' do
     context 'when #saving_via_count_transfer_job is' do
       it 'not true, it fires after_update' do
         expect(item.saving_via_count_transfer_job).to eq nil

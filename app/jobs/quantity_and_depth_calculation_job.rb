@@ -47,7 +47,6 @@ class QuantityAndDepthCalculationJob < ApplicationJob
     # reset the hash to avoid infinite looping
     components_hash = {}
 
-    puts "Starting assemblies loop for #{@technology.name}"
     assemblies.each do |a|
       # only set the depth to the counter if it's bigger than the existing value
       # this ensures that components or parts shared by multiple assemblies only
@@ -85,7 +84,6 @@ class QuantityAndDepthCalculationJob < ApplicationJob
   end
 
   def loop_components(components_hash)
-    puts "Starting loop_components for #{@technology.name}"
     components = Component.where(id: components_hash.keys)
     @counter += 1
 
