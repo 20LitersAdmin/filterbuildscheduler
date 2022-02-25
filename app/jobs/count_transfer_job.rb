@@ -5,7 +5,7 @@ class CountTransferJob < ApplicationJob
 
   attr_accessor :inventory, :receiving
 
-  # called by Inventory#after_update callback
+  # called by InventoriesController#update via @inventory.run_count_transfer_job
 
   def perform(inventory)
     return if inventory.blank?
@@ -26,16 +26,16 @@ class CountTransferJob < ApplicationJob
       end
     end
 
-    # save the history, which is populated by the #transfer_ methods
+    # save the history JSON field, which is populated by the #transfer_*_counts methods
     @inventory.save
 
     @inventory.counts.destroy_all
   end
 
   def transfer_auto_count(count)
-    # shipping, receiving and event inventories need to combine their counts with current item counts
     item = count.item
 
+    # shipping, receiving and event inventories need to combine their counts with current item counts
     item.loose_count += count.loose_count
     item.box_count += count.unopened_boxes_count
     item.available_count += count.available
@@ -48,20 +48,25 @@ class CountTransferJob < ApplicationJob
       item.last_received_quantity = count.available
     end
 
+    # Set this attr so Itemable#after_save :run_update_jobs is skipped
+    item.saving_via_count_transfer_job = true
     item.save
     @inventory.history[item.uid] = count.history_hash_for_inventory
   end
 
   def transfer_manual_count(count)
-    # manual inventories override current item counts
     item = count.item
 
+    # manual inventories override current item counts
     item.loose_count = count.loose_count
     item.box_count = count.unopened_boxes_count
     item.available_count = count.available
 
     # using the count values to cast into the Inventory history JSON saves is possible here because the count values override the item's counts.
     item.history[@inventory.date.iso8601] = count.history_hash_for_item
+
+    # Set this attr so Itemable#after_save :run_update_jobs is skipped
+    item.saving_via_count_transfer_job = true
     item.save
 
     @inventory.history[item.uid] = count.history_hash_for_inventory

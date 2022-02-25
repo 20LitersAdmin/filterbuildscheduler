@@ -244,6 +244,36 @@ RSpec.describe Part, type: :model do
     end
   end
 
+  describe '#run_jobs_related_to_quantity_from_material' do
+    context 'after save when quantity_from_material || made_from_material has' do
+      it 'not changed, it does not fire' do
+        expect(part).not_to receive(:run_jobs_related_to_quantity_from_material)
+        part.save
+      end
+      it 'changed, it fires' do
+        expect(part).to receive(:run_jobs_related_to_quantity_from_material)
+        part.quantity_from_material = 3.5
+        part.save
+      end
+    end
+
+    it 'enqueues ProduceableJob' do
+      # Itemable#run_update_jobs also enqueues this job
+      allow(part).to receive(:run_update_jobs).and_return(true)
+
+      expect { part.__send__(:run_jobs_related_to_quantity_from_material) }
+        .to have_enqueued_job(ProduceableJob)
+    end
+
+    it 'enqueues GoalRemainderCalculationJob' do
+      # Itemable#run_update_jobs also enqueues this job
+      allow(part).to receive(:run_update_jobs).and_return(true)
+
+      expect { part.__send__(:run_jobs_related_to_quantity_from_material) }
+        .to have_enqueued_job(GoalRemainderCalculationJob)
+    end
+  end
+
   describe '#set_made_from_material' do
     it 'fires before validation' do
       expect(part).to receive(:set_made_from_material)
