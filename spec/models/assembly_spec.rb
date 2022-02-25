@@ -221,8 +221,7 @@ RSpec.describe Assembly, type: :model do
     end
   end
 
-  fdescribe '#update_items_via_jobs' do
-
+  describe '#update_items_via_jobs' do
     it 'fires on after_save' do
       expect(assembly).to receive(:update_items_via_jobs)
 
