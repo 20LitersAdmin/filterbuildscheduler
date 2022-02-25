@@ -3,6 +3,10 @@
 module Itemable
   extend ActiveSupport::Concern
 
+  # CountTransferJob calls item.save, which could trigger #after_save :run_update_jobs and create and delete too many jobs
+  # This attr is a flag we can check to prevent the after_save callback from triggering
+  attr_accessor :saving_via_count_transfer_job
+
   # Items are: Technology, Component, Part, Material
   # Things Items have uniquely in common:
   # UIDs
@@ -29,12 +33,8 @@ module Itemable
 
     after_save :run_price_calculation_job, if: -> { saved_change_to_price_cents? }
 
-    # CountTransferJob calls item.save so this queues up too many jobs
-    # These things already trigger ProduceableJob:
-    # - CRUDing an assembly
-    # - Completing an inventory
-
-    # after_update :run_produceable_job, if: -> { saved_change_to_loose_count? || saved_change_to_box_count? || saved_change_to_quantity_per_box? }
+    # The saving_via_count_transfer_job flag allows us to skip this callback when calling item.save within in the CountTransferJob
+    after_update :run_update_jobs, if: -> { (saved_change_to_loose_count? || saved_change_to_box_count? || saved_change_to_quantity_per_box?) && !saving_via_count_transfer_job }
   end
 
   def all_technologies
@@ -156,6 +156,14 @@ module Itemable
     Delayed::Job.where(queue: 'price_calc', locked_at: nil).delete_all
 
     PriceCalculationJob.perform_later
+  end
+
+  def run_update_jobs
+    # Delete any jobs that exist, but haven't started, in favor of this new job
+    Delayed::Job.where(queue: %w[produceable goal_remainder], locked_at: nil).delete_all
+
+    ProduceableJob.perform_later
+    GoalRemainderCalculationJob.perform_later
   end
 
   def set_below_minimum

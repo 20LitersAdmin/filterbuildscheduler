@@ -258,11 +258,17 @@ RSpec.describe Part, type: :model do
     end
 
     it 'enqueues ProduceableJob' do
+      # Itemable#run_update_jobs also enqueues this job
+      allow(part).to receive(:run_update_jobs).and_return(true)
+
       expect { part.__send__(:run_jobs_related_to_quantity_from_material) }
         .to have_enqueued_job(ProduceableJob)
     end
 
     it 'enqueues GoalRemainderCalculationJob' do
+      # Itemable#run_update_jobs also enqueues this job
+      allow(part).to receive(:run_update_jobs).and_return(true)
+
       expect { part.__send__(:run_jobs_related_to_quantity_from_material) }
         .to have_enqueued_job(GoalRemainderCalculationJob)
     end

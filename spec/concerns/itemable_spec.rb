@@ -283,6 +283,28 @@ RSpec.shared_examples Itemable do
     end
   end
 
+  describe '#run_update_jobs' do
+    context 'when #saving_via_count_transfer_job is' do
+      it 'not true, it fires after_update' do
+        expect(item.saving_via_count_transfer_job).to eq nil
+        expect(item).to receive(:run_update_jobs)
+
+        item.update(loose_count: 26)
+      end
+
+      it 'true, it does not fire after_update' do
+        item.saving_via_count_transfer_job = true
+
+        expect(item).not_to receive(:run_update_jobs)
+
+        item.update(loose_count: 26)
+      end
+    end
+
+    # Not bothering to test the other conditions:
+    # saved_change_to_loose_count? || saved_change_to_box_count? || saved_change_to_quantity_per_box?
+  end
+
   describe '#set_below_minimum' do
     it 'fires on before_save' do
       expect(item).to receive(:set_below_minimum)
