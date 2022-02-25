@@ -7,7 +7,7 @@ class ProduceableJob < ApplicationJob
   # InventoriesController#update via @inventory.run_produceable_job
   # Itemable#after_update
   # Assembly#after_save && #after_destroy
-  # Part#after_save when #quantity_from_material || #made_from_material is chagned
+  # Part#after_save when #quantity_from_material || #made_from_material is changed
 
   def perform
     ActiveRecord::Base.logger.level = 1
