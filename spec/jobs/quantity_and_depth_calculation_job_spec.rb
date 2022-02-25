@@ -25,10 +25,10 @@ RSpec.describe QuantityAndDepthCalculationJob, type: :job do
     context 'for each technology' do
       let(:techs) { create_list :technology, 3 }
 
-      it 'calls loop_technology' do
+      it 'calls process_technology' do
         techs
 
-        expect(job).to receive(:loop_technology).exactly(3).times
+        expect(job).to receive(:process_technology).exactly(3).times
 
         job.perform
       end
@@ -38,7 +38,7 @@ RSpec.describe QuantityAndDepthCalculationJob, type: :job do
           tech.update(quantities: { k: 'v' })
         end
 
-        allow(job).to receive(:loop_technology).and_return(true)
+        allow(job).to receive(:process_technology).and_return(true)
 
         expect(job).to receive(:insert_into_item_quantities).exactly(3).times
 
@@ -47,37 +47,37 @@ RSpec.describe QuantityAndDepthCalculationJob, type: :job do
     end
   end
 
-  describe '#loop_technology' do
+  describe '#process_technology' do
     let(:technology) { create :technology }
-    let(:assemblies) { create_list :assembly, 3, combination: technology }
+    let(:assemblies) { create_list :assembly_part_from_material, 3, combination: technology }
 
     it 'calls assemblies_loop' do
       job.technology = technology
 
       expect(job).to receive(:assemblies_loop).with(technology.assemblies)
 
-      job.loop_technology
+      job.process_technology
     end
 
     it 'calls loop_parts_for_material' do
       job.technology = technology
+      assemblies
 
       expect(job).to receive(:loop_parts_for_materials)
 
-      job.loop_technology
+      job.process_technology
     end
   end
 
   describe '#assemblies_loop' do
     let(:technology) { create :technology }
-    let(:assemblies) { create_list :assembly, 3, combination: technology, depth: 2 }
+    let(:assemblies) { create_list :assembly_tech, 3, combination: technology, depth: 2 }
 
     context 'when the counter is greater than the current assembly\'s depth' do
       let(:counter) { 4 }
 
       it 'calls update_columns on the assembly' do
         job.counter = counter
-        job.component_ids = []
 
         allow(job).to receive(:insert_into_quantity).and_return(true)
 
@@ -94,7 +94,6 @@ RSpec.describe QuantityAndDepthCalculationJob, type: :job do
 
       it 'does not call update_columns on the assembly' do
         job.counter = counter
-        job.component_ids = []
 
         allow(job).to receive(:insert_into_quantity).and_return(true)
 
@@ -106,30 +105,11 @@ RSpec.describe QuantityAndDepthCalculationJob, type: :job do
       end
     end
 
-    context 'when the assembly.item is a component' do
-      let(:assemblies) { create_list :assembly_tech, 3, combination: technology, depth: 4 }
-
-      it 'adds the id to @component_ids' do
-        job.counter = 3
-        job.component_ids = []
-
-        allow(job).to receive(:insert_into_quantity).and_return(true)
-        allow(job).to receive(:loop_components).and_return(true)
-
-        expect(job.component_ids.blank?).to eq true
-
-        job.assemblies_loop(assemblies)
-
-        expect(job.component_ids.size).to eq 3
-      end
-    end
-
     context 'when the assembly.item is a part made from materials' do
       let(:assemblies) { create_list :assembly_part_from_material, 3, combination: technology, depth: 4 }
 
       it 'adds the id to @part_ids_made_from_materials' do
         job.counter = 3
-        job.component_ids = []
         job.part_ids_made_from_material = []
 
         allow(job).to receive(:insert_into_quantity).and_return(true)
@@ -143,14 +123,18 @@ RSpec.describe QuantityAndDepthCalculationJob, type: :job do
       end
     end
 
-    context 'if there are any @component_ids' do
+    context 'if any assemblies items are components' do
       it 'calls loop_components' do
         job.counter = 3
-        job.component_ids = [1, 2, 3, 4]
 
         allow(job).to receive(:insert_into_quantity).and_return(true)
 
-        expect(job).to receive(:loop_components).with([1, 2, 3, 4])
+        expected_hash = {}
+        assemblies.each do |a|
+          expected_hash[a.item_id] = a.quantity
+        end
+
+        expect(job).to receive(:loop_components).with(expected_hash)
 
         job.assemblies_loop(assemblies)
       end
@@ -170,7 +154,7 @@ RSpec.describe QuantityAndDepthCalculationJob, type: :job do
       it 'combines the value' do
         job.technology = technology
 
-        expect { job.insert_into_quantity(assembly) }
+        expect { job.insert_into_quantity(assembly.item.uid, assembly.quantity) }
           .to change { technology.quantities[part.uid] }
           .from(2).to(7)
       end
@@ -180,7 +164,7 @@ RSpec.describe QuantityAndDepthCalculationJob, type: :job do
       it 'adds the value' do
         job.technology = technology
 
-        expect { job.insert_into_quantity(assembly) }
+        expect { job.insert_into_quantity(assembly.item.uid, assembly.quantity) }
           .to change { technology.quantities[part.uid] }
           .from(nil).to(5)
       end
@@ -202,25 +186,19 @@ RSpec.describe QuantityAndDepthCalculationJob, type: :job do
   end
 
   describe '#loop_components' do
-    let(:components) { create_list :component, 3 }
-
-    it 'resets the @component_ids array' do
-      job.component_ids = [1, 2, 3, 4]
-      job.counter = 1
-
-      allow(job).to receive(:assemblies_loop).and_return(true)
-
-      job.loop_components(components.pluck(:id))
-
-      expect(job.component_ids.empty?).to eq true
-    end
+    let(:components) { create_list :component, 4 }
 
     it 'calls assemblies_loop on a collection of components' do
+      components_hash = {}
+
+      components.each do |comp|
+        components_hash[comp.id] = Random.rand(2..45)
+      end
       job.counter = 1
 
-      expect(job).to receive(:assemblies_loop).exactly(3).times
+      expect(job).to receive(:assemblies_loop).exactly(4).times
 
-      job.loop_components(components.pluck(:id))
+      job.loop_components(components_hash)
     end
   end
 
@@ -233,12 +211,13 @@ RSpec.describe QuantityAndDepthCalculationJob, type: :job do
         technology.quantities[part.uid] = 1
         technology.quantities[part.material.uid] = 2
         technology.save
+        job.part_ids_made_from_material = [part.id]
       end
 
       it 'combines the value' do
         job.technology = technology
 
-        expect { job.loop_parts_for_materials(part.id) }
+        expect { job.loop_parts_for_materials }
           .to change { technology.quantities[part.material.uid] }
           .from(2).to(2.25)
       end
@@ -248,12 +227,13 @@ RSpec.describe QuantityAndDepthCalculationJob, type: :job do
       before do
         technology.quantities[part.uid] = 2
         technology.save
+        job.part_ids_made_from_material = [part.id]
       end
 
       it 'adds the value' do
         job.technology = technology
 
-        expect { job.loop_parts_for_materials(part.id) }
+        expect { job.loop_parts_for_materials }
           .to change { technology.quantities[part.material.uid] }
           .from(nil).to(0.5)
       end

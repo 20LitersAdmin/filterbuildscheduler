@@ -5,6 +5,7 @@ FactoryBot.define do
     combination factory: :component
     item factory: :part
     quantity { Random.rand(1..4) }
+    depth { 0 }
 
     factory :assembly_tech do
       combination factory: :technology

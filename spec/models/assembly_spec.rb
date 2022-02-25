@@ -3,6 +3,9 @@
 require 'rails_helper'
 
 RSpec.describe Assembly, type: :model do
+  # let(:part) { create :part }
+  # let(:component) { create :component }
+  # let(:assembly) { build :assembly, item: part, combination: component }
   let(:assembly) { build :assembly }
 
   describe 'must be valid' do
@@ -232,16 +235,25 @@ RSpec.describe Assembly, type: :model do
     end
 
     it 'enqueues QuantityAndDeptCalculationJob' do
+      allow(assembly.item).to receive(:run_update_jobs).and_return true
+      allow(assembly.combination).to receive(:run_update_jobs).and_return true
+
       expect { assembly.__send__(:update_items_via_jobs) }
         .to have_enqueued_job(QuantityAndDepthCalculationJob)
     end
 
     it 'enqueues PriceCalculationJob' do
+      allow(assembly.item).to receive(:run_update_jobs).and_return true
+      allow(assembly.combination).to receive(:run_update_jobs).and_return true
+
       expect { assembly.__send__(:update_items_via_jobs) }
         .to have_enqueued_job(PriceCalculationJob)
     end
 
     it 'enqueues ProduceableJob' do
+      allow(assembly.item).to receive(:run_update_jobs).and_return true
+      allow(assembly.combination).to receive(:run_update_jobs).and_return true
+
       expect { assembly.__send__(:update_items_via_jobs) }
         .to have_enqueued_job(ProduceableJob)
     end
