@@ -4,9 +4,10 @@ class ProduceableJob < ApplicationJob
   queue_as :produceable
 
   # NOTE: This job is fired from:
-  # Inventory#after_update
+  # InventoriesController#update via @inventory.run_produceable_job
   # Itemable#after_update
   # Assembly#after_save && #after_destroy
+  # Part#after_save when #quantity_from_material || #made_from_material is chagned
 
   def perform
     ActiveRecord::Base.logger.level = 1

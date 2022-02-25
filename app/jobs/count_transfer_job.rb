@@ -5,7 +5,7 @@ class CountTransferJob < ApplicationJob
 
   attr_accessor :inventory, :receiving
 
-  # called by Inventory#after_update callback
+  # called by InventoriesController#update via @inventory.run_count_transfer_job
 
   def perform(inventory)
     return if inventory.blank?

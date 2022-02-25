@@ -3,6 +3,11 @@
 class GoalRemainderCalculationJob < ApplicationJob
   queue_as :goal_remainder
 
+  # NOTE: This job is fired from:
+  # Part#after_save when #quantity_from_material || #made_from_material is changed
+  # Assembly#after_save && #after_destroy
+  # InventoriesController#update via @inventory.run_goal_remainder_calculation_job
+
   def perform
     ActiveRecord::Base.logger.level = 1
 

@@ -43,6 +43,7 @@ class Part < ApplicationRecord
   before_validation :set_made_from_material
   before_save :process_image, if: -> { attachment_changes.any? }
   after_save { image.purge if remove_image == '1' }
+  after_save :run_jobs_related_to_quantity_from_material, if: -> { saved_change_to_quantity_from_material? || saved_change_to_made_from_material? }
 
   # Not in Itemable because it's unique to Component and Part
   def self.search_name_and_uid(string)
@@ -135,6 +136,14 @@ class Part < ApplicationRecord
     image_name = "#{uid}_#{Date.today.iso8601}.png"
 
     image.attach(io: File.open(processed_image.path), filename: image_name, content_type: 'image/png')
+  end
+
+  def run_jobs_related_to_quantity_from_material
+    # Delete any jobs that exist, but haven't started, in favor of this new job
+    Delayed::Job.where(queue: %w[produceable goal_remainder], locked_at: nil).delete_all
+
+    ProduceableJob.perform_later
+    GoalRemainderCalculationJob.perform_later
   end
 
   def set_made_from_material
