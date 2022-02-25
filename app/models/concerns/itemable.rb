@@ -158,13 +158,6 @@ module Itemable
     PriceCalculationJob.perform_later
   end
 
-  def run_produceable_job
-    # Delete any jobs that exist, but haven't started, in favor of this new job
-    Delayed::Job.where(queue: 'produceable', locked_at: nil).delete_all
-
-    ProduceableJob.perform_later
-  end
-
   def set_below_minimum
     self.below_minimum = available_count < minimum_on_hand
   end
