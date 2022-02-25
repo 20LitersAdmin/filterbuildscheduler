@@ -244,7 +244,7 @@ RSpec.describe Part, type: :model do
     end
   end
 
-  fdescribe '#run_jobs_related_to_quantity_from_material' do
+  describe '#run_jobs_related_to_quantity_from_material' do
     context 'after save when quantity_from_material || made_from_material has' do
       it 'not changed, it does not fire' do
         expect(part).not_to receive(:run_jobs_related_to_quantity_from_material)
