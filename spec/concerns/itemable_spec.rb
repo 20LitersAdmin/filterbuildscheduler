@@ -275,12 +275,23 @@ RSpec.shared_examples Itemable do
     end
 
     it 'queues up a ProduceableJob' do
+      allow(item).to receive(:run_jobs_related_to_quantity_from_material).and_return(true) if item.instance_of?(Part)
+
       allow(Delayed::Job).to receive_message_chain(:where, :delete_all)
 
-      expect(ProduceableJob).to receive(:perform_later)
-
-      item.__send__(:run_update_jobs)
+      expect { item.__send__(:run_update_jobs) }
+        .to have_enqueued_job(ProduceableJob)
     end
+
+    it 'queues up a GoalRemainderCalculationJob' do
+      allow(item).to receive(:run_jobs_related_to_quantity_from_material).and_return(true) if item.instance_of?(Part)
+
+      allow(Delayed::Job).to receive_message_chain(:where, :delete_all)
+
+      expect { item.__send__(:run_update_jobs) }
+        .to have_enqueued_job(GoalRemainderCalculationJob)
+    end
+
     context 'when #saving_via_count_transfer_job is' do
       it 'not true, it fires after_update' do
         expect(item.saving_via_count_transfer_job).to eq nil
