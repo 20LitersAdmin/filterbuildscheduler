@@ -3,7 +3,7 @@
 class QuantityAndDepthCalculationJob < ApplicationJob
   queue_as :quantity_calc
 
-  attr_accessor :technology, :component_ids, :part_ids_made_from_material, :counter
+  attr_accessor :technology, :part_ids_made_from_material, :counter
 
   def perform(*_args)
     ActiveRecord::Base.logger.level = 1
