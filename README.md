@@ -1,11 +1,4 @@
 # README
-## LISTS:
-- Write tests for:
-  - Technology#parts_quantities
-  - TechnologiesController#quantities
-  - Combinations#index has 'Parts & Quantities' link
-  - TechnologiesController#item_list has 'Technologies List' link
-
 ## BOXEN:
 - Be able to customize the language of boxes for Itemable objects
   - New dB fields:
