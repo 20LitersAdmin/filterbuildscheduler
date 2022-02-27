@@ -110,7 +110,7 @@ RSpec.describe Technology, type: :model do
     end
   end
 
-  fdescribe '#parts_quantities' do
+  describe '#parts_quantities' do
     it 'returns an array of hashes with part info' do
       parts = create_list :part, 3
 
