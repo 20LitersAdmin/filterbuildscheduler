@@ -5,6 +5,6 @@
       %p.title= @label.name
       %p.bold= @label.uid
       - unless @label.only_loose?
-        %p Qty/box: #{@label.quantity_per_box}
+        %p Qty/#{@label.box_type}: #{@label.quantity_per_box}
       %p.desc= @label.description
 

@@ -1,4 +1,5 @@
 @import 'variables';
+
 // `/labels`
 .row.labels-check-btns {
   margin-bottom: 1em;
@@ -7,29 +8,41 @@
   }
 }
 
-// `/label/:uid`
+// '/labels_select' && `/label/:uid` && '/inventories/paper'
 .labels_page {
   width: 8.5in;
   margin: 0;
   display: grid;
+  gap: 0;
+  outline: 1px dotted;
+  page-break-after: always;
+  break-after: always;
+
+  // can't use .label because Bootstrap is already using it
+  div[class*="-gutter"], .label-custom {
+    outline: 1px dotted;
+    text-align: center;
+  }
+
+  // Avery 8136 labels (4"x2", 5 per row, 2 columns)
   // left gutter | label | center gutter | label | right gutter
   grid-template-columns: 0.155in 4in 0.19in 4in 0.155in;
   // top gutter | labels x 5 | bottom gutter
   grid-template-rows: 0.5625in repeat(5, 2in) 0.4375in;
-  gap: 0;
-  outline: 1px dotted;
+
+  .label-custom .label-grid {
+    aspect-ratio: 2 / 1;
+  }
 
   .top-gutter {
     grid-column: 1 / 6;
     grid-row: 1;
-    outline: 1px dotted;
   }
 
   .bottom-gutter {
     grid-column: 1 / 6;
     grid-row: 7;
     page-break-after: always;
-    outline: 1px dotted;
   }
 
   .left-gutter {
@@ -39,55 +52,61 @@
 
   .center-gutter {
     grid-column-start: 3;
-    outline: 1px dotted;
   }
 
   .right-gutter {
     grid-column-start: 5;
-    outline: 1px dotted;
-  }
-
-  // can't use .label because of Bootstrap
-  .label-4x2 {
-    outline: 1px dotted;
-    text-align: center;
   }
 }
 
 // _label partial
-.label-flex {
-  aspect-ratio: 2/1;
+.label-grid {
+  height: 100%;
   padding: 1%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  overflow: hidden;
 
-  .half {
-    width: 50%;
-    height: 100%;
-    float: left;
-    overflow: hidden;
+  .img {
+    grid-column-start: 1;
+    grid-column-end: 2;
+    grid-row-start: 1;
+    grid-row-end: 2;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: top;
+    list-style-position: inside;
 
-    &.img {
-      background-size: contain;
-      background-repeat: no-repeat;
-      background-position: center;
-      list-style-position: inside;
-
-      img {
-        // this image is only for print
-        display: none;
-      }
+    img {
+      // this image is only for print
+      display: none;
     }
+  }
+
+  .text {
+    grid-column-start: 2;
+    grid-column-end: 3;
+    grid-row-start: 1;
+    grid-row-end: 2;
+  }
+
+  .whole {
+    grid-column-start: 1;
+    grid-column-end: 3;
+    grid-row-start: 2;
+    grid-row-end: 3;
   }
 
   p {
     text-align: center;
-    margin-bottom: 2px;
+    padding: 1%;
+    margin-bottom: 1px;
   }
 
   p.title {
     padding: 6px 0;
     font-weight: bold;
-    font-size: 1.25em;
-    height: 35%;
+    font-size: 1.2vw;
     overflow: hidden;
   }
 
@@ -95,32 +114,38 @@
     width: 98%;
     margin-left: 1%;
     marign-right: 1%;
-    font-size: 1.25em;
+    font-size: 1.2vw;
     font-weight: 900;
     outline: 1px solid black;
   }
+
+  p.small {
+    font-size: 1vw;
+  }
 }
 
+// 'inventories/paper' styles for counts-cols
+.label-custom.counts-cols {
+
+}
+
+// '/labels_select' && `/label/:uid` && '/inventories/paper'
 @media print {
   .labels_page {
-    outline: none;
+    // outline: none;
 
     div[class*="-gutter"] {
-      outline: none;
+      // outline: none;
     }
 
-    .label-4x2 {
-      outline: none;
+    .label-custom {
+      // outline: none;
     }
   }
 
-  .label-flex {
-    .img {
-      img {
-        display: inline !important;
-        max-height: 1.9in;
-      }
-    }
+  img {
+    display: inline !important;
+    max-height: 1.75in;
+    max-width: 2in;
   }
 }
-

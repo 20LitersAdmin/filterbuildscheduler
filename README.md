@@ -1,9 +1,6 @@
 # README
 ## BOXEN:
 - Be able to customize the language of boxes for Itemable objects
-  - New dB fields:
-    - box_type: e.g. bag, bundle, large tub, medium tub, small tub, tray
-    - box_notes: an extra field for things like: "box quantity is an average", "red strap bundle is approx. 100"
   - Update views to include box_type and box_note:
     - label
     - printed inventory
@@ -13,7 +10,6 @@
 
 - Technologies: show quantities in rails_admin show view:
   * table: [ uid.objectify_uid.name | quantity ]
-
 
 ## Setup Crew:
 - System has a system test for generating SetupMailer.notify
