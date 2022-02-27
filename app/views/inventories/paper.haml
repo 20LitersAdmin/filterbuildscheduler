@@ -1,9 +1,23 @@
 -# frozen_string_literal: true
-.row.no-print
-  .col-xs-8
-    %h3 Printable inventory
-  .col-xs-4.right-align
-    = link_to 'Back', '/admin', class: 'btn yellow'
-- @items.in_groups_of(5, false) do |batch|
-  .inventory_paper
-    = render partial: 'item_paper', collection: batch
+
+#inventory_paper.col-xs-12
+  .row.no-print
+    .col-xs-8
+      %h4 Printable inventory
+      %ul
+        %li Print from Google Chrome
+        %li Under "More Settings", set Margins to "None"
+    .col-xs-4.right-align
+      = link_to 'Back', '/admin', class: 'btn yellow'
+
+  - @items.in_groups_of(8, false) do |batch|
+    -# styles in labels.scss
+    .inventory_paper
+      .top-gutter
+        %p.text-center 20 Liters Inventory (printed on #{human_date Date.today})
+      - batch.each do |item|
+        .left-gutter
+        .item-line
+          = render partial: 'label', locals: { label: Label.new(item.label_hash) }
+        .right-gutter
+      .bottom-gutter

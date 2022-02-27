@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_02_17_171731) do
+ActiveRecord::Schema.define(version: 2022_02_26_205108) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -78,6 +78,8 @@ ActiveRecord::Schema.define(version: 2022_02_17_171731) do
     t.boolean "below_minimum", default: false, null: false
     t.integer "minimum_on_hand", default: 0, null: false
     t.integer "goal_remainder", default: 0
+    t.string "box_type", default: "box"
+    t.text "box_notes"
     t.index ["discarded_at"], name: "index_components_on_discarded_at"
   end
 
@@ -218,6 +220,8 @@ ActiveRecord::Schema.define(version: 2022_02_17_171731) do
     t.jsonb "quantities", default: {}, null: false
     t.boolean "below_minimum", default: false, null: false
     t.integer "goal_remainder", default: 0
+    t.string "box_type", default: "box"
+    t.text "box_notes"
     t.index ["discarded_at"], name: "index_materials_on_discarded_at"
     t.index ["supplier_id"], name: "index_materials_on_supplier_id"
   end
@@ -283,6 +287,8 @@ ActiveRecord::Schema.define(version: 2022_02_17_171731) do
     t.integer "quantity_from_material", default: 0, null: false
     t.boolean "below_minimum", default: false, null: false
     t.integer "goal_remainder", default: 0
+    t.string "box_type", default: "box"
+    t.text "box_notes"
     t.index ["discarded_at"], name: "index_parts_on_discarded_at"
     t.index ["material_id"], name: "index_parts_on_material_id"
     t.index ["supplier_id"], name: "index_parts_on_supplier_id"
@@ -380,6 +386,8 @@ ActiveRecord::Schema.define(version: 2022_02_17_171731) do
     t.text "description"
     t.integer "default_goal", default: 0, null: false
     t.integer "goal_remainder", default: 0
+    t.string "box_type", default: "box"
+    t.text "box_notes"
     t.index ["discarded_at"], name: "index_technologies_on_discarded_at"
   end
 

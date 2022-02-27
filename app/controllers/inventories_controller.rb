@@ -157,6 +157,9 @@ class InventoriesController < ApplicationController
   end
 
   def order_goal
+    # TODO: Does this really slow things down or not?
+    GoalRemainderCalculationJob.perform_now
+
     @technologies = Technology.list_worthy
 
     @technologies_select = @technologies.map { |t| [t.name, t.id] }

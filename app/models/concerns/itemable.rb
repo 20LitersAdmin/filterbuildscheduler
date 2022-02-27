@@ -112,6 +112,8 @@ module Itemable
       uid: uid,
       technologies: all_technologies_names,
       quantity_per_box: quantity_per_box,
+      box_type: box_type,
+      box_notes: box_notes,
       picture: picture,
       only_loose: only_loose?
     }

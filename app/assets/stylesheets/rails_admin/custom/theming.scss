@@ -32,7 +32,12 @@ body.rails_admin[data-action="show"] {
         max-width: 30%;
 
         &.full-width {
-          max-width: 100%;
+          max-width: 90%;
+        }
+
+        &.full-width-force {
+          max-width: 90%;
+          width: 90%;
         }
 
         ul {

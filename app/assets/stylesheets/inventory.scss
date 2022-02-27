@@ -222,107 +222,123 @@
   }
 }
 
-// inventories/paper.haml
-.inventory_paper {
-  // I believe Chrome default margins are 0.4in, but assume 0.5 to be safe
-  width: 7.5in;
-  height: 10.245in;
-  margin: 0;
-  display: grid;
-  grid-template-columns: 4in repeat(2, 1.75in);
-  grid-template-rows: repeat(5, 2in) 0.245in;
-  gap: 0;
-  // page-break-after: always;
-
-  .box-column p, .loose-column p, .loose-column-full p {
-    text-align: center;
-    margin: 5px 0 0;
-  }
-
-  .label-column {
-    grid-column: 1;
-    outline: 1px solid black;
-  }
-
-  .loose-column {
-    grid-column: 2;
-    outline: 1px solid black;
-  }
-
-  .loose-column-full {
-    grid-column: 2 / 4;
-    outline: 1px solid black;
-  }
-
-  .box-column {
-    grid-column: 3;
-    outline: 1px solid black;
-  }
-
-  // @media print {
-  //   thead { display: table-header-group; }
-  // }
-
-  // #inv_paper_tbl {
-  //   table-layout: fixed;
-
-  //   .prev, .write-in {
-  //     text-align: center;
-  //     padding: 0px;
-  //   }
-
-  //   .total {
-  //     border-left: 1px solid gray;
-  //     text-align: center;
-  //     padding: 0px;
-  //   }
-
-  //   .write-in {
-  //     border-left: 1px solid gray;
-  //     font-weight: bold;
-  //   }
-
-  //   p {
-  //     padding: 0px 2px;
-  //     margin: 0 0 0 0;
-  //     font-size: .8em;
-  //   }
-  // }
-
-  // .item-label {
-  //   table-layout: fixed;
-
-  //   .td-img {
-  //     width: 150px;
-  //     img {
-  //       max-width: 90%;
-  //       max-height: 62px;
-  //     }
-  //   }
-
-  //   .td-name {
-  //     font-weight: bold;
-  //     font-size: 1.125em;
-
-  //     p {
-  //       padding-bottom: 6px !important;
-  //     }
-  //   }
-
-  //   .right-border {
-  //     border-right: 2px solid gray;
-  //     // text-align: right;
-  //     padding-right: 4px;
-  //     margin-right: -2px;
-  //     width: 20px;
-  //     height: 15px;
-  //   }
-  // }
-}
-
 #inventory_new {
   .panel-body img {
     max-width: 100%;
+  }
+}
+
+.inventory_paper {
+  width: 8.5in;
+  margin: 0;
+  display: grid;
+  gap: 0;
+  page-break-after: always;
+  break-after: always;
+
+  // can't use .label because Bootstrap is already using it
+  div[class*="-gutter"] {
+    outline: 1px dotted black;
+  }
+
+  // left gutter | label | label | right gutter
+  grid-template-columns: 0.25in 8in 0.25in;
+  // top gutter | labels x 10 | bottom gutter
+  grid-template-rows: 0.5in repeat(8, 1.25in) 0.5in;
+
+  .top-gutter {
+    grid-column: 1 / 4;
+    grid-row: 1;
+    vertical-align: bottom;
+
+    p {
+      padding-top: 0.25in;
+    }
+  }
+
+  .bottom-gutter {
+    grid-column: 1 / 4;
+    grid-row: 12;
+  }
+
+  .left-gutter {
+    grid-column: 1;
+  }
+
+  .right-gutter {
+    grid-column: 3;
+  }
+
+  .item-line {
+    outline: 1px solid black;
+    text-align: center;
+    display: grid;
+    height: 100%;
+    grid-template-columns: 1fr 2fr 3fr 3fr;
+    grid-template-rows: 1.25in;
+    overflow: hidden;
+
+    div {
+      outline: 1px solid grey;
+    }
+
+    .img {
+      grid-column: 1 / 2;
+      grid-row: 1 / 2;
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: left;
+
+      img {
+        // this image is only for print
+        display: none;
+      }
+    }
+
+    .titles {
+      grid-column: 2 / 3;
+    }
+
+    .descriptions {
+      grid-column: 3 / 4;
+    }
+
+    .counts {
+      grid-column: 4 / 5;
+
+      .half {
+        float: left;
+        width: 50%;
+        height: 100%;
+        outline: 1px solid grey;
+      }
+    }
+
+    p {
+      text-align: center;
+      padding: 1%;
+      margin-bottom: 1px;
+    }
+
+    p.title {
+      padding: 6px 0;
+      font-weight: bold;
+      font-size: 1.2vw;
+      overflow: hidden;
+    }
+
+    p.bold {
+      width: 98%;
+      margin-left: 1%;
+      marign-right: 1%;
+      font-size: 1.2vw;
+      font-weight: 900;
+      outline: 1px solid black;
+    }
+
+    p.small {
+      font-size: 1vw;
+    }
   }
 }
 
@@ -334,5 +350,15 @@
   .inventory_paper {
     -webkit-print-color-adjust:exact;
     -webkit-filter:opacity(1);
+
+    img {
+      display: inline !important;
+      max-height: 0.75in;
+      max-width: 2in;
+    }
+
+    div[class*="-gutter"] {
+      outline: none;
+    }
   }
 }

@@ -16,6 +16,8 @@ function runShowPageFunctions() {
     // .well is set to max-width: 30% for long text block fields
     // but line charts should get max-width: 100%
     $('canvas').parents('.well').addClass('full-width');
+    // and item lists should get width: 100%
+    $('.quantities-table').parents('.well').addClass('full-width-force');
   };
 };
 

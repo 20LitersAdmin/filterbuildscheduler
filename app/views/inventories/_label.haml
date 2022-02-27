@@ -1,0 +1,26 @@
+-# frozen_string_literal: true
+
+- picture_url = label.picture.instance_of?(String) ? label.picture : rails_blob_url(label.picture)
+
+.img{ style: "background-image: url(#{picture_url});" }
+  = image_tag label.picture
+.titles
+  %p.title= label.name
+  %p.bold= label.uid
+.descriptions
+  - if label.only_loose?
+    %p (only loose)
+  - else
+    %p Qty/#{label.box_type}: #{human_number label.quantity_per_box}
+    - if label.box_notes.present?
+      %p.small= label.box_notes
+  - if label.description.present?
+    %p.small= label.description
+.counts
+  - if label.only_loose?
+    %p Loose count:
+  - else
+    .half
+      %p Loose count:
+    .half
+      %p Box count:

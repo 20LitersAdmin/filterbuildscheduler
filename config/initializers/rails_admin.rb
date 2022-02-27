@@ -356,6 +356,16 @@ RailsAdmin.config do |config|
             !bindings[:object].only_loose?
           end
         end
+        field :box_type do
+          visible do
+            !bindings[:object].only_loose?
+          end
+        end
+        field :box_notes do
+          visible do
+            !bindings[:object].only_loose?
+          end
+        end
         field :can_be_produced, :delimited
         field :minimum_on_hand, :delimited
         field :below_minimum, :true_is_bad do
@@ -363,9 +373,10 @@ RailsAdmin.config do |config|
             bindings[:object].below_minimum
           end
         end
-        field :default_goal do
+        field :default_goal, :delimited do
           label 'Default production goal for cycle'
         end
+        field :goal_remainder, :delimited
       end
 
       group 'Build info' do
@@ -398,12 +409,12 @@ RailsAdmin.config do |config|
         field :liters_per_day
       end
 
-      group 'Items' do
-        field :quantities, :quantities_json
-      end
-
       group 'History' do
         field :history_series, :line_chart
+      end
+
+      group 'Items' do
+        field :quantities, :quantities_json
       end
     end
 
@@ -446,6 +457,12 @@ RailsAdmin.config do |config|
           help 'Current box count'
         end
         field :quantity_per_box
+        field :box_type do
+          help 'Customize name. E.g. bag, bundle, large bin, medium bin, small bin, tray'
+        end
+        field :box_notes do
+          help 'An extra field for things like: "quantity is an average", "red strap bundle is approx 100"'
+        end
         field :can_be_produced, :delimited do
           help 'Calculated number that can be made'
           read_only true
@@ -455,6 +472,9 @@ RailsAdmin.config do |config|
         end
         field :default_goal do
           help 'Default production goal for cycle'
+        end
+        field :goal_remainder, :delimited do
+          read_only true
         end
       end
 
@@ -534,6 +554,7 @@ RailsAdmin.config do |config|
       end
       group 'Inventory Info' do
         field :available_count, :delimited
+        field :goal_remainder, :delimited
         field :only_loose
         field :loose_count, :delimited do
           visible do
@@ -550,12 +571,21 @@ RailsAdmin.config do |config|
             !bindings[:object].only_loose?
           end
         end
+        field :box_type do
+          visible do
+            !bindings[:object].only_loose?
+          end
+        end
+        field :box_notes do
+          visible do
+            !bindings[:object].only_loose?
+          end
+        end
         field :below_minimum, :true_is_bad_false_is_good
-        field :minimum_on_hand
+        field :minimum_on_hand, :delimited
         field :can_be_produced, :delimited do
           help 'Calculated can be produced from sub items'
         end
-        field :goal_remainder, :delimited
         field :discarded_at, :date
       end
 
@@ -602,10 +632,16 @@ RailsAdmin.config do |config|
         field :box_count do
           help 'Current box count'
         end
-        field :quantity_per_box
         field :available_count, :delimited do
           help 'Calculated total available'
           read_only true
+        end
+        field :quantity_per_box
+        field :box_type do
+          help 'Customize name. E.g. bag, bundle, large bin, medium bin, small bin, tray'
+        end
+        field :box_notes do
+          help 'An extra field for things like: "quantity is an average", "red strap bundle is approx 100"'
         end
         field :minimum_on_hand
         field :below_minimum, :true_is_bad_false_is_good do
@@ -679,6 +715,7 @@ RailsAdmin.config do |config|
       end
       group 'Inventory Info' do
         field :available_count, :delimited
+        field :goal_remainder, :delimited
         field :only_loose
         field :loose_count, :delimited do
           visible do
@@ -695,13 +732,18 @@ RailsAdmin.config do |config|
             !bindings[:object].only_loose?
           end
         end
-        field :minimum_on_hand, :delimited
-        field :below_minimum
-        field :can_be_produced, :delimited do
-          help 'Calculated can be produced from sub items'
-          read_only true
+        field :box_type do
+          visible do
+            !bindings[:object].only_loose?
+          end
         end
-        field :goal_remainder, :delimited
+        field :box_notes do
+          visible do
+            !bindings[:object].only_loose?
+          end
+        end
+        field :below_minimum, :true_is_bad_false_is_good
+        field :minimum_on_hand, :delimited
         field :discarded_at, :date
       end
       group 'Supplier Info' do
@@ -716,6 +758,9 @@ RailsAdmin.config do |config|
         field :made_from_material
         field :material
         field :quantity_from_material
+        field :can_be_produced, :delimited do
+          help 'Calculated can be produced from sub items'
+        end
       end
       group 'Order Info' do
         field :last_ordered_at, :date
@@ -771,10 +816,26 @@ RailsAdmin.config do |config|
         field :box_count do
           help 'Current box count'
         end
-        field :minimum_on_hand
-        field :quantity_per_box
         field :available_count, :delimited do
           help 'Calculated total available'
+          read_only true
+        end
+        field :quantity_per_box
+        field :box_type do
+          help 'Customize name. E.g. bag, bundle, large bin, medium bin, small bin, tray'
+        end
+        field :box_notes do
+          help 'An extra field for things like: "quantity is an average", "red strap bundle is approx 100"'
+        end
+        field :minimum_on_hand
+        field :below_minimum, :true_is_bad_false_is_good do
+          read_only true
+        end
+        field :can_be_produced, :delimited do
+          visible do
+            bindings[:object].made_from_material?
+          end
+          help 'Calculated can be produced from materials'
           read_only true
         end
         field :goal_remainder, :delimited do
@@ -876,8 +937,18 @@ RailsAdmin.config do |config|
             !bindings[:object].only_loose?
           end
         end
+        field :box_type do
+          visible do
+            !bindings[:object].only_loose?
+          end
+        end
+        field :box_notes do
+          visible do
+            !bindings[:object].only_loose?
+          end
+        end
+        field :below_minimum, :true_is_bad_false_is_good
         field :minimum_on_hand, :delimited
-        field :below_minimum
         field :discarded_at, :date
       end
       group 'Supplier Info' do
@@ -938,13 +1009,19 @@ RailsAdmin.config do |config|
         field :box_count do
           help 'Current box count'
         end
-        field :quantity_per_box
         field :available_count, :delimited do
           help 'Calculated total available'
           read_only true
         end
+        field :quantity_per_box
+        field :box_type do
+          help 'Customize name. E.g. bag, bundle, large bin, medium bin, small bin, tray'
+        end
+        field :box_notes do
+          help 'An extra field for things like: "quantity is an average", "red strap bundle is approx 100"'
+        end
         field :minimum_on_hand
-        field :below_minimum do
+        field :below_minimum, :true_is_bad_false_is_good do
           read_only true
         end
         field :goal_remainder, :delimited do
