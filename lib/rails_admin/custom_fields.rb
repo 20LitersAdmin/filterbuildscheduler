@@ -79,12 +79,12 @@ class QuantitiesJson < RailsAdmin::Config::Fields::Base
   RailsAdmin::Config::Fields::Types.register(:quantities_json, self)
 
   register_instance_option :formatted_value do
-    html_response = ['<ul>']
+    html_response = ['<table class="table table-striped quantities-table"><thead><tr><th>Item</th><th>Quantity</th></tr></thead><tbody>']
     value.each do |uid, quantity|
       item = uid.objectify_uid
-      html_response << "<li>#{item.uid_and_name}: #{quantity}</li>"
+      html_response << "<tr><td>#{item.uid_and_name}</td><td>#{quantity}</td></tr>"
     end
-    html_response << ['</ul>']
+    html_response << ['</tbody></table>']
 
     html_response.join.html_safe
   end

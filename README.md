@@ -1,16 +1,4 @@
 # README
-## BOXEN:
-- Be able to customize the language of boxes for Itemable objects
-  - Update views to include box_type and box_note:
-    - label
-    - printed inventory
-    - inventory#edit partial? (could be label)
-  - Almost nothing is actually "only loose"
-- Fix issues with printed inventory: some items overlap
-
-- Technologies: show quantities in rails_admin show view:
-  * table: [ uid.objectify_uid.name | quantity ]
-
 ## Setup Crew:
 - System has a system test for generating SetupMailer.notify
   - from EventsController#Setup (only for self)
