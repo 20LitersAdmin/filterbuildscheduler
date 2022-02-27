@@ -11,7 +11,7 @@
   - if label.only_loose?
     %p (only loose)
   - else
-    %p Qty/#{label.box_type}: #{label.quantity_per_box}
+    %p Qty/#{label.box_type}: #{human_number label.quantity_per_box}
     - if label.box_notes.present?
       %p.small= label.box_notes
   - if label.description.present?
