@@ -126,7 +126,7 @@ RSpec.shared_examples Itemable do
     it 'returns a hash of attributes important to Label' do
       label_hash = item.label_hash
 
-      expect(label_hash.keys).to eq %i[name description uid technologies quantity_per_box picture only_loose]
+      expect(label_hash.keys).to eq %i[name description uid technologies quantity_per_box box_type box_notes picture only_loose]
     end
   end
 

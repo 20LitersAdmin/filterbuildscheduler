@@ -3,9 +3,8 @@
 
 :ruby
   item = setup_assembly.item
-  item_type = setup_assembly.item_type
   available = item.available_count
-  available_text = item.only_loose? ? available : "#{human_number available} (#{human_number item.box_count, display_zero: true} boxes, #{human_number item.loose_count, display_zero: true} loose)"
+  available_text = item.only_loose? ? available : "#{human_number available} (#{pluralize(item.box_count, item.box_type)}, #{human_number item.loose_count, display_zero: true} loose)"
   goal_remainder = item.goal_remainder
   highlight = 'color: red; font-weight: bolder; border: solid 2px red' if goal_remainder > available && !item.has_sub_assemblies?
 

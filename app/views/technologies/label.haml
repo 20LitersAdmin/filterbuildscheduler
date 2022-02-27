@@ -1,4 +1,5 @@
 -# frozen_string_literal: true
+
 .no-print
   %h4 Printing instructions:
   %ul
@@ -9,10 +10,10 @@
   .top-gutter
   - 5.times do
     .left-gutter
-    .label-4x2
+    .label-custom
       = render partial: @label
     .center-gutter
-    .label-4x2
+    .label-custom
       = render partial: @label
     .right-gutter
   .bottom-gutter

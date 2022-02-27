@@ -110,6 +110,19 @@ RSpec.describe Technology, type: :model do
     end
   end
 
+  describe '#parts_quantities' do
+    it 'returns an array of hashes with part info' do
+      parts = create_list :part, 3
+
+      parts.each do |part|
+        technology.quantities[part.uid] = 2
+      end
+      technology.save
+
+      expect(technology.parts_quantities.is_a?(Array)).to eq true
+    end
+  end
+
   describe '#results_worthy?' do
     let(:not_worthy) { build :technology, people: 0, lifespan_in_years: 0, liters_per_day: 0 }
 

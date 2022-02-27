@@ -12,7 +12,7 @@
               %th Date
               %th Type
               %th.center-align Loose Count
-              %th.center-align Box Count
+              %th.center-align #{@item.box_type} Count
               %th.center-align Available
           %tbody
             - @item.history.reverse_each do |h|

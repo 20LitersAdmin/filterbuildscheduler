@@ -4,7 +4,7 @@
     .col-xs-8
       %h3 Select labels to print
     .col-xs-4
-      = submit_tag 'Submit', class: 'btn yellow float-right', name: nil
+      = submit_tag 'Submit', class: 'btn yellow float-right', name: nil, data: { disable_with: false }
   .row.labels-check-btns
     .col-xs-12.right-align
       %a{ href: '#', class: 'btn blue btn-check', id: 'check_all' }
@@ -35,5 +35,5 @@
                 = check_box_tag i[0], 1, false, { class: 'label-checkbox' }
   .row
     .col-xs-12
-      = submit_tag 'Submit', class: 'btn yellow float-right', name: nil
+      = submit_tag 'Submit', class: 'btn yellow float-right', name: nil, data: { disable_with: false }
 

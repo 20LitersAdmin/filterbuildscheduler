@@ -15,14 +15,14 @@ RSpec.describe 'Selected labels page', type: :system do
 
     # first go to /labels, select them all then click 'Submit'
     visit labels_path
-    all('input[type=checkbox]').each { |cb| cb.click }
+    all('input[type=checkbox]').each(&:click)
     find('input[type="submit"]', match: :first).click
   end
 
   it 'displays a page with labels' do
     expect(page).to have_current_path('/labels_select')
     expect(page).to have_content 'Printing instructions:'
-    expect(page).to have_css 'div.label-4x2', count: 120
+    expect(page).to have_css 'div.label-custom', count: 120
   end
 
   it 'displays 10 labels per item' do
