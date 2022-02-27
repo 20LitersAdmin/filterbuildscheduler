@@ -373,7 +373,7 @@ RailsAdmin.config do |config|
             bindings[:object].below_minimum
           end
         end
-        field :default_goald, :delimited do
+        field :default_goal, :delimited do
           label 'Default production goal for cycle'
         end
         field :goal_remainder, :delimited
@@ -409,12 +409,12 @@ RailsAdmin.config do |config|
         field :liters_per_day
       end
 
-      group 'Items' do
-        field :quantities, :quantities_json
-      end
-
       group 'History' do
         field :history_series, :line_chart
+      end
+
+      group 'Items' do
+        field :quantities, :quantities_json
       end
     end
 
