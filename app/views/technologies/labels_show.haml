@@ -21,18 +21,3 @@
         = render partial: 'labels/label', object: item
       .right-gutter
     .bottom-gutter
-
--#
-  One label for each item
-  - @ary.in_groups_of(10, false) do |batch|
-    .labels_page
-      .top-gutter
-      - batch.in_groups_of(2, false) do |item_a, item_b|
-        .left-gutter
-        .label-4x2
-          = render partial: 'labels/label', object: item_a
-        .center-gutter
-        .label-4x2
-          = render partial: 'labels/label', object: item_b unless item_b.nil?
-        .right-gutter
-      .bottom-gutter
