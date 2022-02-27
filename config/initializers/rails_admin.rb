@@ -458,7 +458,7 @@ RailsAdmin.config do |config|
         end
         field :quantity_per_box
         field :box_type do
-          help 'Customize name. E.g. bag, bundle, large tub, medium tub, small tub, tray'
+          help 'Customize name. E.g. bag, bundle, large bin, medium bin, small bin, tray'
         end
         field :box_notes do
           help 'An extra field for things like: "quantity is an average", "red strap bundle is approx 100"'
@@ -638,7 +638,7 @@ RailsAdmin.config do |config|
         end
         field :quantity_per_box
         field :box_type do
-          help 'Customize name. E.g. bag, bundle, large tub, medium tub, small tub, tray'
+          help 'Customize name. E.g. bag, bundle, large bin, medium bin, small bin, tray'
         end
         field :box_notes do
           help 'An extra field for things like: "quantity is an average", "red strap bundle is approx 100"'
@@ -822,7 +822,7 @@ RailsAdmin.config do |config|
         end
         field :quantity_per_box
         field :box_type do
-          help 'Customize name. E.g. bag, bundle, large tub, medium tub, small tub, tray'
+          help 'Customize name. E.g. bag, bundle, large bin, medium bin, small bin, tray'
         end
         field :box_notes do
           help 'An extra field for things like: "quantity is an average", "red strap bundle is approx 100"'
@@ -1015,7 +1015,7 @@ RailsAdmin.config do |config|
         end
         field :quantity_per_box
         field :box_type do
-          help 'Customize name. E.g. bag, bundle, large tub, medium tub, small tub, tray'
+          help 'Customize name. E.g. bag, bundle, large bin, medium bin, small bin, tray'
         end
         field :box_notes do
           help 'An extra field for things like: "quantity is an average", "red strap bundle is approx 100"'
