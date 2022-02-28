@@ -173,6 +173,8 @@ module Itemable
   end
 
   def update_available_count
-    self.available_count = (box_count.to_i * quantity_per_box.to_i) + loose_count.to_i
+    self.available_count = loose_count.to_i
+
+    self.available_count += (box_count.to_i * quantity_per_box.to_i) unless only_loose?
   end
 end
