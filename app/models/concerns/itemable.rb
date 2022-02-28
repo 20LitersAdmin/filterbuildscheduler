@@ -169,10 +169,10 @@ module Itemable
   end
 
   def set_below_minimum
-    self.below_minimum = available_count < minimum_on_hand
+    self.below_minimum = available_count.to_i < minimum_on_hand.to_i
   end
 
   def update_available_count
-    self.available_count = (box_count * quantity_per_box) + loose_count
+    self.available_count = (box_count.to_i * quantity_per_box.to_i) + loose_count.to_i
   end
 end
