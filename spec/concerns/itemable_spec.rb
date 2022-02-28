@@ -347,15 +347,31 @@ RSpec.shared_examples Itemable do
       end
     end
 
-    it 'sets the available_count based upon box and loose counts' do
-      item.available_count = nil
-      item.box_count = 5
-      item.quantity_per_box = 100
-      item.loose_count = 30
+    context 'when item is only_loose' do
+      it 'sets the available_count to match the loose count' do
+        item.only_loose = true
+        item.available_count = nil
+        item.box_count = 5
+        item.quantity_per_box = 100
+        item.loose_count = 30
 
-      item.__send__(:update_available_count)
+        item.__send__(:update_available_count)
 
-      expect(item.available_count).to eq 530
+        expect(item.available_count).to eq 30
+      end
+    end
+
+    context 'when item is not only_loose' do
+      it 'sets the available_count based upon box and loose counts' do
+        item.available_count = nil
+        item.box_count = 5
+        item.quantity_per_box = 100
+        item.loose_count = 30
+
+        item.__send__(:update_available_count)
+
+        expect(item.available_count).to eq 530
+      end
     end
   end
 end
