@@ -12,8 +12,8 @@
       .col-xs-2
         = icon('fas', 'search', class: 'btn blue')
     .row
-      .col-xs-12.center#item_search_response{ style: 'display: none;' }
-      .col-xs-12.center#spinner_div{ style: 'display: none;' }
+      #item_search_response.col-xs-12.center{ style: 'display: none;' }
+      #spinner_div.col-xs-12.center{ style: 'display: none;' }
         = icon('fas', 'spinner fa-pulse fa-2x', id: 'ajax_spinner')
     .row
       .col-xs-12
@@ -21,7 +21,7 @@
         = f.input :combination_id, as: :hidden
         = f.input :item_type, as: :hidden
 
-        = f.input :item_id, as: :select, required: true, collection: [], label: 'Select Item', label_html: { style: 'display: none;'}, input_html: { style: 'display: none;'}
+        = f.input :item_id, as: :select, required: true, collection: [], label: 'Select Item', label_html: { style: 'display: none;' }, input_html: { style: 'display: none;' }
         = f.input :quantity, hint: @assembly.quantity_hint, required: true
         = f.input :affects_price_only, hint: 'This item is not included in a ready-to-ship unit, but is part of a complete filter. (e.g. buckets and lids join household filters at time of shipping)'
         = f.submit class: 'btn yellow'
