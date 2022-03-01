@@ -34,9 +34,10 @@ class AssembliesController < ApplicationController
 
   def create
     # Check if assembly already exists
-    @assembly = @combination.assemblies.find_or_initialize_by assembly_params.except(:quantity)
+    @assembly = @combination.assemblies.find_or_initialize_by assembly_params.except(:quantity, :affects_price_only)
 
     @assembly.quantity = assembly_params[:quantity]
+    @assembly.affects_price_only = assembly_params[:affects_price_only]
 
     new_record = @assembly.new_record?
     success_message = new_record ? 'Assembly created!' : 'Found existing assembly and updated it.'
@@ -109,6 +110,7 @@ class AssembliesController < ApplicationController
                                      :combination_type,
                                      :item_id,
                                      :item_type,
-                                     :quantity
+                                     :quantity,
+                                     :affects_price_only
   end
 end
