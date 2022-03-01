@@ -254,12 +254,13 @@ RailsAdmin.config do |config|
   config.model 'Event' do
     weight 1
     list do
-      scopes %i[all needs_leaders future needs_report closed discarded]
+      scopes %i[future needs_leaders needs_report closed all discarded]
       sort_by :start_time
       field :title
       field :format_date_w_year do
         label 'Date'
         column_width 110
+        sortable :start_time
       end
       field :format_time_slim do
         label 'Time'
