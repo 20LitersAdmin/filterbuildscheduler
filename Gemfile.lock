@@ -229,7 +229,7 @@ GEM
     icalendar (2.7.1)
       ice_cube (~> 0.16)
     ice_cube (0.16.4)
-    image_processing (1.12.1)
+    image_processing (1.12.2)
       mini_magick (>= 4.9.5, < 5)
       ruby-vips (>= 2.0.17, < 3)
     jmespath (1.6.0)
@@ -577,7 +577,7 @@ DEPENDENCIES
   haml
   httparty
   icalendar
-  image_processing (~> 1.2)
+  image_processing (~> 1.12)
   jquery-datatables-rails
   jquery-rails
   letter_opener_web
