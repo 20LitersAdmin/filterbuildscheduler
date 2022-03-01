@@ -22,5 +22,6 @@
         = f.input :item_type, as: :hidden
 
         = f.input :item_id, as: :select, required: true, collection: [], label: 'Select Item', label_html: { style: 'display: none;'}, input_html: { style: 'display: none;'}
-        = f.input :quantity, hint: "#{@assembly.quantity_hint}"
+        = f.input :quantity, hint: @assembly.quantity_hint, required: true
+        = f.input :affects_price_only, hint: 'This item is not included in a ready-to-ship unit, but is part of a complete filter. (e.g. buckets and lids join household filters at time of shipping)'
         = f.submit class: 'btn yellow'

@@ -5,5 +5,6 @@
 .col-xs-12
   = simple_form_for @assembly, as: :assembly, method: :patch, url: combination_assembly_path(@combination.uid, @assembly.id), remote: true do |f|
     = f.error_notification
-    = f.input :quantity, hint: "#{@assembly.quantity_hint}"
+    = f.input :quantity, hint: @assembly.quantity_hint
+    = f.input :affects_price_only, hint: 'This item is not included in a ready-to-ship unit, but is part of a complete filter. (e.g. buckets and lids join household filters at time of shipping)'
     = f.submit class: 'btn yellow'
