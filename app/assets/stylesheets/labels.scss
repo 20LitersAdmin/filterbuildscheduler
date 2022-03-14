@@ -132,14 +132,14 @@
 // '/labels_select' && `/label/:uid` && '/inventories/paper'
 @media print {
   .labels_page {
-    // outline: none;
+    outline: none;
 
     div[class*="-gutter"] {
-      // outline: none;
+      outline: none;
     }
 
     .label-custom {
-      // outline: none;
+      outline: none;
     }
   }
 
