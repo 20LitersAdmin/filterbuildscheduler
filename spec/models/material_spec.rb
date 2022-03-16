@@ -39,8 +39,10 @@ RSpec.describe Material, type: :model do
     context 'when last_received_at is nil' do
       it 'returns true' do
         material.last_ordered_at = Time.now - 2.days
+        material.last_ordered_quantity = 200
         expect(material.last_ordered_at.present?).to eq true
         expect(material.last_received_at.nil?).to eq true
+
         expect(material.on_order?).to eq true
       end
     end
@@ -62,6 +64,7 @@ RSpec.describe Material, type: :model do
     context 'when last_ordered_at is present, last_received_at is not nil, and partial_received is false' do
       before :each do
         material.last_ordered_at = Time.now - 2.days
+        material.last_ordered_quantity = 20
         material.last_received_at = Time.now - 1.year
       end
 
@@ -76,6 +79,7 @@ RSpec.describe Material, type: :model do
         it 'returns false' do
           material.last_ordered_at = Time.now - 2.years
           expect(material.last_ordered_at <= material.last_received_at).to eq true
+
           expect(material.on_order?).to eq false
         end
       end

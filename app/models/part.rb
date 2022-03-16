@@ -61,6 +61,7 @@ class Part < ApplicationRecord
 
   def on_order?
     return false unless last_ordered_at.present?
+    return false if last_ordered_quantity.nil?
 
     return true if last_received_at.nil?
 
@@ -71,12 +72,12 @@ class Part < ApplicationRecord
   end
 
   def partial_received?
-    return false unless last_ordered_at.present? && last_received_at.present?
+    return false unless last_ordered_at.present? && last_received_at.present? && last_received_quantity.to_i.positive?
 
     return false if last_received_quantity == last_ordered_quantity && last_received_at > last_ordered_at
 
     # when receiving multiple partial orders, need to determine if full order has been recevived
-    received_since_last_order < last_ordered_quantity
+    received_since_last_order.to_i < last_ordered_quantity.to_i
   end
 
   def partial_order_remainder

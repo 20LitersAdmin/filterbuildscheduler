@@ -79,6 +79,7 @@ RSpec.describe Part, type: :model do
     context 'when last_received_at is nil' do
       it 'returns true' do
         part.last_ordered_at = Time.now - 2.days
+        part.last_ordered_quantity = 200
         expect(part.last_ordered_at.present?).to eq true
         expect(part.last_received_at.nil?).to eq true
         expect(part.on_order?).to eq true
@@ -102,6 +103,7 @@ RSpec.describe Part, type: :model do
     context 'when last_ordered_at is present, last_received_at is not nil, and partial_received is false' do
       before :each do
         part.last_ordered_at = Time.now - 2.days
+        part.last_ordered_quantity = 20
         part.last_received_at = Time.now - 1.year
       end
 
