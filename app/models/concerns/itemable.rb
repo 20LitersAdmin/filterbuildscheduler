@@ -143,6 +143,7 @@ module Itemable
     ary
   end
 
+  # Rails Admin virtual
   def uid_and_name
     "#{uid}: #{name}"
   end
