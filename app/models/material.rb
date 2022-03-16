@@ -44,13 +44,23 @@ class Material < ApplicationRecord
   def partial_received?
     return false unless last_ordered_at.present? && last_received_at.present?
 
-    (0..1_209_600).include?(last_received_at - last_ordered_at) && last_received_quantity < last_ordered_quantity
+    return false if last_received_quantity == last_ordered_quantity && last_received_at > last_ordered_at
+
+    # when receiving multiple partial orders, need to determine if full order has been recevived
+    received_since_last_order < last_ordered_quantity
   end
 
   def partial_order_remainder
     return 0 unless on_order? && partial_received?
 
-    last_ordered_quantity - last_received_quantity
+    last_ordered_quantity - received_since_last_order
+  end
+
+  def received_since_last_order
+    # Get history records where date key is greater than the last_ordered_at date && where inventory type is Receiving
+    history.select { |k, v| Date.parse(k) > last_ordered_at && v['inv_type'] == 'Receiving' }
+           .values.map { |r| r['available'] }
+           .sum
   end
 
   def owners
@@ -75,11 +85,6 @@ class Material < ApplicationRecord
     sku_as_link = ActionController::Base.helpers.link_to sku_sub, order_url, target: '_blank', rel: 'tooltip'
 
     "#{supplier.name} - SKU: #{sku_as_link}".html_safe
-  end
-
-  # Rails Admin virtual
-  def uid_and_name
-    "#{uid}: #{name}"
   end
 
   private

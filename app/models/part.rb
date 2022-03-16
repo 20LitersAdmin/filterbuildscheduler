@@ -65,7 +65,6 @@ class Part < ApplicationRecord
     return true if last_received_at.nil?
 
     ## partial order received, still waiting for the rest:
-    # received_at is within 2 weeks of ordered_at and ordered_quantity is greater than received_quantity
     return true if partial_received?
 
     last_ordered_at > last_received_at
@@ -74,13 +73,27 @@ class Part < ApplicationRecord
   def partial_received?
     return false unless last_ordered_at.present? && last_received_at.present?
 
-    (0..1_209_600).include?(last_received_at - last_ordered_at) && last_received_quantity < last_ordered_quantity
+    return false if last_received_quantity == last_ordered_quantity && last_received_at > last_ordered_at
+
+    # when receiving multiple partial orders, need to determine if full order has been recevived
+    received_since_last_order < last_ordered_quantity
   end
 
   def partial_order_remainder
     return 0 unless on_order? && partial_received?
 
-    last_ordered_quantity - last_received_quantity
+    last_ordered_quantity - received_since_last_order
+  end
+
+  def received_since_last_order
+    # Get history records where date key is greater than the last_ordered_at date && where inventory type is Receiving
+    history.select { |k, v| Date.parse(k) > last_ordered_at && v['inv_type'] == 'Receiving' }
+           .values.map { |r| r['available'] }
+           .sum
+  end
+
+  def reorder?
+    available_count < minimum_on_hand
   end
 
   def reorder_total_cost
@@ -106,11 +119,6 @@ class Part < ApplicationRecord
 
   def sub_assemblies
     Assembly.none
-  end
-
-  # Rails Admin virtual
-  def uid_and_name
-    "#{uid}: #{name}"
   end
 
   private
