@@ -56,7 +56,7 @@ class Material < ApplicationRecord
   def partial_order_remainder
     return 0 unless on_order? && partial_received?
 
-    last_ordered_quantity - received_since_last_order
+    last_ordered_quantity.to_i - received_since_last_order.to_i
   end
 
   def received_since_last_order
