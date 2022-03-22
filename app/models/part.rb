@@ -72,8 +72,10 @@ class Part < ApplicationRecord
   end
 
   def partial_received?
+    # has not been ordered, or has not been received
     return false unless last_ordered_at.present? && last_received_at.present? && last_received_quantity.to_i.positive?
 
+    # received in full
     return false if last_received_quantity == last_ordered_quantity && last_received_at > last_ordered_at
 
     # when receiving multiple partial orders, need to determine if full order has been recevived
@@ -87,10 +89,13 @@ class Part < ApplicationRecord
   end
 
   def received_since_last_order
+    # shipping, receiving and event inventories combine their counts with current item counts
+    # so don't sum the values of the receiving inventory, look at the max value
+
     # Get history records where date key is greater than the last_ordered_at date && where inventory type is Receiving
     history.select { |k, v| Date.parse(k) > last_ordered_at && v['inv_type'] == 'Receiving' }
            .values.map { |r| r['available'] }
-           .sum
+           .max
   end
 
   def reorder?
