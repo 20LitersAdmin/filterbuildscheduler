@@ -5,15 +5,14 @@
   .img{ style: "background-image: url(#{picture_url});" }
     = image_tag label.picture
   .text
-    %p.title= label.name
     %p.bold= label.uid
+    %p.title= label.name
     - if label.only_loose?
       %p (only loose)
     - else
       %p Qty/#{label.box_type}: #{human_number label.quantity_per_box}
       - if label.box_notes.present?
         %p.small= label.box_notes
-  - if label.description.present? || label.box_notes.present?
+  - if label.description.present?
     .whole
-      - if label.description.present?
-        %p.small= label.description
+      %p.small= label.description

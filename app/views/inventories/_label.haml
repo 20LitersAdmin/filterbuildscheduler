@@ -1,12 +1,11 @@
 -# frozen_string_literal: true
 
 - picture_url = label.picture.instance_of?(String) ? label.picture : rails_blob_url(label.picture)
-
 .img{ style: "background-image: url(#{picture_url});" }
   = image_tag label.picture
 .titles
-  %p.title= label.name
   %p.bold= label.uid
+  %p.title= label.name
 .descriptions
   - if label.only_loose?
     %p (only loose)
