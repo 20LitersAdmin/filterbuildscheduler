@@ -20,7 +20,7 @@
         %br/
         %strong.count-tech
           - if item.is_a? Technology
-            (complete)
+            = item.short_name.to_s
           - else
             For: #{item.all_technologies_names}
       - if count.user_id.present?
