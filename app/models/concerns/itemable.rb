@@ -148,6 +148,10 @@ module Itemable
     "#{uid}: #{name}"
   end
 
+  def uid_and_short_name
+    "#{uid}: #{short_name}"
+  end
+
   private
 
   def check_uid
