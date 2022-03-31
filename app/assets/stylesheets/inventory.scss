@@ -318,12 +318,15 @@
       text-align: center;
       padding: 1%;
       margin-bottom: 1px;
+      font-size: 1.4vw;
+      line-height: 1.4vw;
     }
 
     p.title {
       padding: 6px 0;
       font-weight: bold;
-      font-size: 1.2vw;
+      font-size: 1.8vw;
+      line-height: 1.8vw;
       overflow: hidden;
     }
 
@@ -331,13 +334,16 @@
       width: 98%;
       margin-left: 1%;
       marign-right: 1%;
-      font-size: 1.2vw;
+      font-size: 1.8vw;
+      line-height: 1.8vw;
       font-weight: 900;
-      outline: 1px solid black;
+      outline: 1px solid $dark-grey;
+      background-color: $dark-grey;
+      color: white;
     }
 
     p.small {
-      font-size: 1vw;
+      font-size: 1.2vw;
     }
   }
 }

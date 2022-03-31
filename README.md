@@ -13,6 +13,7 @@
 
 ## Issues:
 - Shipping inventory, when submitting positive numbers doesn't submit, but also doesn't display an error.
+- Technology.list_worthy is broad and sucks. e.g. Technology.last
 
 ### Policies:
 - Prevent some user types from accessing some parts of rails_admin?

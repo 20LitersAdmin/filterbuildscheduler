@@ -1,10 +1,12 @@
 @import 'variables';
 
 // `/labels`
-.row.labels-check-btns {
-  margin-bottom: 1em;
-  a.btn-check {
-    font-size: 9px;
+.labels_list_page {
+  .row.labels-check-btns {
+    margin-bottom: 1em;
+    a.btn-check {
+      font-size: 9px;
+    }
   }
 }
 
@@ -59,7 +61,7 @@
   }
 }
 
-// _label partial
+// labels/_label partial
 .label-grid {
   height: 100%;
   padding: 1%;
@@ -101,12 +103,16 @@
     text-align: center;
     padding: 1%;
     margin-bottom: 1px;
+    font-size: 1.4vw;
+    line-height: 1.4vw;
   }
 
   p.title {
     padding: 6px 0;
     font-weight: bold;
-    font-size: 1.2vw;
+    font-size: 1.8vw;
+    line-height: 1.8vw;
+    font-stretch: condensed;
     overflow: hidden;
   }
 
@@ -114,20 +120,22 @@
     width: 98%;
     margin-left: 1%;
     marign-right: 1%;
-    font-size: 1.2vw;
+    font-size: 1.8vw;
+    line-height: 1.8vw;
     font-weight: 900;
-    outline: 1px solid black;
+    outline: 1px solid $dark-grey;
+    background-color: $dark-grey;
+    color: white;
   }
 
   p.small {
-    font-size: 1vw;
+    font-size: 1.2vw;
   }
 }
 
-// 'inventories/paper' styles for counts-cols
-.label-custom.counts-cols {
+// inventories/_label partial
+// see inventory.scss#239
 
-}
 
 // '/labels_select' && `/label/:uid` && '/inventories/paper'
 @media print {

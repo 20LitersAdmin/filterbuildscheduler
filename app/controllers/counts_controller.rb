@@ -6,6 +6,7 @@ class CountsController < ApplicationController
 
   def edit
     respond_to do |format|
+      format.html
       format.js { render 'edit', layout: 'blank' }
     end
   end
