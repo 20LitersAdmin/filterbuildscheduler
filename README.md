@@ -1,4 +1,41 @@
 # README
+## MailerLite integration:
+- Kindful's contact/query "has_email": "Yes" returns all records
+- Kindful's contact/query "linked" returns none currently
+  - Linking records could be beneficial for tracking new and changed: https://developer.kindful.com/customer/linking-guide/contact-link
+  - But linking would require a dB table with at least [id, external_id] fields
+    - and have a max of 5,000 rows
+- MailerLite has s Ruby gem: https://github.com/jpalumickas/mailerlite-ruby
+- MailerLite reference: https://developers.mailerlite.com/reference
+- MailerLite API rate limit: 60 requests per endpoint per minute max
+
+### Contacts/Subscribers:
+  _no Kindful webhooks exist for Contact changes, so these must be done as queries_
+  - Kindful Contacts that have been created: "not_linked"
+    _create a MailerLite subscriber_
+  - Kindful Contacts that have been updated: "linked", "changed"
+    - email, email_opt_out, alt_email
+    _a MailerLite subscriber is updated
+  - Kindful COntacts that have been archived: (part of "linked", "changed"?)
+    _a MailerLite subscriber is destroyed?_
+
+  _MailerLite has webhooks on Subscriber and Campaign
+  - When a MailerLite record is created
+    - via sign-up form on webiste?
+    _a new Kindful contact is created_
+  - When a MailerLite record changes
+    - via "manage preferences" from email?
+    - via "unsubscribe" request
+    _a Kindful contact is updated_
+
+### Kindful Notes:
+  - MailerLite read receipts
+    - as a daily cron job
+    - will need to identify new opens, reads, clicks on existing campaigns (and ignore existing)
+
+
+##### --- older notes ---
+
 ## Setup Crew:
 - System has a system test for generating SetupMailer.notify
   - from EventsController#Setup (only for self)

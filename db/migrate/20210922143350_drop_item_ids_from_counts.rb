@@ -2,8 +2,6 @@
 
 class DropItemIdsFromCounts < ActiveRecord::Migration[6.1]
   def change
-    InventoryMigrationJob.perform_now
-
     remove_column :counts, :component_id
     remove_column :counts, :material_id
     remove_column :counts, :part_id

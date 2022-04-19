@@ -9,6 +9,7 @@ git_source(:github) do |repo_name|
 end
 
 gem 'aws-sdk-s3'
+gem 'barnes'
 gem 'bootsnap', '>= 1.4.2', require: false
 gem 'bootstrap3-datetimepicker-rails'
 gem 'bootstrap-sass'

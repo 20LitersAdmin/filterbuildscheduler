@@ -116,7 +116,7 @@ ActiveRecord::Schema.define(version: 2022_02_26_205108) do
   end
 
   create_table "emails", force: :cascade do |t|
-    t.bigint "oauth_user_id", null: false
+    t.integer "oauth_user_id", null: false
     t.string "from", array: true
     t.string "to", array: true
     t.string "subject"
