@@ -91,6 +91,9 @@ GEM
       aws-sigv4 (~> 1.4)
     aws-sigv4 (1.4.0)
       aws-eventstream (~> 1, >= 1.0.2)
+    barnes (0.0.9)
+      multi_json (~> 1)
+      statsd-ruby (~> 1.1)
     bcrypt (3.1.16)
     better_errors (2.9.1)
       coderay (>= 1.0.0)
@@ -509,6 +512,7 @@ GEM
       actionpack (>= 5.2)
       activesupport (>= 5.2)
       sprockets (>= 3.0.0)
+    statsd-ruby (1.5.0)
     temple (0.8.2)
     therubyracer (0.12.3)
       libv8 (~> 3.16.14.15)
@@ -555,6 +559,7 @@ PLATFORMS
 DEPENDENCIES
   airborne
   aws-sdk-s3
+  barnes
   better_errors
   binding_of_caller
   bootsnap (>= 1.4.2)

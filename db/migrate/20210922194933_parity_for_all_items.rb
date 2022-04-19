@@ -10,8 +10,6 @@ class ParityForAllItems < ActiveRecord::Migration[6.1]
     remove_column :parts, :sample_size, :integer
     remove_column :parts, :sample_weight, :float
 
-    ImageSyncJob.perform_now
-
     remove_column :locations, :photo_url, :string
     remove_column :technologies, :img_url, :string
   end

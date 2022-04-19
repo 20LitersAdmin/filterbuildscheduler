@@ -11,11 +11,6 @@ class KindfulClient
 
     @env = env
 
-    # easy way to change which campaign and fund are linked for body methods
-    # NOTE: If Kindful is still changing the names of campaigns on import, try match_by: { campaign: 'name' }
-    # and remove campaign_id and fund_id and fund_name values
-
-    # SANDBOX settings
     @kindful_email = {
       campaign_name: 'Contributions',
       fund_name: 'Contributions 40100'
@@ -30,28 +25,6 @@ class KindfulClient
       campaign_name: 'CauseVox Transactions',
       fund_name: 'Special Events 40400'
     }
-
-    # Production settings
-    # @kindful_email = {
-    #   campaign_id: '247247',
-    #   campaign_name: 'Contributions',
-    #   fund_id: '25946',
-    #   fund_name: 'Contributions 40100'
-    # }
-
-    # @kindful_filter_build = {
-    #   campaign_id: '338482',
-    #   campaign_name: 'Filter Builds',
-    #   fund_id: '25946',
-    #   fund_name: 'Contributions 40100'
-    # }
-
-    # @kindful_causevox = {
-    #   campaign_id: '270572',
-    #   campaign_name: 'CauseVox Transactions',
-    #   fund_id: '27452',
-    #   fund_name: 'Special Events 40400'
-    # }
 
     set_host
   end
