@@ -314,7 +314,7 @@ class Event < ApplicationRecord
       important_fields_for_admins_changed?
   end
 
-  def should_notify_builders?
+  def should_notify_builders_and_leaders?
     start_time_was > Time.now &&
       registrations.kept.any? &&
       important_fields_for_builders_changed?
