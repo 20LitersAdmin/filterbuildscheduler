@@ -242,15 +242,10 @@ RSpec.shared_examples Itemable do
       end
     end
 
-    it 'calls delete_all on existing PriceCalculationJobs that haven\'t run yet' do
-      ar_relation = instance_double ActiveRecord::Relation
-      allow(Delayed::Job).to receive(:where).and_return(ar_relation)
-      allow(ar_relation).to receive(:delete_all)
-
-      expect(Delayed::Job).to receive(:where).with(queue: 'price_calc', locked_at: nil)
-      expect(ar_relation).to receive(:delete_all)
-
-      item.__send__(:run_price_calculation_job)
+    fit 'calls delete_all on existing PriceCalculationJobs that haven\'t run yet' do
+      expect { item.__send__(:run_price_calculation_job) }
+        .to change(PriceCalculationJob.jobs, :size)
+        .by(1)
     end
 
     it 'queues up a PriceCalculationJob' do
