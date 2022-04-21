@@ -1,4 +1,8 @@
 # README
+## Memory issues
+- try switching from DelayedJob to Sidekick
+- are any records setup as crons? Still running every hour?
+
 ## MailerLite integration:
 - Kindful's contact/query "has_email": "Yes" returns all records
 - Kindful's contact/query "linked" returns none currently

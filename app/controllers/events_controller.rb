@@ -232,8 +232,8 @@ class EventsController < ApplicationController
       admins_notified = 'Admins notified.'
     end
 
-    if @event.should_notify_builders?
-      @event.registrations.each do |registration|
+    if @event.should_notify_builders_and_leaders?
+      @event.registrations.kept.each do |registration|
         # Can't use delayed_job because ActiveModel::Dirty doesn't persist
         RegistrationMailer.event_changed(registration, @event).deliver_now
       end

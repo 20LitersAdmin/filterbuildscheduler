@@ -512,16 +512,16 @@ RSpec.describe Event, type: :model do
     end
   end
 
-  describe '#should_notify_builders?' do
+  describe '#should_notify_builders_and_leaders?' do
     context 'when start_time_was is in the future and event has registrations and important_fields_for_admins_changed?' do
       it 'returns true' do
         complete_event.start_time = Time.now + 1.day
-        expect(complete_event.should_notify_builders?).to eq false
+        expect(complete_event.should_notify_builders_and_leaders?).to eq false
 
         reg1.save
         # event.start_time_was == 20 days in the future
         event.start_time = Time.now + 1.day
-        expect(event.should_notify_builders?).to eq true
+        expect(event.should_notify_builders_and_leaders?).to eq true
       end
     end
   end
