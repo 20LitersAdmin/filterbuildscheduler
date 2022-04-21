@@ -34,7 +34,8 @@ module CleanupCrew
     # use .delete_all because there are no dependencies
     Supplier.delete_all
     Organization.delete_all
-    Delayed::Job.delete_all
+
+    Sidekiq::Queue.all.clear
 
     puts 'Mess is gone, boss.'
 
