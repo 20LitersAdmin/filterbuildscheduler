@@ -233,7 +233,7 @@ class EventsController < ApplicationController
     end
 
     if @event.should_notify_builders?
-      @event.registrations.each do |registration|
+      @event.registrations.kept.each do |registration|
         # Can't use delayed_job because ActiveModel::Dirty doesn't persist
         RegistrationMailer.event_changed(registration, @event).deliver_now
       end
