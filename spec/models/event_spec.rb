@@ -16,7 +16,7 @@ RSpec.describe Event, type: :model do
 
   let(:user) { create :user }
   let(:reg1) { build :registration, event: event, guests_registered: 19, user: user }
-  let(:reg2) { build :registration, event: event, guests_registered: 4 }
+  let(:reg2) { build :registration, event: event, guests_registered: 9 }
 
   let(:reg_leader1) { build :registration_leader, event: event, guests_registered: 0 }
   let(:reg_leader2) { build :registration_leader, event: event, guests_registered: 0 }
@@ -393,9 +393,9 @@ RSpec.describe Event, type: :model do
 
   describe '#registrations_remaining' do
     it 'returns the # of slots remaining for the event' do
-      expect(event.registrations_remaining).to eq(25)
+      expect(event.registrations_remaining).to eq(30)
       event.registrations << reg1
-      expect(event.registrations_remaining).to eq(5)
+      expect(event.registrations_remaining).to eq(10)
       event.registrations << reg2
       expect(event.registrations_remaining).to eq(0)
     end
@@ -403,13 +403,13 @@ RSpec.describe Event, type: :model do
 
   describe '#registrations_remaining_without(registration)' do
     it 'returns the # of slots remaining for the event excluding the given registration' do
-      expect(event.registrations_remaining).to eq(25)
+      expect(event.registrations_remaining).to eq(30)
       event.registrations << reg1
-      expect(event.registrations_remaining).to eq(5)
-      expect(event.registrations_remaining_without(reg1.reload)).to eq(25)
+      expect(event.registrations_remaining).to eq(10)
+      expect(event.registrations_remaining_without(reg1.reload)).to eq(30)
       event.registrations << reg2
       expect(event.registrations_remaining).to eq(0)
-      expect(event.registrations_remaining_without(reg2.reload)).to eq(5)
+      expect(event.registrations_remaining_without(reg2.reload)).to eq(10)
     end
   end
 
@@ -594,7 +594,7 @@ RSpec.describe Event, type: :model do
     it 'adds the number of guests and builders' do
       reg1.save
       reg2.save
-      expect(event.total_registered).to eq(25)
+      expect(event.total_registered).to eq(30)
     end
   end
 
@@ -613,7 +613,7 @@ RSpec.describe Event, type: :model do
         reg_leader1.save
         reg_leader2.save
 
-        expect(event.total_registered_w_leaders).to eq 27
+        expect(event.total_registered_w_leaders).to eq 32
       end
     end
   end
