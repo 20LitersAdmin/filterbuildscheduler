@@ -8,7 +8,7 @@ FactoryBot.define do
     min_leaders { 1 }
     max_leaders { 2 }
     min_registrations { 5 }
-    max_registrations { 25 }
+    max_registrations { 30 }
     technology
     location
 

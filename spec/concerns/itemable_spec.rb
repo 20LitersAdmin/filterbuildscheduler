@@ -230,8 +230,6 @@ RSpec.shared_examples Itemable do
   end
 
   describe '#run_price_calculation_job' do
-    let(:ar_relation) { instance_double ActiveRecord::Relation }
-
     context 'when price_cents changed on last save' do
       it 'fires on after_save' do
         item.price_cents = 699_669
@@ -242,54 +240,47 @@ RSpec.shared_examples Itemable do
       end
     end
 
-    it 'calls delete_all on existing PriceCalculationJobs that haven\'t run yet' do
-      ar_relation = instance_double ActiveRecord::Relation
-      allow(Delayed::Job).to receive(:where).and_return(ar_relation)
-      allow(ar_relation).to receive(:delete_all)
+    it 'calls clear on existing PriceCalculationJob that haven\'t run yet' do
+      # Part has after_save :run_jobs_related_to_quantity_from_material
+      allow(item).to receive(:run_jobs_related_to_quantity_from_material).and_return(true) if item.instance_of? Part
 
-      expect(Delayed::Job).to receive(:where).with(queue: 'price_calc', locked_at: nil)
-      expect(ar_relation).to receive(:delete_all)
+      sq_instance = instance_double Sidekiq::Queue
+      allow(Sidekiq::Queue).to receive(:new).and_return(sq_instance)
+
+      expect(sq_instance).to receive(:clear)
 
       item.__send__(:run_price_calculation_job)
     end
 
     it 'queues up a PriceCalculationJob' do
-      allow(Delayed::Job).to receive_message_chain(:where, :delete_all)
-
-      expect(PriceCalculationJob).to receive(:perform_later)
-
-      item.__send__(:run_price_calculation_job)
+      expect { item.__send__(:run_price_calculation_job) }
+        .to have_enqueued_job.on_queue('price_calc')
     end
   end
 
   describe '#run_update_jobs' do
-    it 'calls delete_all on existing ProduceableJobs and GoalRemainderCalculationJobs that haven\'t run yet' do
-      ar_relation = instance_double ActiveRecord::Relation
-      allow(Delayed::Job).to receive(:where).and_return(ar_relation)
-      allow(ar_relation).to receive(:delete_all)
+    it 'calls clear on existing ProduceableJobs and GoalRemainderCalculationJobs that haven\'t run yet' do
+      # Part has after_save :run_jobs_related_to_quantity_from_material
+      allow(item).to receive(:run_jobs_related_to_quantity_from_material).and_return(true) if item.instance_of? Part
 
-      expect(Delayed::Job).to receive(:where).with(queue: %w[produceable goal_remainder], locked_at: nil)
-      expect(ar_relation).to receive(:delete_all)
+      sq_instance = instance_double Sidekiq::Queue
+      allow(Sidekiq::Queue).to receive(:new).and_return(sq_instance)
+
+      expect(sq_instance).to receive(:clear).twice
 
       item.__send__(:run_update_jobs)
     end
 
     it 'queues up a ProduceableJob' do
-      allow(item).to receive(:run_jobs_related_to_quantity_from_material).and_return(true) if item.instance_of?(Part)
-
-      allow(Delayed::Job).to receive_message_chain(:where, :delete_all)
-
       expect { item.__send__(:run_update_jobs) }
-        .to have_enqueued_job(ProduceableJob)
+        .to have_enqueued_job.on_queue('produceable').at_least(:once)
     end
 
     it 'queues up a GoalRemainderCalculationJob' do
-      allow(item).to receive(:run_jobs_related_to_quantity_from_material).and_return(true) if item.instance_of?(Part)
-
-      allow(Delayed::Job).to receive_message_chain(:where, :delete_all)
+      allow(item).to receive(:run_jobs_related_to_quantity_from_material).and_return(true) if item.instance_of? Part
 
       expect { item.__send__(:run_update_jobs) }
-        .to have_enqueued_job(GoalRemainderCalculationJob)
+        .to have_enqueued_job.on_queue('goal_remainder')
     end
 
     context 'when #saving_via_count_transfer_job is' do
