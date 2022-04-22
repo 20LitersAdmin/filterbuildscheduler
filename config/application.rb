@@ -17,6 +17,7 @@ require 'action_view/railtie'
 require 'action_cable/engine'
 require 'sprockets/railtie'
 # require 'rails/test_unit/railtie'
+require 'sidekiq/api'
 
 require 'google/apis/gmail_v1'
 require 'google/api_client/client_secrets'
@@ -32,7 +33,7 @@ module BuildPlanner
 
     config.time_zone = 'Eastern Time (US & Canada)'
 
-    config.active_job.queue_adapter = :delayed_job
+    config.active_job.queue_adapter = :sidekiq
 
     config.action_mailer.default_url_options = { host: 'make.20liters.org' }
     config.action_mailer.preview_path = "#{Rails.root}/spec/mailers/previews"

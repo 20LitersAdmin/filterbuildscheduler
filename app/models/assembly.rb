@@ -99,7 +99,9 @@ class Assembly < ApplicationRecord
 
   def update_items_via_jobs
     # Delete any jobs that exist, but haven't started, in favor of this new job
-    Delayed::Job.where(queue: %w[quantity_calc price_calc produceable goal_remainder], locked_at: nil).delete_all
+    %w[quantity_calc price_calc produceable goal_remainder].each do |q|
+      Sidekiq::Queue.new(q).clear
+    end
 
     QuantityAndDepthCalculationJob.perform_later
     PriceCalculationJob.perform_later

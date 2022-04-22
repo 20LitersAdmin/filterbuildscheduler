@@ -114,8 +114,4 @@ Rails.application.routes.draw do
   mount RailsAdmin::Engine => '/admin', as: 'rails_admin'
   mount LetterOpenerWeb::Engine, at: '/letter_opener' if Rails.env.development?
   mount ActionCable.server => '/cable'
-
-  authenticated :user, ->(user) { user.is_admin? } do
-    mount DelayedJobWeb, at: '/delayed_job'
-  end
 end

@@ -13,6 +13,7 @@ require 'rspec/rails'
 # note: require 'devise' after require 'rspec/rails'
 require 'devise'
 require 'support/cleanup_crew'
+require 'sidekiq/testing'
 
 # These are only for system specs and should probably be moved
 require 'capybara/rspec'

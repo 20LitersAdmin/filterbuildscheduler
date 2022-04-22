@@ -123,27 +123,17 @@ RSpec.describe Inventory, type: :model do
 
   describe '#run_produceable_job' do
     before :each do
-      allow(Delayed::Job)
-        .to receive(:where)
-        .with(queue: 'produceable', locked_at: nil)
-        .and_call_original
-
-      allow_any_instance_of(ActiveRecord::Relation)
-        .to receive(:delete_all)
-        .and_return(1)
+      @sq_instance = instance_double Sidekiq::Queue
+      allow(Sidekiq::Queue).to receive(:new).and_return(@sq_instance)
+      allow(@sq_instance).to receive(:clear)
     end
 
     context 'when inventory.completed_at is nil' do
       it "doesn't fire" do
         expect(inventory.completed_at).to eq nil
 
-        ar_relation = instance_double(ActiveRecord::Relation)
-
-        allow(Delayed::Job).to receive(:where).with(queue: 'produceable', locked_at: nil).and_return(ar_relation)
-
-        expect(ar_relation).not_to receive(:delete_all)
-
-        inventory.run_produceable_job
+        expect { inventory.run_produceable_job }
+          .not_to have_enqueued_job(ProduceableJob)
       end
     end
 
@@ -158,29 +148,13 @@ RSpec.describe Inventory, type: :model do
 
     it 'deletes any currently queued Produceable jobs' do
       inventory.completed_at = Time.now
-
-      ar_relation = instance_double(ActiveRecord::Relation)
-
-      allow(Delayed::Job).to receive(:where).with(queue: 'produceable', locked_at: nil).and_return(ar_relation)
-
-      expect(ar_relation).to receive(:delete_all)
+      expect(@sq_instance).to receive(:clear)
 
       inventory.run_produceable_job
     end
   end
 
   describe '#run_count_transfer_job' do
-    before :each do
-      allow(Delayed::Job)
-        .to receive(:where)
-        .with(queue: 'count_transfer', locked_at: nil)
-        .and_call_original
-
-      allow_any_instance_of(ActiveRecord::Relation)
-        .to receive(:delete_all)
-        .and_return(1)
-    end
-
     context 'when inventory.completed_at is nil' do
       it "doesn't fire" do
         expect(inventory.completed_at).to eq nil
@@ -201,11 +175,9 @@ RSpec.describe Inventory, type: :model do
 
     it 'deletes any currently queued CountTransfer jobs' do
       inventory.completed_at = Time.now
-      ar_relation = instance_double(ActiveRecord::Relation)
-
-      allow(Delayed::Job).to receive(:where).with(queue: 'count_transfer', locked_at: nil).and_return(ar_relation)
-
-      expect(ar_relation).to receive(:delete_all)
+      sq_instance = instance_double Sidekiq::Queue
+      allow(Sidekiq::Queue).to receive(:new).and_return(sq_instance)
+      expect(sq_instance).to receive(:clear)
 
       inventory.run_count_transfer_job
     end
