@@ -3,4 +3,15 @@ development:
 production:
   :concurrency: 1
 :queues:
-  - default
+  - mailers
+  - count_create
+  - count_transfer
+  - email_sync
+  - event_inventory
+  - goal_remainder
+  - kindful_job
+  - price_calc
+  - produceable
+  - quantity_calc
+  - registration_reminder
+  - setup_reminder

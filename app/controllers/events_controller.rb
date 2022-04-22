@@ -30,7 +30,7 @@ class EventsController < ApplicationController
     authorize @event = Event.new(event_params)
     if @event.save
       flash[:success] = 'The event has been created.'
-      EventMailer.delay(queue: 'event_mailer').created(@event, current_user)
+      EventMailer.created(@event, current_user).deliver_later
       redirect_to action: :index
     else
       @locations = Location.active.order(:name)
@@ -227,14 +227,14 @@ class EventsController < ApplicationController
     inventory_created = nil
 
     if @event.should_notify_admins?
-      # Can't use delayed_job because ActiveModel::Dirty doesn't persist
+      # Can't use Sidekiq because ActiveModel::Dirty doesn't persist
       EventMailer.changed(@event, current_user).deliver_now
       admins_notified = 'Admins notified.'
     end
 
     if @event.should_notify_builders_and_leaders?
       @event.registrations.kept.each do |registration|
-        # Can't use delayed_job because ActiveModel::Dirty doesn't persist
+        # Can't use Sidekiq because ActiveModel::Dirty doesn't persist
         RegistrationMailer.event_changed(registration, @event).deliver_now
       end
       users_notified = 'All registered builders notified.'
@@ -258,7 +258,7 @@ class EventsController < ApplicationController
         # shouldn't be any need for .active here because registrations were just marked as attended, there hasn't been a chance to discard them.
         @event.registrations.attended.each do |r|
           RegistrationMailer.event_results(r).deliver_later if send_results_emails
-          KindfulClient.new.delay(queue: 'kindful_client').import_user_w_note(r)
+          KindfulJob.perform_later('import_user_w_note', r)
         end
 
         EventInventoryJob.perform_later(@event) if create_inventory

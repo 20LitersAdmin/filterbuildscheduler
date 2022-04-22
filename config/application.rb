@@ -17,6 +17,7 @@ require 'action_view/railtie'
 require 'action_cable/engine'
 require 'sprockets/railtie'
 # require 'rails/test_unit/railtie'
+require 'sidekiq/api'
 
 require 'google/apis/gmail_v1'
 require 'google/api_client/client_secrets'

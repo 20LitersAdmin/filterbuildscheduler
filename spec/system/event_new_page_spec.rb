@@ -123,8 +123,7 @@ RSpec.describe 'Create events:', type: :system do
       fill_in 'event_max_registrations', with: event.max_registrations
 
       expect { click_button 'Submit' }
-        .to change { Delayed::Job.where(queue: 'event_mailer').size }
-        .from(0).to(1)
+        .to have_enqueued_mail
 
       expect(page).to have_content 'Upcoming Builds'
 

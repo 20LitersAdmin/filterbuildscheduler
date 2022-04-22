@@ -199,7 +199,8 @@ RSpec.describe 'To create an event report', type: :system do
 
       expect(page).to have_field('event_attendance', with: '5')
 
-      click_button 'Submit'
+      expect { click_button 'Submit' }
+        .not_to change { ActionMailer::Base.deliveries.count }
 
       expect(page).to have_content 'Event updated.'
       event.reload
@@ -208,7 +209,7 @@ RSpec.describe 'To create an event report', type: :system do
       expect(event.boxes_packed).to eq 2
       expect(event.emails_sent).to eq false
 
-      expect(Delayed::Job.where(queue: 'registration_mailer').size).to eq 0
+      # expect(ActionMailer::Base.deliveries.count).to eq 0
     end
 
     it 'and submit it while sending emails', js: true do
@@ -252,8 +253,7 @@ RSpec.describe 'To create an event report', type: :system do
       click_link 'btn_check_all'
 
       expect { click_button 'Submit' }
-        .to change { Delayed::Job.where(queue: 'kindful_client').size }
-        .from(0).to(5)
+        .to have_enqueued_job.on_queue('kindful_job').exactly(5).times
 
       expect(page).to have_content 'Event updated.'
     end
