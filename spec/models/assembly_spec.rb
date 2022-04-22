@@ -234,28 +234,26 @@ RSpec.describe Assembly, type: :model do
       assembly.destroy
     end
 
-    it 'enqueues QuantityAndDeptCalculationJob' do
-      allow(assembly.item).to receive(:run_update_jobs).and_return true
-      allow(assembly.combination).to receive(:run_update_jobs).and_return true
+    context 'enqueues' do
+      before :each do
+        allow(assembly.item).to receive(:run_update_jobs).and_return true
+        allow(assembly.combination).to receive(:run_update_jobs).and_return true
+      end
 
-      expect { assembly.__send__(:update_items_via_jobs) }
-        .to have_enqueued_job(QuantityAndDepthCalculationJob)
-    end
+      it 'QuantityAndDeptCalculationJob' do
+        expect { assembly.__send__(:update_items_via_jobs) }
+          .to have_enqueued_job(QuantityAndDepthCalculationJob)
+      end
 
-    it 'enqueues PriceCalculationJob' do
-      allow(assembly.item).to receive(:run_update_jobs).and_return true
-      allow(assembly.combination).to receive(:run_update_jobs).and_return true
+      it 'PriceCalculationJob' do
+        expect { assembly.__send__(:update_items_via_jobs) }
+          .to have_enqueued_job(PriceCalculationJob)
+      end
 
-      expect { assembly.__send__(:update_items_via_jobs) }
-        .to have_enqueued_job(PriceCalculationJob)
-    end
-
-    it 'enqueues ProduceableJob' do
-      allow(assembly.item).to receive(:run_update_jobs).and_return true
-      allow(assembly.combination).to receive(:run_update_jobs).and_return true
-
-      expect { assembly.__send__(:update_items_via_jobs) }
-        .to have_enqueued_job(ProduceableJob)
+      it 'ProduceableJob' do
+        expect { assembly.__send__(:update_items_via_jobs) }
+          .to have_enqueued_job(ProduceableJob)
+      end
     end
   end
 end

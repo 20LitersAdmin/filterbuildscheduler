@@ -154,9 +154,10 @@ class Part < ApplicationRecord
 
   def run_jobs_related_to_quantity_from_material
     # Delete any jobs that exist, but haven't started, in favor of this new job
-    Delayed::Job.where(queue: %w[produceable goal_remainder], locked_at: nil).delete_all
-
+    Sidekiq::Queue.new('produceable').clear
     ProduceableJob.perform_later
+
+    Sidekiq::Queue.new('goal_remainder').clear
     GoalRemainderCalculationJob.perform_later
   end
 

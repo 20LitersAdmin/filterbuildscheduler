@@ -35,7 +35,8 @@ module CleanupCrew
     Supplier.delete_all
     Organization.delete_all
 
-    Sidekiq::Queue.all.clear
+    # To clear all workers' jobs:
+    Sidekiq::Worker.clear_all
 
     puts 'Mess is gone, boss.'
 

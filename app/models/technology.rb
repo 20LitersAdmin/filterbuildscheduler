@@ -135,7 +135,7 @@ class Technology < ApplicationRecord
 
   def run_goal_remainder_calculation_job
     # Delete any jobs that exist, but haven't started, in favor of this new job
-    Delayed::Job.where(queue: 'goal_remainder', locked_at: nil).delete_all
+    Sidekiq::Queue.new('goal_remainder').clear
 
     GoalRemainderCalculationJob.perform_later
   end

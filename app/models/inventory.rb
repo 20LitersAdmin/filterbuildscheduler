@@ -42,8 +42,7 @@ class Inventory < ApplicationRecord
     return unless completed_at.present?
 
     # Delete any jobs that exist, but haven't started, in favor of this new job
-    Delayed::Job.where(queue: 'produceable', locked_at: nil).delete_all
-
+    Sidekiq::Queue.new('produceable').clear
     ProduceableJob.perform_later
   end
 
@@ -51,8 +50,7 @@ class Inventory < ApplicationRecord
     return unless completed_at.present?
 
     # Delete any jobs that exist, but haven't started, in favor of this new job
-    Delayed::Job.where(queue: 'count_transfer', locked_at: nil).delete_all
-
+    Sidekiq::Queue.new('count_transfer').clear
     CountTransferJob.perform_later(self)
   end
 
@@ -60,8 +58,7 @@ class Inventory < ApplicationRecord
     return unless completed_at.present?
 
     # Delete any jobs that exist, but haven't started, in favor of this new job
-    Delayed::Job.where(queue: 'goal_remainder', locked_at: nil).delete_all
-
+    Sidekiq::Queue.new('goal_remainder').clear
     GoalRemainderCalculationJob.perform_later
   end
 
