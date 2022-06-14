@@ -2,7 +2,7 @@ Hello <%= @recipient.fname %>,
 
 Thanks for registering to build filters with 20 Liters. We're glad you've signed up!
 
-<% if !@registration.guests_registered.nil? && @registration.guests_registered > 0 %>
+<% if @registration.guests_registered.positive? %>
 You registered to bring <%= pluralize(@registration.guests_registered, 'guest') %>. Please share this information with them.
 <% end %>
 
