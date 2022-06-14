@@ -1,10 +1,24 @@
 -# frozen_string_literal: true
-= form_tag labels_select_path, method: 'post', class: 'form-inline labels_list_page' do
-  .row
+
+.row
+  .col-xs-12
+    %h3 Select labels to print
+
+  .row.tech-chooser
+    .col-xs-2
+      %h4 Select technologies to limit list:
     .col-xs-8
-      %h3 Select labels to print
-    .col-xs-4
-      = submit_tag 'Submit', class: 'btn yellow float-right', name: nil, data: { disable_with: false }
+      .btn-group{ role: 'group' }
+        - @tech_choices.each do |tech|
+          .btn.btn-default.btn-sm
+            = tech[1]
+            = check_box_tag tech[0], 1, @techs&.pluck(:id)&.include?(tech[0]), { class: 'tech-checkbox' }
+    .col-xs-2
+      = form_tag labels_path, method: 'get', class: 'form-inline' do
+        = text_field_tag 'techs', @techs&.pluck(:id).to_s.gsub(', ', ',').gsub('[', '').gsub(']', '')
+        = submit_tag 'Submit', class: 'btn yellow btn-sm', name: nil, data: { disable_with: false }
+
+= form_tag labels_select_path, method: 'post', class: 'form-inline labels_list_page' do
   .row.labels-check-btns
     .col-xs-12.right-align
       %a{ href: '#', class: 'btn blue btn-check', id: 'check_all' }
@@ -17,6 +31,7 @@
           = icon 'fas', 'square', class: 'fa-stack-1x'
           = icon 'far', 'square', class: 'fa-stack-2x'
         %span.bnt-text  all
+      = submit_tag 'Submit', class: 'btn blue btn-sm', name: nil, data: { disable_with: false }
   .row
     .col-xs-12
       %table.table.table-striped.datatable-label-chooser
@@ -35,5 +50,5 @@
                 = check_box_tag i[0], 1, false, { class: 'label-checkbox' }
   .row
     .col-xs-12
-      = submit_tag 'Submit', class: 'btn yellow float-right', name: nil, data: { disable_with: false }
+      = submit_tag 'Submit', class: 'btn blue float-right', name: nil, data: { disable_with: false }
 
