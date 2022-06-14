@@ -29,6 +29,10 @@ class Material < ApplicationRecord
     []
   end
 
+  def can_be_produced
+    0
+  end
+
   def on_order?
     return false unless last_ordered_at.present?
     return false if last_ordered_quantity.nil?

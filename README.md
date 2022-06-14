@@ -1,4 +1,11 @@
 # README
+
+## Improvement Projects:
+- Inventory: switch from "technologies to skip" to "technologies to inventory" on the inventory creation form
+- Printed inventories and labels: be able to select which technologies to show
+- Make sure Google Calendar appointments are created and sent for events
+- A new type of inventory: "Create Technology" which would act like an event-based inventory.
+
 ## MailerLite integration:
 - Kindful's contact/query "has_email": "Yes" returns all records
 - Kindful's contact/query "linked" returns none currently
