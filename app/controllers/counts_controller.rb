@@ -66,7 +66,7 @@ class CountsController < ApplicationController
   end
 
   def set_count
-    authorize @count = Count.find(params[:id])
+    authorize @count ||= Count.find(params[:id])
   end
 
   def set_inventory
