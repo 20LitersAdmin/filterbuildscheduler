@@ -64,8 +64,7 @@ RSpec.describe Replicator, type: :model do
     end
 
     it 'sends the EventMailer#replicated email' do
-      allow(EventMailer).to receive(:delay).and_return(EventMailer)
-      allow(EventMailer).to receive(:replicated).and_call_original
+      allow(EventMailer).to receive_message_chain(:replicated, :deliver_later)
 
       expect(EventMailer).to receive(:replicated)
 
