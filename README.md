@@ -7,8 +7,11 @@
 - A new type of inventory: "Create Technology" which would act like an event-based inventory.
 
 -- VWF import files:
-- labels.haml ln7-20
+- labels.haml ln7-20, 33, 52
 - technologies_controller.rb ln58-81
+- technologies.js ln27-43
+- global.scss ln289 (remove .bnt-check { margin-top: })
+- labels_select_page_spec.rb ln19
 
 
 
