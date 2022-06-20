@@ -6,12 +6,17 @@
 - Make sure Google Calendar appointments are created and sent for events
 - A new type of inventory: "Create Technology" which would act like an event-based inventory.
 
--- VWF import files:
+### VWF import files:
+#### feature: TechnologiesController::Labels: user can choose to limit labels by Technology
 - labels.haml ln7-20, 33, 52
 - technologies_controller.rb ln58-81
-- technologies.js ln27-43
+- global.js ln82-106
 - global.scss ln289 (remove .bnt-check { margin-top: })
 - labels_select_page_spec.rb ln19
+
+#### feature: InventoriesController::Paper: user can choose to limit printed inventory by Technology
+- inventories_controller.rb ln190-210
+- paper.haml ln4-15
 
 
 

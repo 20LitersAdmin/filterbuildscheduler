@@ -187,12 +187,27 @@ class InventoriesController < ApplicationController
     authorize Inventory
     @print_navbar = true
 
-    technologies = Technology.active.list_worthy
-    components = Component.active
-    parts = Part.active
-    materials = Material.active
+    @tech_choices = Technology.list_worthy.pluck(:id, :short_name)
 
-    @items = [technologies, components, parts, materials].flatten
+    if params[:techs].present?
+      @techs = Technology.where(id: params[:techs].split(','))
+      components = []
+      parts = []
+      materials = []
+      @techs.each do |tech|
+        components << tech.all_components.order(:name)
+        parts << tech.all_parts.order(:name)
+        materials << tech.materials.order(:name)
+      end
+      @items = [@techs, components.flatten(1).uniq, parts.flatten(1).uniq, materials.flatten(1).uniq].flatten(1)
+    else
+      technologies = Technology.active.list_worthy
+      components = Component.active
+      parts = Part.active
+      materials = Material.active
+
+      @items = [technologies, components, parts, materials].flatten
+    end
   end
 
   def history
