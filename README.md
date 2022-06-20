@@ -6,6 +6,12 @@
 - Make sure Google Calendar appointments are created and sent for events
 - A new type of inventory: "Create Technology" which would act like an event-based inventory.
 
+-- VWF import files:
+- labels.haml ln7-20
+- technologies_controller.rb ln58-81
+
+
+
 ## MailerLite integration:
 - Kindful's contact/query "has_email": "Yes" returns all records
 - Kindful's contact/query "linked" returns none currently

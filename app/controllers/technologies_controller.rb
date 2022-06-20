@@ -78,8 +78,6 @@ class TechnologiesController < ApplicationController
       materials =    Material.active.order(:name).pluck(:uid, :name)
       @items = [technologies, components, parts, materials].flatten(1)
     end
-
-
   end
 
   def labels_select
