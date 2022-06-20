@@ -1,6 +1,19 @@
 -# frozen_string_literal: true
 
 #inventory_paper.col-xs-12
+  .row.tech-chooser.well.no-print
+    .col-sm-10.center-align
+      %i Select technologies to filter list:
+      .btn-group{ role: 'group' }
+        - @tech_choices.each do |tech|
+          .btn.btn-default.btn-sm
+            = tech[1]
+            = check_box_tag tech[0], 1, @techs&.pluck(:id)&.include?(tech[0]), { class: 'tech-checkbox' }
+    .col-sm-2
+      = form_tag paper_inventories_path, method: 'get', class: 'form-inline' do
+        = hidden_field_tag 'techs', @techs&.pluck(:id).to_s.gsub(', ', ',').gsub('[', '').gsub(']', '')
+        = submit_tag 'Filter', class: 'btn yellow btn-sm', name: nil, data: { disable_with: false }
+
   .row.no-print
     .col-xs-8
       %h4 Printable inventory

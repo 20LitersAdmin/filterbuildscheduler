@@ -57,6 +57,11 @@ $(document).on("turbolinks:load", function(){
     };
   };
 
+  // Inventories#paper && Technologies#labels techs field mgmt
+  function techsFieldMgmt(source) {
+
+  };
+
   $(document).on("click", "a.accordion-link", function() {
     $(this).children(".fa").toggle();
 
@@ -68,9 +73,35 @@ $(document).on("turbolinks:load", function(){
     $("#load_screen").show();
   });
 
+  // global print button function
   $(document).on("click", "#print_btn", function() {
-    // global print button function
     event.preventDefault;
     window.print();
   })
+
+  // Inventories#paper && Technologies#labels techs field mgmt
+  // btn controls the form field, the checkbox inside is just UX
+  $(document).on("click", ".tech-checkbox", function() {
+    // if user clicks the checkbox inside the button, just toggle it back quick, else the btn click function will do it again
+    $(this).prop("checked", !$(this).prop("checked"));
+  });
+
+  $(document).on("click", ".tech-chooser .btn-group .btn", function() {
+    var checkbox = $(this).children('.tech-checkbox');
+    checkbox.prop("checked", !checkbox.prop("checked"));
+    var idStr = checkbox.attr("id");
+    var techsField = $('input#techs');
+    var techsFieldVal = techsField.val();
+    if (checkbox.is(':checked')) {
+      if (techsFieldVal.length == 0) {
+        var newVal = idStr;
+      } else {
+        var newVal = techsFieldVal + ',' + idStr;
+      };
+    } else {
+      var newVal = techsFieldVal.replace(',' + idStr, '');
+      var newVal = newVal.replace(idStr, '');
+    };
+    techsField.val(newVal);
+  });
 });
