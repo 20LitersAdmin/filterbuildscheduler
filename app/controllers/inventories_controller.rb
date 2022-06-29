@@ -37,27 +37,15 @@ class InventoriesController < ApplicationController
   end
 
   def create
-    @date = inventory_params[:date]
-
-    @type =
-      if inventory_params[:receiving] == 'true'
-        'receiving'
-      elsif inventory_params[:shipping] == 'true'
-        'shipping'
-      elsif inventory_params[:manual] == 'true'
-        'manual'
-      else
-        'unknown'
-      end
-
     authorize @inventory = Inventory.create(inventory_params)
     @inventory.save
 
     if @inventory.errors.any?
-      flash[:warning] = @inventory.errors.first.join(': ')
+      flash[:danger] = @inventory.errors.full_messages.to_sentence
+      @technologies = Technology.list_worthy.order(:owner, :short_name)
+      render 'new'
     else
-      # technologies_param is used to bypass some techs and skip making counts
-      CountCreateJob.perform_now(@inventory.reload, technologies_params)
+      CountCreateJob.perform_now(@inventory.reload)
       flash[:success] = 'The inventory has been created.'
       redirect_to edit_inventory_path(@inventory)
     end
@@ -66,16 +54,16 @@ class InventoriesController < ApplicationController
   def edit
     return redirect_to inventory_path(@inventory) if @inventory.counts.none?
 
-    # This view is where inventory counting gets performed
+    # This view is where the user edits count records associated with the inventory
 
     @counts = @inventory.counts.sort_by { |c| [c.sort_by_status, - c.item.name] }
     @uncounted = "#{view_context.pluralize(@inventory.counts.uncounted.size, 'item')} uncounted."
 
-    @techs = Technology.list_worthy
+    @techs = Technology.list_worthy.where(id: @inventory.technologies)
   end
 
   def update
-    # @inventory only gets updated once, on complete, no incremental updates
+    # @inventory only gets updated once: on completion, no incremental updates
     @inventory.completed_at = Time.now.localtime
 
     @inventory.save
@@ -234,19 +222,15 @@ class InventoriesController < ApplicationController
 
   def inventory_params
     params.require(:inventory).permit :date,
-                                      :reported,
                                       :receiving,
                                       :shipping,
                                       :manual,
                                       :event_id,
-                                      :completed_at
+                                      :completed_at,
+                                      technologies: []
   end
 
   def set_inventory
     authorize @inventory = Inventory.find(params[:id])
-  end
-
-  def technologies_params
-    params.require(:inventory).permit technologies: []
   end
 end
