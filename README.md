@@ -29,6 +29,18 @@
 - views/inventories/technology.haml ln8 - don't include `checked: 'checked'`
 - views/inventories/edit.haml lns34-36
 - views/inventories/new.haml ln18
+- specs:
+  - modified:   app/jobs/event_inventory_job.rb
+  - renamed:    spec/concerns/itemable.rb
+  - modified:   spec/factories/inventories.rb
+  - modified:   spec/jobs/count_create_job_spec.rb
+  - modified:   spec/jobs/event_inventory_job_spec.rb
+  - modified:   spec/models/assembly_spec.rb
+  - modified:   spec/models/component_spec.rb
+  - modified:   spec/models/material_spec.rb
+  - modified:   spec/models/part_spec.rb
+  - modified:   spec/models/technology_spec.rb
+  - modified:   spec/system/inventory_new_page_spec.rb
 
 
 ## MailerLite integration:

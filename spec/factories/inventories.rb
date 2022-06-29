@@ -4,6 +4,7 @@ FactoryBot.define do
   factory :inventory do
     manual { true }
     date { Date.today }
+    technologies { ['1', '2', '3'] }
 
     factory :inventory_ship do
       manual { false }

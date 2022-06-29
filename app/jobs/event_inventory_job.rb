@@ -26,7 +26,7 @@ class EventInventoryJob < ApplicationJob
     @produced_and_boxed = @box_created * @technology.quantity_per_box
     @produced_total     = @produced_and_boxed + @loose_created
 
-    @inventory = @event.create_inventory(date: Date.today)
+    @inventory = @event.create_inventory(date: Date.today, technologies: [@technology.id])
 
     # @tracker << { @technology.uid => { produced_and_boxed: @produced_and_boxed, produced_total: @produced_total, loose: @technology.loose_count, has_subs: true } }
 
