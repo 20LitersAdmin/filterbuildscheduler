@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_04_21_163200) do
+ActiveRecord::Schema.define(version: 2022_06_29_042438) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -157,6 +157,7 @@ ActiveRecord::Schema.define(version: 2022_04_21_163200) do
     t.datetime "completed_at"
     t.datetime "report_sent_at"
     t.jsonb "history", default: {}, null: false
+    t.string "technologies", default: [], array: true
     t.index ["event_id"], name: "index_inventories_on_event_id"
   end
 

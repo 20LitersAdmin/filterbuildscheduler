@@ -31,8 +31,9 @@
         %button.btn.blue.status-btn{ type: 'button', data: { action: 'partial' } } Partial
         %button.btn.blue.status-btn{ type: 'button', data: { action: 'counted' } } Counted
       .btn-group.btn-group-sm{ role: 'group' }
-        - @techs.each do |t|
-          %button.btn.empty.tech-btn{ type: 'button', data: { tech: t.id } }= t.short_name
+        - if @techs.size > 1
+          - @techs.each do |t|
+            %button.btn.empty.tech-btn{ type: 'button', data: { tech: t.id } }= t.short_name
       .btn-group.btn-group-sm
         %input#search{ name: 'search', placeholder: 'Search...', type: 'text' }
       .btn-group.btn-group-sm

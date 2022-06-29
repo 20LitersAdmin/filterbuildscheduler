@@ -2,7 +2,10 @@
 
 ## Improvement Projects:
 - Inventory: switch from "technologies to skip" to "technologies to inventory" on the inventory creation form
-- Printed inventories and labels: be able to select which technologies to show
+  - Implemented, not tested. Some tests should fail.
+  - Add validation test for Inventory#technologies
+  - Inventories Edit view should only show filters for @inventory.technologies and not show filters when @inventory.technologies.size is 1
+
 - Make sure Google Calendar appointments are created and sent for events
 - A new type of inventory: "Create Technology" which would act like an event-based inventory.
 
@@ -18,6 +21,14 @@
 - inventories_controller.rb ln190-210
 - paper.haml ln4-15
 
+#### feather: InventoriesController::New: user can manually select which technologies to count
+- db/migrate/add_technologies_to_inventories.rb _`rails db:migrate` on deploy!_
+- inventories_controller.rb #create, ln57, 62, 239, 224, 229, 230
+- inventory.rb ln14, ln65 (remove #technologies)
+- views/inventories/new.haml ln18
+- views/inventories/edit.haml lns34-36
+- views/inventories/technology.haml ln8 - don't include `checked: 'checked'`
+- jobs/count_create_job.rb (most of it)
 
 
 ## MailerLite integration:

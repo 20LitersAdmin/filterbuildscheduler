@@ -5,7 +5,7 @@
     .panel-heading
       .checkbox
         %label
-          = check_box "inventory", "technologies", { multiple: true, class: 'checkbox'}, technology.uid, nil
+          = check_box 'inventory', 'technologies', { multiple: true, class: 'checkbox', checked: 'checked' }, technology.id, nil
           = technology.uid_and_short_name
     .panel-body
       - if technology.image.attached?
