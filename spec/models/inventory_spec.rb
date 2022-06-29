@@ -8,6 +8,7 @@ RSpec.describe Inventory, type: :model do
   let(:shipping) { build :inventory_ship }
   let(:receiving) { build :inventory_rec }
   let(:event) { build :inventory_event }
+  let(:extrapolate) { build :inventory_extrapolate }
 
   describe 'must be valid' do
     let(:no_receiving) { build :inventory_rec, receiving: nil }
@@ -91,6 +92,7 @@ RSpec.describe Inventory, type: :model do
       expect(shipping.type_for_params).to eq('shipping')
       expect(event.type_for_params).to eq('event')
       expect(manual.type_for_params).to eq('manual')
+      expect(extrapolate.type_for_params).to eq ('extrapolate')
     end
   end
 
@@ -100,6 +102,7 @@ RSpec.describe Inventory, type: :model do
       expect(receiving.verb_past_tense).to eq('received')
       expect(shipping.verb_past_tense).to eq('shipped')
       expect(manual.verb_past_tense).to eq('counted')
+      expect(extrapolate.verb_past_tense).to eq('created.')
     end
   end
 

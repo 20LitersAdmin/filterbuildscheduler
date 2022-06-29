@@ -16,9 +16,10 @@ class CountCreateJob < ApplicationJob
     items << techs
 
     techs.each do |tech|
+      # for Extrapolate inventories, only create counts for Technologies and Components
       items << tech.all_components
-      items << tech.all_parts
-      items << tech.materials
+      items << tech.all_parts unless @inventory.extrapolate?
+      items << tech.materials unless @inventory.extrapolate?
     end
 
     items.flatten(1).uniq.each do |item|

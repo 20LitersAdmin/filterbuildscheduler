@@ -20,6 +20,8 @@ class Inventory < ApplicationRecord
         'received.'
       elsif shipping?
         'shipped.'
+      elsif extrapolate?
+        'created.'
       else
         'counted.'
       end
@@ -29,6 +31,10 @@ class Inventory < ApplicationRecord
 
   def event_based?
     event_id.present?
+  end
+
+  def extrapolate_counts?
+    event_id.present? || extrapolate?
   end
 
   def latest?
@@ -70,18 +76,22 @@ class Inventory < ApplicationRecord
       'Receiving'
     elsif shipping
       'Shipping'
+    elsif extrapolate
+      'Technology Created'
     else # manual
       'Manual'
     end
   end
 
   def type_for_params
-    if receiving
+    if receiving?
       'receiving'
-    elsif shipping
+    elsif shipping?
       'shipping'
     elsif event_id.present?
       'event'
+    elsif extrapolate?
+      'extrapolate'
     else # manual
       'manual'
     end
@@ -90,10 +100,12 @@ class Inventory < ApplicationRecord
   def verb_past_tense
     if event_id.present?
       'adjusted after an event'
-    elsif receiving
+    elsif receiving?
       'received'
-    elsif shipping
+    elsif shipping?
       'shipped'
+    elsif extrapolate?
+      'created'
     else
       'counted'
     end

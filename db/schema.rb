@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_06_29_042438) do
+ActiveRecord::Schema.define(version: 2022_06_29_165112) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -158,6 +158,7 @@ ActiveRecord::Schema.define(version: 2022_06_29_042438) do
     t.datetime "report_sent_at"
     t.jsonb "history", default: {}, null: false
     t.string "technologies", default: [], array: true
+    t.boolean "extrapolate", default: false, null: false
     t.index ["event_id"], name: "index_inventories_on_event_id"
   end
 
