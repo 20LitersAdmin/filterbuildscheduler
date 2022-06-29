@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require 'rails_helper'
-require 'concerns/itemable_spec'
+require 'concerns/itemable'
 
 RSpec.describe Component, type: :model do
   it_behaves_like Itemable
