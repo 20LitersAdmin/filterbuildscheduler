@@ -18,9 +18,9 @@ class CountTransferJob < ApplicationJob
         transfer_manual_count(count)
       end
     else
-      # event_based only creates counts for necessary items, so all should be transfered
+      # event_based and extrapolate inventory types should transfer all counts, regardless of submission status
       # non-event_based create all counts, so only transfer those that were submitted
-      counts = @inventory.event_based? ? @inventory.counts : @inventory.counts.submitted
+      counts = @inventory.extrapolate_counts? ? @inventory.counts : @inventory.counts.submitted
       counts.each do |count|
         transfer_auto_count(count)
       end

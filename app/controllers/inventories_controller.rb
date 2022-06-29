@@ -29,6 +29,8 @@ class InventoriesController < ApplicationController
       @inventory.receiving = true
     when 'shipping'
       @inventory.shipping = true
+    when 'extrapolate'
+      @inventory.extrapolate = true
     else # created manually
       @inventory.manual = true
     end

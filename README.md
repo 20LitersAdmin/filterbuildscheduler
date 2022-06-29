@@ -1,13 +1,8 @@
 # README
 
 ## Improvement Projects:
-- Inventory: switch from "technologies to skip" to "technologies to inventory" on the inventory creation form
-  - Implemented, not tested. Some tests should fail.
-  - WRITE TEST:Add validation test for Inventory#technologies
-  - WRITE TEST: Inventories Edit view should only show filters for @inventory.technologies and not show filters when @inventory.technologies.size is 1
-
-- Make sure Google Calendar appointments are created and sent for events
 - A new type of inventory: "Create Technology" which would act like an event-based inventory.
+- Make sure Google Calendar appointments are created and sent for events
 
 ### VWF import files:
 #### feature: TechnologiesController::Labels: user can choose to limit labels by Technology
