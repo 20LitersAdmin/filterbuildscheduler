@@ -11,6 +11,7 @@ class Inventory < ApplicationRecord
   scope :former, -> { order(date: :desc, created_at: :desc).drop(1) }
 
   validates :date, presence: true
+  validates_presence_of :technologies, message: '- must select at least one.', on: :create
 
   def count_summary
     summary = "#{item_count} of #{counts.count} items "
@@ -60,10 +61,6 @@ class Inventory < ApplicationRecord
     # Delete any jobs that exist, but haven't started, in favor of this new job
     Sidekiq::Queue.new('goal_remainder').clear
     GoalRemainderCalculationJob.perform_later
-  end
-
-  def technologies
-    # inventory#new form field for bypassing technologies
   end
 
   def type

@@ -3,9 +3,6 @@
 require 'rails_helper'
 
 RSpec.describe Assembly, type: :model do
-  # let(:part) { create :part }
-  # let(:component) { create :component }
-  # let(:assembly) { build :assembly, item: part, combination: component }
   let(:assembly) { build :assembly }
 
   describe 'must be valid' do

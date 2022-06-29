@@ -7,39 +7,21 @@ class CountCreateJob < ApplicationJob
 
   # called by InventoriesController#create with #perform_now
 
-  def perform(inventory, technologies_params = { 'technologies': [] })
+  def perform(inventory)
     @inventory = inventory
 
-    tech_uids_to_skip = technologies_params['technologies'].presence
-
-    if tech_uids_to_skip
-      item_uids_to_potentially_skip = Technology.active
-                                                .where(uid: tech_uids_to_skip)
-                                                .map { |t| t.quantities.keys }
-                                                .flatten.uniq.sort
-
-      techs = Technology.list_worthy.where.not(uid: tech_uids_to_skip)
-
-      item_uids_to_not_skip = techs.list_worthy
-                                   .where.not(uid: tech_uids_to_skip)
-                                   .map { |t| t.quantities.keys }
-                                   .flatten.uniq.sort
-
-      item_uids_to_definitely_skip = (item_uids_to_potentially_skip - item_uids_to_not_skip).sort
-    else
-      techs = Technology.list_worthy
-      item_uids_to_definitely_skip = []
-    end
+    techs = Technology.active.where(id: inventory.technologies)
 
     items = []
     items << techs
-    items << Component.active
-    items << Part.active
-    items << Material.active
 
-    items.flatten(1).each do |item|
-      next if item_uids_to_definitely_skip.include?(item.uid)
+    techs.each do |tech|
+      items << tech.all_components
+      items << tech.all_parts
+      items << tech.materials
+    end
 
+    items.flatten(1).uniq.each do |item|
       create_count(item)
     end
   end

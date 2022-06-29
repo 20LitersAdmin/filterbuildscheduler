@@ -33,7 +33,7 @@ RSpec.describe 'Creating a new inventory', type: :system do
       sign_in create(:inventoryist)
       visit new_inventory_path
 
-      expect(page).to have_content 'Create a new inventory'
+      expect(page).to have_content "Create a new manual inventory"
     end
 
     it 'users who receive inventory redirects to home page' do
@@ -48,7 +48,7 @@ RSpec.describe 'Creating a new inventory', type: :system do
       sign_in create(:admin)
       visit new_inventory_path
 
-      expect(page).to have_content 'Create a new inventory'
+      expect(page).to have_content "Create a new manual inventory"
       expect(page).to have_css('input#inventory_date')
       expect(page).to have_button 'Create Inventory'
     end
@@ -65,7 +65,7 @@ RSpec.describe 'Creating a new inventory', type: :system do
       sign_in create(:data_manager)
       visit new_inventory_path
 
-      expect(page).to have_content 'Create a new inventory'
+      expect(page).to have_content "Create a new manual inventory"
     end
   end
 
@@ -85,8 +85,8 @@ RSpec.describe 'Creating a new inventory', type: :system do
         expect(page).to have_css("input#inventory_shipping[value='false']", visible: false)
       end
 
-      it 'shows the bypass options' do
-        expect(page).to have_content 'Select technologies to bypass:'
+      it 'shows the technology selection options' do
+        expect(page).to have_content 'Select technologies to inventory:'
       end
     end
 
@@ -101,8 +101,8 @@ RSpec.describe 'Creating a new inventory', type: :system do
         expect(page).to have_css("input#inventory_shipping[value='false']", visible: false)
       end
 
-      it 'shows the bypass options' do
-        expect(page).to have_content 'Select technologies to bypass:'
+      it 'shows the technology selection options' do
+        expect(page).to have_content 'Select technologies to inventory:'
       end
     end
 
@@ -117,8 +117,8 @@ RSpec.describe 'Creating a new inventory', type: :system do
         expect(page).to have_css("input#inventory_shipping[value='false']", visible: false)
       end
 
-      it "doesn't show the bypass options" do
-        expect(page).not_to have_content 'Select technologies to bypass:'
+      it 'shows the technology selection options' do
+        expect(page).to have_content 'Select technologies to inventory:'
       end
     end
 
@@ -133,14 +133,14 @@ RSpec.describe 'Creating a new inventory', type: :system do
         expect(page).to have_css("input#inventory_shipping[value='true']", visible: false)
       end
 
-      it "doesn't show the bypass options" do
-        expect(page).not_to have_content 'Select technologies to bypass:'
+      it "shows the technology selection options" do
+        expect(page).to have_content 'Select technologies to inventory:'
       end
     end
   end
 
   context 'is possible' do
-    let(:technologies) { create_list :technology, 3 }
+    let(:technologies) { create_list :technology, 4 }
     let(:parts) { create_list :part, 7 }
     let(:components) { create_list :component, 4 }
     let(:materials) { create_list :material, 2 }
@@ -177,7 +177,9 @@ RSpec.describe 'Creating a new inventory', type: :system do
         sign_in create(:admin)
         visit new_inventory_path
 
-        find("input[value=#{Technology.first.uid}]").click
+        # clicking un-checks the box which is checked by default
+        find("input[value=#{Technology.second.id}]").click
+        find("input[value=#{Technology.third.id}]").click
 
         click_button 'Create Inventory'
 
@@ -185,7 +187,7 @@ RSpec.describe 'Creating a new inventory', type: :system do
         expect(page).to have_content('The inventory has been created.')
         expect(page).to have_css('div#inventory_edit')
 
-        expect(Inventory.latest.counts.size).to eq 12
+        expect(Inventory.latest.counts.size).to eq 5
       end
     end
   end

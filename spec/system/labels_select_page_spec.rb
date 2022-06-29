@@ -16,7 +16,7 @@ RSpec.describe 'Selected labels page', type: :system do
     # first go to /labels, select them all then click 'Submit'
     visit labels_path
     all('input[type=checkbox]').each(&:click)
-    find('input[type="submit"]', match: :first).click
+    find('input[value="Print Selected Labels"]', match: :first).click
   end
 
   it 'displays a page with labels' do
