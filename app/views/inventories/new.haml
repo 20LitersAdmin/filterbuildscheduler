@@ -1,8 +1,8 @@
 -# frozen_string_literal: true
 .col-xs-8
-  %h2 Create a new inventory
+  %h2 Create a new #{@inventory.type.downcase} inventory
 .col-xs-4.right-align
-  = link_to 'Back', inventories_path, class: 'btn btn-small blue'
+  = link_to 'Back', request.referrer || inventories_path, class: 'btn btn-small blue'
 #inventory_new.col-xs-12
   = simple_form_for @inventory do |f|
     = f.error_notification
@@ -11,12 +11,11 @@
     = f.input :shipping, as: :hidden
     = f.input :event_id, as: :hidden
     = f.input :date, label: 'Select date when inventory occured:', as: :string, input_html: { class: 'datepicker-nomax', value: Date.today }
-    - if @inventory.manual?
-      .row.form-inline
-        .col-xs-12
-          %h3 Select technologies to bypass:
-          %p
-            Bypassed technologies will be skipped and no count will be recorded for their items.
-        = fields_for :technologies, @inventory.technologies do
-          = render partial: 'technology', collection: @technologies
+    .row.form-inline
+      .col-xs-12
+        %h3 Select technologies to inventory:
+        %p
+          Counts will only be created and recorded for selected technologies.
+      = fields_for :technologies, @inventory.technologies do
+        = render partial: 'technology', collection: @technologies
     = f.button :submit, class: 'btn yellow fullwidth'

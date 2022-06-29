@@ -33,7 +33,7 @@ RSpec.describe EventInventoryJob, type: :job do
     it 'creates an inventory via Event.create_inventory' do
       allow(event).to receive(:create_inventory).and_call_original
 
-      expect(event).to receive(:create_inventory).with(date: Date.today)
+      expect(event).to receive(:create_inventory).with(date: Date.today, technologies: [event.technology.id])
 
       job.perform(event)
     end

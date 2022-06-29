@@ -57,12 +57,27 @@ class TechnologiesController < ApplicationController
 
   def labels
     # page to select multiple items to print individual lables
-    technologies = Technology.list_worthy.pluck(:uid, :name)
-    components =   Component.active.order(:name).pluck(:uid, :name)
-    parts =        Part.active.order(:name).pluck(:uid, :name)
-    materials =    Material.active.order(:name).pluck(:uid, :name)
+    @tech_choices = Technology.list_worthy.pluck(:id, :short_name)
 
-    @items = [technologies, components, parts, materials].flatten(1)
+    if params[:techs].present?
+      @techs = Technology.where(id: params[:techs].split(','))
+      technologies = @techs.pluck(:uid, :name)
+      components = []
+      parts = []
+      materials = []
+      @techs.each do |tech|
+        components << tech.all_components.order(:name).pluck(:uid, :name)
+        parts << tech.all_parts.order(:name).pluck(:uid, :name)
+        materials << tech.materials.order(:name).pluck(:uid, :name)
+      end
+      @items = [technologies, components.flatten(1).uniq, parts.flatten(1).uniq, materials.flatten(1).uniq].flatten(1)
+    else
+      technologies = Technology.list_worthy.pluck(:uid, :name)
+      components =   Component.active.order(:name).pluck(:uid, :name)
+      parts =        Part.active.order(:name).pluck(:uid, :name)
+      materials =    Material.active.order(:name).pluck(:uid, :name)
+      @items = [technologies, components, parts, materials].flatten(1)
+    end
   end
 
   def labels_select

@@ -2,9 +2,46 @@
 
 ## Improvement Projects:
 - Inventory: switch from "technologies to skip" to "technologies to inventory" on the inventory creation form
-- Printed inventories and labels: be able to select which technologies to show
+  - Implemented, not tested. Some tests should fail.
+  - WRITE TEST:Add validation test for Inventory#technologies
+  - WRITE TEST: Inventories Edit view should only show filters for @inventory.technologies and not show filters when @inventory.technologies.size is 1
+
 - Make sure Google Calendar appointments are created and sent for events
 - A new type of inventory: "Create Technology" which would act like an event-based inventory.
+
+### VWF import files:
+#### feature: TechnologiesController::Labels: user can choose to limit labels by Technology
+- labels.haml ln7-20, 33, 52
+- technologies_controller.rb ln58-81
+- global.js ln82-106
+- global.scss ln289 (remove .bnt-check { margin-top: })
+- labels_select_page_spec.rb ln19
+
+#### feature: InventoriesController::Paper: user can choose to limit printed inventory by Technology
+- inventories_controller.rb ln190-210
+- paper.haml ln4-15
+
+#### feature: InventoriesController::New: user can manually select which technologies to count
+- db/migrate/add_technologies_to_inventories.rb _`rails db:migrate` on deploy!_
+- inventories_controller.rb #create, ln57, 62, 239, 224, 229, 230
+- jobs/count_create_job.rb (most of it)
+- inventory.rb ln14, ln65 (remove #technologies)
+- views/inventories/technology.haml ln8 - don't include `checked: 'checked'`
+- views/inventories/edit.haml lns34-36
+- views/inventories/new.haml ln18
+- specs:
+  - modified:   app/jobs/event_inventory_job.rb
+  - renamed:    spec/concerns/itemable.rb
+  - modified:   spec/factories/inventories.rb
+  - modified:   spec/jobs/count_create_job_spec.rb
+  - modified:   spec/jobs/event_inventory_job_spec.rb
+  - modified:   spec/models/assembly_spec.rb
+  - modified:   spec/models/component_spec.rb
+  - modified:   spec/models/material_spec.rb
+  - modified:   spec/models/part_spec.rb
+  - modified:   spec/models/technology_spec.rb
+  - modified:   spec/system/inventory_new_page_spec.rb
+
 
 ## MailerLite integration:
 - Kindful's contact/query "has_email": "Yes" returns all records
