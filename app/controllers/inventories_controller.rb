@@ -70,16 +70,17 @@ class InventoriesController < ApplicationController
 
     @inventory.save
 
-    # This used to be Inventory#after_save
-    # but the job calls @inventory.save, so it always triggered itself infinitely
-    @inventory.reload.run_count_transfer_job
+    if @inventory.reload.extrapolate?
+      @inventory.run_count_extrapolate_job
+    else
+      @inventory.run_count_transfer_job
+    end
 
-    # NOTE: the unless is probably unnecessary as event-based inventories don't hit the update action, but just being overly cautious
+    # NOTE: the 'unless' is probably unnecessary as event-based inventories don't hit the update action, but just being overly cautious
     InventoryMailer.notify(@inventory, current_user).deliver_later unless @inventory.event_based?
 
     flash[:success] = 'Inventory complete! All completed counts have been transferred to their items.'
 
-    # This used to be Inventory#after_save
     @inventory.run_produceable_job
     @inventory.run_goal_remainder_calculation_job
 

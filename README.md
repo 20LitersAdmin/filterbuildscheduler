@@ -38,6 +38,20 @@
   - modified:   spec/system/inventory_new_page_spec.rb
 
 
+## feature: New Inventory Type: Extrapopate: user can create an inventory which extrapolates down the tree like event inventories do
+- inventories_controller.rb ln32-33, 73-77
+- count_create_job.rb ln21-22
+- count_transfer_job ln23
+- extrapolate_inventory_job.rb
+- count.rb ln15-17, 65-71
+- inventory.rb ln23-24, 36-39, 79-80, 87, 89, 93, 94, 103, 105, 107, 108
+- inventories/new.haml ln12
+- initializers/constants.rb ln5
+- db/migrate/add_extrap_to_inventories.rb
+- spec/factories/inventories ln23-27
+- inventory_spec ln11, 95, 105
+
+
 ## MailerLite integration:
 - Kindful's contact/query "has_email": "Yes" returns all records
 - Kindful's contact/query "linked" returns none currently

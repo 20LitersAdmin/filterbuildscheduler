@@ -5,35 +5,15 @@ class ExtrapolateInventoryJob < ApplicationJob
 
   def perform(inventory)
     return false unless inventory.extrapolate? &&
-                          inventory.counts.positive? &&
-                          inventory.completed_at.blank?
+                        inventory.counts.positive? &&
+                        inventory.completed_at.blank?
 
     @inventory = inventory
 
     # ProduceableJob sets all item.can_be_produced values, and is run by Inventory#after_update callback
     # so we can assume item.can_be_produced is accurate from the latest inventory
 
-    # handle changes in Component inventory counts first, so that these new changes can be incorporated into Technology changes
-    comp_counts = @inventory.counts.components
-
-    comp_counts.each do |comp_count|
-      next if comp_count.useless?
-
-      component = comp_count.item
-
-      if item_has_sufficient_loose_count?(comp_count)
-        adjust_count_only(comp_count, component, produced_and_boxed)
-      else
-        # component couldn't handle it alone, time to rely on the tree
-
-        # remainder needed is set and represents what we still need to "produce" from sub items
-        component_remainder = produced_total - technology.loose_count
-
-        loop_assemblies(technology, component_remainder)
-      end
-    end
-
-    # handle changes in Technology inventory counts after Component inventory counts
+    # handle changes in Technology inventory counts before Component inventory counts. This makes the assumption that Components counted are above and beyond any components created and immediately used for Technologies
     tech_counts = @inventory.counts.technologies
 
     tech_counts.each do |tech_count|
@@ -42,7 +22,7 @@ class ExtrapolateInventoryJob < ApplicationJob
       technology = tech_count.item
 
       if item_has_sufficient_loose_count?(tech_count)
-        adjust_count_only(tech_count, technology, produced_and_boxed)
+        adjust_count_only(tech_count, technology)
       else
         # technology couldn't handle it alone, time to rely on the tree
 
@@ -51,21 +31,39 @@ class ExtrapolateInventoryJob < ApplicationJob
 
         loop_assemblies(technology, technology_remainder)
       end
-
-      # run CountTransferJob
     end
+
+    # handle changes in Component inventory counts last, assuming that Component counts do not include components created to generate Technology counts
+    comp_counts = @inventory.counts.components
+
+    comp_counts.each do |comp_count|
+      next if comp_count.useless?
+
+      component = comp_count.item
+
+      if item_has_sufficient_loose_count?(comp_count)
+        adjust_count_only(comp_count, component)
+      else
+        # component couldn't handle it alone, time to rely on the tree
+
+        # remainder needed is set and represents what we still need to "produce" from sub items
+        component_remainder = produced_total - component.loose_count
+
+        loop_assemblies(component, component_remainder)
+      end
+    end
+
+    # run CountTransferJob
+    @inventory.update(completed_at: Time.now)
+    @inventory.reload.run_count_transfer_job
   end
 
-  def adjust_tech_count(tech_count)
-    # needed??
-  end
-
-  def adjust_count_only(count, item, produced_and_boxed)
+  def adjust_count_only(count, item)
     # increase the count's box_count by the item's box_count
     count.unopened_boxes_count += item.box_count
 
     # adjust the count's loose_count by adding what was created as loose and subtracting what was boxed
-    count.loose_count += item.loose_count - produced_and_boxed
+    count.loose_count += item.loose_count - count.produced_and_boxed
   end
 
   def create_or_update_count(item, loose_count, box_count)
@@ -121,11 +119,7 @@ class ExtrapolateInventoryJob < ApplicationJob
 
   def item_has_sufficient_loose_count?(count)
     # Can the number of loose and boxed items be satisfied by the existing loose_count of the item?
-    item = count.item
-    produced_and_boxed = count.unopened_boxes_count * item.quantity_per_box
-    produced_total = produced_and_boxed + count.loose_count
-
-    produced_total < item.loose_count
+    count.produced_total < count.item.loose_count
   end
 
   def item_insufficient(item)

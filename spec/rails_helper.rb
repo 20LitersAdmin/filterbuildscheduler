@@ -63,6 +63,10 @@ RSpec.configure do |config|
     Capybara.page.driver.browser.manage.window.resize_to(1920, 2024)
   end
 
+  config.before(:each, type: :job) do
+    CleanupCrew.clean_up!
+  end
+
   config.after :suite do
     CleanupCrew.clean_up!
   end
