@@ -61,6 +61,14 @@ class Inventory < ApplicationRecord
     CountTransferJob.perform_later(self)
   end
 
+  def run_count_extrapolate_job
+    return unless completed_at.present?
+
+    # Delete any jobs that exist, but haven't started, in favor of this new job
+    Sidekiq::Queue.new('extrapolate_inventory').clear
+    ExtrapolateInventoryJob.perform_later(self)
+  end
+
   def run_goal_remainder_calculation_job
     return unless completed_at.present?
 
