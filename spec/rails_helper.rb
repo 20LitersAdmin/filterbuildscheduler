@@ -27,6 +27,8 @@ Capybara.javascript_driver = :selenium
 FactoryBot.use_parent_strategy = false
 ActiveJob::Base.queue_adapter = :test
 
+RSpec::Matchers.define_negated_matcher :not_change, :change
+
 RSpec.configure do |config|
   config.include FactoryBot::Syntax::Methods
   config.include Devise::Test::IntegrationHelpers, type: :system
@@ -63,11 +65,11 @@ RSpec.configure do |config|
     Capybara.page.driver.browser.manage.window.resize_to(1920, 2024)
   end
 
-  config.before(:each, type: :job) do
+  config.before(:suite) do
     CleanupCrew.clean_up!
   end
 
-  config.after :suite do
+  config.after(:suite) do
     CleanupCrew.clean_up!
   end
 

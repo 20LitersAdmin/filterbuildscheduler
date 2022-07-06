@@ -7,8 +7,14 @@ class CountTransferJob < ApplicationJob
 
   # called by InventoriesController#update via @inventory.run_count_transfer_job
 
+  # called by ExtrapolateInventoryJob#perform via @inventory.run_count_transfer_job
+
   def perform(inventory)
     return if inventory.blank?
+
+    ActiveRecord::Base.logger.level = 1
+
+    puts '========================= Starting CountTransferJob ========================='
 
     @inventory = inventory
     @receiving = @inventory.receiving?
@@ -30,6 +36,10 @@ class CountTransferJob < ApplicationJob
     @inventory.save
 
     @inventory.counts.destroy_all
+
+    puts '========================= FINISHED CountTransferJob ========================='
+
+    ActiveRecord::Base.logger.level = 0
   end
 
   def transfer_auto_count(count)

@@ -5,8 +5,8 @@ class ExtrapolateInventoryJob < ApplicationJob
 
   def perform(inventory)
     return false unless inventory.extrapolate? &&
-                        inventory.counts.positive? &&
-                        inventory.completed_at.blank?
+                        inventory.counts.size.positive? &&
+                        inventory.completed_at.present?
 
     @inventory = inventory
 
@@ -19,51 +19,41 @@ class ExtrapolateInventoryJob < ApplicationJob
     tech_counts.each do |tech_count|
       next if tech_count.useless?
 
-      technology = tech_count.item
-
-      if item_has_sufficient_loose_count?(tech_count)
-        adjust_count_only(tech_count, technology)
-      else
-        # technology couldn't handle it alone, time to rely on the tree
-
-        # remainder needed is set and represents what we still need to "produce" from sub items
-        technology_remainder = produced_total - technology.loose_count
-
-        loop_assemblies(technology, technology_remainder)
-      end
+      analyze_count(tech_count)
     end
 
-    # handle changes in Component inventory counts last, assuming that Component counts do not include components created to generate Technology counts
+    # handle changes in Component inventory counts last, assuming that Component counts do not include components created and already used to generate Technology counts
     comp_counts = @inventory.counts.components
 
     comp_counts.each do |comp_count|
       next if comp_count.useless?
 
-      component = comp_count.item
-
-      if item_has_sufficient_loose_count?(comp_count)
-        adjust_count_only(comp_count, component)
-      else
-        # component couldn't handle it alone, time to rely on the tree
-
-        # remainder needed is set and represents what we still need to "produce" from sub items
-        component_remainder = produced_total - component.loose_count
-
-        loop_assemblies(component, component_remainder)
-      end
+      analyze_count(comp_count)
     end
 
     # run CountTransferJob
-    @inventory.update(completed_at: Time.now)
     @inventory.reload.run_count_transfer_job
   end
 
-  def adjust_count_only(count, item)
-    # increase the count's box_count by the item's box_count
-    count.unopened_boxes_count += item.box_count
+  def analyze_count(count)
+    item = count.item
 
-    # adjust the count's loose_count by adding what was created as loose and subtracting what was boxed
-    count.loose_count += item.loose_count - count.produced_and_boxed
+    if item_has_sufficient_loose_count?(count)
+      remove_produced_and_boxed_from_loose(count)
+    else
+      # item couldn't handle it alone, time to rely on the tree
+
+      # count.unopened_boxes_count should be left as-is
+
+      # we already know item.loose_count < count.produced_and_boxed, so we assume that we want item.loose_count to be taken down to 0, then increased to count.loose_count
+      loose_count_adjustment = -item.loose_count
+      create_or_update_count(item, loose_count_adjustment, 0)
+
+      # we assume we use all item.loose_count towards creating produced_and_boxed, the overage remaining is our remainder
+      remainder = count.produced_and_boxed - item.loose_count
+
+      loop_assemblies(item, remainder)
+    end
   end
 
   def create_or_update_count(item, loose_count, box_count)
@@ -73,7 +63,7 @@ class ExtrapolateInventoryJob < ApplicationJob
 
     count.tap do |c|
       c.loose_count += loose_count
-      c.box_count += box_count
+      c.unopened_boxes_count += box_count
     end
 
     count.save
@@ -118,8 +108,8 @@ class ExtrapolateInventoryJob < ApplicationJob
   end
 
   def item_has_sufficient_loose_count?(count)
-    # Can the number of loose and boxed items be satisfied by the existing loose_count of the item?
-    count.produced_total < count.item.loose_count
+    # Can the number of boxed items created be satisfied by the existing loose_count of the item?
+    count.produced_and_boxed < count.item.loose_count
   end
 
   def item_insufficient(item)
@@ -132,9 +122,7 @@ class ExtrapolateInventoryJob < ApplicationJob
 
     assemblies.each do |assembly|
       item = assembly.item
-      quantity_per_assembly = assembly.quantity
-
-      to_remove = remander * quantity_per_assembly
+      to_remove = remainder * assembly.quantity
 
       # Three scenarios:
       # 1. item_can_satisfy_remainder
@@ -162,7 +150,7 @@ class ExtrapolateInventoryJob < ApplicationJob
 
     if material_loose >= material_needed
       # there are enough loose materials, no boxes need to be opened
-      create_count(material, -material_needed, 0)
+      create_or_update_count(material, -material_needed, 0)
     else
       material_needed_from_boxed = material_needed - material_loose
       material_quantity_per_box = material.quantity_per_box
@@ -177,6 +165,7 @@ class ExtrapolateInventoryJob < ApplicationJob
     parts_produced = material_needed * part_quantity_from_material
 
     return unless parts_produced > parts_needed
+
     # add extra parts produced from material to the part's count
     count = @inventory.counts.where(item: part).first
     count.loose_count += parts_produced - parts_needed
@@ -196,5 +185,15 @@ class ExtrapolateInventoryJob < ApplicationJob
       # zero out material, nothing else can be done
       create_or_update_count(material, -material.loose_count, -material.box_count)
     end
+  end
+
+  def remove_produced_and_boxed_from_loose(count)
+    # KEEP IN MIND: the count values should not be the desired values, but instead the amount to add or subtract from the item to achieve the desired values
+    # see CountTransferJob#transfer_auto_count
+
+    # adjust the count's loose_count by subtracting what was boxed
+    count.loose_count -= count.produced_and_boxed
+
+    count.save
   end
 end

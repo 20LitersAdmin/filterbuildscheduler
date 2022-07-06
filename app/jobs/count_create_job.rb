@@ -8,6 +8,12 @@ class CountCreateJob < ApplicationJob
   # called by InventoriesController#create with #perform_now
 
   def perform(inventory)
+    return if inventory.blank?
+
+    ActiveRecord::Base.logger.level = 1
+
+    puts '========================= Starting CountCreateJob ========================='
+
     @inventory = inventory
 
     techs = Technology.active.where(id: inventory.technologies)
@@ -25,6 +31,10 @@ class CountCreateJob < ApplicationJob
     items.flatten(1).uniq.each do |item|
       create_count(item)
     end
+
+    puts '========================= FINISHED CountCreateJob ========================='
+
+    ActiveRecord::Base.logger.level = 0
   end
 
   def create_count(item)

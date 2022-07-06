@@ -4,6 +4,18 @@
 - A new type of inventory: "Create Technology" which would act like an event-based inventory.
 - Make sure Google Calendar appointments are created and sent for events
 
+## Ordering QOL:
+- By supplier: make supplier name a clickable link to URL
+- Show SKUs as part of item name field
+- edit price on the fly
+- clicking item name opens new tab
+- Record order date and quantity via button click
+- /inventories:
+  - filter by tech
+  - show goal?
+  - should show TID, not UID for VWF
+
+
 ### VWF import files:
 #### feature: TechnologiesController::Labels: user can choose to limit labels by Technology
 - labels.haml ln7-20, 33, 52
@@ -42,14 +54,16 @@
 - inventories_controller.rb ln32-33, 73-77
 - count_create_job.rb ln21-22
 - count_transfer_job ln23
-- extrapolate_inventory_job.rb
+- extrapolate_inventory_job.rb (whole thing)
 - count.rb ln15-17, 65-71
-- inventory.rb ln23-24, 36-39, 79-80, 87, 89, 93, 94, 103, 105, 107, 108
+- inventory.rb ln23-24, 36-39, 64-71, 87-88, 101-102, 115-116
 - inventories/new.haml ln12
 - initializers/constants.rb ln5
 - db/migrate/add_extrap_to_inventories.rb
 - spec/factories/inventories ln23-27
 - inventory_spec ln11, 95, 105
+- spec/jobs/extrapolate_inventory_job_spec.rb (whole thing)
+- rails_helper.rb ln 66-69
 
 
 ## MailerLite integration:
