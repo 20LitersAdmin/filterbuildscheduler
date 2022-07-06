@@ -60,12 +60,11 @@ class Part < ApplicationRecord
   end
 
   def on_order?
-    return false unless last_ordered_at.present?
-    return false if last_ordered_quantity.nil?
+    return false if last_ordered_at.blank? || last_ordered_quantity.nil?
 
     return true if last_received_at.nil?
 
-    ## partial order received, still waiting for the rest:
+    ## partial order received, still waiting for the rest
     return true if partial_received?
 
     last_ordered_at > last_received_at
@@ -75,17 +74,20 @@ class Part < ApplicationRecord
     # has not been ordered, or has not been received
     return false unless last_ordered_at.present? && last_received_at.present? && last_received_quantity.to_i.positive?
 
-    # received in full
-    return false if last_received_quantity == last_ordered_quantity && last_received_at > last_ordered_at
+    # last_received_at is before last_ordered_at
+    return false if last_received_at < last_ordered_at
+
+    # received in full within the last 3 months
+    return false if last_received_quantity == last_ordered_quantity && (last_received_at - last_ordered_at).seconds.in_months <= 3
 
     # when receiving multiple partial orders, need to determine if full order has been recevived
-    received_since_last_order.to_i < last_ordered_quantity.to_i
+    received_since_last_order < last_ordered_quantity.to_i
   end
 
   def partial_order_remainder
     return 0 unless on_order? && partial_received?
 
-    last_ordered_quantity.to_i - received_since_last_order.to_i
+    last_ordered_quantity.to_i - received_since_last_order
   end
 
   def received_since_last_order
@@ -95,7 +97,7 @@ class Part < ApplicationRecord
     # Get history records where date key is greater than the last_ordered_at date && where inventory type is Receiving
     history.select { |k, v| Date.parse(k) > last_ordered_at && v['inv_type'] == 'Receiving' }
            .values.map { |r| r['available'] }
-           .max
+           .max.to_i
   end
 
   def reorder?
