@@ -27,9 +27,8 @@ class EventInventoryJob < ApplicationJob
 
     # If boxes were packed and there were enough @technology loose items,
     # we assume the loose items were just boxed, nothing had to be produced
-    technology_has_sufficient_loose_count = @box_created.positive? && (@technology.loose_count > @produced_and_boxed)
 
-    create_technology_count_only if technology_has_sufficient_loose_count
+    create_technology_count_only if technology_has_sufficient_loose_count?
 
     unless technology_has_sufficient_loose_count?
       # @technology couldn't handle it alone, time to rely on the tree
@@ -190,5 +189,9 @@ class EventInventoryJob < ApplicationJob
       # zero out material, nothing else can be done
       create_count(material, -material.loose_count, -material.box_count)
     end
+  end
+
+  def technology_has_sufficient_loose_count?
+    @box_created.positive? && (@technology.loose_count > @produced_and_boxed)
   end
 end
