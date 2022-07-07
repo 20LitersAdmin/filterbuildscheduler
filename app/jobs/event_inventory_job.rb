@@ -9,9 +9,6 @@ class EventInventoryJob < ApplicationJob
     # ProduceableJob sets all item.can_be_produced values, and is run by Inventory#after_update callback
     # so we can assume item.can_be_produced is accurate from the latest inventory
 
-    # TESTING / TRACING: allow @tracker to store { UID -> { remove: amt_to_remove, available: @item.available_count, has_subs: @item.has_sub_assemblies? } }
-    # @tracker = []
-
     @event         = event
     @loose_created = @event.technologies_built
     @box_created   = @event.boxes_packed
@@ -28,15 +25,12 @@ class EventInventoryJob < ApplicationJob
 
     @inventory = @event.create_inventory(date: Date.today, technologies: [@technology.id])
 
-    # @tracker << { @technology.uid => { produced_and_boxed: @produced_and_boxed, produced_total: @produced_total, loose: @technology.loose_count, has_subs: true } }
-
     # If boxes were packed and there were enough @technology loose items,
     # we assume the loose items were just boxed, nothing had to be produced
-    technology_has_sufficient_loose_count = @box_created.positive? && (@technology.loose_count > @produced_and_boxed)
 
-    create_technology_count_only if technology_has_sufficient_loose_count
+    create_technology_count_only if technology_has_sufficient_loose_count?
 
-    unless technology_has_sufficient_loose_count
+    unless technology_has_sufficient_loose_count?
       # @technology couldn't handle it alone, time to rely on the tree
       # Create a count for Technology that results in @technology.loose_count == @loose_created && @technology.box_count += @box_created
       create_technology_count
@@ -121,9 +115,6 @@ class EventInventoryJob < ApplicationJob
   end
 
   def item_insufficient
-    # 2. item_insufficient (and has_no_sub_assemblies)
-    # - the item quantities are zeroed out and there's nothing else to do.
-
     # zero out the item counts, everything was used
     create_count(@item, -@item.loose_count, -@item.box_count)
   end
@@ -136,8 +127,6 @@ class EventInventoryJob < ApplicationJob
       quantity_per_assembly = assembly.quantity
 
       to_remove = remainder * quantity_per_assembly
-
-      # @tracker << { @item.uid => { remove: to_remove, available: @item.available_count, has_subs: @item.has_sub_assemblies?, quantity_per_assembly: quantity_per_assembly } }
 
       # Three scenarios:
       # 1. item_can_satisfy_remainder
@@ -179,8 +168,6 @@ class EventInventoryJob < ApplicationJob
 
     parts_produced = material_needed * part_quantity_from_material
 
-    # @tracker << { material.uid => { remove: material_needed, available: material.available_count, has_subs: false, quantity_per_material: part_quantity_from_material } }
-
     return unless parts_produced > parts_needed
 
     # add extra parts produced from material to the part's count
@@ -202,5 +189,9 @@ class EventInventoryJob < ApplicationJob
       # zero out material, nothing else can be done
       create_count(material, -material.loose_count, -material.box_count)
     end
+  end
+
+  def technology_has_sufficient_loose_count?
+    @box_created.positive? && (@technology.loose_count > @produced_and_boxed)
   end
 end

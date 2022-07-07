@@ -7,8 +7,14 @@ class CountTransferJob < ApplicationJob
 
   # called by InventoriesController#update via @inventory.run_count_transfer_job
 
+  # called by ExtrapolateInventoryJob#perform via @inventory.run_count_transfer_job
+
   def perform(inventory)
     return if inventory.blank?
+
+    ActiveRecord::Base.logger.level = 1
+
+    puts '========================= Starting CountTransferJob ========================='
 
     @inventory = inventory
     @receiving = @inventory.receiving?
@@ -18,9 +24,9 @@ class CountTransferJob < ApplicationJob
         transfer_manual_count(count)
       end
     else
-      # event_based only creates counts for necessary items, so all should be transfered
-      # non-event_based create all counts, so only transfer those that were submitted
-      counts = @inventory.event_based? ? @inventory.counts : @inventory.counts.submitted
+      # event_based and extrapolate inventory types should transfer all counts, regardless of submission status
+      # non-event_based inventory types create all counts, so only transfer those that were submitted
+      counts = @inventory.extrapolate_counts? ? @inventory.counts : @inventory.counts.submitted
       counts.each do |count|
         transfer_auto_count(count)
       end
@@ -30,6 +36,10 @@ class CountTransferJob < ApplicationJob
     @inventory.save
 
     @inventory.counts.destroy_all
+
+    puts '========================= FINISHED CountTransferJob ========================='
+
+    ActiveRecord::Base.logger.level = 0
   end
 
   def transfer_auto_count(count)

@@ -12,6 +12,9 @@ class Count < ApplicationRecord
   scope :submitted, -> { where.not(user_id: nil) }
   scope :uncounted, -> { where(user_id: nil) }
 
+  scope :technologies, -> { where(item_type: 'Technology') }
+  scope :components, -> { where(item_type: 'Component') }
+
   def available
     loose_count.to_i + box_count
   end
@@ -59,11 +62,23 @@ class Count < ApplicationRecord
     'yellow'
   end
 
+  def produced_and_boxed
+    unopened_boxes_count * item.quantity_per_box
+  end
+
+  def produced_total
+    produced_and_boxed + loose_count
+  end
+
   def sort_by_status
     return 2 if user_id.present?
 
     return 1 if partial_box || partial_loose
 
     0
+  end
+
+  def useless?
+    user_id.nil? && loose_count.zero? && unopened_boxes_count.zero?
   end
 end
