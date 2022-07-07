@@ -20,5 +20,10 @@ FactoryBot.define do
       manual { false }
       event factory: :complete_event_technology
     end
+
+    factory :inventory_extrapolate do
+      manual { false }
+      extrapolate { true }
+    end
   end
 end

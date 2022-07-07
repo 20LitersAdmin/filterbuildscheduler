@@ -105,6 +105,12 @@ module Itemable
     }
   end
 
+  def in_boxes_count
+    return 0 if only_loose? || quantity_per_box.nil?
+
+    box_count * quantity_per_box
+  end
+
   def label_hash
     {
       name: name,
