@@ -102,7 +102,7 @@ RSpec.describe Inventory, type: :model do
       expect(receiving.verb_past_tense).to eq('received')
       expect(shipping.verb_past_tense).to eq('shipped')
       expect(manual.verb_past_tense).to eq('counted')
-      expect(extrapolate.verb_past_tense).to eq('created.')
+      expect(extrapolate.verb_past_tense).to eq('created')
     end
   end
 
