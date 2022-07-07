@@ -63,6 +63,7 @@ module RailsAdmin
                 { name: 'New Inventory', link: 'inventories/new?type=manual' },
                 { name: 'Receive Supplies', link: 'inventories/new?type=receiving' },
                 { name: 'Ship Supplies', link: 'inventories/new?type=shipping' },
+                { name: 'Assemble Technologies and Components', link: 'inventories/new?type=extrapolate' },
                 { name: 'Print Inventory', link: 'inventories/paper' },
                 { name: 'Print Labels', link: 'labels' }
               ]

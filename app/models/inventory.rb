@@ -85,7 +85,7 @@ class Inventory < ApplicationRecord
     elsif shipping
       'Shipping'
     elsif extrapolate
-      'Technology Created'
+      'Assembly'
     else # manual
       'Manual'
     end
