@@ -83,6 +83,7 @@ RSpec.describe Inventory, type: :model do
       expect(receiving.type).to eq('Receiving')
       expect(shipping.type).to eq('Shipping')
       expect(manual.type).to eq('Manual')
+      expect(extrapolate.type).to eq('Assembly')
     end
   end
 
@@ -92,7 +93,7 @@ RSpec.describe Inventory, type: :model do
       expect(shipping.type_for_params).to eq('shipping')
       expect(event.type_for_params).to eq('event')
       expect(manual.type_for_params).to eq('manual')
-      expect(extrapolate.type_for_params).to eq ('extrapolate')
+      expect(extrapolate.type_for_params).to eq('extrapolate')
     end
   end
 
