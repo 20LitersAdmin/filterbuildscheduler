@@ -10,25 +10,22 @@ class ExtrapolateInventoryJob < ApplicationJob
 
     @inventory = inventory
 
-    # ProduceableJob sets all item.can_be_produced values, and is run by Inventory#after_update callback
-    # so we can assume item.can_be_produced is accurate from the latest inventory
-
-    # handle changes in Technology inventory counts before Component inventory counts. This makes the assumption that Components counted are above and beyond any components created and immediately used for Technologies
-    tech_counts = @inventory.counts.technologies
-
-    tech_counts.each do |tech_count|
-      next if tech_count.useless?
-
-      analyze_count(tech_count)
-    end
-
-    # handle changes in Component inventory counts last, assuming that Component counts do not include components created and already used to generate Technology counts
+    # handle changes in Component inventory counts first. This makes the assumption that Components counted are above and beyond any components created and immediately used for Technologies
     comp_counts = @inventory.counts.components
 
     comp_counts.each do |comp_count|
       next if comp_count.useless?
 
       analyze_count(comp_count)
+    end
+
+    # handle changes in Technology inventory counts after Component inventory counts. This makes the assumption that Components counted are above and beyond any components created and immediately used for Technologies
+    tech_counts = @inventory.counts.technologies
+
+    tech_counts.each do |tech_count|
+      next if tech_count.useless?
+
+      analyze_count(tech_count)
     end
 
     # run CountTransferJob
@@ -43,14 +40,17 @@ class ExtrapolateInventoryJob < ApplicationJob
     else
       # item couldn't handle it alone, time to rely on the tree
 
-      # count.unopened_boxes_count should be left as-is
+      # For technologies only:
+      # we already know item.loose_count < count.produced_and_boxed, so we assume that we want item.loose_count to be taken down to 0, then increased to count.loose_count (which the count already has set by default)
+      loose_count_adjustment = item.is_a?(Technology) ? -item.loose_count : 0
 
-      # we already know item.loose_count < count.produced_and_boxed, so we assume that we want item.loose_count to be taken down to 0, then increased to count.loose_count
-      loose_count_adjustment = -item.loose_count
-      create_or_update_count(item, loose_count_adjustment, 0)
+      # count.unopened_boxes_count should be left as-is
+      create_or_update_count(item, loose_count_adjustment, 0) unless loose_count_adjustment.zero?
 
       # we assume we use all item.loose_count towards creating produced_and_boxed, the overage remaining is our remainder
       remainder = count.produced_and_boxed - item.loose_count
+
+      # byebug if item.name == 'Comp2'
 
       loop_assemblies(item, remainder)
     end
@@ -73,7 +73,9 @@ class ExtrapolateInventoryJob < ApplicationJob
     # 1. item_can_satisfy_remainder
     # - create or update a count that subtracts the amt_to_remove from the item's current counts
 
-    if item.loose_count >= amt_to_remove
+    item_loose_count = item.loose_count
+
+    if item_loose_count >= amt_to_remove
       # There are enough loose items, no boxes need to be opened
       create_or_update_count(item, -amt_to_remove, 0)
     else
@@ -81,11 +83,15 @@ class ExtrapolateInventoryJob < ApplicationJob
       # There aren't enough loose items, need to open boxes
 
       # calculate number of boxes that need to be opened
-      needed_from_boxed = amt_to_remove - item.loose_count
+      needed_from_boxed = amt_to_remove - item_loose_count
       boxes_to_open = (needed_from_boxed / item_quantity_per_box.to_f).ceil
 
+      # any extras from opened boxes will need to be added to the loose count
+      remainder_from_boxes_to_transfer_to_loose = (boxes_to_open * item_quantity_per_box) - needed_from_boxed
+
       # determine how this will change the loose count
-      change_to_loose = (boxes_to_open * item_quantity_per_box) - amt_to_remove
+      # needed_from_boxed assumes we first use all loose items, so the current loose count is subtracted (to zero it out) while the remainder_from_boxes_to_transfer_to_loose is added
+      change_to_loose = remainder_from_boxes_to_transfer_to_loose - item_loose_count
 
       create_or_update_count(item, change_to_loose, -boxes_to_open)
 

@@ -50,7 +50,7 @@
   - modified:   spec/system/inventory_new_page_spec.rb
 
 
-## feature: New Inventory Type: Extrapopate: user can create an inventory which extrapolates down the tree like event inventories do
+## feature: New Inventory Type: Extrapolate: user can create an inventory which extrapolates down the tree like event inventories do
 - inventories_controller.rb ln32-33, 73-77
 - count_create_job.rb ln21-22
 - count_transfer_job ln23
