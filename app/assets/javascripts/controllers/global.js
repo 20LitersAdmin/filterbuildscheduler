@@ -57,14 +57,8 @@ $(document).on("turbolinks:load", function(){
     };
   };
 
-  // Inventories#paper && Technologies#labels techs field mgmt
-  function techsFieldMgmt(source) {
-
-  };
-
   $(document).on("click", "a.accordion-link", function() {
     $(this).children(".fa").toggle();
-
     collapsedFAs(this);
   });
 

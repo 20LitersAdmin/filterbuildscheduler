@@ -27,7 +27,6 @@ class EventInventoryJob < ApplicationJob
 
     # If boxes were packed and there were enough @technology loose items,
     # we assume the loose items were just boxed, nothing had to be produced
-
     create_technology_count_only if technology_has_sufficient_loose_count?
 
     unless technology_has_sufficient_loose_count?

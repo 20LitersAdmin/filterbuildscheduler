@@ -104,7 +104,7 @@ class UsersController < ApplicationController
     @availability = [['All hours', 0], ['Business hours', 1], ['After hours', 2]]
     @types = [['', nil], ['Trainee', 0], ['Helper', 1], ['Primary', 2]]
     @technologies = [['All', 0]]
-    Technology.list_worthy.each do |tech|
+    Technology.for_events.each do |tech|
       @technologies << [tech.short_name, tech.id]
     end
 

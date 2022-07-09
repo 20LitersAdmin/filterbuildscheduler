@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_06_29_165112) do
+ActiveRecord::Schema.define(version: 2022_07_08_182505) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -355,7 +355,6 @@ ActiveRecord::Schema.define(version: 2022_06_29_165112) do
     t.text "comments"
     t.integer "monthly_production_rate", default: 1, null: false
     t.string "short_name"
-    t.boolean "list_worthy", default: true, null: false
     t.string "uid"
     t.boolean "only_loose", default: false
     t.integer "loose_count", default: 0
@@ -374,6 +373,8 @@ ActiveRecord::Schema.define(version: 2022_06_29_165112) do
     t.integer "goal_remainder", default: 0
     t.string "box_type", default: "box"
     t.text "box_notes"
+    t.boolean "for_events", default: true, null: false
+    t.boolean "for_inventories", default: true, null: false
     t.index ["discarded_at"], name: "index_technologies_on_discarded_at"
   end
 
@@ -407,7 +408,7 @@ ActiveRecord::Schema.define(version: 2022_06_29_165112) do
     t.datetime "discarded_at"
     t.string "authentication_token", limit: 30
     t.boolean "does_inventory", default: false
-    t.boolean "send_notification_emails", default: false
+    t.boolean "send_event_emails", default: false
     t.boolean "send_inventory_emails", default: false
     t.boolean "email_opt_out", default: false
     t.boolean "available_business_hours", default: false, null: false

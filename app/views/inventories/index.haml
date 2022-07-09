@@ -20,11 +20,18 @@
           .col-xs-6.col-sm-4
             = link_to 'Edit', edit_inventory_path(@latest), class: 'btn blue full-width use-load-screen'
 
+  .row.tech-chooser.well
+    .col-sm-12.center-align
+      = form_tag inventories_path, method: 'get', class: 'form-inline' do
+        = label_tag 'tech', 'Select a technology to filter the list:'
+        = select_tag 'tech', options_from_collection_for_select(@tech_choices, 'id', 'short_name', @tech&.id), include_blank: true, class: 'form-control'
+        = submit_tag 'Filter', class: 'btn yellow btn-sm', name: nil, data: { disable_with: false }
+
   .row
     .col-xs-8
       %h2 Inventory Counts:
       %p
-        %i Click on an item's name to see the count history
+        %i Click on the calendar next to an item to see the count history
     .col-xs-4.right-align
       = link_to 'Inventory History', history_inventories_path, class: 'btn btn-sm empty'
       = link_to 'New Inventory', new_inventory_path, class: 'btn btn-sm yellow'

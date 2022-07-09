@@ -83,7 +83,7 @@ RSpec.describe 'Create events:', type: :system do
 
   context 'admin' do
     before :each do
-      @user = create(:admin, send_notification_emails: true)
+      @user = create(:admin, send_event_emails: true)
       @location = create(:location)
       @technology = create(:technology)
       sign_in @user

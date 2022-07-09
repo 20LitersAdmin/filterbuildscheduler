@@ -1,7 +1,12 @@
 -# frozen_string_literal: true
 %tr
   %td
-    = link_to item_tbl.name, history_inventories_path(uid: item_tbl.uid), remote: true, data: { target: '#item_history_modal' }
+    .clear-both
+      .float-left
+        = link_to item_tbl.name, rails_admin.edit_path(model_name: item_tbl.model_name.name, id: item_tbl.id), target: '_blank'
+      .float-right
+        = link_to history_inventories_path(uid: item_tbl.uid), remote: true, data: { target: '#item_history_modal' } do
+          = icon('fas', 'calendar-day')
   %td= item_tbl.uid
   %td
     = item_tbl.supplier&.name if item_tbl.instance_of?(Part) || item_tbl.instance_of?(Material)

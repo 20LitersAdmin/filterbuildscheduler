@@ -1,0 +1,13 @@
+// Update the price and order total cells
+$("tr#<%= @item.uid %>").find('span.item-cost-value').html("<%= @item.price %>");
+var currentOrderQuantity = parseInt($("tr#<%= @item.uid %>").find('input.min-order-field').val());
+var newTotalOrderAmt = (<%= @item.price %> * currentOrderQuantity).toLocaleString("en-US", { maximumFractionDigits: 2, minimumFractionDigits: 2 })
+
+$("tr#<%= @item.uid %>").find('span.order-total-amt').html(newTotalOrderAmt);
+
+// re-calculate the total field based on currently checked boxes
+orderTotal();
+
+// Reset the modal
+$('#item_price_modal').modal('hide');
+$('#price_modal_body').html("Oops! Something broke.");

@@ -5,19 +5,25 @@ class InventoriesController < ApplicationController
   before_action :authorize_inventory, only: %i[order order_all order_goal]
 
   def index
-    # NOTE: After creating an inventory, user is redirected to InventoriesController#index
-    # Then @latest is visible and user can edit the inventory.
-    @latest = Inventory.latest
-    authorize @latest
+    authorize @latest = Inventory.latest
 
     @below_minimum = Part.below_minimums.any? || Material.below_minimums.any?
 
-    technologies = Technology.active.list_worthy
-    components = Component.active
-    parts = Part.active
-    materials = Material.active
+    @tech_choices = Technology.for_inventories.order(:short_name)
 
-    @items = [technologies, components, parts, materials].flatten
+    if params[:tech].present?
+      @tech = Technology.find(params[:tech])
+      components = @tech.all_components
+      parts = @tech.all_parts
+      materials = @tech.materials
+      @items = [[@tech], components.uniq, parts.uniq, materials.uniq].flatten(1).compact_blank
+    else
+      technologies = Technology.for_inventories
+      components = Component.active
+      parts = Part.active
+      materials = Material.active
+      @items = [technologies, components, parts, materials].flatten
+    end
   end
 
   def new
@@ -35,7 +41,7 @@ class InventoriesController < ApplicationController
       @inventory.manual = true
     end
 
-    @technologies = Technology.list_worthy.order(:owner, :short_name)
+    @technologies = Technology.for_inventories.order(:owner, :short_name)
   end
 
   def create
@@ -44,7 +50,7 @@ class InventoriesController < ApplicationController
 
     if @inventory.errors.any?
       flash[:danger] = @inventory.errors.full_messages.to_sentence
-      @technologies = Technology.list_worthy.order(:owner, :short_name)
+      @technologies = Technology.for_inventories.order(:owner, :short_name)
       render 'new'
     else
       CountCreateJob.perform_now(@inventory.reload)
@@ -61,7 +67,7 @@ class InventoriesController < ApplicationController
     @counts = @inventory.counts.sort_by { |c| [c.sort_by_status, - c.item.name] }
     @uncounted = "#{view_context.pluralize(@inventory.counts.uncounted.size, 'item')} uncounted."
 
-    @techs = Technology.list_worthy.where(id: @inventory.technologies)
+    @techs = Technology.for_inventories.where(id: @inventory.technologies)
   end
 
   def update
@@ -100,7 +106,7 @@ class InventoriesController < ApplicationController
   end
 
   def order
-    @technologies = Technology.list_worthy
+    @technologies = Technology.for_inventories.order(:name)
 
     @technologies_select = @technologies.map { |t| [t.name, t.id] }
 
@@ -118,13 +124,13 @@ class InventoriesController < ApplicationController
     end
 
     @items = [parts, materials].flatten(1).uniq
-    @suppliers = [parts.map(&:supplier).uniq, materials.map(&:supplier).uniq].flatten(1).uniq.compact
+    @suppliers = [parts.map(&:supplier).uniq, materials.map(&:supplier).uniq].flatten(1).uniq.compact.sort_by(&:name)
 
     @items_w_no_supplier = @items.select { |item| item.supplier.nil? }
   end
 
   def order_all
-    @technologies = Technology.list_worthy
+    @technologies = Technology.for_inventories.order(:name)
 
     @technologies_select = @technologies.map { |t| [t.name, t.id] }
 
@@ -142,7 +148,7 @@ class InventoriesController < ApplicationController
     end
 
     @items = [parts, materials].flatten(1).uniq
-    @suppliers = [parts.map(&:supplier).uniq, materials.map(&:supplier).uniq].flatten.uniq.compact
+    @suppliers = [parts.map(&:supplier).uniq, materials.map(&:supplier).uniq].flatten.uniq.compact.sort_by(&:name)
 
     @items_w_no_supplier = @items.select { |item| item.supplier.nil? }
   end
@@ -151,7 +157,7 @@ class InventoriesController < ApplicationController
     # TODO: Does this really slow things down or not?
     GoalRemainderCalculationJob.perform_now
 
-    @technologies = Technology.list_worthy
+    @technologies = Technology.for_inventories.order(:name)
 
     @technologies_select = @technologies.map { |t| [t.name, t.id] }
 
@@ -169,7 +175,7 @@ class InventoriesController < ApplicationController
     end
 
     @items = [parts, materials].flatten(1).uniq
-    @suppliers = [parts.map(&:supplier).uniq, materials.map(&:supplier).uniq].flatten(1).uniq.compact
+    @suppliers = [parts.map(&:supplier).uniq, materials.map(&:supplier).uniq].flatten(1).uniq.compact.sort_by(&:name)
 
     @items_w_no_supplier = @items.select { |item| item.supplier.nil? }
   end
@@ -178,7 +184,7 @@ class InventoriesController < ApplicationController
     authorize Inventory
     @print_navbar = true
 
-    @tech_choices = Technology.list_worthy.pluck(:id, :short_name)
+    @tech_choices = Technology.for_inventories.pluck(:id, :short_name)
 
     if params[:techs].present?
       @techs = Technology.where(id: params[:techs].split(','))
@@ -192,7 +198,7 @@ class InventoriesController < ApplicationController
       end
       @items = [@techs, components.flatten(1).uniq, parts.flatten(1).uniq, materials.flatten(1).uniq].flatten(1)
     else
-      technologies = Technology.active.list_worthy
+      technologies = Technology.active.for_inventories
       components = Component.active
       parts = Part.active
       materials = Material.active
@@ -213,6 +219,34 @@ class InventoriesController < ApplicationController
     end
   end
 
+  def price
+    respond_to do |format|
+      format.js do
+        @item = params[:uid].presence&.objectify_uid
+        render 'price', layout: 'blank'
+      end
+    end
+  end
+
+  def update_price
+    respond_to do |format|
+      format.js do
+        @item = params[:uid].presence&.objectify_uid
+        @item.update(price: params[:price])
+        @item.reload
+        render 'update_price', layout: 'blank'
+      end
+    end
+  end
+
+  def update_ordered
+    @item = item_quantity_params[:uid].presence&.objectify_uid
+    @item.update(last_ordered_at: Date.today, last_ordered_quantity: item_quantity_params[:quantity])
+    @item.reload
+    @message = "#{@item.name}: #{@item.last_ordered_quantity} marked as ordered."
+    render json: { message: @message, uid: @item.uid, order_language: @item.order_language }
+  end
+
   private
 
   def authorize_inventory
@@ -228,9 +262,14 @@ class InventoriesController < ApplicationController
                                       :receiving,
                                       :shipping,
                                       :manual,
+                                      :extrapolate,
                                       :event_id,
                                       :completed_at,
                                       technologies: []
+  end
+
+  def item_quantity_params
+    params.require(:item).permit(:uid, :quantity)
   end
 
   def set_inventory

@@ -90,6 +90,9 @@ Rails.application.routes.draw do
   resources :inventories do
     collection do
       get 'history'
+      get 'price'
+      patch 'update_price'
+      patch 'update_ordered'
       get 'order_all'
       get 'order_goal'
       get 'order'

@@ -6,7 +6,6 @@ class CountTransferJob < ApplicationJob
   attr_accessor :inventory, :receiving
 
   # called by InventoriesController#update via @inventory.run_count_transfer_job
-
   # called by ExtrapolateInventoryJob#perform via @inventory.run_count_transfer_job
 
   def perform(inventory)

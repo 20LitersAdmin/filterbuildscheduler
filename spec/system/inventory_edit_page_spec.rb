@@ -104,7 +104,7 @@ RSpec.describe 'Inventory edit page', type: :system do
       sign_in @user
 
       [['technology 1', 'tech1'], ['technology 2', 'tech2'], ['technology 3', 'tech3']].each do |ary|
-        tech = create :technology, name: ary[0], short_name: ary[1], list_worthy: true
+        tech = create :technology, name: ary[0], short_name: ary[1]
         create :count_tech, item: tech, inventory: @inventory, loose_count: 0, unopened_boxes_count: 0
       end
 
