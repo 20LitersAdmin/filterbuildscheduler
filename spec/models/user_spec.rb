@@ -213,7 +213,7 @@ RSpec.describe User, type: :model do
         user.is_oauth_admin = true
         user.is_leader = true
         user.is_scheduler = true
-        user.send_notification_emails = true
+        user.send_event_emails = true
         user.send_inventory_emails = true
 
         expect(user.can_do_inventory?).to eq false
@@ -240,7 +240,7 @@ RSpec.describe User, type: :model do
         user.is_oauth_admin = true
         user.is_leader = true
         user.is_scheduler = true
-        user.send_notification_emails = true
+        user.send_event_emails = true
 
         expect(user.can_do_inventory?).to eq false
       end
@@ -275,7 +275,7 @@ RSpec.describe User, type: :model do
       it 'returns false' do
         user.is_oauth_admin = true
         user.does_inventory = true
-        user.send_notification_emails = true
+        user.send_event_emails = true
         user.send_inventory_emails = true
 
         expect(user.can_edit_events?).to eq false
@@ -306,7 +306,7 @@ RSpec.describe User, type: :model do
         user.is_leader = true
         user.does_inventory = true
         user.is_data_manager = true
-        user.send_notification_emails = true
+        user.send_event_emails = true
         user.send_inventory_emails = true
 
         expect(user.can_manage_leaders?).to eq false

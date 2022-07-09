@@ -92,7 +92,7 @@ RSpec.describe 'Inventory#index', type: :system do
 
   it 'shows a table of items and their latest counts' do
     inventory
-    create_list :technology, 2, list_worthy: true
+    create_list :technology, 2
     create_list :component, 3
     create_list :part, 5
     create_list :material, 3

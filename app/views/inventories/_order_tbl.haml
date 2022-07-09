@@ -9,12 +9,26 @@
         .float-right
           = link_to order_tbl.order_url, target: '_blank', rel: 'noopener noreferrer' do
             = icon 'fas', 'external-link-alt'
+          = link_to history_inventories_path(uid: order_tbl.uid), remote: true, data: { target: '#item_history_modal', toggle: 'modal' } do
+            = icon('fas', 'calendar-day')
     - else
       = order_tbl.uid_and_name
+  %td.small-text
+    - if order_tbl.sku.present?
+      - if order_tbl.order_url.present?
+        = link_to order_tbl.sku, order_tbl.order_url, target: '_blank', rel: 'noopener noreferrer'
+      - else
+        = order_tbl.sku
   - if @locator == 'item'
     %td.item-supplier.small-text
       - if (supplier = order_tbl.supplier)
-        = link_to supplier.name, rails_admin.edit_path(model_name: supplier.model_name.name, id: supplier.id)
+        .clear-both
+          .float-left
+            = link_to supplier.name, rails_admin.edit_path(model_name: supplier.model_name.name, id: supplier.id)
+          - if supplier.url.present?
+            .float-right
+              = link_to supplier.url, target: '_blank', rel: 'noopener noreferrer' do
+                = icon 'fas', 'external-link-alt'
   %td.center-align
     = human_float(order_tbl.weeks_to_deliver)
   %td.center-align
@@ -24,20 +38,22 @@
   %td.item-cost.right-align
     $
     %span.item-cost-value= order_tbl.price
+    %span
+      = link_to price_inventories_path(uid: order_tbl.uid), remote: true, data: { target: '#item_price_modal', toggle: 'modal' } do
+        = icon 'far', 'edit'
   %td.min-order
-    = text_field_tag "#{@locator}_min_order_#{order_tbl.id}", human_number(order_tbl.min_order), class: 'min-order-field right-align', min: 0
+    = text_field_tag "#{@locator}_min_order_#{order_tbl.uid}", human_number(order_tbl.min_order), class: 'min-order-field right-align', min: 0
   %td.order-total.right-align
     $
     %span.order-total-amt= number_with_delimiter(order_tbl.reorder_total_cost, delimiter: ',')
   %td.order-check.center-align.small-text
-    = check_box_tag "checkbox_#{@locator}_#{order_tbl.id}", 1, false, class: 'order_checkbox'
-    - if order_tbl.on_order?
-
-      %br
-      %i
-        - if order_tbl.partial_received?
-          Awaiting #{human_number(order_tbl.partial_order_remainder)}
-          %br from #{human_date(order_tbl.last_ordered_at)}
-        - else
-          Ordered #{human_number(order_tbl.last_ordered_quantity)}
-          %br on #{human_date(order_tbl.last_ordered_at)}
+    .clear-both
+      .float-left
+        = check_box_tag "checkbox_#{@locator}_#{order_tbl.uid}", 1, false, class: 'order_checkbox'
+      .float-right
+        = link_to '#', data: { item: order_tbl.uid, confirm: "Mark #{order_tbl.name} as ordered on today's date with current quantity?" }, class: 'update-ordered-btn' do
+          = icon 'fas', 'save fa-2x'
+    .order-language-div
+      - if order_tbl.on_order?
+        %br
+        %i.order-language= order_tbl.order_language

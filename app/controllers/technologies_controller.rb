@@ -9,7 +9,7 @@ class TechnologiesController < ApplicationController
     @quantity = params[:q].present? ? params[:q].to_i : 1
     @quantity_val = params[:q].to_i if params[:q].present?
 
-    @technologies_select = Technology.list_worthy.pluck(:short_name, :id)
+    @technologies_select = Technology.for_inventories.pluck(:short_name, :id)
     # params[:tech] can be used to limit the donations needed
     tech_id_ary = broad_set_params.except(:q).keys
 
@@ -21,7 +21,7 @@ class TechnologiesController < ApplicationController
         @items << technology.materials.active.joins(:supplier).pluck(:uid, :name, :'suppliers.name', :sku, :quantities, :price_cents)
       end
     else
-      @selected_technologies = Technology.list_worthy
+      @selected_technologies = Technology.for_inventories
       @items << Part.not_made_from_material.joins(:supplier).pluck(:uid, :name, :'suppliers.name', :sku, :quantities, :price_cents)
       @items << Material.active.joins(:supplier).pluck(:uid, :name, :'suppliers.name', :sku, :quantities, :price_cents)
     end
@@ -30,7 +30,7 @@ class TechnologiesController < ApplicationController
 
   def item_list
     # Item names alphabetically with UID (find UID by name)
-    technologies = Technology.list_worthy.pluck(:uid, :name)
+    technologies = Technology.for_inventories.pluck(:uid, :name)
     components =   Component.active.order(:name).pluck(:uid, :name)
     parts =        Part.active.order(:name).pluck(:uid, :name)
     materials =    Material.active.order(:name).pluck(:uid, :name)
@@ -57,7 +57,7 @@ class TechnologiesController < ApplicationController
 
   def labels
     # page to select multiple items to print individual lables
-    @tech_choices = Technology.list_worthy.pluck(:id, :short_name)
+    @tech_choices = Technology.for_inventories.pluck(:id, :short_name)
 
     if params[:techs].present?
       @techs = Technology.where(id: params[:techs].split(','))
@@ -72,7 +72,7 @@ class TechnologiesController < ApplicationController
       end
       @items = [technologies, components.flatten(1).uniq, parts.flatten(1).uniq, materials.flatten(1).uniq].flatten(1)
     else
-      technologies = Technology.list_worthy.pluck(:uid, :name)
+      technologies = Technology.for_inventories.pluck(:uid, :name)
       components =   Component.active.order(:name).pluck(:uid, :name)
       parts =        Part.active.order(:name).pluck(:uid, :name)
       materials =    Material.active.order(:name).pluck(:uid, :name)

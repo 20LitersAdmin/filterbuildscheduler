@@ -185,13 +185,6 @@ RSpec.describe Material, type: :model do
     end
   end
 
-  describe '#uid_and_name' do
-    it 'returns a string with the uid and name' do
-      expect(material.uid_and_name).to include material.uid
-      expect(material.uid_and_name).to include material.name
-    end
-  end
-
   private
 
   describe '#process_image' do

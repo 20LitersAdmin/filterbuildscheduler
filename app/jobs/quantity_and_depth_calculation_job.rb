@@ -13,7 +13,7 @@ class QuantityAndDepthCalculationJob < ApplicationJob
     set_all_assembly_depths_to_zero
     set_all_item_quantities_to_zero
 
-    Technology.list_worthy.each do |technology|
+    Technology.for_inventories.each do |technology|
       @technology = technology
       process_technology
 
