@@ -303,8 +303,7 @@ RailsAdmin.config do |config|
       scopes %i[active discarded]
       sort_by :name
       field :name
-      field :short_name
-      field :owner do
+      field :short_name do
         column_width 80
       end
       field :price, :money do
@@ -314,15 +313,11 @@ RailsAdmin.config do |config|
       field :family_friendly do
         column_width 80
       end
-      field :ideal_build_length do
-        column_width 80
-      end
       field :ideal_group_size do
         column_width 80
       end
-      field :default_goal do
-        column_width 80
-      end
+      field :for_events, :boolean
+      field :for_inventories, :boolean
     end
 
     show do
@@ -434,10 +429,10 @@ RailsAdmin.config do |config|
           read_only true
           help 'Calculated from parts and materials'
         end
-        field :for_events do
+        field :for_events, :boolean do
           help 'Un-check to hide from Event dropboxes'
         end
-        field :for_inventories do
+        field :for_inventories, :boolean do
           help 'Un-check to hide from Inventory dropboxes'
         end
         field :discarded_at, :date do
