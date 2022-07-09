@@ -207,6 +207,9 @@ RailsAdmin.config do |config|
         field :is_leader do
           help 'If making a new leader, use "Save and edit" button to see additional leader options and settings.'
         end
+        field :send_event_emails do
+          help 'Will get an email everytime an event is created or changed'
+        end
         field :does_inventory
         field :send_inventory_emails do
           help 'Will get an email everytime an inventory is complete'
@@ -219,9 +222,6 @@ RailsAdmin.config do |config|
         end
         field :is_data_manager do
           help 'Adds Event Reports and manages User Communication Preferences'
-        end
-        field :send_notification_emails do
-          help 'Will get an email everytime an event is created or changed'
         end
         field :is_admin do
           help 'Full access to all system functions. Admins can\'t be discarded or deleted.'
@@ -331,8 +331,11 @@ RailsAdmin.config do |config|
         field :name
         field :short_name
         field :price, :money
-        field :list_worthy do
-          label 'Show on lists'
+        field :for_events do
+          label 'Show on Event lists'
+        end
+        field :for_inventories do
+          label 'Show on Inventory lists'
         end
         field :discarded_at, :date
       end
@@ -431,8 +434,11 @@ RailsAdmin.config do |config|
           read_only true
           help 'Calculated from parts and materials'
         end
-        field :list_worthy do
-          help 'Un-check to hide from Inventory and Build dropboxes'
+        field :for_events do
+          help 'Un-check to hide from Event dropboxes'
+        end
+        field :for_inventories do
+          help 'Un-check to hide from Inventory dropboxes'
         end
         field :discarded_at, :date do
           help 'Discarding hides this technology from use'
@@ -856,9 +862,9 @@ RailsAdmin.config do |config|
       group 'Order Info' do
         active false
         field :last_ordered_at, :date
-        field :last_ordered_quantity, :delimited
+        field :last_ordered_quantity
         field :last_received_at, :date
-        field :last_received_quantity, :delimited
+        field :last_received_quantity
       end
     end
   end
@@ -1042,9 +1048,9 @@ RailsAdmin.config do |config|
       group 'Order Info' do
         active false
         field :last_ordered_at, :date
-        field :last_ordered_quantity, :delimited
+        field :last_ordered_quantity
         field :last_received_at, :date
-        field :last_received_quantity, :delimited
+        field :last_received_quantity
       end
     end
   end

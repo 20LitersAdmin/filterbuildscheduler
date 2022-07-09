@@ -205,13 +205,6 @@ RSpec.describe Part, type: :model do
     end
   end
 
-  describe '#uid_and_name' do
-    it 'returns a string with the uid and name' do
-      expect(part.uid_and_name).to include part.uid
-      expect(part.uid_and_name).to include part.name
-    end
-  end
-
   private
 
   describe '#process_image' do

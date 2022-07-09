@@ -33,7 +33,7 @@ RSpec.describe 'Creating a new inventory', type: :system do
       sign_in create(:inventoryist)
       visit new_inventory_path
 
-      expect(page).to have_content "Create a new manual inventory"
+      expect(page).to have_content 'Create a new manual inventory'
     end
 
     it 'users who receive inventory redirects to home page' do
@@ -48,7 +48,7 @@ RSpec.describe 'Creating a new inventory', type: :system do
       sign_in create(:admin)
       visit new_inventory_path
 
-      expect(page).to have_content "Create a new manual inventory"
+      expect(page).to have_content 'Create a new manual inventory'
       expect(page).to have_css('input#inventory_date')
       expect(page).to have_button 'Create Inventory'
     end

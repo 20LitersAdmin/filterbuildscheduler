@@ -3,6 +3,8 @@
 class Part < ApplicationRecord
   include Discard::Model
   include Itemable
+  include ApplicationHelper
+  include ActionView::Helpers::NumberHelper
 
   # SCHEMA notes
   # #history is a JSON store of historical inventory counts: { date.iso8601 => { loose: 99, box: 99, available: 99 } }
@@ -64,10 +66,20 @@ class Part < ApplicationRecord
 
     return true if last_received_at.nil?
 
-    ## partial order received, still waiting for the rest
+    # partial order received, still waiting for the rest
     return true if partial_received?
 
     last_ordered_at > last_received_at
+  end
+
+  def order_language
+    return '' unless on_order?
+
+    if partial_received?
+      "Awaiting #{human_number(partial_order_remainder)}<br/> from #{human_date(last_ordered_at)}".html_safe
+    else
+      "Ordered #{human_number(last_ordered_quantity)}<br/> on #{human_date(last_ordered_at)}".html_safe
+    end
   end
 
   def partial_received?

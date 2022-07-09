@@ -34,7 +34,7 @@ class EventsController < ApplicationController
       redirect_to action: :index
     else
       @locations = Location.active.order(:name)
-      @technologies = Technology.list_worthy.order(:id).map { |t| ["#{t.name} (#{t.short_name})", t.id] }
+      @technologies = Technology.for_events.order(:id).map { |t| ["#{t.name} (#{t.short_name})", t.id] }
       render 'new'
     end
   end
@@ -68,7 +68,7 @@ class EventsController < ApplicationController
 
   def edit
     @locations = Location.active.order(:name)
-    @technologies = Technology.list_worthy.order(:id).map { |t| ["#{t.name} (#{t.short_name})", t.id] }
+    @technologies = Technology.for_events.order(:id).map { |t| ["#{t.name} (#{t.short_name})", t.id] }
   end
 
   def index
@@ -126,7 +126,7 @@ class EventsController < ApplicationController
 
   def new
     @locations = Location.active.order(:name)
-    @technologies = Technology.list_worthy.order(:id).map { |t| ["#{t.name} (#{t.short_name})", t.id] }
+    @technologies = Technology.for_events.order(:id).map { |t| ["#{t.name} (#{t.short_name})", t.id] }
 
     if params[:source_event].blank?
       @indicator = 'new'
@@ -272,7 +272,7 @@ class EventsController < ApplicationController
     else
       flash[:danger] = 'There was a problem saving this event report.'
       @locations = Location.active.order(:name)
-      @technologies = Technology.list_worthy.order(:id).map { |t| ["#{t.name} (#{t.short_name})", t.id] }
+      @technologies = Technology.for_events.order(:id).map { |t| ["#{t.name} (#{t.short_name})", t.id] }
       render 'edit'
     end
   end
