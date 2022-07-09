@@ -51,7 +51,7 @@ RSpec.describe 'Email registered users:', type: :system do
 
   context 'admin' do
     before :each do
-      @user = create(:admin, send_notification_emails: true)
+      @user = create(:admin, send_event_emails: true)
       sign_in @user
       registrations
       visit messenger_event_registrations_path event

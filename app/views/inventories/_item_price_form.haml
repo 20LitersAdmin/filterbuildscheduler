@@ -1,0 +1,13 @@
+-# frozen_string_literal: true
+
+#item_price.col-xs-12
+  .row
+    .col-xs-12
+      %h2 Update price for #{@item.name}:
+      %p Currently: #{humanized_money_with_symbol @item.price}
+    .col-xs-12
+      = form_with url: update_price_inventories_path(uid: @item.uid), method: 'patch', class: 'row' do |f|
+        .col-xs-12.col-sm-6
+          = f.number_field :price, value: @item.price, class: 'full-width', step: 0.01
+        .col-xs-12.col-sm-6
+          = f.submit 'Update price', class: 'btn yellow'

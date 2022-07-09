@@ -19,6 +19,10 @@
       .col-xs-6.col-sm-3.right-align.form-group
         = submit_tag 'Filter', class: 'btn yellow', name: nil
   #scrolling.row
+    .col-xs-12
+      %i Click on the arrow to open the item's order URL, click on the calendar to see the history.
+      %br
+      %i Click on the save icon to record the order quantity as ordered as of today.
     #order_item_div.col-xs-12
       - @locator = 'item'
       %table#order_item_tbl.table.table-striped.table-bordered.datatable-order-item
@@ -29,3 +33,22 @@
       = render partial: 'order_supplier', collection: @suppliers, locals: { items: @items }
       - if @items_w_no_supplier.any?
         = render partial: 'order_supplier', object: Supplier.new, locals: { items: @items_w_no_supplier }
+
+
+#item_history_modal.modal.fade{ role: 'dialog', 'tab-index': '-1' }
+  .modal-dialog.modal-lg{ role: 'document' }
+    .modal-content
+      .modal-header
+        %button.close{ 'aria-label': 'Close', 'data-dismiss': 'modal', type: 'button' }
+          %span{ 'aria-hidden': 'true' } ×
+      #history_modal_body.modal-body.row
+        %p Oops! Something broke.
+
+#item_price_modal.modal.fade.in{ role: 'dialog', 'tab-index': '-1' }
+  .modal-dialog.modal-lg{ role: 'document' }
+    .modal-content
+      .modal-header
+        %button.close{ 'aria-label': 'Close', 'data-dismiss': 'modal', type: 'button' }
+          %span{ 'aria-hidden': 'true' } ×
+      #price_modal_body.modal-body.row
+        %p Oops! Something broke.

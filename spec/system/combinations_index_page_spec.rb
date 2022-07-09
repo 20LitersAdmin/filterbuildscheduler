@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe 'Combinations#index' do
-  let(:techs) { create_list :technology, 3, list_worthy: true }
+  let(:techs) { create_list :technology, 3 }
 
   context 'when visited by a' do
     it 'anon user, it redirects to sign-in page' do

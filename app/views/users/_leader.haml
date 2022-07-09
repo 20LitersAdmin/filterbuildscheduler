@@ -15,7 +15,7 @@
   %td.no-print
     = select_tag "#{leader.id}_type", options_for_select(@types, User.leader_types[leader.leader_type]), class: 'type-select'
   %td
-    = leader.technologies.list_worthy.map(&:short_name).join(', ')
+    = leader.technologies.for_events.map(&:short_name).join(', ')
   %td
     %p{ id: "#{leader.id}_leader_notes" }= leader.leader_notes
     %p.no-print

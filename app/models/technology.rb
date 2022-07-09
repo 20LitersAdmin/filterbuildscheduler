@@ -39,7 +39,8 @@ class Technology < ApplicationRecord
   scope :active, -> { kept }
 
   scope :status_worthy, -> { kept.where('monthly_production_rate > ?', 0).order(monthly_production_rate: 'desc') }
-  scope :list_worthy, -> { kept.where(list_worthy: true) }
+  scope :for_events, -> { kept.where(for_events: true) }
+  scope :for_inventories, -> { kept.where(for_inventories: true) }
   scope :finance_worthy, -> { kept.where.not(price_cents: 0).order(:name) }
   scope :with_set_goal, -> { kept.where.not(default_goal: 0) }
 

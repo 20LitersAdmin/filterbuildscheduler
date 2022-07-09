@@ -39,7 +39,7 @@ class Contactor
   private
 
   def collect_technologies
-    self.technology_ids = technology == '0' ? Technology.list_worthy.map(&:id) : [technology.to_i]
+    self.technology_ids = technology == '0' ? Technology.for_events.map(&:id) : [technology.to_i]
   end
 
   def determine_availability

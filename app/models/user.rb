@@ -43,12 +43,12 @@ class User < ApplicationRecord
   scope :active, -> { kept }
 
   scope :admins,                -> { kept.where(is_admin: true) }
-  scope :builders,              -> { kept.where(is_admin: false, is_leader: false, does_inventory: false, send_notification_emails: false, send_inventory_emails: false) }
+  scope :builders,              -> { kept.where(is_admin: false, is_leader: false, does_inventory: false, send_event_emails: false, send_inventory_emails: false) }
   scope :data_managers,         -> { kept.where(is_data_manager: true) }
   scope :inventoryists,         -> { kept.where(does_inventory: true) }
   scope :leaders,               -> { kept.where(is_leader: true) }
   scope :setup_crew,            -> { kept.where(is_setup_crew: true) }
-  scope :notify,                -> { kept.where(send_notification_emails: true) }
+  scope :notify,                -> { kept.where(send_event_emails: true) }
   scope :notify_inventory,      -> { kept.where(send_inventory_emails: true) }
   scope :non_builders,          -> { kept.where('is_admin = TRUE OR is_leader = TRUE OR does_inventory = TRUE OR is_scheduler = TRUE OR is_data_manager = TRUE') }
   scope :schedulers,            -> { kept.where(is_scheduler: true) }
@@ -300,7 +300,7 @@ class User < ApplicationRecord
     return unless is_leader? && technologies.any?
 
     ary = []
-    technologies.list_worthy.order(:name).pluck(:name, :owner).each do |tech|
+    technologies.for_events.order(:name).pluck(:name, :owner).each do |tech|
       ary << "#{tech[0]} (#{tech[1]})"
     end
 
