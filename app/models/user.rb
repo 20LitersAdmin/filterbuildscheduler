@@ -239,7 +239,7 @@ class User < ApplicationRecord
     # rails_admin users#index and #show
     ary = []
     ary << 'Admin' if is_admin
-    ary << 'Leader' if is_leader
+    ary << "Leader (#{leader_type})" if is_leader
     ary << 'Inventoryist' if does_inventory
     ary << 'Scheduler' if is_scheduler
     ary << 'Data Manager' if is_data_manager
@@ -247,7 +247,6 @@ class User < ApplicationRecord
     ary << 'Setup Crew' if is_setup_crew
 
     ary << 'Builder' if ary.blank?
-
     ary
   end
 
