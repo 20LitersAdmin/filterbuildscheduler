@@ -110,7 +110,9 @@ RailsAdmin.config do |config|
         field :phone do
           label 'Phone'
         end
-        field :role
+        field :role_html do
+          label 'Roles'
+        end
         field :email_opt_out, :true_is_bad_false_is_good
       end
 
@@ -137,6 +139,8 @@ RailsAdmin.config do |config|
       end
 
       group 'Leader Stats' do
+        visible { bindings[:object].is_leader? }
+
         field :events_led do
           pretty_value { value.size }
         end
@@ -144,21 +148,17 @@ RailsAdmin.config do |config|
           label 'Leader hours'
           pretty_value { precise(value) }
         end
-        field :primary_location
-        field :availability do
-          visible { bindings[:object].is_leader? }
-        end
       end
 
       group 'Leader Qualifications' do
+        visible { bindings[:object].is_leader? }
+
         field :techs_qualified_html do
           label 'Qualifications'
         end
-
-        field :role_html do
-          label 'Roles'
-          visible { bindings[:object].is_leader? }
-        end
+        field :leader_type
+        field :primary_location
+        field :availability
       end
 
       group 'System access' do
@@ -174,7 +174,6 @@ RailsAdmin.config do |config|
         field :lname
         field :email
         field :email_opt_out do
-          # TODO: not true for VWF
           help 'Prevents ANY email from being sent; overrides settings in Permissions.<br />Is synced with Kindful and Mailchimp.'.html_safe
         end
         field :phone
@@ -233,18 +232,13 @@ RailsAdmin.config do |config|
       end
 
       group 'Leader details' do
-        field :primary_location do
-          visible { bindings[:object].is_leader? }
-        end
-        field :available_business_hours do
-          visible { bindings[:object].is_leader? }
-        end
-        field :available_after_hours do
-          visible { bindings[:object].is_leader? }
-        end
+        visible { bindings[:object].is_leader? }
+        field :primary_location
+        field :leader_type
+        field :available_business_hours
+        field :available_after_hours
         field :technologies do
           label 'Qualified to lead:'
-          visible { bindings[:object].is_leader? }
           inline_add false
         end
       end
