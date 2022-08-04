@@ -1,4 +1,4 @@
 -# frozen_string_literal: true
 
 .event-container
-  = render partial: @event
+  = render partial: @event, locals: { no_date: true }
