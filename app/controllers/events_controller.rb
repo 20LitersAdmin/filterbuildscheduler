@@ -6,6 +6,7 @@ class EventsController < ApplicationController
                   attendance
                   destroy
                   edit
+                  event_div
                   leader_register
                   leader_unregister
                   leaders
@@ -69,6 +70,10 @@ class EventsController < ApplicationController
   def edit
     @locations = Location.active.order(:name)
     @technologies = Technology.for_events.order(:id).map { |t| ["#{t.name} (#{t.short_name})", t.id] }
+  end
+
+  def event_div
+    render 'event_div', layout: 'simple'
   end
 
   def index
