@@ -25,6 +25,10 @@ class EventPolicy < ApplicationPolicy
     create?
   end
 
+  def event_div?
+    show?
+  end
+
   def lead?
     create?
   end
