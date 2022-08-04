@@ -1,0 +1,13 @@
+-# frozen_string_literal: true
+
+!!!
+%html
+  %head
+    %meta{ content: 'width=device-width, initial-scale=1', name: 'viewport' }
+    %title Make [20 Liters]
+    = csrf_meta_tags
+    = stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track': 'reload'
+  %body.twentyliters{ data: { action: controller.action_name, controller: controller.controller_name, site: '20Liters-make' } }
+    .main
+      .row
+        = yield

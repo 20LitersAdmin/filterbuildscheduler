@@ -54,7 +54,7 @@ Rails.application.routes.draw do
       get 'poster'
       get 'replicate'
       put 'replicator'
-      # uses JS to show occurrences on /replicator
+      get 'event_div'
     end
     resources :setups do
       member do
