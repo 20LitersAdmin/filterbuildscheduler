@@ -73,6 +73,9 @@ class EventsController < ApplicationController
   end
 
   def event_div
+    # allow this page to be iframed on 20liters.org
+    response.headers.delete 'X-Frame-Options'
+
     render 'event_div', layout: 'simple'
   end
 
