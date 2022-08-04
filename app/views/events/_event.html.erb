@@ -1,4 +1,5 @@
 <% use_edit_link ||= false %>
+<% no_date ||= false %>
 <% disabled = event.registrations_filled? && !current_user&.admin_or_leader? && !current_user.registered?(event) %>
 <div class="event <%= 'disabled' if disabled %>" id="event_<%= event.id %>">
   <% if event.you_are_attendee(@user).present? || event.you_are_leader(@user).present? %>
@@ -9,7 +10,11 @@
       <div>
         <span class="location">Hosted by <%= event.location.name %></span>
       </div>
-      <h2 class="date"><%= event.format_date_only %></h2>
+      <%- if no_date  %>
+        <br>
+      <% else %>
+        <h2 class="date"><%= event.format_date_only %></h2>
+      <% end -%>
       <h3 class="time"><%= event.format_time_only %></h3>
       <h3 class="title"><%= event.title %></h3>
       <div class='family-friendly'>
