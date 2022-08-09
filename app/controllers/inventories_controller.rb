@@ -211,7 +211,7 @@ class InventoriesController < ApplicationController
     respond_to do |format|
       format.js do
         @item = params[:uid].presence&.objectify_uid
-        render 'history', layout: 'blank'
+        render 'history', layout: false
       end
       format.html do
         @inventories = Inventory.all.order(date: :desc)
@@ -223,7 +223,7 @@ class InventoriesController < ApplicationController
     respond_to do |format|
       format.js do
         @item = params[:uid].presence&.objectify_uid
-        render 'price', layout: 'blank'
+        render 'price', layout: false
       end
     end
   end
@@ -234,7 +234,7 @@ class InventoriesController < ApplicationController
         @item = params[:uid].presence&.objectify_uid
         @item.update(price: params[:price])
         @item.reload
-        render 'update_price', layout: 'blank'
+        render 'update_price', layout: false
       end
     end
   end

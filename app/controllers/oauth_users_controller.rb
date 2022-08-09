@@ -66,16 +66,16 @@ class OauthUsersController < ApplicationController
 
       if @error
         respond_to do |format|
-          format.js { render 'error', layout: 'blank' }
+          format.js { render 'error', layout: false }
         end
       else
         respond_to do |format|
-          format.js { render 'querying', layout: 'blank' }
+          format.js { render 'querying', layout: false }
         end
       end
     else
       respond_to do |format|
-        format.js { render 'update', layout: 'blank' }
+        format.js { render 'update', layout: false }
       end
     end
   end
