@@ -7,7 +7,7 @@ class AssembliesController < ApplicationController
 
   def edit
     respond_to do |format|
-      format.js { render 'edit', layout: 'blank' }
+      format.js { render 'edit', layout: false }
     end
   end
 
@@ -22,13 +22,13 @@ class AssembliesController < ApplicationController
     end
 
     respond_to do |format|
-      format.js { render 'update', layout: 'blank' }
+      format.js { render 'update', layout: false }
     end
   end
 
   def new
     respond_to do |format|
-      format.js { render 'new', layout: 'blank' }
+      format.js { render 'new', layout: false }
     end
   end
 
@@ -55,9 +55,9 @@ class AssembliesController < ApplicationController
     respond_to do |format|
       format.js do
         if new_record
-          render 'create', layout: 'blank'
+          render 'create', layout: false
         else
-          render 'update', layout: 'blank'
+          render 'update', layout: false
         end
       end
     end
@@ -73,7 +73,7 @@ class AssembliesController < ApplicationController
     end
 
     respond_to do |format|
-      format.js { render 'delete', layout: 'blank' }
+      format.js { render 'delete', layout: false }
     end
   end
 
