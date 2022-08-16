@@ -4,9 +4,12 @@
     = link_to 'Back', labels_path, class: 'btn yellow'
   %h4 Printing instructions:
   %ul
+    %li Use Avery 8136 labels (4"x2", 10 per page)
     %li Print from Google Chrome
     %li Under "More Settings", set Margins to "None"
-    %li Use Avery 8136 labels (4"x2", 10 per page), lay face-up in Operations Xerox 7120
+    %li Print to PDF, not directly to printer
+    %li from Preview, print to Xerox 7120 using Color Tray 5 settings
+    %li Xerox 7120 tray 5: place labels face down with guards against long edge
 
 -# One full page of labels for each item
 - @ary.each do |item|
