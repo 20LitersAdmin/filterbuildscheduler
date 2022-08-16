@@ -27,13 +27,6 @@
       = @location.instructions
       %br/
     %br/
-    %strong
-      PLEASE WEAR A MASK. A facemask must be worn to participate in this event.
-    %br/
-    Masks that cover the nose and mouth must be worn the whole time. A mask will be provided if you don't bring one.
-    %br/
-    You must wear a mask even if you have been vaccinated.
-    %br/
     - if @event.description.present?
       %br/
       %strong Additional Event Details:
@@ -52,7 +45,6 @@
   %p{ style: 'margin-bottom: 6px;' }
     %strong What to bring:
   %ul{ style: 'margin-top: 6px;' }
-    %li A facemask that covers your nose and mouth
     %li A water bottle is a good idea
     %li Comfortable, close-toed shoes
     %li A desire to help the 383 million people without access to clean water
