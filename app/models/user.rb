@@ -226,6 +226,10 @@ class User < ApplicationRecord
     "#{fname} #{lname[0]}"
   end
 
+  def name_reverse
+    "#{lname} #{fname}"
+  end
+
   def password_required?
     # Devise: make password optional
     false
