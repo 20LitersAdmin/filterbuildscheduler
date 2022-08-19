@@ -3,7 +3,9 @@ Hello <%= @recipient.fname %>,
 Thanks for coming to the filter build on <%= @event.format_date_only %>!
 
 We built <%= pluralize(@event.technology_results, @technology.name) %>!
+
 These filters will make dirty water clean for <%= pluralize(number_with_delimiter(@event.results_people, delimiter: ','), 'people') %> and produce <%= pluralize(number_with_delimiter(@event.results_liters_per_day, delimiter: ','), 'liter') %> of clean water every day.
+
 That's <%= pluralize(number_with_delimiter(@event.results_liters_per_year, delimiter: ','), 'liter') %> of clean water every year for at least the next <%= pluralize(number_with_delimiter(@event.results_timespan, delimiter: ','), 'year') %>.
 
 
@@ -15,12 +17,24 @@ Starting with improving health, saving and earning more money, and keeping kids 
 Thanks for providing life, health and prosperity to people you'll probably never meet in this lifetime.
 
 <% if @registration.guests_attended&.positive? %>
-  You brought <%= pluralize(@registration.guests_attended, 'guest') %>. Please share these results with them.
+You brought <%= pluralize(@registration.guests_attended, 'guest') %>. Please share these results with them.
 <% end -%>
+
+* Stats are great, but what does this mean?
+We provide updates on what's happening with our teams in Rwanda several times every month. Go see our work in action for yourself:
+https://track.20liters.org
 
 * Want to do it again? *
 Check out more builds or request a custom event online:
 https://make.20liters.org
+
+* Think you could do more? *
+Many of our filter builds are lead by volunteers just like you. Volunteer leaders are our force multiplyer that allow us to reach more people and build more filters.
+And, we always need more volunteers to make our mission possible.
+
+- Sign up to volunteer: https://20liters.org/volunteer
+
+- Check out Filter Build Leadership: https://20liters.org/wp-content/uploads/2019/12/20-Liters-Role-Filter-Build-Leader.pdf
 
 
 
