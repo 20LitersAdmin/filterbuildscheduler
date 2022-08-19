@@ -1,6 +1,6 @@
 -# frozen_string_literal: true
 %tr
-  %td
+  %td{data: {sort: leader.name_reverse }}
     = leader.name
   %td
     = leader.email
@@ -17,7 +17,8 @@
   %td
     = leader.technologies.for_events.map(&:short_name).join(', ')
   %td
-    %p{ id: "#{leader.id}_leader_notes" }= leader.leader_notes
+    %p{ id: "#{leader.id}_leader_notes" }
+      = leader.leader_notes
     %p.no-print
       = link_to icon('far', 'edit'), edit_leader_notes_path(leader), remote: true
   %td.no-print
