@@ -60,9 +60,9 @@ RSpec.describe 'Events#Lead', type: :system do
     end
   end
 
-  it 'shows events still needing leaders' do
+  it 'shows all future events' do
     events
-    event4 = create(:event, min_leaders: 1, max_leaders: 1, title: 'NOT FAKER')
+    event4 = create(:past_event, title: 'PAST EVENT')
     create(:registration_leader, event: event4)
 
     sign_in create(:leader)
