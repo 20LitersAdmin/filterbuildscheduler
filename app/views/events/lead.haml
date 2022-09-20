@@ -2,7 +2,7 @@
 
 .container.event-lead
   .event-container
-    %h2.heading Builds that need leaders
+    %h2.heading Upcoming Builds
     - if @events.any?
       %table#events_leaders_table.table.table-striped.datatable-events-lead
         %thead
@@ -18,4 +18,4 @@
             %th Need / Want
         %tbody= render partial: 'table', collection: @events
     - else
-      %h4 All events have leaders!
+      %h4 No Upcoming build events
