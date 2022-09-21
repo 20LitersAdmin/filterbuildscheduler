@@ -12,9 +12,10 @@
       = f.label :leader, 'Register as Leader?'
       = f.check_box :leader
   %div
-    %p
-      Room for #{pluralize(@event.registrations_remaining - 1, 'more guest')}
-    = f.input :guests_registered, label: 'Additional Guests (excluding you)', input_html: { min: 0, max: @event.registrations_remaining - 1 }
+    - if @event.allow_guests?
+      %p
+        Room for #{pluralize(@event.registrations_remaining - 1, 'more guest')}
+      = f.input :guests_registered, label: 'Additional Guests (excluding you)', input_html: { min: 0, max: @event.registrations_remaining - 1 }
     = f.input :accommodations, label: 'Notes', as: :text
   - if !@registration.waiver_accepted?
     %div
