@@ -1,0 +1,37 @@
+-# frozen_string_literal: true
+
+%h2 Share This Event!
+.share-container
+  %div
+    .fb-share-button{ data: { href: "https://make.20liters.org#{request.path}", layout: 'button', size: 'small' } }
+  .twitter-div
+    %a.twitter-share-button{ data: { 'show-count': 'false', text: current_user&.registered?(@event) ? 'Join me in building water filters with 20 Liters!' : 'Help build water filters with 20 Liters!', href: 'https://twitter.com/share?ref_src=twsrc%5Etfw' } } Tweet
+    %script{ async: '', charset: 'utf-8', src: 'https://platform.twitter.com/widgets.js' }
+  .poster-div
+    = link_to poster_event_path(@event), class: 'btn-sharing', id: 'poster_link', target: '_blank' do
+      %i.fa.fa-print
+      Poster
+  .copy-div
+    %a#btn_copy.btn-sharing{ href: '#' }
+      %i.fa.fa-copy
+      Copy Link
+    %p#copy_confirm Copied to clipboard!
+%div
+  %input#copy_url{ type: 'text', value: request.url }
+#fb-root
+:javascript
+  (function(d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) return;
+    js = d.createElement(s); js.id = id;
+    js.src = 'https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v3.0';
+    fjs.parentNode.insertBefore(js, fjs);
+  }(document, 'script', 'facebook-jssdk'));
+
+- content_for :fb_og do
+  %meta{ content: request.url, property: 'og:url' }
+  %meta{ content: 'website', property: 'og:type' }
+  %meta{ content: 'Filter Build', property: 'og:title' }
+  %meta{ content: 'Tackle the global clean water crisis by assembling water filters.', property: 'og:description' }
+  %meta{ content: image_url('20L_Logo.png'), property: 'og:image' }
+  %meta{ content: '20Liters.org', property: 'og:image:alt' }
