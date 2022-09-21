@@ -26,14 +26,14 @@ RSpec.describe 'Events#Lead', type: :system do
       sign_in create(:leader)
 
       visit lead_events_path
-      expect(page).to have_content 'Builds that need leaders'
+      expect(page).to have_content 'Upcoming Builds'
     end
 
     it 'admins shows the page' do
       sign_in create(:admin)
 
       visit lead_events_path
-      expect(page).to have_content 'Builds that need leaders'
+      expect(page).to have_content 'Upcoming Builds'
     end
 
     it 'inventoryist redirects to home page' do
@@ -49,20 +49,20 @@ RSpec.describe 'Events#Lead', type: :system do
       sign_in create(:data_manager)
 
       visit lead_events_path
-      expect(page).to have_content 'Builds that need leaders'
+      expect(page).to have_content 'Upcoming Builds'
     end
 
     it 'schedulers shows the page' do
       sign_in create(:scheduler)
 
       visit lead_events_path
-      expect(page).to have_content 'Builds that need leaders'
+      expect(page).to have_content 'Upcoming Builds'
     end
   end
 
-  it 'shows events still needing leaders' do
+  it 'shows all future events' do
     events
-    event4 = create(:event, min_leaders: 1, max_leaders: 1, title: 'NOT FAKER')
+    event4 = create(:past_event, title: 'PAST EVENT')
     create(:registration_leader, event: event4)
 
     sign_in create(:leader)

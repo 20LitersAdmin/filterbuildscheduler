@@ -95,7 +95,7 @@ class EventsController < ApplicationController
 
   def lead
     @user = current_user
-    @events = Event.needs_leaders
+    @events = Event.future
 
     authorize Event
   end
