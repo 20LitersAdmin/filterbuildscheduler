@@ -18,6 +18,25 @@ RSpec.describe 'Admin creating event registrations', type: :system do
       expect(page).to have_css("input[name='commit']")
     end
 
+    context 'when the event allows guests' do
+      it 'shows guests field' do
+        expect(event.allow_guests?).to eq true
+        expect(page).to have_field 'registration_guests_registered'
+      end
+    end
+
+    context 'when the event does not allow guests' do
+      before do
+        event.update(allow_guests: false)
+        visit new_event_registration_path event
+      end
+
+      it 'does not show guests field' do
+        expect(event.allow_guests?).to eq false
+        expect(page).not_to have_field 'registration_guests_registered'
+      end
+    end
+
     context 'can be filled out and submitted' do
       it 'using the Create & New button' do
         user = build(:user)
