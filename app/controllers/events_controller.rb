@@ -298,6 +298,7 @@ class EventsController < ApplicationController
                                   :min_registrations,
                                   :max_registrations,
                                   :is_private,
+                                  :allow_guests,
                                   :description,
                                   :item_goal,
                                   :impact_results,

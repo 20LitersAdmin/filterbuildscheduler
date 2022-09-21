@@ -37,7 +37,8 @@
           Room for #{pluralize(@event.registrations_remaining - 1, 'more guest')} without increasing max attendance.
           %br>/
           Max attendance will be updated automatically if necessary.
-      = f.input :guests_registered, label: 'Guests', input_html: { min: 0, max: @event.registrations_remaining - 1 }
+      - if @event.allow_guests?
+        = f.input :guests_registered, label: 'Guests', input_html: { min: 0, max: @event.registrations_remaining - 1 }
       = f.input :accommodations, label: 'Notes', as: :text
     = f.button :submit, class: 'btn yellow fullwidth'
     = f.button :submit, name: 'commit_and_new', value: 'Create & New', class: 'btn yellow fullwidth'

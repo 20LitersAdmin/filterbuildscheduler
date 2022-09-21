@@ -14,7 +14,7 @@
     .form-inputs
       = f.simple_fields_for @user do |u|
         = u.input :email_opt_out, inline_label: 'Opt out of emails?'
-      = f.input :guests_registered, required: true, autofocus: true, label: 'Additional Guests'
+      = f.input :guests_registered, required: true, autofocus: true, label: 'Additional Guests' if @event.allow_guests?
       = f.input :accommodations, autofocus: true, as: :text, label: 'Notes'
     .form-actions
       = f.button :submit, 'Update', class: 'btn yellow fullwidth'

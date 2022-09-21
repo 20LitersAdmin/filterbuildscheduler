@@ -34,8 +34,10 @@
       .col-sm-6
         = f.input :max_registrations, label: 'Max. Builders'
     .row
-      .col-xs-6
-        = f.input :is_private, label: 'Private Event'
+      .col-xs-3
+        = f.input :allow_guests, label: 'Allow Guests?'
+      .col-xs-3
+        = f.input :is_private, label: 'Private Event?'
       .col-xs-6
         %p If it's private, is there a contact person?
     .row
