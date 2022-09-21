@@ -1,13 +1,17 @@
 -# frozen_string_literal: true
 
+:ruby
+  reg_message = "You registered on #{@registration.created_at.strftime('%-m/%-d/%Y')}"
+  reg_message += "and are bringing #{pluralize(@registration.guests_registered, 'guest')}" if @event.allow_guests?
+  reg_message += '.'
+
 .emphasis-div-narrow
   %h3 You're Registered!
   %p
     = current_user.name
     | #{current_user.email}
   %p
-    You registered on #{@registration.created_at.strftime('%-m/%-d/%Y')} and are bringing #{pluralize(@registration.guests_registered, 'guest')}.
-  - if @registration.leader?
+    = reg_message
     %div
       %p#leader_self_note
         - if @event.registrations.active.leaders.count == 1

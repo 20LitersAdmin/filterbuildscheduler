@@ -23,7 +23,7 @@
         - if @event.registrations_remaining.positive?
           Room for #{pluralize(@event.registrations_remaining, 'more person')}.
         - else
-          %strong Event is full. No more room for additional guests.
+          %strong Event is full. No more room for additional people.
       %p
         %strong
           - if @leaders.count.positive?

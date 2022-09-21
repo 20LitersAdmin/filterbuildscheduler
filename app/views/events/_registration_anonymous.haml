@@ -9,9 +9,10 @@
     = o.input :lname
     = o.input :email
     = o.input :phone, required: false
-    %p
-      Room for #{pluralize(@event.registrations_remaining - 1, 'more guest')}
-    = f.input :guests_registered, label: 'Additional Guests (excluding you)', input_html: { min: 0, max: @event.registrations_remaining - 1 }
+    - if @event.allow_guests?
+      %p
+        Room for #{pluralize(@event.registrations_remaining - 1, 'more guest')}
+      = f.input :guests_registered, label: 'Additional Guests (excluding you)', input_html: { min: 0, max: @event.registrations_remaining - 1 }
     = f.input :accommodations, label: 'Notes', as: :text
     %div
       %h4
