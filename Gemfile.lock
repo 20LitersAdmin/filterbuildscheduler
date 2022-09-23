@@ -241,8 +241,6 @@ GEM
       letter_opener (~> 1.7)
       railties (>= 5.2)
       rexml
-    libv8-node (16.10.0.0-x86_64-darwin)
-    libv8-node (16.10.0.0-x86_64-linux)
     listen (3.7.1)
       rb-fsevent (~> 0.10, >= 0.10.3)
       rb-inotify (~> 0.9, >= 0.9.10)
@@ -260,8 +258,6 @@ GEM
     mime-types-data (3.2022.0105)
     mini_magick (4.11.0)
     mini_mime (1.1.2)
-    mini_racer (0.6.3)
-      libv8-node (~> 16.10.0.0)
     minitest (5.16.3)
     momentjs-rails (2.29.4.1)
       railties (>= 3.1)
@@ -567,7 +563,6 @@ DEPENDENCIES
   letter_opener_web
   listen (~> 3.2)
   mini_magick
-  mini_racer
   momentjs-rails
   money-rails
   net-smtp
@@ -604,7 +599,7 @@ DEPENDENCIES
   webdrivers
 
 RUBY VERSION
-   ruby 3.1.0p0
+   ruby 3.1.2p20
 
 BUNDLED WITH
    2.3.17
