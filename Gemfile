@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 source 'https://rubygems.org'
-ruby '3.0.2'
+ruby '3.1.2'
 
 git_source(:github) do |repo_name|
   repo_name = "#{repo_name}/#{repo_name}" unless repo_name.include?('/')
@@ -27,6 +27,7 @@ gem 'jquery-rails'
 gem 'mini_magick'
 gem 'momentjs-rails'
 gem 'money-rails'
+gem 'net-smtp'
 gem 'omniauth-google-oauth2'
 gem 'omniauth-rails_csrf_protection', '~> 0.1'
 gem 'pg'
@@ -40,7 +41,6 @@ gem 'rest-client'
 gem 'sass-rails', '>= 6'
 gem 'sidekiq'
 gem 'simple_form'
-gem 'therubyracer', platforms: :ruby
 gem 'turbolinks', '~> 5'
 gem 'uglifier', '>= 1.3.0'
 
