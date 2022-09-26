@@ -56,6 +56,10 @@ module Itemable
     all_technologies.active&.pluck(:id)&.join(',')
   end
 
+  def box_language
+    "#{quantity_per_box} / #{box_type}"
+  end
+
   def has_sub_assemblies?
     return false if is_a?(Material)
 

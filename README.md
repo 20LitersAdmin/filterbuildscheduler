@@ -1,4 +1,10 @@
 # README
+## google-api gem is depreciated
+* https://github.com/googleapis/google-api-ruby-client
+* https://github.com/googleapis/google-api-ruby-client/tree/main/google-api-client/generated/google/apis/gmail_v1
+* Probably needs to be `gem google-api-gmail_v1`
+  - `require 'google/apis/gmail_v1'`
+
 ## Donation list
 - Total cost is wrong?
 - Filtering items: SAM2 only returns two materials and nothing else?
