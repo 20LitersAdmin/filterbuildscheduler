@@ -17,6 +17,7 @@
         %thead
           %tr
             %th= @technology.uid_and_name
+            %th Box Quantity:
             %th.right-align #{human_number @technology.available_count} available
             %th.right-align #{human_number @technology.can_be_produced} produceable
             %th.right-align Still need #{human_number @technology.default_goal - @technology.available_count}
@@ -34,6 +35,7 @@
           %thead
             %tr
               %th= component.uid_and_name
+              %th Box Quantity:
               %th.right-align #{human_number component.available_count} available
               %th.right-align #{human_number component.can_be_produced} produceable
               %th.right-align Still need #{human_number component.goal_remainder}
