@@ -7,6 +7,9 @@
 # Ignore bundler config.
 /.bundle
 
+# For Railway, ignore the Procfile
+/Procfile
+
 
 # Ignore db backups
 /db/*.dump
