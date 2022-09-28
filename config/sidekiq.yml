@@ -15,3 +15,20 @@ production:
   - quantity_calc
   - registration_reminder
   - setup_reminder
+:schedule:
+  registration_reminders:
+    description: "Run at 6:30am everyday. For events occurring in the next 2 days, send email reminders to any registrants who have not yet received them."
+    cron: '0 30 6 * * *'
+    class: RegistrationReminderJob
+  setup_reminders:
+    description: "Run at 5:30am everyday. For setups occurring in the next 2 days, send email reminders to any registered users who have not yet received them."
+    cron: '0 30 5 * * *'
+    class: SetupReminderJob
+  sync_emails:
+    description: "Run at 4am everyday. For each OauthUser, sync emails from Gmail to notes in Kindful when a matching person or organization is found."
+    cron: '0 0 4 * * *'
+    class: EmailSyncJob
+  sync_organizations:
+    description: "Run at 2am on the 1st of each month. Pull a list of contacts from a set of groups and save them as Organizations."
+    cron: '0 0 2 1 * *'
+    class: KindfulOrganizationSyncJob
