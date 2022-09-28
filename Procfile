@@ -1,2 +1,2 @@
-web: bundle exec puma -C config/puma.rb
+web: rails db:migrate && bundle exec puma -C config/puma.rb
 worker: bundle exec sidekiq -C config/sidekiq.yml
