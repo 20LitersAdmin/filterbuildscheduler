@@ -6,11 +6,8 @@ We'll be building <%= @technology.name.pluralize %>
 Location:
 ---------
 <%= @location.name %>
-<%= @location.address1 %>
-<% if @location.map_url %>
-<%= @location.address2 %>
-<% end %>
-<%= @location.city %>, <%= @location.state %>  <%= @location.zip %>
+<%= @location.address %>
+<%= @location.one_liner %>
 
 <% if @location.map_url %>
 Map: <%= @location.map_url %>
