@@ -5,6 +5,11 @@
 * Probably needs to be `gem google-api-gmail_v1`
   - `require 'google/apis/gmail_v1'`
 
+## Admin can't register new user when event is full
+
+## Emails are not DKIM'd correctly
+- https://github.com/jhawthorn/dkim
+
 ## Donation list
 - Total cost is wrong?
 - Filtering items: SAM2 only returns two materials and nothing else?
