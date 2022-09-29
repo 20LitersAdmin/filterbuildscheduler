@@ -73,7 +73,7 @@ Rails.application.configure do
     authentication: :plain,
     address: 'smtp.mailgun.org',
     port: 587,
-    domain: 'mg.20liters.org',
+    domain: '20liters.org',
     user_name: ENV['SMTP_USER'],
     password: ENV['SMTP_PASS']
   }
