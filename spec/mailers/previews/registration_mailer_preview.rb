@@ -12,9 +12,10 @@ class RegistrationMailerPreview < ActionMailer::Preview
 
   def event_changed
     event = Event.last
+    new_location_id = Location.where.not(id: event.location.id).limit(1).first.id
     event.start_time = Time.new(2017, 11, 8, 16, 0, 0, '-05:00')
     event.end_time = Time.new(2017, 11, 8, 21, 0, 0, '-05:00')
-    event.location_id = 2
+    event.location_id = new_location_id
 
     RegistrationMailer.event_changed(Registration.last, event)
   end

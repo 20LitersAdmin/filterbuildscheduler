@@ -1,5 +1,5 @@
 <div class="whole" style="position: relative; min-height: 1px; padding-left: 15px; padding-right: 15px; float: left; width: 100%;">
-  <p>Hello #{@recipient.fname},</p>
+  <p><%= "Hello #{@recipient.fname}," %></p>
   <h3 style="margin-bottom: 6px">
     <strong>Unfortunately, this filter build was cancelled:</strong>
   </h3>
@@ -22,7 +22,7 @@
 <div class="whole" style="position: relative; min-height: 1px; padding-left: 15px; padding-right: 15px; float: left; width: 100%;">
   <% if @registration.guests_registered&.positive? %>
     <p>
-      You registered to bring #{pluralize(@registration.guests_registered, 'guest')}. Please share this information with them.
+      <%= "You registered to bring #{pluralize(@registration.guests_registered, 'guest')}. Please share this information with them." %>
     </p>
   <% end %>
   <p>If you want to register for a different build, please visit the site:</p>

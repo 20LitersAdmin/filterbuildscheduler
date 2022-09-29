@@ -1,11 +1,11 @@
 <div class="whole" style="position: relative; min-height: 1px; padding-left: 15px; padding-right: 15px; float: left; width: 100%;">
   <p>
-    Hello #{@recipient.fname},
+    <%= "Hello #{@recipient.fname}," %>
   </p>
   <p>The filter build event that you registered for has changed.</p>
   <% if @registration.guests_registered&.positive? %>
     <p>
-      You registered to bring #{pluralize(@registration.guests_registered, 'guest')}. Please share this information with them.
+      <%= "You registered to bring #{pluralize(@registration.guests_registered, 'guest')}. Please share this information with them." %>
     </p>
   <% end %>
   <div class="whole" style="position: relative; min-height: 1px; float: left; width: 100%; margin: auto 16px;">
@@ -40,6 +40,8 @@
           <li>
             <strong>Now:</strong>
             <%= @location.name %>
+            <br>
+            <%= @location.address_block %>
           </li>
         </ul>
       <% end %>

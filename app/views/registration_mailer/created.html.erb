@@ -1,11 +1,11 @@
 <div class="whole" style="position: relative; min-height: 1px; padding-left: 15px; padding-right: 15px; float: left; width: 100%;">
   <p>
-    Hello #{@recipient.fname},
+    <%= "Hello #{@recipient.fname}," %>
   </p>
   <p>Thanks for registering to build filters with 20 Liters. We're glad you've signed up!</p>
   <% if !@registration.guests_registered.nil? && @registration.guests_registered.positive? %>
     <p>
-      You registered to bring #{pluralize(@registration.guests_registered, 'guest')}. Please share this information with them.
+      <%= "You registered to bring #{pluralize(@registration.guests_registered, 'guest')}. Please share this information with them." %>
     </p>
   <% end %>
   <p style="margin-bottom: 2px">

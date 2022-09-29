@@ -1,8 +1,13 @@
 <div class="whole" style="position: relative; min-height: 1px; padding-left: 15px; padding-right: 15px; float: left; width: 100%;">
   <p>
-    Hello #{@recipient.fname},
+    <%= "Hello #{@recipient.fname}," %>
   </p>
   <p>This is a reminder that you're registered for a filter build coming up soon.</p>
+  <% if @registration.guests_registered&.positive? %>
+    <p>
+      <%= "You registered to bring #{pluralize(@registration.guests_registered, 'guest')}. Please share this information with them." %>
+    </p>
+  <% end %>
   <div class="row" style="margin-left: -15px; margin-right: -15px; ">
     <div class="whole" style="position: relative; min-height: 16px; padding-left: 15px; padding-right: 15px; float: left; width: 100%; text-align: left;">
       <p>
