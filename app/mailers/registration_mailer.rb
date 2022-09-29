@@ -3,8 +3,6 @@
 class RegistrationMailer < ApplicationMailer
   helper MailerHelper
 
-  default from: 'filterbuilds@20liters.org'
-
   def created(registration)
     @registration = registration
     @recipient = @registration.user
