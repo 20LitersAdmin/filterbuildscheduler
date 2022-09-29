@@ -32,7 +32,7 @@ class RegistrationMailer < ApplicationMailer
       e.description = @description
     end
     cal.append_custom_property('METHOD', 'REQUEST')
-    # mail.attachments[@attachment_title] = { mime_type: 'text/calendar', content: cal.to_ical }
+    mail.attachments[@attachment_title] = { mime_type: 'text/calendar', content: cal.to_ical }
 
     mail(to: @recipient.email, subject: "[20 Liters] You registered for a filter build on #{@event.mailer_time}")
   end
@@ -70,7 +70,7 @@ class RegistrationMailer < ApplicationMailer
       e.description = @description
     end
     cal.append_custom_property('METHOD', 'REQUEST')
-    # mail.attachments[@attachment_title] = { mime_type: 'text/calendar', content: cal.to_ical }
+    mail.attachments[@attachment_title] = { mime_type: 'text/calendar', content: cal.to_ical }
 
     mail(to: @recipient.email, subject: '[20 Liters] NOTICE: Build Event Changed')
   end
