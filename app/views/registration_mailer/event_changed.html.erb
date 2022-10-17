@@ -1,0 +1,81 @@
+<div class="whole" style="position: relative; min-height: 1px; padding-left: 15px; padding-right: 15px; float: left; width: 100%;">
+  <p>
+    <%= "Hello #{@recipient.fname}," %>
+  </p>
+  <p>The filter build event that you registered for has changed.</p>
+  <% if @registration.guests_registered&.positive? %>
+    <p>
+      <%= "You registered to bring #{pluralize(@registration.guests_registered, 'guest')}. Please share this information with them." %>
+    </p>
+  <% end %>
+  <div class="whole" style="position: relative; min-height: 1px; float: left; width: 100%; margin: auto 16px;">
+    <h3 style="margin-bottom: 6px">
+      <strong>Here's what changed:</strong>
+    </h3>
+    <div class="whole" style="position: relative; min-height: 1px; float: left; width: 100%; margin: auto 16px;">
+      <% if @start_time || @end_time %>
+        <p style="margin-bottom: 6px">
+          <strong>The time was changed:</strong>
+        </p>
+        <ul style="margin-top: 6px">
+          <li>
+            <strong>Original:</strong>
+            <%= format_changed_time_range(@event.start_time_was, @event.end_time_was) %>
+          </li>
+          <li>
+            <strong>Now:</strong>
+            <%= format_changed_time_range(@event.start_time, @event.end_time) %>
+          </li>
+        </ul>
+      <% end %>
+      <% if @location_id %>
+        <p style="margin-bottom: 6px">
+          <strong>The location was changed:</strong>
+        </p>
+        <ul style="margin-top: 6px">
+          <li>
+            <strong>Original:</strong>
+            <%= @location_was.name %>
+          </li>
+          <li>
+            <strong>Now:</strong>
+            <%= @location.name %>
+            <br>
+            <%= @location.address_block %>
+          </li>
+        </ul>
+      <% end %>
+    </div>
+  </div>
+  <div class="whole" style="position: relative; min-height: 16px; padding-left: 15px; padding-right: 15px; float: left; width: 100%; text-align: left;">
+    <p>
+      <strong>Need to change or cancel your registration?</strong>
+      No worries, just follow this link.
+    </p>
+    <%= link_to 'Change / Cancel my registration', edit_event_registration_url(@event, @registration, user_token: @recipient.authentication_token, user_email: @recipient.email), target: '_blank', style: 'display: inline-block; margin-bottom: 0; font-weight: normal; text-align: center; vertical-align: middle; border: 1px solid; white-space: nowrap; padding: 6px 12px; font-size: 14px; text-decoration: none; color: #4a4a4a; background-color: #9bb4c8; border-color: #91a0c8;' %>
+  </div>
+  <div class="whole" style="position: relative; min-height: 1px; float: left; width: 100%; margin: auto 16px;">
+    <h2 style="margin-bottom: 6px">
+      <strong>Here are all the details</strong>
+    </h2>
+    <%= render partial: 'details' %>
+  </div>
+  <div class="row" style="margin-top: 26px; margin-left: -15px; margin-right: -15px; ">
+    <div class="whole" style="position: relative; min-height: 1px; padding-left: 15px; padding-right: 15px; float: left; width: 50%; text-align: left;">
+      <p>
+        <strong>Calendars:</strong>
+      </p>
+      <p>While we can't delete the old calendar appointment for you, we have created a new one. Use the link to add this to your Google Calendar. Use the attached iCal for other calendar types.</p>
+      <%= link_to 'Add to my Google Calendar', url_for_registration_gcal, target: '_blank', style: 'display: inline-block; margin-bottom: 0; font-weight: normal; text-align: center; vertical-align: middle; border: 1px solid; white-space: nowrap; padding: 6px 12px; font-size: 14px; text-decoration: none; color: #4a4a4a; background-color: #9bb4c8; border-color: #91a0c8;' %>
+    </div>
+    <div class="whole" style="position: relative; min-height: 16px; padding-left: 15px; padding-right: 15px; float: left; width: 100%; text-align: left; margin-top: 24px;">
+      <p>
+        <strong>Have a Question?</strong>
+        Just reply to this email.
+      </p>
+    </div>
+    <div class="whole" style="position: relative; min-height: 16px; padding-left: 15px; padding-right: 15px; float: left; width: 100%; text-align: left;">
+      <%= link_to 'Go to make.20liters.org', 'https://make.20liters.org', target: '_blank', style: 'display: inline-block; margin-bottom: 0; font-weight: normal; text-align: center; vertical-align: middle; border: 1px solid; white-space: nowrap; padding: 6px 12px; font-size: 14px; text-decoration: none; color: #4a4a4a; background-color: #9bb4c8; border-color: #91a0c8;' %>
+    </div>
+  </div>
+</div>
