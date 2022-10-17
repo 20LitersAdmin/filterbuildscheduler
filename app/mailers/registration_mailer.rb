@@ -3,8 +3,6 @@
 class RegistrationMailer < ApplicationMailer
   helper MailerHelper
 
-  default from: 'filterbuilds@20liters.org'
-
   def created(registration)
     @registration = registration
     @recipient = @registration.user
@@ -37,6 +35,9 @@ class RegistrationMailer < ApplicationMailer
     mail.attachments[@attachment_title] = { mime_type: 'text/calendar', content: cal.to_ical }
 
     mail(to: @recipient.email, subject: "[20 Liters] You registered for a filter build on #{@event.mailer_time}")
+
+    # PATCH: text and html parts are getting inserted in multipart/mixed (top level) as well as multipart/alternative (2nd level)
+    mail.parts.reject! { |part| !part.attachment? && !part.multipart? }
   end
 
   def event_changed(registration, event)
@@ -75,6 +76,9 @@ class RegistrationMailer < ApplicationMailer
     mail.attachments[@attachment_title] = { mime_type: 'text/calendar', content: cal.to_ical }
 
     mail(to: @recipient.email, subject: '[20 Liters] NOTICE: Build Event Changed')
+
+    # PATCH: text and html parts are getting inserted in multipart/mixed (top level) as well as multipart/alternative (2nd level)
+    mail.parts.reject! { |part| !part.attachment? && !part.multipart? }
   end
 
   def reminder(registration)

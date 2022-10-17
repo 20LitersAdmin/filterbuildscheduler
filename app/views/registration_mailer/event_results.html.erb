@@ -1,0 +1,102 @@
+<div class="whole" style="position: relative; min-height: 1px; padding-left: 15px; padding-right: 15px; float: left; width: 100%;">
+  <p>
+    <%= "Hello #{@recipient.fname}," %>
+  </p>
+  <p>
+    <%= "Thanks for coming to the filter build on #{@event.format_date_only}!" %>
+  </p>
+  <p style="margin-bottom: 6px">
+    <strong>
+      <%= "We built #{pluralize(@event.technology_results, @technology.name)}!" %>
+    </strong>
+  </p>
+  <p style="margin-bottom: 6px">
+    These filters will make dirty water clean for
+    <strong><%= pluralize(number_with_delimiter(@event.results_people, delimiter: ','), 'people') %></strong>
+    and produce
+    <strong><%= pluralize(number_with_delimiter(@event.results_liters_per_day, delimiter: ','), 'liter') %></strong>
+    of clean water every day.
+    <br/>
+    That's
+    <strong><%= "#{pluralize(number_with_delimiter(@event.results_liters_per_year, delimiter: ','), 'liter')} of clean water" %></strong>
+    <%= "every year for at least the next #{pluralize(number_with_delimiter(@event.results_timespan, delimiter: ','), 'year')}." %>
+  </p>
+  <p style="margin-bottom: 6px">
+    By volunteering your time to build filters, you helped make them
+    <strong>more affordable</strong>
+    to people who need access to clean water.
+    And access to clean water has the power to change everything for vulnerable families.
+    <br/>
+    Starting with
+    <strong>improving health</strong>,
+    <strong>saving and earning more money</strong>
+    and keeping kids healthy enough to
+    <strong>attend school more often.</strong>
+  </p>
+  <p style="margin-bottom: 6px">
+    Thanks for providing
+    <strong>life, health and prosperity</strong>
+    to people you'll probably never meet in this lifetime.
+  </p>
+  <% if @registration.guests_attended&.positive? %>
+    <p style="margin-bottom: 6px">
+      <%= "You brought #{pluralize(@registration.guests_attended, 'guest')}. Please share these results with them." %>
+    </p>
+  <% end %>
+  <div class="row" style="margin-top: 14px;">
+    <div class="whole" style="position: relative; min-height: 16px; float: left; width: 100%; text-align: left; margin-top: 0px;">
+      <p>
+        <strong>Stats are great, but what does this mean?</strong>
+      </p>
+      <p>
+        We provide updates on what's happening with our teams in Rwanda several times every month. Go see our work in action for yourself.
+      </p>
+      <%= link_to 'Go to track.20liters.org', 'https://track.20liters.org', target: '_blank', style: 'display: inline-block; margin-bottom: 0; font-weight: normal; text-align: center; vertical-align: middle; border: 1px solid; white-space: nowrap; padding: 6px 12px; font-size: 14px; text-decoration: none; color: #4a4a4a; background-color: #9bb4c8; border-color: #91a0c8;' %>
+      <p>
+        <strong>Want to do it again?</strong>
+      </p>
+      <p>
+        Check out more builds or request a custom event online:
+      </p>
+      <%= link_to 'Go to make.20liters.org', 'https://make.20liters.org', target: '_blank', style: 'display: inline-block; margin-bottom: 0; font-weight: normal; text-align: center; vertical-align: middle; border: 1px solid; white-space: nowrap; padding: 6px 12px; font-size: 14px; text-decoration: none; color: #4a4a4a; background-color: #9bb4c8; border-color: #91a0c8;' %>
+      <p>
+        <strong>Think you could do more?</strong>
+      </p>
+      <p>
+        Many of our filter builds are lead by volunteers just like you. Volunteer leaders are our force multiplyer that allow us to reach more people and build more filters.
+        And, we always need more volunteers to make our mission possible.
+      </p>
+      <%= link_to 'Sign up to Volunteer', 'https://20liters.org/volunteer/', target: '_blank', style: 'display: inline-block; margin-bottom: 0; font-weight: normal; text-align: center; vertical-align: middle; border: 1px solid; white-space: nowrap; padding: 6px 12px; font-size: 14px; text-decoration: none; color: #4a4a4a; background-color: #9bb4c8; border-color: #91a0c8;' %>
+      <%= link_to 'Check out Filter Build Leadership', 'https://20liters.org/wp-content/uploads/2019/12/20-Liters-Role-Filter-Build-Leader.pdf', target: '_blank', style: 'display: inline-block; margin-bottom: 0; font-weight: normal; text-align: center; vertical-align: middle; border: 1px solid; white-space: nowrap; padding: 6px 12px; font-size: 14px; text-decoration: none; color: #4a4a4a; background-color: #9bb4c8; border-color: #91a0c8;' %>
+    </div>
+  </div>
+  <div class="row" style="margin-top: 28px;">
+    <div class="whole" style="position: relative; min-height: 16px; float: left; width: 100%; text-align: left; margin-top: 28px;">
+      <p style="margin-bottom: 6px; text-decoration: underline;">
+        <strong>One last thing!</strong>
+      </p>
+      <p style="margin-bottom: 6px">
+        You've already shown a desire to make dirty water clean. We share your passion.
+      </p>
+      <p style="margin-bottom: 6px">
+        Building the filters is just one step. Purchasing the supplies, shipping the filters, equipping and training the volunteers in Rwanda, all of this takes money.
+        <br/>
+        But it results in the filters you built ending up in the homes of families with the training and support they need to not only maintain the filter, but implement all the health and hygiene skills we teach.
+      </p>
+      <p style="margin-bottom: 6px">
+        Each filter costs about
+        <strong>$100</strong>
+        when you add up every step of the process.
+        <br/>
+        This means we can give a family clean water for over a decade at just
+        <em>
+          <strong>$10 per year.</strong>
+        </em>
+      </p>
+      <p>
+        Can you help us take the next step?
+      </p>
+      <%= link_to 'Please Give Today', 'https://give.20liters.org/?campaign=338482', target: '_blank', style: 'display: inline-block; margin-bottom: 0; font-weight: normal; text-align: center; vertical-align: middle; border: 1px solid; white-space: nowrap; padding: 6px 12px; font-size: 14px; text-decoration: none; color: #4a4a4a; background-color: #9bb4c8; border-color: #91a0c8;' %>
+    </div>
+  </div>
+</div>

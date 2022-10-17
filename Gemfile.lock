@@ -141,6 +141,8 @@ GEM
     domain_name (0.5.20190701)
       unf (>= 0.0.5, < 1.0.0)
     erubi (1.11.0)
+    et-orbi (1.2.7)
+      tzinfo
     execjs (2.8.1)
     factory_bot (6.2.1)
       activesupport (>= 5.0.0)
@@ -157,6 +159,9 @@ GEM
     font-awesome-sass (5.15.1)
       sassc (>= 1.11)
     foreman (0.87.2)
+    fugit (1.7.1)
+      et-orbi (~> 1, >= 1.2.7)
+      raabro (~> 1.4)
     gems (1.2.0)
     globalid (1.0.0)
       activesupport (>= 5.0)
@@ -325,6 +330,7 @@ GEM
       nio4r (~> 2.0)
     pundit (2.2.0)
       activesupport (>= 3.0.0)
+    raabro (1.4.0)
     racc (1.6.0)
     rack (2.2.4)
     rack-pjax (1.1.0)
@@ -445,6 +451,8 @@ GEM
       ffi (~> 1.12)
     ruby2_keywords (0.0.5)
     rubyzip (2.3.2)
+    rufus-scheduler (3.8.2)
+      fugit (~> 1.1, >= 1.1.6)
     sass-rails (6.0.0)
       sassc-rails (~> 2.1, >= 2.1.1)
     sassc (2.4.0)
@@ -466,6 +474,11 @@ GEM
       connection_pool (>= 2.2.5)
       rack (~> 2.0)
       redis (>= 4.5.0, < 5)
+    sidekiq-scheduler (4.0.2)
+      redis (>= 4.2.0)
+      rufus-scheduler (~> 3.2)
+      sidekiq (>= 4)
+      tilt (>= 1.4.0)
     signet (0.17.0)
       addressable (~> 2.8)
       faraday (>= 0.17.5, < 3.a)
@@ -587,6 +600,7 @@ DEPENDENCIES
   selenium-webdriver
   shoulda-matchers
   sidekiq
+  sidekiq-scheduler
   simple_form
   spring
   spring-commands-rspec

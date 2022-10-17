@@ -1,9 +1,13 @@
 # frozen_string_literal: true
 
+require 'sidekiq-scheduler'
+
 class EmailSyncJob < ApplicationJob
   queue_as :email_sync
 
   def perform(*_args)
+    puts 'Starting Email Sync'
+
     before = Date.today.strftime('%Y/%m/%d')
     after = Date.yesterday.strftime('%Y/%m/%d')
 
@@ -34,5 +38,7 @@ class EmailSyncJob < ApplicationJob
     e_size = Email.stale.size
     Email.stale.destroy_all
     puts "-+ Removed #{e_size} stale emails."
+
+    puts 'Done.'
   end
 end
