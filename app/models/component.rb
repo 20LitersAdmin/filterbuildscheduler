@@ -54,6 +54,10 @@ class Component < ApplicationRecord
     Component.kept.where('name ILIKE any ( array[?] )', ary).or(where('uid ILIKE any ( array[?] )', ary))
   end
 
+  # =====> Hello, Interviewers!
+  #
+  # I can write raw SQL when needed. Just sayin'.
+  #
   # NOTE: will only find 1st-level parents, not all ancestors
   def super_components
     Component.kept.find_by_sql(

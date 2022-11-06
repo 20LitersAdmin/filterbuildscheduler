@@ -1,5 +1,23 @@
 # frozen_string_literal: true
 
+# =====> Hello, Interviewers!
+# Integrating the event registration side of this app with our donor CRM
+# really got my wheels spinning on what other integrations I could write
+# that could help 20 Liters save time and have better data.
+#
+# Relationship management is the reason CRMs exist and one feature we
+# wished we had in our donor CRM was communication history.
+# Kindful CRM allowed us to manually enter notes onto donor profiles any
+# time we called, emailed or mailed a donor, but it was a manual process.
+#
+# We missed the email integration offered by larger CRMs that could
+# automatically sync email conversations with donor records.
+#
+# 20 Liters uses GSuite, Gmail has an API, even a Rails gem, and I had
+# I had some experience with OAuth through another app, so why not try it?
+#
+# see /app/jobs/email_sync_job
+
 class GmailClient
   attr_reader :standard_fields, :service, :user, :body_data, :skipped_ids, :fails, :oauth_fail
 

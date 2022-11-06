@@ -18,6 +18,10 @@ function actionMatches(actions_ary) {
   return actions_ary.indexOf(action) !== -1;
 };
 
+// =====> Hello, Interviewers!
+// RailsAdmin ajaxes about every request, rendering the back button
+// useless and making it hard for js to know where we actually are.
+//
 // Ensure <body> tag always has data attributes: data-controller && data-action
 // views/layouts/rails_admin/application.html.haml sets the data values for full page loads, so it's not needed on $(document).ready
 // BUT ajaxComplete calls need to update data attributes so that rails_admin/custom/*.js functions can use controllerMatches() and actionMatches() confidently

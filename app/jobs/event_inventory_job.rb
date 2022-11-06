@@ -1,5 +1,29 @@
 # frozen_string_literal: true
 
+## =====> Hello, Interviewers!
+#
+# Items (Technologies, Components, Parts, and Materials) are linked to
+# each other via Assemblies, forming a tree structure
+#
+# There are two scenarios when I want the system to update item counts
+# all the way down the tree:
+# 1. When a filter build event happens and results in Technologies being created
+# 2. A user can submit an 'extrapolate' inventory where they indicate
+# how many Items were created (in essence recording the results of some event, but without needing an event record)
+#
+# This job handles situation #1. After an event is complete, the event
+# leader isn't expected to perform a full inventory. But, they can
+# indicate how many completed Technologies were built.
+#
+# This job is able to traverse down the tree of items that make up that
+# technology and assume how the inventory count of all those deeply nested
+# items have changed.
+#
+# Like ExtrapolateInventoryJob, I'm sure there are some advanced concepts
+# that could simplify or speed up this job, which uses loops to step
+# through each level of the tree, but my compromise is just to use Sidekiq
+# to run this job in the background.
+
 class EventInventoryJob < ApplicationJob
   queue_as :event_inventory
 

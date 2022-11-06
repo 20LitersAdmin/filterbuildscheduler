@@ -1,5 +1,24 @@
 # frozen_string_literal: true
 
+## =====> Hello, Interviewers!
+#
+# Items (Technologies, Components, Parts, and Materials) are linked to
+# each other via Assemblies, forming a tree structure
+#
+# There are two scenarios when I want the system to update item counts
+# all the way down the tree:
+# 1. When a filter build event happens and results in Technologies being created
+# 2. A user can submit an 'extrapolate' inventory where they indicate
+# how many Items were created (in essence recording the results of some event, but without needing an event record)
+#
+# This job handles situation #2, it is a more complex version of the
+# EventInventoryJob (which handles #1) because 'extrapolate' Inventories can have changes in Parts, Components, and/or Technologies
+#
+# I'm proud of this job becase it was a true labor of love.
+# It probably took me over 60 hours to puzzle through the steps involved.
+# I'm sure I'm missing some inefficienies here, which I'm accomodating for
+# by running this as a background job.
+
 class ExtrapolateInventoryJob < ApplicationJob
   queue_as :extrapolate_inventory
 

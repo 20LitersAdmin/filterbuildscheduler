@@ -27,6 +27,13 @@
 //= require_directory ./controllers
 //= require_tree ./rails_admin
 
+
+// =====> Hello, Interviewers!
+// In Rails 4 - 6, I got in the habit of using these functions
+// to restrict my JS to the apropriate page.
+//
+// Not sure it'll be relevant in Rails 7, but a nice trick I picked up
+// from some gist somewhere.
 function controllerMatches(controllers_ary) {
   var controller = $('body').data('controller');
   return controllers_ary.indexOf(controller) !== -1;
