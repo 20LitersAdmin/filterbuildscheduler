@@ -21,10 +21,15 @@ Rails.application.routes.draw do
   get 'leaders', to: 'users#leaders', as: 'leaders'
   get 'setup_crew', to: 'users#setup_crew', as: 'setup_crew'
 
+  #  =====> Hello, Interviewers!
+  #
+  # This is a common controller for Technology & Component.
+  # Since all the CRUDding is happening in RailsAdmin
+  # we only really need to manage assemblies here.
+  #
+  # Using my homebrewed UID here instead of a typical ID,
+  # see /lib/core_ext/string
   resources :combinations, only: %i[index show edit], param: :uid, constraints: { uid: Constants::UID::URL_REGEX } do
-    # A common controller for Technology & Component
-    # since all the CRUDding is happening in RailsAdmin
-    # we only really need to manage assemblies here.
     collection do
       post 'item_search'
     end

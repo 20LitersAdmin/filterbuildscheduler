@@ -1,5 +1,14 @@
 # frozen_string_literal: true
 
+## =====> Hello, Interviewers!
+#
+# Items (Technologies, Components, Parts, and Materials) are linked to
+# each other via Assemblies, forming a tree structure
+#
+# They share so much business logic, that I wrote my first concern.
+#
+# I can see why some people love them and some people think they smell.
+
 module Itemable
   extend ActiveSupport::Concern
 

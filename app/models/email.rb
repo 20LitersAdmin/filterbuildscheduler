@@ -1,5 +1,18 @@
 # frozen_string_literal: true
 
+# =====> Hello, Interviewers!
+#
+# My first attempt at syncing Gmail with our donor CRM was to not actually
+# store records in my database at all.
+#
+# But I ran into issues with duplication. This model primarily ensures we
+# can ignore duplicates.
+#
+# It also allows me to encapsulate the logic for data from Gmail turning
+# into data for Kindful.
+#
+# Emails are only saved for 2 weeks so the database doesn't get bloated.
+
 class Email < ApplicationRecord
   belongs_to :oauth_user
 

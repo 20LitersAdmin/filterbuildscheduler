@@ -1,5 +1,18 @@
 # frozen_string_literal: true
 
+# =====> Hello, Interviewers!
+# Once Ross Hunter taught me about APIs
+# (see /app/controllers/webhooks_controller.rb), I got bold.
+#
+# Registering for a filter build event in this system should create a
+# donor record in our donor CRM.
+# Attending a filter build event should add a note to that donor's record.
+#
+# This allowed us to see how good we were at converting one-time event
+# attendees into ongoing supporters of the organization.
+#
+# Phase 3 was the GmailClient (see /app/services/gmail_client.rb)
+
 class KindfulClient
   include HTTParty
   attr_accessor :results, :env

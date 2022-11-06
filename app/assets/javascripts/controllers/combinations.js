@@ -3,6 +3,15 @@ $(document).on('turbolinks:load', function() {
     return;
   };
 
+  // =====> Hello, Interviewers!
+  // This is the custom item search field on Assemblies#new
+  //
+  // Take the inputs of the item_search field and use it to create a
+  // collection of matching Component and Part records that the user can
+  // use to set the item (child) half of the Assembly join table.
+  // the JSON return records are inserted as options to the :item_id
+  // select field.
+  //
   // CombinationsController#edit: item search via AJAX lookup
   $(document).on('change', '#assembly_item_search', function() {
     var searchString = $(this).val();

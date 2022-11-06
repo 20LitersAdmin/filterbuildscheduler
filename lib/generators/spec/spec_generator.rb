@@ -1,5 +1,11 @@
 # frozen_string_literal: true
 
+# =====> Hello, Interviewers!
+#
+# I got really sick of writing the exact same tests into every system spec
+# so I found out I could write my own generator to make it more bearable
+# to write all these system tests for each route
+
 class SpecGenerator < Rails::Generators::Base
   source_root File.expand_path('templates', __dir__)
 

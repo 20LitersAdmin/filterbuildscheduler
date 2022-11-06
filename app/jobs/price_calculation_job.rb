@@ -1,5 +1,17 @@
 # frozen_string_literal: true
 
+## =====> Hello, Interviewers!
+#
+# Items (Technologies, Components, Parts, and Materials) are linked to
+# each other via Assemblies, forming a tree structure
+#
+# I can leverage this tree structure and the most recent unit cost of each
+# item to calculate the cost of each Assembly, and ultimately the cost of
+# the Technology itself.
+#
+# This quick little job runs whenever an Assembly is created, updated or
+# destroyed, or whenever the price if an item will be changed on save.
+
 class PriceCalculationJob < ApplicationJob
   queue_as :price_calc
 

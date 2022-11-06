@@ -1,5 +1,22 @@
 # frozen_string_literal: true
 
+## =====> Hello, Interviewers!
+# This Assembly model is my first swing at a tree-like structure
+# in a Rails app. In brief:
+# - a Technology is composed of many Components and Parts
+# -- a Component is composed of many Components and/or Parts
+# -- a Part may be composed of a Material
+# (had this been a first-release feature, I might have used a single
+# Item model instead of these three distinct models)
+#
+# Using a polymorphic join allows me a few main features.
+# Because I can traverse up and down from any item, I can:
+# * Use this join model to roll up the combination's price in an efficient way
+# * Extrapolate how multiple item's inventory counts have changed
+# based upon a change in the count of an up-stream (up-branch?) item
+# * Predict how many items can be produced based upon the inventory of
+# it's child items (traversing deeply downward)
+
 class Assembly < ApplicationRecord
   # SCHEMA notes
   # 'combination' represents the 'parent' object

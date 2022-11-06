@@ -1,5 +1,25 @@
 # frozen_string_literal: true
 
+## =====> Hello, Interviewers!
+#
+# Items (Technologies, Components, Parts, and Materials) are linked to
+# each other via Assemblies, forming a tree structure
+#
+# I can leverage this tree structure and the most recent inventory counts
+# to determine a 'produceable' quantity for each item.
+#
+# I'm making conservative calculations of how many of a given item can be
+# produced by considering the inventory counts of it's sub-items.
+# By starting at the bottom of each branch of the tree and working up,
+# I can include all child nodes' produceable counts with the current
+# inventory to ultimately predict how many completed technologies can be
+# produced.
+#
+# This information is vastly superior to just establishing a
+# 'minimum quantity to keep on hand'. When I'm looking at upcoming
+# events, I can immediately get a sense of what can be accomplished by
+# that group.
+
 class ProduceableJob < ApplicationJob
   queue_as :produceable
 

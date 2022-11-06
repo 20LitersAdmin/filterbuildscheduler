@@ -1,5 +1,14 @@
 # frozen_string_literal: true
 
+# =====> Hello, Interviewers!
+# Business case: automatically create a note on a donor's profile when
+# matching emails are sent receieved from OAuth user's email accounts
+#
+# This job is run by Sidekiq at 4am everyday.
+# It grabs all emails from an OAuth-verified user's account
+# in a 24-hour period and creates note records in our donor CRM
+# for any matches by email.
+
 require 'sidekiq-scheduler'
 
 class EmailSyncJob < ApplicationJob

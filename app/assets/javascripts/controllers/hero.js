@@ -1,3 +1,7 @@
+// =====> Hello, Interviewers!
+//
+// If Bootstrap columns just aren't quite dynamic enough,  roll your own!
+
 function sizeStatsBlocks() {
   var statBlocks = $('.stat-block');
   var groupSize;

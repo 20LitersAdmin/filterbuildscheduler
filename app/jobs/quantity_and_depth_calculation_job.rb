@@ -1,5 +1,24 @@
 # frozen_string_literal: true
 
+## =====> Hello, Interviewers!
+#
+# Items (Technologies, Components, Parts, and Materials) are linked to
+# each other via Assemblies, forming a tree structure
+#
+# Having a JSONB field on each item allows me to store a representation
+# of that item's tree.
+# It's a helpful piece of data to store to make tree traversal a bit
+# faster.
+# Since I'm storing a tree representation, I might as well store some
+# other useful information, like the quantity of sub items used to make
+# that item, and the depth of this item in the tree.
+#
+# Depth is helpful to any Job that wants to start at the bottom of trees
+# and work upwards.
+#
+# Quantity is helpful for displaying item lists without having to load
+# associated records.
+
 class QuantityAndDepthCalculationJob < ApplicationJob
   queue_as :quantity_calc
 
