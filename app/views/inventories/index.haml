@@ -28,12 +28,13 @@
         = submit_tag 'Filter', class: 'btn yellow btn-sm', name: nil, data: { disable_with: false }
 
   .row
-    .col-xs-8
+    .col-sm-7
       %h2 Inventory Counts:
       %p
         %i Click on the calendar next to an item to see the count history
-    .col-xs-4.right-align
-      = link_to 'Inventory History', history_inventories_path, class: 'btn btn-sm empty'
+    .col-sm-5.right-align
+      = link_to 'History', history_inventories_path, class: 'btn btn-sm empty'
+      = link_to 'Snapshot', snapshot_inventories_path, class: 'btn btn-sm empty'
       = link_to 'New Inventory', new_inventory_path, class: 'btn btn-sm yellow'
     .col-xs-12
       %table#item_tbl.table.table-striped.table-bordered.datatable

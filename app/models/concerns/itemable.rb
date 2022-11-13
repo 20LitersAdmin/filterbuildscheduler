@@ -69,6 +69,38 @@ module Itemable
     "#{quantity_per_box} / #{box_type}"
   end
 
+  # get the closest date from the history JSON
+  # if enforce_before: history date must be before or equal to date
+  # if !enforced_before: use the closest date (before or after)
+  # rubocop:disable Lint/UnexpectedBlockArity
+  def count_as_of(date, enforce_before: false)
+    date = Date.parse(date) if date.is_a?(String)
+
+    return ArgumentError 'invalid date' unless date.is_a?(Date)
+
+    return [available_count, date] if history.empty?
+
+    return [available_count, history.keys.max] if date == Date.today
+
+    closest_date =
+      if enforce_before
+        history.keys
+               .sort
+               .select { |k| Date.parse(k) < date }
+               .last
+      else
+        history.keys
+               .min { |k| (Date.parse(k) - date).abs }
+      end
+
+    # Edge case: enforce_before == true and item has no history before date
+    # meaning the item didn't exist in the system, so assume 0
+    return [0, history.keys.max] if closest_date.nil?
+
+    [history[closest_date]['available'], closest_date]
+  end
+  # rubocop:enable Lint/UnexpectedBlockArity
+
   def has_sub_assemblies?
     return false if is_a?(Material)
 

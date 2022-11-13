@@ -34,6 +34,10 @@ class InventoryPolicy < ApplicationPolicy
     index?
   end
 
+  def snapshot?
+    index?
+  end
+
   def destroy?
     user&.is_admin?
   end
