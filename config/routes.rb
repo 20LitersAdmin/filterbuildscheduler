@@ -102,6 +102,7 @@ Rails.application.routes.draw do
       get 'order_goal'
       get 'order'
       get 'paper'
+      get 'snapshot'
     end
     resources :counts
   end

@@ -1,0 +1,13 @@
+-# frozen_string_literal: true
+
+- available = snapshot_item.count_as_of(@date, enforce_before: @enforce_before)
+- price = snapshot_item.price unless available[0].zero?
+- cost_ttl = available[0] * price unless available[0].zero?
+
+- if available[0].positive?
+  %tr
+    %td= snapshot_item.uid_and_name
+    %td.right-align{ data: { order: "#{available[1]}" } }= human_date available[1]
+    %td.right-align= human_number available[0]
+    %td.right-align= humanized_money_with_symbol price
+    %td.right-align= humanized_money_with_symbol cost_ttl

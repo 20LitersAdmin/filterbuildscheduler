@@ -2,7 +2,7 @@
 
 class InventoriesController < ApplicationController
   before_action :set_inventory, only: %i[show edit update destroy]
-  before_action :authorize_inventory, only: %i[order order_all order_goal]
+  before_action :authorize_inventory, only: %i[order order_all order_goal snapshot]
 
   def index
     authorize @latest = Inventory.latest
@@ -95,6 +95,33 @@ class InventoriesController < ApplicationController
 
   def show
     # arrive here via #history, not #index
+  end
+
+  def snapshot
+    @tech_choices = Technology.for_inventories.order(:short_name)
+
+    @date = params[:date].present? ? Date.parse(params[:date]) : Date.today
+
+    @enforce_before = params[:strict].present?
+
+    if params[:tech].present?
+      @tech = Technology.find(params[:tech])
+      components = @tech.all_components
+      parts = @tech.all_parts
+      materials = @tech.materials
+      @items = [[@tech], components.uniq, parts.uniq, materials.uniq].flatten(1).compact_blank
+    else
+      technologies = Technology.for_inventories
+      components = Component.active
+      parts = Part.active
+      materials = Material.active
+      @items = [technologies, components, parts, materials].flatten
+    end
+
+    # TODO: Here, use Itemable#count_as_of(date, enforce_before: false) to show:
+    # - available
+    # - cost
+    # - total cost
   end
 
   def destroy

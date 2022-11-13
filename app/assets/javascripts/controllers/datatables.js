@@ -1,4 +1,16 @@
 $(document).on("turbolinks:load", function(){
+  function addCommas(nStr) {
+    nStr += '';
+    x = nStr.split('.');
+    x1 = x[0];
+    x2 = x.length > 1 ? '.' + x[1] : '';
+    var rgx = /(\d+)(\d{3})/;
+    while (rgx.test(x1)) {
+      x1 = x1.replace(rgx, '$1' + ',' + '$2');
+    }
+    return x1 + x2;
+  };
+
   /* Create an array with the values of all the checkboxes in a column */
   $.fn.dataTable.ext.order['dom-checkbox'] = function  ( settings, col ) {
     return this.api().column( col, {order:'index'} ).nodes().map( function ( td, i ) {
@@ -84,6 +96,30 @@ $(document).on("turbolinks:load", function(){
   });
 
   $('.datatable-item-list').DataTable({
+    retrieve: true,
+    order: [[0, "asc"]],
+    pageLength: -1,
+    responsive: true,
+    autoWidth: false,
+    info: false,
+    dom:
+      "<'col-xs-12 no-overflow center' B>" +
+      "t",
+    buttons: [ 'copy', 'csv', 'excel', 'print' ]
+  });
+
+  $('.datatable-item-snapshot').DataTable({
+    headerCallback: function (row, data, start, end, display) {
+      var api = this.api();
+      // Remove string formatting
+      var intVal = function (i) {
+        return typeof i === 'string' ? i.replace(/[\$,]/g, '') * 1 : typeof i === 'number' ? i : 0;
+      };
+
+      total = api.column(-1).data().reduce(function (a, b) { return intVal(a) + intVal(b)}, 0);
+
+      $(api.column(-1).header()).html('Cost Ttl $' + addCommas(total.toFixed(2)));
+    },
     retrieve: true,
     order: [[0, "asc"]],
     pageLength: -1,
