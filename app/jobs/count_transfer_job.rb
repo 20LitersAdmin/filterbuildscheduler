@@ -57,7 +57,7 @@ class CountTransferJob < ApplicationJob
       item.last_received_quantity = count.available
     end
 
-    # Set this attr so Itemable#after_save :run_update_jobs is skipped
+    # Set saving_via_count_transfer_job so Itemable#after_save :run_update_jobs is skipped
     item.saving_via_count_transfer_job = true
     item.save
     @inventory.history[item.uid] = count.history_hash_for_inventory

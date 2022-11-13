@@ -1,0 +1,36 @@
+-# frozen_string_literal: true
+
+#inventory_snapshot.col-xs-12
+  .row.tech-chooser.well
+    .col-sm-12.center-align
+      = form_tag snapshot_inventories_path, method: 'get', class: 'form-inline' do
+        = label_tag 'tech', 'Select a technology:'
+        = select_tag 'tech', options_from_collection_for_select(@tech_choices, 'id', 'short_name', @tech&.id), include_blank: true, class: 'form-control'
+        = label_tag 'date', 'Select a date:'
+        = text_field_tag 'date', nil, class: 'datepicker-maxtoday', value: @date
+        = label_tag 'Enforce before'
+        = check_box_tag 'strict', 1, @enforce_before
+        = submit_tag 'Filter', class: 'btn yellow btn-sm', name: nil, data: { disable_with: false }
+    .col-sm-12.right-align
+      %i Enforce Before: The closest inventory date might be *after* the selected date. Choosing 'Enforce Before' forces the system to use the closest inventory date *before* the selected date.
+
+  .row
+    .col-xs-8
+      %h2 Inventory Snapshot:
+      %p
+        %i Click on the calendar next to an item to see the count history
+    .col-xs-4.right-align
+      = link_to 'Inventories', inventories_path, class: 'btn btn-sm empty'
+      = link_to 'New Inventory', new_inventory_path, class: 'btn btn-sm yellow'
+    .col-xs-12
+      %table#item_tbl.table.table-striped.table-bordered.datatable-item-snapshot
+        %thead
+          %tr
+            %th{ data: { priority: 1 } } Item
+            %th.right-align{ data: { priority: 2 } } As of Date (#{human_date(@date)})
+            %th.right-align{ data: { priority: 1 } } Available
+            %th.right-align{ data: { priority: 3 } } Cost ea
+            %th.right-align{ data: { priority: 1 } } Cost Ttl
+        %tbody
+          = render partial: 'snapshot_item', collection: @items
+
