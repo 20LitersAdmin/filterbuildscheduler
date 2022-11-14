@@ -72,7 +72,7 @@ module Itemable
   # get the closest date from the history JSON
   # if enforce_before: history date must be before or equal to date
   # if !enforced_before: use the closest date (before or after)
-  # rubocop:disable Lint/UnexpectedBlockArity
+  # rubocop:disable Style/RedundantSort
   def count_as_of(date, enforce_before: false)
     date = Date.parse(date) if date.is_a?(String)
 
@@ -89,8 +89,10 @@ module Itemable
                .select { |k| Date.parse(k) < date }
                .last
       else
+        # https://gist.github.com/robotmay/2479149
         history.keys
-               .min { |k| (Date.parse(k) - date).abs }
+               .sort_by { |k| (Date.parse(k) - date).abs }
+               .first
       end
 
     # Edge case: enforce_before == true and item has no history before date
@@ -99,7 +101,7 @@ module Itemable
 
     [history[closest_date]['available'], closest_date]
   end
-  # rubocop:enable Lint/UnexpectedBlockArity
+  # rubocop:enable Style/RedundantSort
 
   def has_sub_assemblies?
     return false if is_a?(Material)
