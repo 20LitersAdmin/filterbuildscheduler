@@ -15,7 +15,7 @@
 
 class KindfulClient
   include HTTParty
-  attr_accessor :results, :env
+  attr_accessor :results, :env, :app
 
   def initialize(env: Rails.env.production? ? 'production' : 'sandbox')
     @query_token = ''
@@ -24,26 +24,17 @@ class KindfulClient
 
     @env = env
 
-    @kindful_email = {
-      campaign_name: 'Contributions',
-      fund_name: 'Contributions 40100'
-    }
-
-    @kindful_filter_build = {
-      campaign_name: 'Filter Builds',
-      fund_name: 'Contributions 40100'
-    }
-
-    @kindful_causevox = {
-      campaign_name: 'CauseVox Transactions',
-      fund_name: 'Special Events 40400'
-    }
+    # based upon the method, @app is set to the contents
+    # of the correct service. E.g. #import_transaction is used
+    # by @kindful_causvox, so @app = kindful_causevox
+    # this way headers can use @app globally
+    @app = {}
 
     set_host
   end
 
   def set_host
-    @host = @env == 'production' ? 'https://app.kindful.com/api/v1/' : 'https://app-sandbox.kindful.com/api/v1'
+    @host = "https://app#{'-sandbox' unless @env == 'production'}.kindful.com/api/v1"
   end
 
   def self.post(url, opts)
@@ -55,36 +46,46 @@ class KindfulClient
   ### action methods:
   def import_transaction(transaction)
     # used by WebhooksController#stripe, which calls this method if the stripe data is for a CauseVox transaction
+    @app = kindful_causevox
+
     set_host
-    self.class.post(import_host, { headers: headers, body: contact_w_transaction(transaction) })
+    self.class.post(import_host, { headers: headers(@app[:token]), body: contact_w_transaction(transaction) })
   end
 
   def import_user(user)
     # used by User#update_kindful, which fires on after_save when contact fields have changed
+    @app = kindful_filter_build
     set_host
-    self.class.post(import_host, { headers: headers, body: contact(user) })
+    self.class.post(import_host, { headers: headers(@app[:token]), body: contact(user) })
   end
 
   def import_company_w_email_note(email_address, email, direction, company_name)
     # used by Email#send_to_kindful, when the email_address matches to an organization record
+    @app = kindful_email
     set_host
 
-    self.class.post(import_host, { headers: headers, body: company_w_email_note(email_address, email, direction, company_name) })
+    self.class.post(import_host, { headers: headers(@app[:token]), body: company_w_email_note(email_address, email, direction, company_name) })
   end
 
   def import_user_w_email_note(email_address, email, direction)
     # used by Email#send_to_kindful, when the email_address *does not* match to an organization record
+    @app = kindful_email
     set_host
-    self.class.post(import_host, { headers: headers, body: contact_w_email_note(email_address, email, direction) })
+
+    self.class.post(import_host, { headers: headers(@app[:token]), body: contact_w_email_note(email_address, email, direction) })
   end
 
   def import_user_w_note(registration)
     # used by EventsController#update, when event report is submitted, all event.registrations.attended records call this
+    @app = kindful_filter_build
     set_host
-    self.class.post(import_host, { headers: headers, body: contact_w_note(registration) })
+
+    self.class.post(import_host, { headers: headers(@app[:token]), body: contact_w_note(registration) })
   end
 
   def email_exists_in_kindful?(email)
+    @app = kindful_email
+
     # This method is always hitting the Production site with Production credentials
     response = self.class.get(email_host(email), { headers: live_headers })
 
@@ -93,8 +94,10 @@ class KindfulClient
 
   def query_organizations
     # queries Kindful's API to get a list of companies
+    @app = kindful_email
     set_host
-    response = self.class.post(query_host, { headers: headers, body: organizations_query })
+
+    response = self.class.post(query_host, { headers: headers(@app[:token]), body: organizations_query })
 
     @results << response.parsed_response['results'] if response.parsed_response['results'].any?
 
@@ -103,7 +106,7 @@ class KindfulClient
     @query_token = response.parsed_response['query_token']
 
     while response.parsed_response['has_more']
-      response = self.class.post("#{query_host}?query_token=#{@query_token}", { headers: headers })
+      response = self.class.post("#{query_host}?query_token=#{@query_token}", { headers: headers(@app[:token]) })
       @results << response.parsed_response['results'] if response.parsed_response['results'].any?
     end
 
@@ -169,8 +172,8 @@ class KindfulClient
           note_type: direction,
           note_sender_name: email.oauth_user.name,
           note_sender_email: email.oauth_user.email,
-          campaign: @kindful_email[:campaign_name],
-          fund: @kindful_email[:fund_name]
+          campaign: @app[:campaign_name],
+          fund: @app[:fund_name]
         }
       ]
     }.to_json
@@ -203,8 +206,8 @@ class KindfulClient
           note_type: direction,
           note_sender_name: email.oauth_user.name,
           note_sender_email: email.oauth_user.email,
-          campaign: @kindful_email[:campaign_name],
-          fund: @kindful_email[:fund_name]
+          campaign: @app[:campaign_name],
+          fund: @app[:fund_name]
         }
       ]
     }.to_json
@@ -243,8 +246,8 @@ class KindfulClient
           note_time: registration.event.end_time.to_s,
           note_subject: subject,
           note_type: 'Event',
-          campaign: @kindful_filter_build[:campaign_name],
-          fund: @kindful_filter_build[:fund_name]
+          campaign: @app[:campaign_name],
+          fund: @app[:fund_name]
         }
       ]
     }.to_json
@@ -282,8 +285,8 @@ class KindfulClient
           stripe_charge_id: opts[:id],
           transaction_type: opts[:source][:funding],
           card_type: opts[:source][:brand],
-          campaign: @kindful_causevox[:campaign_name],
-          fund: @kindful_causevox[:fund_name]
+          campaign: @app[:campaign_name],
+          fund: @app[:fund_name]
          }
       ]
     }.to_json
@@ -327,6 +330,44 @@ class KindfulClient
 
   private
 
+  def headers(token)
+    {
+      'Content-Type': 'application/json',
+      'Authorization': "Token token=\"#{token}\""
+    }
+  end
+
+  def kindful_filter_build
+    {
+      campaign_name: 'Filter Builds',
+      fund_name: 'Contributions 40100',
+      token: token(:buildscheduler)
+    }
+  end
+
+  def kindful_causevox
+    {
+      campaign_name: 'CauseVox Transactions',
+      fund_name: 'Special Events 40400',
+      token: token(:causevox)
+    }
+  end
+
+  def kindful_email
+    {
+      campaign_name: 'Contributions',
+      fund_name: 'Contributions 40100',
+      token: token(:gmailsync)
+    }
+  end
+
+  def live_headers
+    {
+      'Content-Type': 'application/json',
+      'Authorization': "Token token=\"#{Rails.application.credentials.kindful[:gmailsync][:live]}\""
+    }
+  end
+
   def recreate_organizations
     return unless @results.any?
 
@@ -339,25 +380,11 @@ class KindfulClient
     end
   end
 
-  def token
-    if @env == 'production'
-      Rails.application.credentials.kf_filterbuild_token
-    else
-      Rails.application.credentials.kf_filterbuild_token_sandbox
-    end
-  end
+  def token(app_name)
+    app_env = @env == 'production' ? :live : :sandbox
 
-  def headers
-    {
-      'Content-Type': 'application/json',
-      'Authorization': 'Token token="' + token + '"'
-    }
-  end
-
-  def live_headers
-    {
-      'Content-Type': 'application/json',
-      'Authorization': 'Token token="' + Rails.application.credentials.kf_filterbuild_token + '"'
-    }
+    Rails.application
+         .credentials
+         .kindful[app_name][app_env]
   end
 end
