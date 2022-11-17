@@ -1,5 +1,7 @@
 # frozen_string_literal: true
+
 # Unused by Railway, using sidekiq-scheduler instead
+# SEE /sidekiq.yml
 
 desc 'Email Scheduling Daemon'
 task send_reminders: :environment do
