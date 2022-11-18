@@ -36,9 +36,10 @@ RSpec.describe KindfulClient do
   describe 'import_transaction' do
     it 'takes transaction data and sends it to Kindful' do
       file = JSON.parse(File.read("#{Rails.root}/spec/fixtures/files/charge_succeeded_spec.json"))
+      charge = StripeCharge.new(file)
 
       expect(KindfulClient).to receive(:post).with(client.import_host, an_instance_of(Hash)).and_return(http_spy)
-      client.import_transaction(json)
+      client.import_transaction(charge)
     end
   end
 
@@ -158,10 +159,10 @@ RSpec.describe KindfulClient do
   describe 'contact_with_transaction' do
     it 'returns a Kindful note json object from a Stripe payment json object' do
       file = JSON.parse File.read("#{Rails.root}/spec/fixtures/files/charge_succeeded_spec.json")
-      json = file['data']['object'].deep_symbolize_keys
-      contact_json = JSON.parse client.contact_w_transaction(json)
+      charge = StripeCharge.new(file)
+      contact_json = JSON.parse client.contact_w_transaction(charge)
 
-      expect(contact_json['data'][0]['first_name']).to eq json[:metadata][:first_name]
+      expect(contact_json['data'][0]['first_name']).to eq charge.first_name
     end
   end
 
@@ -208,7 +209,7 @@ RSpec.describe KindfulClient do
   describe 'live_headers' do
     it 'retrieves the production token' do
       live_header = client.__send__(:live_headers)
-      expect(live_header[:Authorization]).to include(Rails.application.credentials.kindful[:gmailsync][:live])
+      expect(live_header[:Authorization]).to include(Rails.application.credentials.kindful[:gmailsync][:production])
     end
   end
 
