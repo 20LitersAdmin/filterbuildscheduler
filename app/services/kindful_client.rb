@@ -366,7 +366,7 @@ class KindfulClient
   def live_headers
     {
       'Content-Type': 'application/json',
-      'Authorization': "Token token=\"#{Rails.application.credentials.kindful[:gmailsync][:live]}\""
+      'Authorization': "Token token=\"#{Rails.application.credentials.kindful[:gmailsync][:production]}\""
     }
   end
 

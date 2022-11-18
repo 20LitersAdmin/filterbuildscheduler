@@ -11,12 +11,11 @@ RSpec.describe 'Webhooks', type: :request do
       expect_status :ok
     end
 
-    it 'parses the JSON' do
+    it 'creates a StripeCharge object from the data' do
+      allow(StripeCharge).to receive(:new)
+
+      expect(StripeCharge).to receive(:new)
       post stripe_webhook_path, params: data
-      expect(assigns(:json)[:metadata][:first_name]).to eq 'TEST'
-      expect(assigns(:json)[:metadata][:last_name]).to eq 'USER'
-      expect(assigns(:json)[:id]).to eq 'ch_1BM3X3Df2Ej1M9QFB2Qmnhwq'
-      expect(assigns(:json)[:source][:brand]).to eq 'Visa'
     end
 
     it 'sends the transaction and user to Kindful' do
