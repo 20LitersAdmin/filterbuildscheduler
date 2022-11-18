@@ -224,6 +224,8 @@ class KindfulClient
 
     subject = "[Filter Build] #{role} #{registration.event.title} #{guests}"
 
+    attendee = registration.user
+
     {
       data_format: 'contact_with_note',
       action_type: 'update',
@@ -236,11 +238,11 @@ class KindfulClient
       data: [
         {
           # id: registration.user.id.to_s,
-          first_name: registration.user.fname,
-          last_name: registration.user.lname,
-          email: registration.user.email,
-          primary_phone: registration.user.phone,
-          email_opt_in: registration.user.email_opt_in,
+          first_name: attendee.fname,
+          last_name: attendee.lname,
+          email: attendee.email,
+          primary_phone: attendee.phone,
+          email_opt_in: attendee.email_opt_in,
           country: 'US',
           note_id: registration.id.to_s,
           note_time: registration.event.end_time.to_s,
@@ -253,7 +255,7 @@ class KindfulClient
     }.to_json
   end
 
-  def contact_w_transaction(opts)
+  def contact_w_transaction(charge)
     # from import_transaction
     # creates or updates a contact
     # creates a transaction (CauseVox transaction)
@@ -268,23 +270,23 @@ class KindfulClient
       },
       data: [
         {
-          first_name: opts[:metadata][:first_name],
-          last_name: opts[:metadata][:last_name],
-          email: opts[:metadata][:email],
-          addr1: opts[:metadata][:line1],
-          addr2: opts[:metadata][:line2],
-          city: opts[:metadata][:city],
-          state: opts[:metadata][:state],
-          postal: opts[:metadata][:zipcode],
-          country: opts[:metadata][:country],
-          amount_in_cents: opts[:amount],
-          currency: 'usd',
-          transaction_time: opts[:created],
+          transaction_time: charge.transaction_time,
+          stripe_charge_id: charge.stripe_charge_id,
+          amount_in_cents: charge.amount_in_cents,
+          currency: charge.currency,
+          transaction_note: charge.transaction_note,
+          transaction_type: charge.transaction_type,
+          card_type: charge.card_type,
+          first_name: charge.first_name,
+          last_name: charge.last_name,
+          email: charge.email,
+          addr1: charge.addr1,
+          addr2: charge.addr2,
+          city: charge.city,
+          state: charge.state,
+          postal: charge.postal,
+          country: charge.country,
           acknowledged: 'false',
-          transaction_note: opts[:metadata][:campaign_name],
-          stripe_charge_id: opts[:id],
-          transaction_type: opts[:source][:funding],
-          card_type: opts[:source][:brand],
           campaign: @app[:campaign_name],
           fund: @app[:fund_name]
          }
@@ -364,7 +366,7 @@ class KindfulClient
   def live_headers
     {
       'Content-Type': 'application/json',
-      'Authorization': "Token token=\"#{Rails.application.credentials.kindful[:gmailsync][:live]}\""
+      'Authorization': "Token token=\"#{Rails.application.credentials.kindful[:gmailsync][:production]}\""
     }
   end
 
@@ -381,10 +383,8 @@ class KindfulClient
   end
 
   def token(app_name)
-    app_env = @env == 'production' ? :live : :sandbox
-
     Rails.application
          .credentials
-         .kindful[app_name][app_env]
+         .kindful[app_name][@env.to_sym]
   end
 end
