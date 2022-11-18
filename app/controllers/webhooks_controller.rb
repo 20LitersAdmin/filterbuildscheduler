@@ -21,7 +21,6 @@
 # endpoint for the one use case, so the event registration & inventory app
 # became an event registration & inventory & donations from stripe
 # processing app. And the monolith was born.
-
 class WebhooksController < ApplicationController
   skip_before_action :verify_authenticity_token
 
@@ -29,18 +28,16 @@ class WebhooksController < ApplicationController
     # Stripe's test webhook doesn't have application or metadata.
     # To test to Kindful's sandbox, we need to send the charge_succeeded_spec file.
     # So, when in Development and the webhook is received from Stripe, ignore it and use my test file
-    if Rails.env.development?
-      file = JSON.parse(File.read("#{Rails.root}/spec/fixtures/files/charge_succeeded_spec.json"))
-      @json = file['data']['object']
-    else # test and production envs
-      @json = params[:data][:object].as_json
-    end
+    json =
+      if Rails.env.development?
+        JSON.parse(File.read("#{Rails.root}/spec/fixtures/files/charge_succeeded_spec.json"))
+      else # test and production envs
+        params.as_json
+      end
 
-    @json.deep_symbolize_keys!
+    charge = StripeCharge.new(json)
 
-    # @json[:application] code indicates CauseVox transaction
-    # It is NOT a key or secret or security risk
-    KindfulClient.new.import_transaction(@json) if @json[:application] == 'ca_14yEk8gp5dbBbYDnndXU9yTNM3Z3gyWS'
+    KindfulClient.new.import_transaction(charge) if charge.from_causevox
 
     head :ok
   end

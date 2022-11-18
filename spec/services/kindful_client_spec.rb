@@ -36,7 +36,6 @@ RSpec.describe KindfulClient do
   describe 'import_transaction' do
     it 'takes transaction data and sends it to Kindful' do
       file = JSON.parse(File.read("#{Rails.root}/spec/fixtures/files/charge_succeeded_spec.json"))
-      json = file['data']['object'].deep_symbolize_keys
 
       expect(KindfulClient).to receive(:post).with(client.import_host, an_instance_of(Hash)).and_return(http_spy)
       client.import_transaction(json)
