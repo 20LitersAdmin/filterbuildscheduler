@@ -46,6 +46,8 @@ Style/Documentation:
   Enabled: false
 Style/DisableCopsWithinSourceCodeDirective:
   Enabled: false
+Style/RequireOrder:
+  Enabled: false
 Style/SymbolArray:
   Enabled: true
   Exclude:
