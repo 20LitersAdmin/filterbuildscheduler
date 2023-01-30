@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_01_28_141126) do
+ActiveRecord::Schema.define(version: 2023_01_30_201730) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -131,11 +131,13 @@ ActiveRecord::Schema.define(version: 2023_01_28_141126) do
     t.text "snippet"
     t.string "gmail_id"
     t.string "message_id"
-    t.datetime "sent_to_kindful_on"
-    t.string "matched_emails", array: true
+    t.datetime "sent_to_crm_on"
+    t.string "matched_constituents", array: true
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.string "kindful_job_id", array: true
+    t.string "crm_job_id", array: true
+    t.string "direction"
+    t.string "channel", default: "Email"
     t.index ["gmail_id"], name: "index_emails_on_gmail_id"
     t.index ["message_id"], name: "index_emails_on_message_id"
     t.index ["oauth_user_id"], name: "index_emails_on_oauth_user_id"

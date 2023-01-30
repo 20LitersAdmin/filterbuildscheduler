@@ -6,14 +6,6 @@
 - don't create Interactions on Staff Constituents (@20liters.org emails) <-- thought, maybe, why not?
 - emails to/from non-Constituents => ignored
 
-### CauseVox
-- transaction happens in Causevox =>
-  -- look for Constituent by email
-  -- create a Constituent if necessary
-    --- create a Email for Constituent
-    --- create an Address for Constituent
-  -- create a Transaction on Constituent
-
 ### FilterBuildScheduler
 - person registers for a filter build =>
   -- look for Constituent by email
@@ -28,13 +20,6 @@
     --- create a Email for Constituent
     --- create a Phone for Constituent
   -- create a Note on Constituent -or- create an Interaction on Constituent?
-
-
-## google-api gem is depreciated
-* https://github.com/googleapis/google-api-ruby-client
-* https://github.com/googleapis/google-api-ruby-client/tree/main/google-api-client/generated/google/apis/gmail_v1
-* Probably needs to be `gem google-api-gmail_v1`
-  - `require 'google/apis/gmail_v1'`
 
 ## Admin can't register new user when event is full
 

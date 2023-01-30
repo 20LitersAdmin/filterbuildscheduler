@@ -3,7 +3,7 @@
 class SessionsController < Devise::SessionsController
   def new
     # TODO: remove this handy method before final deploy
-    User.first.reset_password('password', 'password') if Rails.env.development?
+    User.first&.reset_password('password', 'password') if Rails.env.development?
 
     @custom_path = params[:return_to]
     self.resource = resource_class.new(sign_in_params)
@@ -25,7 +25,7 @@ class SessionsController < Devise::SessionsController
     end
   end
 
-  def update
-    super
-  end
+  # def update
+  #   super
+  # end
 end
