@@ -2,7 +2,7 @@
 
 # =====> Hello, Interviewers!
 # Business case: automatically create a note on a donor's profile when
-# matching emails are sent receieved from OAuth user's email accounts
+# matching emails are sent/receieved from OAuth user's email accounts
 #
 # This job is run by Sidekiq at 4am everyday.
 # It grabs all emails from an OAuth-verified user's account

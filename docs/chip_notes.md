@@ -1,3 +1,35 @@
+## Bloomerang client
+
+### Gmail:
+- emails FROM Constituents => create an Interaction on Constituent
+- emails TO Constituents => create an Interaction on Constituent
+- don't create Interactions on Staff Constituents (@20liters.org emails) <-- thought, maybe, why not?
+- emails to/from non-Constituents => ignored
+
+### CauseVox
+- transaction happens in Causevox =>
+  -- look for Constituent by email
+  -- create a Constituent if necessary
+    --- create a Email for Constituent
+    --- create an Address for Constituent
+  -- create a Transaction on Constituent
+
+### FilterBuildScheduler
+- person registers for a filter build =>
+  -- look for Constituent by email
+  -- create a Constituent if necessary <--- maybe we don't want to do this?
+    --- create a Email for Constituent
+    --- create a Phone for Constituent
+  -- create a Note on Constituent
+
+- person attends a filter build (via event report) =>
+  -- look for Constituent by email
+  -- create a Constituent if necessary (especially if we don't create from registrations)
+    --- create a Email for Constituent
+    --- create a Phone for Constituent
+  -- create a Note on Constituent -or- create an Interaction on Constituent?
+
+
 ## google-api gem is depreciated
 * https://github.com/googleapis/google-api-ruby-client
 * https://github.com/googleapis/google-api-ruby-client/tree/main/google-api-client/generated/google/apis/gmail_v1
