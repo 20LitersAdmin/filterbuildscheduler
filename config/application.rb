@@ -22,6 +22,8 @@ require 'sidekiq/api'
 require 'google/apis/gmail_v1'
 require 'google/api_client/client_secrets'
 
+require 'bloomerang'
+
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)

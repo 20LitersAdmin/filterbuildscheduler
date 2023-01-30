@@ -18,6 +18,10 @@ class KindfulClient
   attr_accessor :results, :env, :app
 
   def initialize(env: Rails.env.production? ? 'production' : 'sandbox')
+    raise ActiveSupport::Deprecation.warn 'KindfulClient is deprecated. Use BloomerangClient.'
+
+    return
+
     @query_token = ''
     @results = []
     # you can test in the sandbox by first setting @env to anything other than 'production'

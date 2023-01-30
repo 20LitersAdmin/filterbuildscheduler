@@ -10,6 +10,7 @@ end
 
 gem 'aws-sdk-s3'
 gem 'barnes'
+gem 'bloomerang_api', '~> 1.0'
 gem 'bootsnap', '>= 1.4.2', require: false
 gem 'bootstrap3-datetimepicker-rails'
 gem 'bootstrap-sass'

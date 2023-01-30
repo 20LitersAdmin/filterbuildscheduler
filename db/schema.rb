@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_09_21_151258) do
+ActiveRecord::Schema.define(version: 2023_01_28_141126) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -81,6 +81,28 @@ ActiveRecord::Schema.define(version: 2022_09_21_151258) do
     t.string "box_type", default: "box"
     t.text "box_notes"
     t.index ["discarded_at"], name: "index_components_on_discarded_at"
+  end
+
+  create_table "constituent_emails", force: :cascade do |t|
+    t.string "value", null: false
+    t.integer "constituent_id"
+    t.boolean "is_primary", default: false, null: false
+    t.string "email_type"
+  end
+
+  create_table "constituent_phones", force: :cascade do |t|
+    t.string "value", null: false
+    t.integer "constituent_id"
+    t.boolean "is_primary", default: false, null: false
+    t.string "phone_type"
+  end
+
+  create_table "constituents", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "primary_email"
+    t.string "primary_phone"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "counts", force: :cascade do |t|
@@ -230,15 +252,6 @@ ActiveRecord::Schema.define(version: 2022_09_21_151258) do
     t.index ["email"], name: "index_oauth_users_on_email", unique: true
     t.index ["oauth_id"], name: "index_oauth_users_on_oauth_id", unique: true
     t.index ["oauth_token"], name: "index_oauth_users_on_oauth_token", unique: true
-  end
-
-  create_table "organizations", force: :cascade do |t|
-    t.string "company_name"
-    t.string "email"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-    t.index ["company_name"], name: "index_organizations_on_company_name"
-    t.index ["email"], name: "index_organizations_on_email"
   end
 
   create_table "parts", force: :cascade do |t|

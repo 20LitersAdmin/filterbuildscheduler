@@ -3,7 +3,8 @@
 class KindfulJob < ApplicationJob
   queue_as :kindful_job
 
-  def perform(method = '', *_args)
-    KindfulClient.new.__send__(method, *_args) if method.present?
+  def perform(_method = '', *_args)
+    raise ActiveSupport::Deprecation.warn 'KindfulClient is deprecated, use BloomerangClient instead.'
+    # KindfulClient.new.__send__(method, *_args) if method.present?
   end
 end
