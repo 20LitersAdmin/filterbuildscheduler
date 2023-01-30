@@ -106,6 +106,10 @@ class BloomerangClient
     @bloomerang::Transaction.create(charge.as_bloomerang_transaction(constituent_id))
   end
 
+  def create_from_email(email_as_interaction)
+    @bloomerang::Interaction.create(email_as_interaction)
+  end
+
   def write_primary_emails_to_constituents!(ids: [])
     records = ids.empty? ConstituentEmail | ConstituentEmail.where(id: ids)
 

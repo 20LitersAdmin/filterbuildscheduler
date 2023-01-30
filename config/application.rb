@@ -20,7 +20,7 @@ require 'sprockets/railtie'
 require 'sidekiq/api'
 
 require 'google/apis/gmail_v1'
-require 'google/api_client/client_secrets'
+# require 'google/api_client/client_secrets'
 
 require 'bloomerang'
 
