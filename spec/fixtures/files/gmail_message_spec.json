@@ -5,7 +5,7 @@
      {"name": "Date", "value": "Fri, 19 Nov 2021 09:56:27 -0500"},
      {"name": "Message-ID", "value": "<CAG4LXW=jEzKkfOLnE5jOSo7ertC=gAj-6GKE1qO=P8KB19fake@mail.gmail.com>"},
      {"name": "Subject", "value": "Make a simple message for testing"},
-     {"name": "From", "value": "Test Person <test@20liters.org>"},
+     {"name": "From", "value": "Chip Kragt <chip@20liters.org>"},
      {"name": "To", "value": "Test Person <test@person.me>"},
      {"name": "Content-Type", "value": "multipart/alternative; boundary=\"000000000000cc6f1d05d1257a61\""}],
    "mime_type": "multipart/alternative",

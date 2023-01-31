@@ -10,11 +10,26 @@ class Email < ApplicationRecord
   validate :deny_internal_messages
   validate :deny_unmatched_messages
 
+  before_create :match_to_constituents
+
   after_create :send_to_crm
 
   scope :ordered, -> { order(datetime: :desc) }
   scope :stale, -> { where('datetime < ?', Time.now - 14.days) }
   scope :synced, -> { where.not(sent_to_kindful_on: nil) }
+
+  # TODO: TEMP cleanup, remove after production use
+  def self.remove_if_unmatched!
+    all.each do |record|
+      record.__send__(:match_to_constituents)
+
+      if record.matched_constituents.any?
+        record.save
+      else
+        record.delete
+      end
+    end
+  end
 
   def self.cleanup_text(text)
     return if text.nil?
@@ -77,7 +92,7 @@ class Email < ApplicationRecord
 
     job_ids = []
 
-    matched_constituents.each do |constituent_id|
+    matched_constituents&.each do |constituent_id|
       response = BloomerangJob.perform_later(:gmailsync, :create_from_email, as_bloomerang_interaction(constituent_id))
 
       next if !response.ok? || response&.body.nil? || response&.body&.empty?
@@ -114,7 +129,7 @@ class Email < ApplicationRecord
   end
 
   def constituent_names
-    Constituent.where(id: matched_constituents).pluck(:name).join(", ")
+    Constituent.where(id: matched_constituents).pluck(:name).join(', ')
   end
 
   private
@@ -139,43 +154,46 @@ class Email < ApplicationRecord
   end
 
   def deny_unmatched_messages
-    if from.include? oauth_user.email
+    match_to_constituents
+
+    return true if matched_constituents.any?
+
+    errors.add(:from, 'No matches in database!')
+
+    false
+  end
+
+  def match_to_constituents
+    if from&.include? oauth_user.email
       email_addresses = to
       self.direction = 'received'
-    else
+    elsif to&.include? oauth_user.email
       email_addresses = from
       self.direction = 'sent'
     end
 
-    self.channel = 'MassEmail' if email_addresses.size > 10
+    # TODO: Ask Amanda
+    self.channel = 'MassEmail' if (email_addresses&.size || 0) > 10
 
     ary = []
 
-    email_addresses.each do |email_address|
+    email_addresses&.each do |email_address|
       constituent_id = constituent_id_for_email(email_address)
       ary << constituent_id
     end
 
-    if ary.any?
-      self.matched_constituents = ary.compact.uniq
-
-      true
-    else
-      errors.add(:from, 'No matches in database!')
-
-      false
-    end
+    self.matched_constituents = ary.compact.uniq
   end
 
   def as_bloomerang_interaction(constituent_id)
     {
-      'AccountId': constituent_id,
+      'AccountId': constituent_id.to_i,
       'Date': datetime.to_date.iso8601,
       'Channel': channel,
       'Purpose': 'Other',
       'Subject': "#{direction.upcase_first}: #{snippet}",
       'Note': body,
       'IsInbound': direction == 'sent'
-    }
+    }.as_json
   end
 end
