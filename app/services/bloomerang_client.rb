@@ -130,6 +130,18 @@ class BloomerangClient
     end
   end
 
+  def search_for_appeal(appeal_name, is_active: true)
+    response = @bloomerang::Appeal.fetch({ search: appeal_name, isActive: is_active })
+
+    response['Results']
+  end
+
+  def create_appeal(appeal_name)
+    body = { 'Name': appeal_name }
+
+    @bloomerang::Appeal.create(body)
+  end
+
   protected
 
   ## Constituent batching
