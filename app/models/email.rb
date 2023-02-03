@@ -18,7 +18,7 @@ class Email < ApplicationRecord
   scope :stale, -> { where('datetime < ?', Time.now - 14.days) }
   scope :synced, -> { where.not(sent_to_kindful_on: nil) }
 
-  # TODO: TEMP cleanup, remove after production use
+  # TODO: TEMP cleanup, remove after one production use
   def self.remove_if_unmatched!
     all.each do |record|
       record.__send__(:match_to_constituents)
@@ -172,9 +172,6 @@ class Email < ApplicationRecord
       self.direction = 'sent'
     end
 
-    # TODO: Ask Amanda
-    self.channel = 'MassEmail' if (email_addresses&.size || 0) > 10
-
     ary = []
 
     email_addresses&.each do |email_address|
@@ -190,7 +187,7 @@ class Email < ApplicationRecord
       'AccountId': constituent_id.to_i,
       'Date': datetime.to_date.iso8601,
       'Channel': channel,
-      'Purpose': 'Other',
+      'Purpose': 'ImpactCultivation',
       'Subject': "#{direction.upcase_first}: #{snippet}",
       'Note': body,
       'IsInbound': direction == 'sent'

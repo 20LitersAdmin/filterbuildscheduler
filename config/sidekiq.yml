@@ -30,6 +30,6 @@ production:
       cron: '0 4 * * *'
       class: EmailSyncJob
     import_bloomerang:
-      description: "Run at 2am every monday. import any new/updated Constituents; if it's the 1st Monday of the month: sync all Constituents."
-      cron: '0 2 * * mon'
+      description: "Run at 2am everyday. import any new/updated Constituents; if it's the 1st Monday of the month: sync all Constituents."
+      cron: '0 2 * * *'
       class: BloomerangImportJob
