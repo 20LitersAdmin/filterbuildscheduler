@@ -26,6 +26,7 @@ class StripeCharge
                 :transaction_note,
                 :transaction_type
 
+  # json = JSON.parse(File.read('spec/fixtures/files/charge_succeeded_spec.json'))
   def initialize(json)
     json.deep_symbolize_keys!
     @charge = json.dig(:data, :object)
@@ -132,15 +133,22 @@ class StripeCharge
   def find_or_create_bloomerang_appeal
     bloomerang_client = BloomerangClient.new(:causevoxsync)
     # Use @transaction_note to search for an appeal
+    # returns active and inactive appeals
     results = bloomerang_client.search_for_appeal(@transaction_note)
 
-    if results.any?
-      # TODO: just taking the first result, not very sophisticated
-      results[0]['Id']
-    else
-      # create an appeal and use it
-      bloomerang_client.create_appeal(@transaction_note)['Id']
-    end
+    # create an appeal and use it if nothing was found
+    return bloomerang_client.create_appeal(@transaction_note)['Id'] if results.empty?
+
+    active = results.select { |a| a['IsActive'] == true }
+
+    # take the first active appeal and use it
+    return active[0]['Id'] if active.any?
+
+    # take the first inactive appeal
+    id = (results - active)[0]['Id']
+    # re-activate the appeal
+    bloomerang_client.set_appeal_to_active(id)
+    id
   end
 
   def payment_block
