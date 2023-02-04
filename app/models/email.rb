@@ -8,15 +8,13 @@ class Email < ApplicationRecord
   validates :message_id, :gmail_id, presence: true, uniqueness: true
   validates :from, :to, presence: true
   validate :deny_internal_messages
-  validate :deny_unmatched_messages
-
-  before_create :match_to_constituents
+  validate :deny_unmatched_messages # also populates matched_constituents
 
   after_create :send_to_crm
 
   scope :ordered, -> { order(datetime: :desc) }
   scope :stale, -> { where('datetime < ?', Time.now - 14.days) }
-  scope :synced, -> { where.not(sent_to_kindful_on: nil) }
+  scope :synced, -> { where.not(sent_to_crm_on: nil) }
 
   # TODO: TEMP cleanup, remove after one production use
   def self.remove_if_unmatched!
@@ -77,9 +75,9 @@ class Email < ApplicationRecord
       e.body       = body_data
       e.datetime   = Time.parse(
         response.payload
-          .headers
-          .select { |header| header.name.downcase == 'date' }
-          .first&.value
+                .headers
+                .select { |header| header.name.downcase == 'date' }
+                .first&.value
       )
     end
 
@@ -94,19 +92,16 @@ class Email < ApplicationRecord
 
     matched_constituents&.each do |constituent_id|
       response = BloomerangJob.perform_later(:gmailsync, :create_from_email, as_bloomerang_interaction(constituent_id))
-
-      next if !response.ok? || response&.body.nil? || response&.body&.empty?
-
-      job_ids << response['id']
+      job_ids << response&.job_id
     end
 
-    update_columns(sent_to_crm_on: Time.now, crm_job_id: job_ids) if job_ids.any?
+    update_columns(sent_to_crm_on: Time.now, crm_job_id: job_ids.flatten.uniq) if job_ids.any?
 
     reload
   end
 
   def sync_msg
-    return 'Not synced. No contact match.' if sent_to_crm_on.nil?
+    return 'Not synced. No contacts matched.' if sent_to_crm_on.nil?
 
     "Synced with #{constituent_names} at #{sent_to_crm_on.strftime('%-m/%-d/%y %l:%M %P')}"
   end

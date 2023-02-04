@@ -2,6 +2,8 @@
 
 require 'bloomerang'
 
+# Constituent ID: 8300545 == Chip TestingForm
+# email 14696
 class BloomerangClient
   attr_reader :response, :total_records, :last_modified, :created_record_ids, :app, :bloomerang
 
@@ -130,16 +132,24 @@ class BloomerangClient
     end
   end
 
-  def search_for_appeal(appeal_name, is_active: true)
-    response = @bloomerang::Appeal.fetch({ search: appeal_name, isActive: is_active })
+  def search_for_appeal(appeal_name)
+    response_one = @bloomerang::Appeal.fetch({ search: appeal_name, isActive: true })
+    response_two = @bloomerang::Appeal.fetch({ search: appeal_name, isActive: false })
 
-    response['Results']
+    response_one['Results'] + response_two['Results']
   end
 
   def create_appeal(appeal_name)
-    body = { 'Name': appeal_name }
+    body = {
+      'Name': appeal_name,
+      'IsActive': true
+    }
 
     @bloomerang::Appeal.create(body)
+  end
+
+  def set_appeal_to_active(id)
+    @bloomerang::Appeal.update(id, { 'IsActive': true })
   end
 
   protected

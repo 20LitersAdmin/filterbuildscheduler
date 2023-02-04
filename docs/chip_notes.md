@@ -2,20 +2,20 @@
 # TODO: Re-send Stripe webhooks since Feb 1st-ish (check with Amanda for what she's hand-migrated)
 
 ### DONE: Gmail:
-- emails FROM Constituents => create an Interaction on Constituent
-- emails TO Constituents => create an Interaction on Constituent
-- don't create Interactions on Staff Constituents (@20liters.org emails)
-- emails to/from non-Constituents => ignored
++ emails FROM Constituents => create an Interaction on Constituent
++ emails TO Constituents => create an Interaction on Constituent
++ don't create Interactions on Staff Constituents (@20liters.org emails)
++ emails to/from non-Constituents => ignored
 
 ### WIP: CauseVox/Stripe
-- person makes a gift in CauseVox
-  - check for matching Appeal
-  - create Appeal if no match
-  - Transaction[Desigation[Donation[AppealId]]]
-- can be 'card' or 'ach_debit'
++ person makes a gift in CauseVox
+  + check for matching Appeal
+  + create Appeal if no match
+  + Use the appeal in Transaction[Desigation[Donation[AppealId]]]
++ can be 'card' or 'ach_debit'
   - I made gift to https://gvsu.20liters.org via bank (it was rough), needs a few days for micro-transactions to appear, then I need to check the charge_succeeded JSON object
 
-### FilterBuildScheduler
+### TODO: FilterBuildScheduler
 - user is made is_leader? true =>
   -- merge a Constituent
     --- with Email for Constituent
@@ -41,6 +41,7 @@
     -- create an Interaction: "Attended #TITLE on #DATE"
   -- for leaders
     -- create an Interaction: "Led #TITLE on #DATE"
+
 
 ## Admin can't register new user when event is full
 
