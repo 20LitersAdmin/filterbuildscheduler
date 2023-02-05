@@ -95,6 +95,40 @@ class BloomerangClient
     end
   end
 
+  # interaction_types
+  # :became_leader
+  # :skip
+  def create_from_user(user, interaction_type: nil)
+    # merge the Constituent
+    @respone = @bloomerang::Constituent.create(user.as_bloomerang_constituent)
+    
+    return if interaction_type == :skip
+    # capture the new/update Constituent ID
+    constituent_id = @response['Id']
+
+    # Translates to: user.became_leader_interaction(constituent_id)
+    body = user.__send__("#{interaction_type}_interaction".to_sym, constituent_id)
+
+    @bloomerang::Interaction.create(body)
+  end
+
+  # interaction_types
+  # :attended_event
+  # :skip
+  def create_from_registration(registration, interaction_type: nil)
+    # merge the Constituent
+    @respone = @bloomerang::Constituent.create(registration.user.as_bloomerang_constituent)
+    
+    return if interaction_type == :skip
+    # capture the new/update Constituent ID
+    constituent_id = @response['Id']
+
+    # Translates to: registration.attended_event_interaction(constituent_id)
+    body = registration.__send__("#{interaction_type}_interaction".to_sym, constituent_id)
+
+    @bloomerang::Interaction.create(body)
+  end
+
   def create_from_causevox(charge)
     # charge is an instance of StripeCharge
 

@@ -3,6 +3,10 @@
 class BloomerangJob < ApplicationJob
   queue_as :bloomerang_job
 
+  # app options:
+  # :buildscheduler
+  # :gmailsync
+  # :causevoxsync
   def perform(app = nil, method = '', *args)
     return if app.nil?
 

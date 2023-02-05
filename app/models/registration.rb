@@ -2,10 +2,15 @@
 
 class Registration < ApplicationRecord
   include Discard::Model
+  include ActiveModel::Dirty
 
   belongs_to :user
   belongs_to :event
-  attr_accessor :accept_waiver
+
+  # accept_waiver: form field to pass to user.accepted_waiver_on
+  # form_source: a form field that handles page redirects based on values: "admin", "self", "anon"
+  # email_opt_out: event#edit form field to pass to user.email_opt_out
+  attr_accessor :accept_waiver, :email_opt_out, :form_source
 
   validates :guests_registered, :guests_attended, numericality: { only_integer: true, greater_than_or_equal_to: 0 }, presence: true
 
@@ -32,9 +37,9 @@ class Registration < ApplicationRecord
   }
   scope :pre_reminders,         -> { where(reminder_sent_at: nil) }
 
-  def form_source
-    # this allows for a form field that handles page redirects based on values: "admin", "self", "anon"
-  end
+  # def form_source
+  #   
+  # end
 
   def human_date
     created_at.strftime('%-m/%-d/%Y %H:%M')
@@ -57,5 +62,33 @@ class Registration < ApplicationRecord
   # RegistrationsController line 69
   def waiver_accepted?
     user.signed_waiver_on?
+  end
+
+  def send_to_crm
+    return if !attended? && user.reload.email_opt_out?
+
+    BloomerangJob.perform_later(:buildscheduler, :create_from_registration, self, interaction_type: :attended_event)
+  end
+
+  ## Bloomerang
+  def attended_event_interaction(constituent_id)
+    subject = leader? ? 'Led' : 'Attended'
+    subject += " filter build event"
+    note = "#{event.title} (#{event.format_time_slim})"
+    note += "\nBrought #{guests_attended} #{'guest'.pluralize(guests_attended)}" if guests_attended.positive?
+
+    {
+      'AccountId': constituent_id.to_i,
+      'Date': event.end_time.to_date.iso8601,
+      'Channel': 'Other',
+      'Purpose': 'VolunteerActivity',
+      'Subject': subject,
+      'Note': note,
+      'IsInbound': true
+    }.as_json
+  end
+
+  def pass_email_opt_out_to_user
+    user.update_columns(email_opt_out: email_opt_out)
   end
 end

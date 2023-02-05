@@ -43,7 +43,7 @@ class StripeCharge
     @addr1 =                  @metadata[:cv_postal_line1]
     @addr2 =                  @metadata[:cv_postal_line2]
     @addr =                   "#{@addr1} #{@addr2}".squish
-    @amount_in_cents =        @charge[:amount_captured]
+    @amount_in_cents =        @charge[:amount_captured].to_i
     @amount_decimal =         @amount_in_cents / 100.0
     @city =                   @metadata[:cv_postal_city]
     @country =                @metadata[:cv_postal_country]
@@ -53,7 +53,7 @@ class StripeCharge
     @state =                  @metadata[:cv_postal_state]
     @stripe_charge_id =       @charge[:id]
     @stripe_receipt_url =     @charge[:receipt_url]
-    @transaction_time =       @charge[:created]
+    @transaction_time =       @charge[:created].to_i
     @transaction_date =       Time.at(@transaction_time).to_date.iso8601
     @transaction_note =       @metadata[:cv_campaign_title]
     @transaction_type =       @payment_details[:type]
@@ -84,7 +84,7 @@ class StripeCharge
       },
       'CustomValues': [
         {
-          # 1992708: Attributes: Current Donor
+          # 1992708 Attributes:  7785474 Current Donor
           'FieldId': 1992708,
           'ValueIds': [7785474]
         }

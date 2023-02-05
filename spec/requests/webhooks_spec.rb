@@ -5,6 +5,12 @@ require 'rails_helper'
 RSpec.describe 'Webhooks', type: :request do
   context 'successful post from CauseVox' do
     let(:data) { JSON.parse(file_fixture('charge_succeeded_spec.json').read) }
+    let(:bloom_double) { instance_double BloomerangClient }
+
+    before :each do
+      allow(BloomerangClient).to receive(:new).with(:causevoxsync).and_return(bloom_double)
+      allow(bloom_double).to receive(:create_from_causevox).and_return true
+    end
 
     it 'responds with 200 OK' do
       post stripe_webhook_path, params: data
@@ -18,8 +24,8 @@ RSpec.describe 'Webhooks', type: :request do
       post stripe_webhook_path, params: data
     end
 
-    it 'sends the transaction and user to Kindful' do
-      expect_any_instance_of(KindfulClient).to receive(:import_transaction)
+    it 'sends the transaction and user to BloomerangClient' do
+      expect(BloomerangClient).to receive(:new).with(:causevoxsync)
       post stripe_webhook_path, params: data
     end
   end
@@ -34,8 +40,8 @@ RSpec.describe 'Webhooks', type: :request do
       expect_status :ok
     end
 
-    it 'doesn\'t pass to Kindful' do
-      expect_any_instance_of(KindfulClient).to_not receive(:import_transaction)
+    it 'doesn\'t pass to BloomerangClient' do
+      expect(BloomerangClient).not_to receive(:new).with(:causevoxsync)
     end
   end
 end

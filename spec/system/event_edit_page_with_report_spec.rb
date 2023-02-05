@@ -249,11 +249,11 @@ RSpec.describe 'To create an event report', type: :system do
       expect(EventInventoryJob).to have_received(:perform_later).with(event)
     end
 
-    it 'and submit it to send registration information to Kindful', js: true do
+    it 'and submit it to send registration information to Bloomerang', js: true do
       click_link 'btn_check_all'
 
       expect { click_button 'Submit' }
-        .to have_enqueued_job.on_queue('kindful_job').exactly(5).times
+        .to have_enqueued_job.on_queue('bloomerang_job').exactly(5).times
 
       expect(page).to have_content 'Event updated.'
     end

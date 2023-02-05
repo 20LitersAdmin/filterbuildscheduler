@@ -41,7 +41,7 @@ class EmailSyncJob < ApplicationJob
 
       o.update_column(:last_email_sync, Time.now)
 
-      puts "-+-+ Results for #{o.name}: Created #{b_size} emails. Synced #{b_sent} notes to Kindful"
+      puts "-+-+ Results for #{o.name}: Created #{b_size} emails. Synced #{b_sent} interactions to CRM"
     end
 
     e_size = Email.stale.size

@@ -229,6 +229,13 @@ class EventsController < ApplicationController
     # this also sets submitted registrations as attended
     @event.assign_attributes(event_params)
 
+    @event.registrations.each do |reg|
+      # Since reg.email_opt_out is a virtual field,
+      # we loose the state on @email.save
+      # so we have to update user.email_opt_out before
+      reg.pass_email_opt_out_to_user
+    end
+
     admins_notified = nil
     users_notified = nil
     results_emails_sent = nil
@@ -265,8 +272,10 @@ class EventsController < ApplicationController
       if @event.complete?
         # shouldn't be any need for .active here because registrations were just marked as attended, there hasn't been a chance to discard them.
         @event.registrations.attended.each do |r|
+          r.reload
           RegistrationMailer.event_results(r).deliver_later if send_results_emails
-          KindfulJob.perform_later('import_user_w_note', r)
+          # NOTE: send_to_crm checks attended? and user.email_opt_out?
+          r.send_to_crm
         end
 
         EventInventoryJob.perform_later(@event) if create_inventory
@@ -307,7 +316,7 @@ class EventsController < ApplicationController
                                   :attendance,
                                   :contact_name,
                                   :contact_email,
-                                  registrations_attributes: %i[id user_id event_id attended leader guests_registered guests_attended]
+                                  registrations_attributes: %i[id user_id event_id attended leader guests_registered guests_attended email_opt_out]
   end
 
   def replicator_params

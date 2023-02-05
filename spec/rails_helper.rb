@@ -20,6 +20,7 @@ require 'capybara/rspec'
 require 'selenium-webdriver'
 require 'support/form_helper'
 require 'rspec/retry'
+require 'support/bloomerang_stub'
 
 ActiveRecord::Migration.maintain_test_schema!
 Capybara.server = :puma
@@ -50,6 +51,10 @@ RSpec.configure do |config|
 
   config.expect_with :rspec do |expectations|
     expectations.syntax = %i[should expect]
+  end
+
+  config.before(:all) do
+
   end
 
   config.before(:each) do

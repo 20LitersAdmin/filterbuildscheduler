@@ -1,4 +1,5 @@
 -# frozen_string_literal: true
+-# TODO: Add email_opt_out
 
 .col-sm-12
   .row
@@ -32,11 +33,18 @@
     %h3
       Registration-based attendance:
       %span#attendance_counter 0
-= f.simple_fields_for :registrations, @event.registrations.kept.joins(:user).order('users.lname') do |r|
+= f.simple_fields_for :registrations, @event.registrations.kept.joins(:user).order(leader: :desc, 'users.lname': :asc) do |r|
   .row
-    .col-xs-6
-      = r.input :attended, label: "#{r.object.user.name} (with #{r.object.guests_registered} guests)", input_html: { tabindex: '-1' }
-    .col-xs-4.mt-10
+    .col-xs-4
+      - user = r.object.user
+      - leader_lang = r.object.leader? ? 'LEADER: ' : ''
+      - guests_lang = r.object.guests_registered.positive? ? " (with #{pluralize r.object.guests_registered, 'guest'})" : ''
+      = r.input :attended, label: "#{leader_lang}#{user.name} #{user.id} #{guests_lang}", input_html: { tabindex: '-1' }
+    .col-xs-2.mt-10
+      Email opt out:
+    .col-xs-2.mt-5
+      = r.input :email_opt_out, as: :boolean, label: false, input_html: { checked: user.email_opt_out? }
+    .col-xs-2.mt-10
       Guests attended:
     .col-xs-2.mt-5
       = r.input :guests_attended, label: false
