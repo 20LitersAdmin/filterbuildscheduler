@@ -71,15 +71,13 @@ RSpec.describe 'User self-registering for an event', type: :system do
       expect(page).to have_css("input[name='commit']")
     end
 
-    it 'can be filled out and submitted, which sends the user\'s info to Kindful' do
+    it 'can be filled out and submitted' do
       user = build(:user)
 
       fill_in 'registration_user_fname', with: user.fname
       fill_in 'registration_user_lname', with: user.lname
       fill_in 'registration_user_email', with: user.email
       check 'registration_accept_waiver'
-
-      expect_any_instance_of(KindfulClient).to receive(:import_user)
 
       click_submit
 

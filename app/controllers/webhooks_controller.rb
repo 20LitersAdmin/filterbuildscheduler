@@ -27,7 +27,7 @@ class WebhooksController < ApplicationController
   def stripe
     charge = StripeCharge.new(params.as_json)
 
-    BloomerangClient.new(:causevoxsync).create_from_causevox(charge)
+    BloomerangClient.new(:causevoxsync).create_from_causevox(charge) if charge.from_causevox
 
     head :ok
   end

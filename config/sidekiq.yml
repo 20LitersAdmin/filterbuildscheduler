@@ -26,7 +26,7 @@ production:
       cron: '30 5 * * *'
       class: SetupReminderJob
     sync_emails:
-      description: "Run at 4am everyday. For each OauthUser, sync emails from Gmail to notes in Kindful when a matching person or organization is found."
+      description: "Run at 4am everyday. For each OauthUser, sync Gmail emails to Bloomerang Interactions when a matching Constituent is found."
       cron: '0 4 * * *'
       class: EmailSyncJob
     import_bloomerang:

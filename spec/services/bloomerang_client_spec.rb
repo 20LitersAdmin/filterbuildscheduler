@@ -72,8 +72,10 @@ RSpec.describe BloomerangClient do
   describe '#create_from_causevox' do
     let(:charge) { JSON.parse(File.read("#{Rails.root}/spec/fixtures/files/charge_succeeded_spec.json"))}
     let(:stripe_charge) { StripeCharge.new(charge) }
-
+    
     before do
+      allow(Bloomerang::Appeal).to receive(:fetch).and_return({ 'Results' => []})
+      allow(Bloomerang::Appeal).to receive(:create).and_return({ 'Id' => 0})
       allow(Bloomerang::Constituent).to receive(:create).and_return({ 'Id' => 0 })
     end
 

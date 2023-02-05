@@ -13,7 +13,7 @@ RSpec.describe Email, type: :model do
     allow(BloomerangJob).to receive(:perform_later).with(:gmailsync, :create_from_email, anything).and_return(bloom_double)
     allow(bloom_double).to receive(:ok?).and_return true
     allow(bloom_double).to receive(:body).and_return ['something']
-    allow(bloom_double).to receive(:[]).with('id').and_return 123
+    allow(bloom_double).to receive(:job_id).and_return 123
   end
 
   describe 'must be valid' do
@@ -127,11 +127,11 @@ RSpec.describe Email, type: :model do
   end
 
   describe '#sync_msg' do
-    context 'when email was not sent_to_kindful' do
+    context 'when email was not sent_to_crm' do
       it 'returns a specific message' do
         email.sent_to_crm_on = nil
 
-        expect(email.sync_msg).to eq 'Not synced. No contact match.'
+        expect(email.sync_msg).to eq 'Not synced. No contacts matched.'
       end
     end
 
@@ -144,14 +144,14 @@ RSpec.describe Email, type: :model do
   end
 
   describe '#sync_banner_color' do
-    context 'when email was not sent_to_kindful' do
+    context 'when email was not sent_to_crm' do
       it 'returns "warning"' do
         email.sent_to_crm_on = nil
         expect(email.sync_banner_color).to eq 'warning'
       end
     end
 
-    context 'when email was sent_to_kindful' do
+    context 'when email was sent_to_crm' do
       it 'returns "success"' do
         expect(email.sync_banner_color).to eq 'success'
       end
@@ -330,7 +330,7 @@ RSpec.describe Email, type: :model do
   end
 
   describe '#as_bloomerang_interaction' do
-    fit 'returns a JSON hash' do
+    it 'returns a JSON hash' do
       return_hash = email.__send__(:as_bloomerang_interaction, email.matched_constituents[0])
 
       expect(return_hash.keys - %w[AccountId Date Channel Purpose Subject Note IsInbound]).to eq []

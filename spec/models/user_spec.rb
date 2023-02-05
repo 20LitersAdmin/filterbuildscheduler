@@ -714,45 +714,36 @@ RSpec.describe User, type: :model do
     end
   end
 
-  describe '#update_kindful' do
+  describe '#send_to_crm' do
     let(:user2) { build :user }
-    context 'when name, email, opt_out or phone have changed' do
+    context 'when user becomes a leader' do
+      before do
+        user.is_leader = true
+      end
+
       it 'fires on after_save' do
-        expect(user2).to receive(:update_kindful)
-        user2.save
-
-        user.fname = 'New'
-        expect(user).to receive(:update_kindful)
-        user.save
-
-        user.email = 'new@email.comb'
-        expect(user).to receive(:update_kindful)
-        user.save
-
-        user.email_opt_out = true
-        expect(user).to receive(:update_kindful)
-        user.save
-
-        user.phone = '123-456-7891'
-        expect(user).to receive(:update_kindful)
+        expect(user.will_save_change_to_is_leader?).to eq true
+        expect(user).to receive(:send_to_crm)
         user.save
       end
 
-      it 'takes user data and sends it to kindful_client' do
-        expect_any_instance_of(KindfulClient).to receive(:import_user).with(user2)
-        user2.save
+      it 'takes user data and sends it to BloomerangJob' do
+        expect(BloomerangJob).to receive(:perform_later).with(:buildscheduler, :create_from_user, user, interaction_type: :became_leader)
+        user.save
       end
     end
 
-    context 'when name, email, opt_out and phone have not changed' do
+    context 'when user was already a leader' do
+      let(:leader_user) { create :leader }
+      
       it 'doesn\'t fire' do
-        expect(user).not_to receive(:update_kindful)
+        expect(leader_user).not_to receive(:send_to_crm)
 
-        user.is_leader = true
-        user.signed_waiver_on = Date.today
-        user.leader_notes = 'New note'
+        leader_user.leader_notes = 'New note'
+        expect(leader_user.changed?).to eq true
+        expect(leader_user.will_save_change_to_is_leader?).to eq false
 
-        user.save
+        leader_user.save
       end
     end
   end

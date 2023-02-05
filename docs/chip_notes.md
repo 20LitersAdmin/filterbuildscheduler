@@ -1,48 +1,6 @@
 ## Bloomerang client
 # TODO: Re-send Stripe webhooks since Feb 1st-ish (check with Amanda for what she's hand-migrated)
 
-### DONE: Gmail:
-+ emails FROM Constituents => create an Interaction on Constituent
-+ emails TO Constituents => create an Interaction on Constituent
-+ don't create Interactions on Staff Constituents (@20liters.org emails)
-+ emails to/from non-Constituents => ignored
-
-### WIP: CauseVox/Stripe
-+ person makes a gift in CauseVox
-  + check for matching Appeal
-  + create Appeal if no match
-  + Use the appeal in Transaction[Desigation[Donation[AppealId]]]
-+ can be 'card' or 'ach_debit'
-  - I made gift to https://gvsu.20liters.org via bank (it was rough), needs a few days for micro-transactions to appear, then I need to check the charge_succeeded JSON object
-
-### TODO: FilterBuildScheduler
-- user is made is_leader? true =>
-  -- merge a Constituent
-    --- with Email for Constituent
-    --- with Phone for Constituent
-    --- with Attribute of Volunteer (see StripeCharge)
-    --- with Volunteer Role of FilterBuildLeader (CustomField w/ CustomValue)
-    --- with Has Admin Access To Listed Systems of make.20liters.org  (CustomField w/ CustomValue)
-  -- create an Interaction: "Became a Filter Build Leader"
-
-- user registers for a filter build =>
-  - do nothing
-
-- while event is being closed =>
-  -- mark attendance **ALLOW email_opt_out ON /events/#{id}/edit**
-  -- for builders, if email_opt_out is true:
-    -- do nothing
-  -- for builders, if email_opt_out is false:
-    -- merge a Constituent
-      --- with Email for Constituent
-      --- with Phone for Constituent
-      --- with Attribute of Volunteer (see StripeCharge)
-      --- with Volunteer Role of FilterBuilder (CustomField w/ CustomValue)
-    -- create an Interaction: "Attended #TITLE on #DATE"
-  -- for leaders
-    -- create an Interaction: "Led #TITLE on #DATE"
-
-
 ## Admin can't register new user when event is full
 
 ## Inventory:

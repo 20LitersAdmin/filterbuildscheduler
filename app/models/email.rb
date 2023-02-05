@@ -82,7 +82,7 @@ class Email < ApplicationRecord
     end
 
     email.save
-    email.reload if email.errors.none?
+    email.reload unless email.errors.any?
   end
 
   def send_to_crm
@@ -183,7 +183,7 @@ class Email < ApplicationRecord
       'Date': datetime.to_date.iso8601,
       'Channel': channel,
       'Purpose': 'ImpactCultivation',
-      'Subject': "#{direction.upcase_first}: #{snippet}",
+      'Subject': subject,
       'Note': body,
       'IsInbound': direction == 'sent'
     }.as_json

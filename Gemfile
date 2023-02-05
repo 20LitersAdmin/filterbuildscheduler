@@ -18,7 +18,10 @@ gem 'chartkick'
 gem 'devise'
 gem 'discard'
 gem 'font-awesome-sass', '~> 5.15.1'
-gem 'google-apis-gmail_v1'
+# Techically retired, should use 'google-apis-gmail_v1', but auth is a pain
+gem 'google-api-client'
+# needed for 'google-apis-gmail_v1', is a depenency of 'google-api-client', so it's installed anyway
+# gem 'googleauth'
 gem 'haml'
 gem 'httparty'
 gem 'icalendar'

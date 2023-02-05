@@ -174,7 +174,7 @@ RailsAdmin.config do |config|
         field :lname
         field :email
         field :email_opt_out do
-          help 'Prevents ANY email from being sent; overrides settings in Permissions.<br />Is synced with Kindful and Mailchimp.'.html_safe
+          help 'Prevents ANY email from being sent; overrides settings in Permissions.'.html_safe
         end
         field :phone
         field :discarded_at, :date do

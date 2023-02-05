@@ -7,14 +7,14 @@
 #
 # Relationship management is the reason CRMs exist and one feature we
 # wished we had in our donor CRM was communication history.
-# Kindful CRM allowed us to manually enter notes onto donor profiles any
+# Our CRM allowed us to manually enter interactions onto donor profiles any
 # time we called, emailed or mailed a donor, but it was a manual process.
 #
 # We missed the email integration offered by larger CRMs that could
 # automatically sync email conversations with donor records.
 #
-# 20 Liters uses GSuite, Gmail has an API, even a Rails gem, and I had
-# I had some experience with OAuth through another app, so why not try it?
+# 20 Liters uses GSuite, Gmail has an API, even a Rails gem,
+# and I had some experience with OAuth through another app, so why not try it?
 #
 # see /app/jobs/email_sync_job
 
