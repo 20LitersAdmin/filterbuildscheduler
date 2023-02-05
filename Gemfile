@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 source 'https://rubygems.org'
-ruby '3.1.2'
+ruby '3.1.3'
 
 git_source(:github) do |repo_name|
   repo_name = "#{repo_name}/#{repo_name}" unless repo_name.include?('/')
@@ -10,6 +10,7 @@ end
 
 gem 'aws-sdk-s3'
 gem 'barnes'
+gem 'bloomerang_api', '~> 1.0'
 gem 'bootsnap', '>= 1.4.2', require: false
 gem 'bootstrap3-datetimepicker-rails'
 gem 'bootstrap-sass'
@@ -17,7 +18,10 @@ gem 'chartkick'
 gem 'devise'
 gem 'discard'
 gem 'font-awesome-sass', '~> 5.15.1'
+# Techically retired, should use 'google-apis-gmail_v1', but auth is a pain
 gem 'google-api-client'
+# needed for 'google-apis-gmail_v1', is a depenency of 'google-api-client', so it's installed anyway
+# gem 'googleauth'
 gem 'haml'
 gem 'httparty'
 gem 'icalendar'

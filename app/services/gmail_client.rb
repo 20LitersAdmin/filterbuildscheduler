@@ -7,14 +7,14 @@
 #
 # Relationship management is the reason CRMs exist and one feature we
 # wished we had in our donor CRM was communication history.
-# Kindful CRM allowed us to manually enter notes onto donor profiles any
+# Our CRM allowed us to manually enter interactions onto donor profiles any
 # time we called, emailed or mailed a donor, but it was a manual process.
 #
 # We missed the email integration offered by larger CRMs that could
 # automatically sync email conversations with donor records.
 #
-# 20 Liters uses GSuite, Gmail has an API, even a Rails gem, and I had
-# I had some experience with OAuth through another app, so why not try it?
+# 20 Liters uses GSuite, Gmail has an API, even a Rails gem,
+# and I had some experience with OAuth through another app, so why not try it?
 #
 # see /app/jobs/email_sync_job
 
@@ -49,7 +49,7 @@ class GmailClient
         gmail.get_user_message(@user_id, id, fields: @standard_fields) do |response, error|
           if error.present?
             @skipped_ids << id
-            @fails << { id: id, msg: error, source: 'batch_get_messages' }
+            @fails << { id:, msg: error, source: 'batch_get_messages' }
             next
           end
 
@@ -62,10 +62,7 @@ class GmailClient
   end
 
   def batch_get_queried_messages(query:)
-    paged_response = list_queried_messages(query: query)
-
-    # TESTING: This is a likely source of the Heroku R14 memory leak
-    Rails.logger.warn "batch_get_queried_messages: response size: #{paged_response.as_json.size}"
+    paged_response = list_queried_messages(query:)
 
     ids = []
     paged_response.each do |message|
@@ -84,7 +81,7 @@ class GmailClient
       batch_get_messages(ids)
     end
 
-    return unless @skipped_ids.any?
+    return if @skipped_ids.none?
 
     # retry without batching for skipped_ids
     @skipped_ids.each { |skipped_id| get_message(skipped_id) }
@@ -154,7 +151,6 @@ class GmailClient
     # singlepart emails have no 'parts', just have a 'body.data'
     # which can be 'text/plain' OR 'text/html'
     if response.payload.body&.data.present?
-      # TESTING: This is a likely source of the Heroku R14 memory leak
       @body_data = ActionView::Base.full_sanitizer.sanitize(response.payload.body.data).squish
     elsif response.payload.parts&.any?
       # multipart emails have 'parts', which can be nested within parts multiple times

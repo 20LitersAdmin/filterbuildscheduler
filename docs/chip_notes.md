@@ -1,24 +1,28 @@
-## google-api gem is depreciated
-* https://github.com/googleapis/google-api-ruby-client
-* https://github.com/googleapis/google-api-ruby-client/tree/main/google-api-client/generated/google/apis/gmail_v1
-* Probably needs to be `gem google-api-gmail_v1`
-  - `require 'google/apis/gmail_v1'`
+# Chip's notes
+
+## Bloomerang client
+
+TODO: Re-send Stripe webhooks since Feb 1st-ish (check with Amanda for what she's hand-migrated)
 
 ## Admin can't register new user when event is full
 
-## Inventory:
+## Inventory
+
 - Receiving inventory:
   - should only generate counts for Materials and Parts.not_made_from_materials
   - should include Materials/Parts not associated with any technology
 
-## Assemblies:
+## Assemblies
+
 - SAM3 and boxes: requires an assembly to have floats
 
 ## Donation list
+
 - Total cost is wrong?
 - Filtering items: SAM2 only returns two materials and nothing else?
 
-## Setup Crew:
+## Setup Crew
+
 - System has a system test for generating SetupMailer.notify
   - from EventsController#Setup (only for self)
   - from SetupsController#edit (only new users)
@@ -30,25 +34,29 @@
 
 - volunteer report: include event setups with a standard hour setting (e.g 1.5 hours)
 
+## Policies
 
-### Policies:
 - Prevent some user types from accessing some parts of rails_admin?
 
 - Rails_admin#user#edit
+
   - prevent some fields from being visible based on user type?
     - only admins can create admins
 
 - Rails_admin#destroyable
+
   - only available to full admins?
 
 - User.non_builders scope is missing new roles
 
-### Should do:
+## Should do
+
 - rails_admin pjax screws up browser back and forward buttons
 
 - Inventory "undo" button? Maybe just for most recent? Or just for @inventory.event_based?
 
 - more System tests:
+
   - component_rails_admin_views
   - component_rails_admin_manage (c, u, di, r, de)
 
@@ -93,14 +101,15 @@
   - oauth_update
   - oauth_delete
 
-### Someday
-1. Ability to pause / cancel registration emails
+## Someday
+
+- Ability to pause / cancel registration emails
   - Using a suppress_emails? field?
   - `scope :pre_reminders, -> { where(reminder_sent_at: nil, suppress_reminder_emails: false) }`
 
+## system spec policy checking
 
-### system spec policy checking:
-```
+```ruby
 context 'when visited by a' do
   it 'anon user, it redirects to sign-in page' do
     visit url

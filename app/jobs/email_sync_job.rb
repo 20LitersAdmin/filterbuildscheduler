@@ -2,7 +2,7 @@
 
 # =====> Hello, Interviewers!
 # Business case: automatically create a note on a donor's profile when
-# matching emails are sent receieved from OAuth user's email accounts
+# matching emails are sent/receieved from OAuth user's email accounts
 #
 # This job is run by Sidekiq at 4am everyday.
 # It grabs all emails from an OAuth-verified user's account
@@ -34,14 +34,14 @@ class EmailSyncJob < ApplicationJob
         next
       end
 
-      gc.batch_get_latest_messages(after: after, before: before)
+      gc.batch_get_latest_messages(after:, before:)
 
       b_size = Email.all.size - a_size
       b_sent = Email.synced.size - a_sent
 
       o.update_column(:last_email_sync, Time.now)
 
-      puts "-+-+ Results for #{o.name}: Created #{b_size} emails. Synced #{b_sent} notes to Kindful"
+      puts "-+-+ Results for #{o.name}: Created #{b_size} emails. Synced #{b_sent} interactions to CRM"
     end
 
     e_size = Email.stale.size

@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+# require 'googleauth/web_user_authorizer'
+# require 'googleauth/token_store'
+
 class OauthUser < ApplicationRecord
   has_many :emails, dependent: :destroy
 
@@ -9,6 +12,9 @@ class OauthUser < ApplicationRecord
   scope :ordered_by_id, -> { order(:id) }
 
   attr_accessor :source
+
+  # if google-api-client is removed / degrades, we'll need this
+  # SCOPES = %w[https://www.googleapis.com/auth/gmail.readonly].freeze
 
   def self.from_omniauth(auth)
     oauth_user =
@@ -37,6 +43,19 @@ class OauthUser < ApplicationRecord
           }
       }
     ).to_authorization
+
+    # if google-api-client is removed / degrades, we'll need this
+    # client_id = Rails.application.credentials.google_client_id
+    # client_secret = Rails.application.credentials.google_client_secret
+    # callback_uri = "/auth/google_oauth2/callback"
+
+    # # TODO: is this working??
+    # Google::Auth::UserAuthorizer.new(
+    #   client_id,
+    #   SCOPES,
+    #   OauthUserTokenStore.new(self),
+    #   callback_uri
+    # )
   end
 
   def oauth_expired?

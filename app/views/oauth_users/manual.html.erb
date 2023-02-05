@@ -11,11 +11,11 @@
   <div class="row">
     <div class="col-xs-12">
       <h2>Performing a manual sync:</h2>
-      <p>You can use this form to manually fetch emails from Gmail and send them to Kindful.</p>
+      <p>You can use this form to manually fetch emails from Gmail and send them to Bloomerang.</p>
       <p>Any search query that works in your Gmail searchbar will work here.</p>
       <p>This only works if:</p>
       <ul>
-        <li>The sender or one of the receivers is a Kindful contact</li>
+        <li>The sender or one of the receivers is a Bloomerang Constituent (individual)</li>
         <li>At least one email address is not from '@20liters.org'</li>
         <li>The email has not already been previously synced in the last 14 days</li>
       </ul>
@@ -24,7 +24,7 @@
       <p>This system only keeps track of emails synced in the last 14 days. <strong>A manual sync can easily create duplicate notes for any email older than 14 days ago.</strong></p>
       <h4>Please test the manual query in Gmail FIRST.</h4>
       <p>If your query is not pulling in exactly what you want and nothing else, mistakes can happen.</p>
-      <p>There is no way to undo syncing emails to Kindful. Mistakes will have to be corrected by hand in Kindful.</p>
+      <p>There is no way to undo syncing emails to Bloomerang. Mistakes will have to be corrected by hand in Bloomerang.</p>
 
     </div>
   </div>
@@ -51,7 +51,7 @@
   <p>If the quick reset fails, do this:</p>
   <ol>
     <li>Visit <%= link_to 'Your Google Account Permissions page', 'https://myaccount.google.com/permissions', target: '_blank'  %></li>
-    <li>Click on "20 Liters Kindful Email Sync" from the list of "Third Party apps with account access".</li>
+    <li>Click on "Bloomerang Email Sync" from the list of "Third Party apps with account access".</li>
     <li>Click "Remove Access"</li>
     <li>Then <%= link_to 'reset your Google Sign-in', auth_out_path %></li>
   </ol>

@@ -2,6 +2,7 @@
 
 class User < ApplicationRecord
   include Discard::Model
+  include ActiveModel::Dirty
 
   # SCHEMA NOTES: Roles:
   # is_admin
@@ -62,7 +63,7 @@ class User < ApplicationRecord
     user.restore_encrypted_password! if user.will_save_change_to_encrypted_password? && user.encrypted_password.blank?
   end
 
-  after_save :update_kindful, if: ->(user) { user.saved_change_to_fname? || user.saved_change_to_lname? || user.saved_change_to_email? || user.saved_change_to_email_opt_out? || user.saved_change_to_phone? }
+  after_save :send_to_crm, if: ->(user) { user.became_leader? }
 
   def admin_or_leader?
     is_admin? ||
@@ -107,6 +108,11 @@ class User < ApplicationRecord
       Event.kept.distinct.joins('LEFT JOIN registrations ON registrations.event_id = events.id')
            .where('is_private = false OR registrations.user_id = ?', id)
     end
+  end
+
+  def became_leader?
+    saved_change_to_is_leader? &&
+      is_leader?
   end
 
   def can_do_inventory?
@@ -169,7 +175,6 @@ class User < ApplicationRecord
   end
 
   def email_opt_in
-    # KindfulClient wants email_opt_in, not email_opt_out
     !email_opt_out?
   end
 
@@ -215,7 +220,7 @@ class User < ApplicationRecord
   def leading?(event)
     return false unless is_leader?
 
-    registrations.kept.leaders.where(event: event).present?
+    registrations.kept.leaders.where(event:).present?
   end
 
   def name
@@ -236,7 +241,7 @@ class User < ApplicationRecord
   end
 
   def registered?(event)
-    Registration.kept.where(user: self, event: event).present?
+    Registration.kept.where(user: self, event:).present?
   end
 
   def role_ary
@@ -322,6 +327,73 @@ class User < ApplicationRecord
     str.html_safe
   end
 
+  ## Bloomerang
+  def as_bloomerang_constituent
+    # 1993728 Filter Builder || 1993729 Filter Build Leader
+    role = is_leader? ? [1993729] : [1993728]
+
+    # TODO: leaving PrimaryEmail:AccountID && PrimaryAddress:AccountID blank, assuming it will get assigned
+    body = {
+      'Type': 'Individual',
+      'Status': 'Active',
+      'FirstName': fname,
+      'LastName': lname,
+      'PrimaryEmail': {
+        'Type': 'Home',
+        'Value': email,
+        'IsPrimary': true,
+        'IsBad': false
+      },
+      'CustomValues': [
+        {
+          # 1992708 Attributes:  1994764 Volunteer
+          'FieldId': 1992708,
+          'ValueIds': [1994764]
+        },
+        {
+          # 1992704 Volunteer Roles
+          'FieldId': 1992704,
+          'ValueIds': role
+        }
+      ]
+    }
+
+    return body.as_json unless phone.present?
+
+    primary_phone = {
+      'PrimaryPhone': {
+        'Type': 'Home',
+        'Number': phone,
+        'IsPrimary': true
+      }
+    }
+
+    return (body.merge! primary_phone).as_json unless is_leader?
+
+    access = {
+      # 1995778 Has Admin Access to Listed Systems: 1994762 make.20liters.org
+      'FieldId': 1995778,
+      'ValueIds': [1994762]
+    }
+
+    body[:CustomValues] << access
+
+    body.as_json
+  end
+
+  ## Bloomerang
+  def became_leader_interaction(constituent_id)
+    {
+      'AccountId': constituent_id.to_i,
+      'Date': Date.today.iso8601,
+      'Channel': 'Other',
+      'Purpose': 'VolunteerActivity',
+      'Subject': 'Became Filter Build Leader',
+      'Note': techs_qualified.to_sentence,
+      'IsInbound': true
+    }.as_json
+  end
+
   private
 
   def ensure_authentication_token
@@ -330,7 +402,9 @@ class User < ApplicationRecord
 
   def check_phone_format
     # Remove any non-numbers, and any symbols that aren't part of [(,),-,.,+]
+    # rubocop:disable Lint/DuplicateRegexpCharacterClassElement
     phone.gsub!(/[^\d,(,),+,\s,.,-]/, '') if phone.present? && phone.match('^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$').nil?
+    # rubocop:enable Lint/DuplicateRegexpCharacterClassElement
   end
 
   def generate_authentication_token
@@ -341,7 +415,8 @@ class User < ApplicationRecord
     end
   end
 
-  def update_kindful
-    KindfulClient.new.import_user(self)
+  ## Bloomerang
+  def send_to_crm
+    BloomerangJob.perform_later(:buildscheduler, :create_from_user, self, interaction_type: :became_leader)
   end
 end

@@ -42,9 +42,15 @@ Style/EmptyLiteral:
   Enabled: false
 Style/InlineComment:
   Enabled: false
+Style/Lambda:
+  Enabled: false
 Style/Documentation:
   Enabled: false
 Style/DisableCopsWithinSourceCodeDirective:
+  Enabled: false
+Style/NumericLiterals:
+  Enabled: false
+Style/OpenStructUse:
   Enabled: false
 Style/SymbolArray:
   Enabled: true

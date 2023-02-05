@@ -1,17 +1,6 @@
 # frozen_string_literal: true
 
-# =====> Hello, Interviewers!
-#
-# My first attempt at syncing Gmail with our donor CRM was to not actually
-# store records in my database at all.
-#
-# But I ran into issues with duplication. This model primarily ensures we
-# can ignore duplicates.
-#
-# It also allows me to encapsulate the logic for data from Gmail turning
-# into data for Kindful.
-#
-# Emails are only saved for 2 weeks so the database doesn't get bloated.
+# TODO: HERE: I changed a lot, does this still work as expected?
 
 class Email < ApplicationRecord
   belongs_to :oauth_user
@@ -19,12 +8,26 @@ class Email < ApplicationRecord
   validates :message_id, :gmail_id, presence: true, uniqueness: true
   validates :from, :to, presence: true
   validate :deny_internal_messages
+  validate :deny_unmatched_messages # also populates matched_constituents
 
-  after_create :send_to_kindful, unless: -> { Rails.env.test? }
+  after_create :send_to_crm
 
   scope :ordered, -> { order(datetime: :desc) }
   scope :stale, -> { where('datetime < ?', Time.now - 14.days) }
-  scope :synced, -> { where.not(sent_to_kindful_on: nil) }
+  scope :synced, -> { where.not(sent_to_crm_on: nil) }
+
+  # TODO: TEMP cleanup, remove after one production use
+  def self.remove_if_unmatched!
+    all.each do |record|
+      record.__send__(:match_to_constituents)
+
+      if record.matched_constituents.any?
+        record.save
+      else
+        record.delete
+      end
+    end
+  end
 
   def self.cleanup_text(text)
     return if text.nil?
@@ -55,7 +58,7 @@ class Email < ApplicationRecord
                                                 .first&.value
     return if message_id.nil?
 
-    email = where(message_id: message_id).first_or_initialize
+    email = where(message_id:).first_or_initialize
 
     return email unless email.new_record?
 
@@ -72,9 +75,9 @@ class Email < ApplicationRecord
       e.body       = body_data
       e.datetime   = Time.parse(
         response.payload
-          .headers
-          .select { |header| header.name.downcase == 'date' }
-          .first&.value
+                .headers
+                .select { |header| header.name.downcase == 'date' }
+                .first&.value
       )
     end
 
@@ -82,50 +85,46 @@ class Email < ApplicationRecord
     email.reload unless email.errors.any?
   end
 
-  def send_to_kindful
-    kf = KindfulClient.new
+  def send_to_crm
+    return if sent_to_crm_on.present?
 
-    temp_matched_emails = []
-    temp_job_ids = []
+    job_ids = []
 
-    target_emails.each do |email_address, direction|
-      next unless kf.email_exists_in_kindful?(email_address)
-
-      org = Organization.find_by(email: email_address)
-      response =
-        if org.present?
-          kf.import_company_w_email_note(email_address, self, direction, org.company_name)
-        else
-          kf.import_user_w_email_note(email_address, self, direction)
-        end
-
-      next if !response.ok? || response&.body.nil? || response&.body&.empty?
-
-      temp_matched_emails << email_address
-      temp_job_ids << response['id']
+    matched_constituents&.each do |constituent_id|
+      response = BloomerangJob.perform_later(:gmailsync, :create_from_email, as_bloomerang_interaction(constituent_id))
+      job_ids << response&.job_id
     end
 
-    update_columns(sent_to_kindful_on: Time.now, matched_emails: temp_matched_emails, kindful_job_id: temp_job_ids) if temp_matched_emails.any?
+    update_columns(sent_to_crm_on: Time.now, crm_job_id: job_ids.flatten.uniq) if job_ids.any?
 
     reload
   end
 
   def sync_msg
-    return 'Not synced. No contact match.' if sent_to_kindful_on.nil?
+    return 'Not synced. No contacts matched.' if sent_to_crm_on.nil?
 
-    "Synced with #{matched_emails.join(', ')} at #{sent_to_kindful_on.strftime('%-m/%-d/%y %l:%M %P')}"
+    "Synced with #{constituent_names} at #{sent_to_crm_on.strftime('%-m/%-d/%y %l:%M %P')}"
   end
 
   def sync_banner_color
-    sent_to_kindful_on.present? ? 'success' : 'warning'
+    sent_to_crm_on.present? ? 'success' : 'warning'
   end
 
   def synced?
-    sent_to_kindful_on.present?
+    sent_to_crm_on.present?
   end
 
   def synced_data
-    attributes.slice('id', 'oauth_user_id', 'sent_to_kindful_on', 'matched_emails', 'kindful_job_id', 'gmail_id', 'message_id')
+    attributes.slice('id', 'oauth_user_id', 'sent_to_crm_on', 'matched_emails', 'crm_job_id', 'gmail_id', 'message_id')
+  end
+
+  def constituent_id_for_email(email_address)
+    Constituent.find_by(primary_email: email_address)&.id ||
+      ConstituentEmail.find_by(value: email_address)&.constituent&.id
+  end
+
+  def constituent_names
+    Constituent.where(id: matched_constituents).pluck(:name).join(', ')
   end
 
   private
@@ -136,10 +135,6 @@ class Email < ApplicationRecord
     domains = Constants::Email::INTERNAL_DOMAINS
     address_domains = []
 
-    # Email Regex for domain was:
-    # /@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])/
-    # which I think came from me pulling URI::MailTo::EMAIL_REGEXP apart to find just the domain portion?
-    # Now it's just a simple "everything after @ until a period"
     (from + to).uniq.each do |address|
       address_domains << address.scan(/@[^.]+/)
     end
@@ -153,24 +148,44 @@ class Email < ApplicationRecord
     false
   end
 
-  def target_emails
-    # If I sent the email, include everyone I sent it to
-    # If I received the email, include the person who sent it to me
-    if from.include? oauth_user.email
+  def deny_unmatched_messages
+    match_to_constituents
+
+    return true if matched_constituents.any?
+
+    errors.add(:from, 'No matches in database!')
+
+    false
+  end
+
+  def match_to_constituents
+    if from&.include? oauth_user.email
       email_addresses = to
-      direction = 'Received Email'
-    else
+      self.direction = 'received'
+    elsif to&.include? oauth_user.email
       email_addresses = from
-      direction = 'Sent Email'
+      self.direction = 'sent'
     end
 
     ary = []
 
-    email_addresses.each do |email_address|
-      ary << [email_address, direction]
+    email_addresses&.each do |email_address|
+      constituent_id = constituent_id_for_email(email_address)
+      ary << constituent_id
     end
 
-    # [[email, direction], [email, direction]]
-    ary
+    self.matched_constituents = ary.compact.uniq
+  end
+
+  def as_bloomerang_interaction(constituent_id)
+    {
+      'AccountId': constituent_id.to_i,
+      'Date': datetime.to_date.iso8601,
+      'Channel': channel,
+      'Purpose': 'ImpactCultivation',
+      'Subject': subject,
+      'Note': body,
+      'IsInbound': direction == 'sent'
+    }.as_json
   end
 end

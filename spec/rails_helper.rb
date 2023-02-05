@@ -20,6 +20,7 @@ require 'capybara/rspec'
 require 'selenium-webdriver'
 require 'support/form_helper'
 require 'rspec/retry'
+require 'support/bloomerang_stub'
 
 ActiveRecord::Migration.maintain_test_schema!
 Capybara.server = :puma

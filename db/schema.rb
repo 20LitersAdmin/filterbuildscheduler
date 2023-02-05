@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # This file is auto-generated from the current state of the database. Instead
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
@@ -10,7 +12,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_09_21_151258) do
+ActiveRecord::Schema.define(version: 2023_01_30_201730) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -83,6 +85,28 @@ ActiveRecord::Schema.define(version: 2022_09_21_151258) do
     t.index ["discarded_at"], name: "index_components_on_discarded_at"
   end
 
+  create_table "constituent_emails", force: :cascade do |t|
+    t.string "value", null: false
+    t.integer "constituent_id"
+    t.boolean "is_primary", default: false, null: false
+    t.string "email_type"
+  end
+
+  create_table "constituent_phones", force: :cascade do |t|
+    t.string "value", null: false
+    t.integer "constituent_id"
+    t.boolean "is_primary", default: false, null: false
+    t.string "phone_type"
+  end
+
+  create_table "constituents", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "primary_email"
+    t.string "primary_phone"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
   create_table "counts", force: :cascade do |t|
     t.bigint "user_id"
     t.bigint "inventory_id", null: false
@@ -109,11 +133,13 @@ ActiveRecord::Schema.define(version: 2022_09_21_151258) do
     t.text "snippet"
     t.string "gmail_id"
     t.string "message_id"
-    t.datetime "sent_to_kindful_on"
-    t.string "matched_emails", array: true
+    t.datetime "sent_to_crm_on"
+    t.string "matched_constituents", array: true
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.string "kindful_job_id", array: true
+    t.string "crm_job_id", array: true
+    t.string "direction"
+    t.string "channel", default: "Email"
     t.index ["gmail_id"], name: "index_emails_on_gmail_id"
     t.index ["message_id"], name: "index_emails_on_message_id"
     t.index ["oauth_user_id"], name: "index_emails_on_oauth_user_id"
@@ -230,15 +256,6 @@ ActiveRecord::Schema.define(version: 2022_09_21_151258) do
     t.index ["email"], name: "index_oauth_users_on_email", unique: true
     t.index ["oauth_id"], name: "index_oauth_users_on_oauth_id", unique: true
     t.index ["oauth_token"], name: "index_oauth_users_on_oauth_token", unique: true
-  end
-
-  create_table "organizations", force: :cascade do |t|
-    t.string "company_name"
-    t.string "email"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-    t.index ["company_name"], name: "index_organizations_on_company_name"
-    t.index ["email"], name: "index_organizations_on_email"
   end
 
   create_table "parts", force: :cascade do |t|
