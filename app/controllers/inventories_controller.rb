@@ -118,7 +118,7 @@ class InventoriesController < ApplicationController
       @items = [technologies, components, parts, materials].flatten
     end
 
-    # TODO: Here, use Itemable#count_as_of(date, enforce_before: false) to show:
+    # NOTE: Here, use Itemable#count_as_of(date, enforce_before: false) to show:
     # - available
     # - cost
     # - total cost
@@ -181,7 +181,6 @@ class InventoriesController < ApplicationController
   end
 
   def order_goal
-    # TODO: Does this really slow things down or not?
     GoalRemainderCalculationJob.perform_now
 
     @technologies = Technology.for_inventories.order(:name)

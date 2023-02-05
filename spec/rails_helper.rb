@@ -77,6 +77,10 @@ end
 
 Capybara.default_host = 'http://localhost:3000/'
 
+# WARN Selenium [DEPRECATION] [:capabilities] The :capabilities parameter for Selenium::WebDriver::Chrome::Driver is deprecated.
+# should be fixed once Capybara > 3.36.0
+Selenium::WebDriver.logger.ignore(:browser_options)
+
 Shoulda::Matchers.configure do |config|
   config.integrate do |with|
     # Choose a test framework:

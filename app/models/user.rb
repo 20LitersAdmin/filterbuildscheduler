@@ -332,7 +332,6 @@ class User < ApplicationRecord
     # 1993728 Filter Builder || 1993729 Filter Build Leader
     role = is_leader? ? [1993729] : [1993728]
 
-    # TODO: leaving PrimaryEmail:AccountID && PrimaryAddress:AccountID blank, assuming it will get assigned
     body = {
       'Type': 'Individual',
       'Status': 'Active',

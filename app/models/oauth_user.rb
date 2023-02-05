@@ -48,8 +48,7 @@ class OauthUser < ApplicationRecord
     # client_id = Rails.application.credentials.google_client_id
     # client_secret = Rails.application.credentials.google_client_secret
     # callback_uri = "/auth/google_oauth2/callback"
-
-    # # TODO: is this working??
+    #
     # Google::Auth::UserAuthorizer.new(
     #   client_id,
     #   SCOPES,

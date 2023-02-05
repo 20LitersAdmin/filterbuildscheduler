@@ -60,7 +60,6 @@ class StripeCharge
   end
 
   def as_bloomerang_constituent
-    # TODO: leaving PrimaryEmail:AccountID && PrimaryAddress:AccountID blank, assuming it will get assigned
     {
       'Type': 'Individual',
       'Status': 'Active',
