@@ -42,6 +42,8 @@ Style/EmptyLiteral:
   Enabled: false
 Style/InlineComment:
   Enabled: false
+Style/Lambda:
+  Enabled: false
 Style/Documentation:
   Enabled: false
 Style/DisableCopsWithinSourceCodeDirective:

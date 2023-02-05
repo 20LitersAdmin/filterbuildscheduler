@@ -15,28 +15,29 @@ class Registration < ApplicationRecord
   validates :guests_registered, :guests_attended, numericality: { only_integer: true, greater_than_or_equal_to: 0 }, presence: true
 
   # RailsAdmin "active" is better than "kept"
-  scope :active,                -> { kept }
-  scope :attended,              -> { where(attended: true) }
-  scope :builders,              -> { where(leader: false) }
-  scope :leaders,               -> { where(leader: true) }
-  scope :ordered_by_user_lname, -> { includes(:user).order('users.lname') }
-  scope :pre_reminders,         -> { where(reminder_sent_at: nil) }
-  scope :future, lambda do
-    select('registrations.*')
-      .joins(:event)
-      .where('events.discarded_at IS NULL')
-      .where('events.start_time > ?', Time.now)
-  end
-  scope :past, lambda do
-    select('registrations.*')
-      .joins(:event)
-      .where('events.discarded_at IS NULL')
-      .where('events.start_time < ?', Time.now)
-  end
+  scope :active, -> { kept }
 
-  # def form_source
-  #
-  # end
+  scope :attended,              -> { where(attended: true) }
+
+  scope :builders,              -> { where(leader: false) }
+  scope :future,
+        -> {
+          select('registrations.*')
+            .joins(:event)
+            .where('events.discarded_at IS NULL')
+            .where('events.start_time > ?', Time.now)
+        }
+  scope :leaders,               -> { where(leader: true) }
+
+  scope :ordered_by_user_lname, -> { includes(:user).order('users.lname') }
+  scope :past,
+        -> {
+          select('registrations.*')
+            .joins(:event)
+            .where('events.discarded_at IS NULL')
+            .where('events.start_time < ?', Time.now)
+        }
+  scope :pre_reminders, -> { where(reminder_sent_at: nil) }
 
   def human_date
     created_at.strftime('%-m/%-d/%Y %H:%M')
