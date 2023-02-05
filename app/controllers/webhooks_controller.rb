@@ -25,19 +25,9 @@ class WebhooksController < ApplicationController
   skip_before_action :verify_authenticity_token
 
   def stripe
-    # Stripe's test webhook doesn't have application or metadata.
-    # To test to Kindful's sandbox, we need to send the charge_succeeded_spec file.
-    # So, when in Development and the webhook is received from Stripe, ignore it and use my test file
-    json =
-      if Rails.env.development?
-        JSON.parse(File.read("#{Rails.root}/spec/fixtures/files/charge_succeeded_spec.json"))
-      else # test and production envs
-        params.as_json
-      end
+    charge = StripeCharge.new(params.as_json)
 
-    charge = StripeCharge.new(json)
-
-    KindfulClient.new.import_transaction(charge) if charge.from_causevox
+    BloomerangClient.new(:causevoxsync).create_from_causevox(charge) if charge.from_causevox
 
     head :ok
   end

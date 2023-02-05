@@ -33,7 +33,9 @@ module CleanupCrew
 
     # use .delete_all because there are no dependencies
     Supplier.delete_all
-    Organization.delete_all
+    ConstituentEmail.delete_all
+    ConstituentPhone.delete_all
+    Constituent.delete_all
 
     # To clear all workers' jobs:
     Sidekiq::Worker.clear_all

@@ -19,8 +19,11 @@ require 'sprockets/railtie'
 # require 'rails/test_unit/railtie'
 require 'sidekiq/api'
 
+# Techically retired, should use gem 'google-apis-gmail_v1', but auth is a pain
 require 'google/apis/gmail_v1'
 require 'google/api_client/client_secrets'
+
+require 'bloomerang'
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
