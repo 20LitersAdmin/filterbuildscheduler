@@ -1,19 +1,22 @@
+# frozen_string_literal: true
+
+# rubocop:disable Style/StaticClass, Style/RedundantSelf
 module Bloomerang
   class Base
     # block Bloomerang gem from sending
-    def self.get(path, params = {})
+    def self.get(path, _params = {})
       self.full_url(path)
     end
 
-    def self.post(path, params, body)
+    def self.post(path, _params, _body)
       self.full_url(path)
     end
 
-    def self.put(path, params, body)
+    def self.put(path, _params, _body)
       self.full_url(path)
     end
 
-    def self.delete(path, params = {})
+    def self.delete(path, _params = {})
       self.full_url(path)
     end
 
@@ -22,3 +25,4 @@ module Bloomerang
     end
   end
 end
+# rubocop:enable Style/StaticClass, Style/RedundantSelf

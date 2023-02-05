@@ -48,7 +48,7 @@ Style/DisableCopsWithinSourceCodeDirective:
   Enabled: false
 Style/NumericLiterals:
   Enabled: false
-Style/RequireOrder:
+Style/OpenStructUse:
   Enabled: false
 Style/SymbolArray:
   Enabled: true

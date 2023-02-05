@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 # require 'googleauth/web_user_authorizer'
 # require 'googleauth/token_store'
 

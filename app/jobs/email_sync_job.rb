@@ -34,7 +34,7 @@ class EmailSyncJob < ApplicationJob
         next
       end
 
-      gc.batch_get_latest_messages(after: after, before: before)
+      gc.batch_get_latest_messages(after:, before:)
 
       b_size = Email.all.size - a_size
       b_sent = Email.synced.size - a_sent

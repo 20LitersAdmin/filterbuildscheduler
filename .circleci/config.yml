@@ -20,12 +20,12 @@ jobs:
       - image: cimg/redis:6.2.6
 
     environment:
-      BUNDLE_JOBS: '3'
-      BUNDLE_RETRY: '3'
+      BUNDLE_JOBS: "3"
+      BUNDLE_RETRY: "3"
       BUNDLE_PATH: vendor/bundle
       PGHOST: 127.0.0.1
       PGUSER: chiperific
-      PGPASSWORD: ''
+      PGPASSWORD: ""
       RAILS_ENV: test
 
     steps:

@@ -220,7 +220,7 @@ class User < ApplicationRecord
   def leading?(event)
     return false unless is_leader?
 
-    registrations.kept.leaders.where(event: event).present?
+    registrations.kept.leaders.where(event:).present?
   end
 
   def name
@@ -241,7 +241,7 @@ class User < ApplicationRecord
   end
 
   def registered?(event)
-    Registration.kept.where(user: self, event: event).present?
+    Registration.kept.where(user: self, event:).present?
   end
 
   def role_ary
@@ -388,7 +388,7 @@ class User < ApplicationRecord
       'Date': Date.today.iso8601,
       'Channel': 'Other',
       'Purpose': 'VolunteerActivity',
-      'Subject': "Became Filter Build Leader",
+      'Subject': 'Became Filter Build Leader',
       'Note': techs_qualified.to_sentence,
       'IsInbound': true
     }.as_json
@@ -402,7 +402,9 @@ class User < ApplicationRecord
 
   def check_phone_format
     # Remove any non-numbers, and any symbols that aren't part of [(,),-,.,+]
+    # rubocop:disable Lint/DuplicateRegexpCharacterClassElement
     phone.gsub!(/[^\d,(,),+,\s,.,-]/, '') if phone.present? && phone.match('^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$').nil?
+    # rubocop:enable Lint/DuplicateRegexpCharacterClassElement
   end
 
   def generate_authentication_token

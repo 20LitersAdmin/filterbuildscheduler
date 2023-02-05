@@ -1238,7 +1238,7 @@ RailsAdmin.config do |config|
 
     extend ActionView::Helpers::NumberHelper
 
-    number_with_precision(float, precision: precision, delimiter: ',')
+    number_with_precision(float, precision:, delimiter: ',')
   end
 
   def external_link(view, link)
