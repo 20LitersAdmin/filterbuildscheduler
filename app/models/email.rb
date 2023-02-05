@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-# TODO: HERE: I changed a lot, does this still work as expected?
-
 class Email < ApplicationRecord
   belongs_to :oauth_user
 
@@ -15,19 +13,6 @@ class Email < ApplicationRecord
   scope :ordered, -> { order(datetime: :desc) }
   scope :stale, -> { where('datetime < ?', Time.now - 14.days) }
   scope :synced, -> { where.not(sent_to_crm_on: nil) }
-
-  # TODO: TEMP cleanup, remove after one production use
-  def self.remove_if_unmatched!
-    all.each do |record|
-      record.__send__(:match_to_constituents)
-
-      if record.matched_constituents.any?
-        record.save
-      else
-        record.delete
-      end
-    end
-  end
 
   def self.cleanup_text(text)
     return if text.nil?
