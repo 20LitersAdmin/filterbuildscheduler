@@ -19,17 +19,17 @@ production:
   :schedule:
     registration_reminders:
       description: "Run at 6:30am everyday. For events occurring in the next 2 days, send email reminders to any registrants who have not yet received them."
-      cron: '30 6 * * *'
+      cron: "30 6 * * *"
       class: RegistrationReminderJob
     setup_reminders:
       description: "Run at 5:30am everyday. For setups occurring in the next 2 days, send email reminders to any registered users who have not yet received them."
-      cron: '30 5 * * *'
+      cron: "30 5 * * *"
       class: SetupReminderJob
     sync_emails:
       description: "Run at 4am everyday. For each OauthUser, sync Gmail emails to Bloomerang Interactions when a matching Constituent is found."
-      cron: '0 4 * * *'
+      cron: "0 4 * * *"
       class: EmailSyncJob
     import_bloomerang:
       description: "Run at 2am everyday. import any new/updated Constituents; if it's the 1st Monday of the month: sync all Constituents."
-      cron: '0 2 * * *'
+      cron: "0 2 * * *"
       class: BloomerangImportJob

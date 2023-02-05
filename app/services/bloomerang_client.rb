@@ -101,8 +101,9 @@ class BloomerangClient
   def create_from_user(user, interaction_type: nil)
     # merge the Constituent
     @respone = @bloomerang::Constituent.create(user.as_bloomerang_constituent)
-    
+
     return if interaction_type == :skip
+
     # capture the new/update Constituent ID
     constituent_id = @response['Id']
 
@@ -118,8 +119,9 @@ class BloomerangClient
   def create_from_registration(registration, interaction_type: nil)
     # merge the Constituent
     @respone = @bloomerang::Constituent.create(registration.user.as_bloomerang_constituent)
-    
+
     return if interaction_type == :skip
+
     # capture the new/update Constituent ID
     constituent_id = @response['Id']
 

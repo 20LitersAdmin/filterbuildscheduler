@@ -173,7 +173,7 @@ RSpec.describe User, type: :model do
     end
 
     it 'shows all events I have registered for' do
-      Registration.create user: user, event: private_event
+      Registration.create user:, event: private_event
 
       expect(user.available_events).to eq([private_event])
     end
@@ -181,7 +181,7 @@ RSpec.describe User, type: :model do
     it 'shows all public events and all events I have registered for' do
       event1
       event2
-      Registration.create user: user, event: private_event
+      Registration.create user:, event: private_event
 
       expect(user.available_events).to include(event1)
       expect(user.available_events).to include(event2)
@@ -357,17 +357,17 @@ RSpec.describe User, type: :model do
 
   describe '#events_attended' do
     let(:event_attended) { create :past_event }
-    let(:registration_attended) { create :registration_attended, user: user, event: event_attended }
+    let(:registration_attended) { create :registration_attended, user:, event: event_attended }
 
     let(:event_unattended) { create :past_event }
 
     let(:registration_unattended) { create :registration_attended, event: event_unattended }
 
     let(:event_registered) { create :past_event }
-    let(:registration_registered) { create :registration, event: event_registered, user: user }
+    let(:registration_registered) { create :registration, event: event_registered, user: }
 
     let(:event_future) { create :event }
-    let(:registration_future) { create :registration, user: user }
+    let(:registration_future) { create :registration, user: }
 
     it 'returns a collection of past events based upon registrations.attended' do
       registration_attended
@@ -418,16 +418,16 @@ RSpec.describe User, type: :model do
 
   describe '#events_skipped' do
     let(:event_attended) { create :past_event }
-    let(:registration_attended) { create :registration_attended, user: user, event: event_attended }
+    let(:registration_attended) { create :registration_attended, user:, event: event_attended }
 
     let(:event_unregistered) { create :past_event }
     let(:registration_unregistered) { create :registration, event: event_unregistered }
 
     let(:event_registered) { create :past_event }
-    let(:registration_registered) { create :registration, event: event_registered, user: user }
+    let(:registration_registered) { create :registration, event: event_registered, user: }
 
     let(:event_future) { create :event }
-    let(:registration_future) { create :registration, user: user, event: event_future }
+    let(:registration_future) { create :registration, user:, event: event_future }
 
     it 'returns a collection of past events based upon registrations.where(attended: false)' do
       registration_attended
@@ -485,7 +485,7 @@ RSpec.describe User, type: :model do
     end
 
     context 'when the leader is registered to lead the given event' do
-      let(:registration) { create :registration_leader, user: leader, event: event }
+      let(:registration) { create :registration_leader, user: leader, event: }
 
       it 'returns true' do
         registration
@@ -495,7 +495,7 @@ RSpec.describe User, type: :model do
     end
 
     context 'when the leader is not registered to lead the given event' do
-      let(:registration) { create :registration_leader, event: event }
+      let(:registration) { create :registration_leader, event: }
       it 'returns false' do
         expect(leader.leading?(event)).to eq false
       end
@@ -513,7 +513,7 @@ RSpec.describe User, type: :model do
     let(:user) { create :user }
 
     context 'when the user is registered for the given event' do
-      let(:registration) { create :registration, user: user, event: event }
+      let(:registration) { create :registration, user:, event: }
 
       it 'returns true' do
         registration
@@ -523,7 +523,7 @@ RSpec.describe User, type: :model do
     end
 
     context 'when the user is not registered for the given event' do
-      let(:registration) { create :registration, event: event }
+      let(:registration) { create :registration, event: }
 
       it 'returns false' do
         expect(user.registered?(event)).to eq false
@@ -536,7 +536,7 @@ RSpec.describe User, type: :model do
       3.times do
         # FactoryBot events are 3 hours in length
         event = create :past_event
-        create :registration_attended, event: event, user: user
+        create(:registration_attended, event:, user:)
       end
 
       expect(user.total_volunteer_hours).to eq user.events.map(&:length).sum
@@ -549,8 +549,8 @@ RSpec.describe User, type: :model do
       3.times do
         # FactoryBot events are 3 hours in length
         event = create :past_event
-        create :registration_attended, event: event, user: user
-        create :registration_leader_attended, event: event, user: @leader
+        create :registration_attended, event:, user: user
+        create :registration_leader_attended, event:, user: @leader
       end
     end
 
@@ -572,7 +572,7 @@ RSpec.describe User, type: :model do
       3.times do
         # FactoryBot events are 3 hours in length
         event = create :past_event
-        create :registration_attended, event: event, user: user, guests_attended: 5
+        create :registration_attended, event:, user:, guests_attended: 5
       end
 
       expect(user.total_guests).to eq 15
@@ -735,7 +735,7 @@ RSpec.describe User, type: :model do
 
     context 'when user was already a leader' do
       let(:leader_user) { create :leader }
-      
+
       it 'doesn\'t fire' do
         expect(leader_user).not_to receive(:send_to_crm)
 

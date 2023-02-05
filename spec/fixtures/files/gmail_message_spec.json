@@ -1,28 +1,36 @@
-{"id": "17d38b2e48f6fake",
- "payload":
-  {"headers":
-    [{"name": "MIME-Version", "value": "1.0"},
-     {"name": "Date", "value": "Fri, 19 Nov 2021 09:56:27 -0500"},
-     {"name": "Message-ID", "value": "<CAG4LXW=jEzKkfOLnE5jOSo7ertC=gAj-6GKE1qO=P8KB19fake@mail.gmail.com>"},
-     {"name": "Subject", "value": "Make a simple message for testing"},
-     {"name": "From", "value": "Chip Kragt <chip@20liters.org>"},
-     {"name": "To", "value": "Test Person <test@person.me>"},
-     {"name": "Content-Type", "value": "multipart/alternative; boundary=\"000000000000cc6f1d05d1257a61\""}],
-   "mime_type": "multipart/alternative",
-   "parts":
-    [
+{
+  "id": "17d38b2e48f6fake",
+  "payload": {
+    "headers": [
+      { "name": "MIME-Version", "value": "1.0" },
+      { "name": "Date", "value": "Fri, 19 Nov 2021 09:56:27 -0500" },
       {
-        "mime_type": "text/plain", "body":
-          {
-            "data": "This is a very simple message.\r\n"
-          }
+        "name": "Message-ID",
+        "value": "<CAG4LXW=jEzKkfOLnE5jOSo7ertC=gAj-6GKE1qO=P8KB19fake@mail.gmail.com>"
       },
-     {
-      "mime_type": "text/html", "body":
-        {
+      { "name": "Subject", "value": "Make a simple message for testing" },
+      { "name": "From", "value": "Chip Kragt <chip@20liters.org>" },
+      { "name": "To", "value": "Test Person <test@person.me>" },
+      {
+        "name": "Content-Type",
+        "value": "multipart/alternative; boundary=\"000000000000cc6f1d05d1257a61\""
+      }
+    ],
+    "mime_type": "multipart/alternative",
+    "parts": [
+      {
+        "mime_type": "text/plain",
+        "body": {
+          "data": "This is a very simple message.\r\n"
+        }
+      },
+      {
+        "mime_type": "text/html",
+        "body": {
           "data": "<div dir=\"ltr\">This is a very simple message.</div>\r\n"
         }
       }
     ]
   },
- "snippet": "This is a very simple message."}
+  "snippet": "This is a very simple message."
+}

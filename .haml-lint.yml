@@ -9,6 +9,8 @@ linters:
     enabled: false
   IdNames:
     enabled: false
+  InstanceVariables:
+    enabled: false
 
   RuboCop:
     ignored_cops:

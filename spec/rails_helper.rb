@@ -53,10 +53,6 @@ RSpec.configure do |config|
     expectations.syntax = %i[should expect]
   end
 
-  config.before(:all) do
-
-  end
-
   config.before(:each) do
     Faker::UniqueGenerator.clear
   end

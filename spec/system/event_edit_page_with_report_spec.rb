@@ -110,7 +110,7 @@ RSpec.describe 'To create an event report', type: :system do
     end
 
     context 'with registrations present' do
-      let(:registrations) { create_list :registration, 2, event: event }
+      let(:registrations) { create_list :registration, 2, event: }
 
       it 'can email results' do
         registrations

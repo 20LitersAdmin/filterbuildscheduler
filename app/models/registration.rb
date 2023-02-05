@@ -15,30 +15,27 @@ class Registration < ApplicationRecord
   validates :guests_registered, :guests_attended, numericality: { only_integer: true, greater_than_or_equal_to: 0 }, presence: true
 
   # RailsAdmin "active" is better than "kept"
-  scope :active, -> { kept }
-
+  scope :active,                -> { kept }
   scope :attended,              -> { where(attended: true) }
-
   scope :builders,              -> { where(leader: false) }
-  scope :future,                -> {
+  scope :leaders,               -> { where(leader: true) }
+  scope :ordered_by_user_lname, -> { includes(:user).order('users.lname') }
+  scope :pre_reminders,         -> { where(reminder_sent_at: nil) }
+  scope :future, lambda do
     select('registrations.*')
       .joins(:event)
       .where('events.discarded_at IS NULL')
       .where('events.start_time > ?', Time.now)
-  }
-  scope :leaders,               -> { where(leader: true) }
-
-  scope :ordered_by_user_lname, -> { includes(:user).order('users.lname') }
-  scope :past,                  -> {
+  end
+  scope :past, lambda do
     select('registrations.*')
       .joins(:event)
       .where('events.discarded_at IS NULL')
       .where('events.start_time < ?', Time.now)
-  }
-  scope :pre_reminders,         -> { where(reminder_sent_at: nil) }
+  end
 
   # def form_source
-  #   
+  #
   # end
 
   def human_date
@@ -73,7 +70,7 @@ class Registration < ApplicationRecord
   ## Bloomerang
   def attended_event_interaction(constituent_id)
     subject = leader? ? 'Led' : 'Attended'
-    subject += " filter build event"
+    subject += ' filter build event'
     note = "#{event.title} (#{event.format_time_slim})"
     note += "\nBrought #{guests_attended} #{'guest'.pluralize(guests_attended)}" if guests_attended.positive?
 
@@ -89,6 +86,6 @@ class Registration < ApplicationRecord
   end
 
   def pass_email_opt_out_to_user
-    user.update_columns(email_opt_out: email_opt_out)
+    user.update_columns(email_opt_out:)
   end
 end

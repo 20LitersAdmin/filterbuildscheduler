@@ -229,12 +229,10 @@ class EventsController < ApplicationController
     # this also sets submitted registrations as attended
     @event.assign_attributes(event_params)
 
-    @event.registrations.each do |reg|
-      # Since reg.email_opt_out is a virtual field,
-      # we loose the state on @email.save
-      # so we have to update user.email_opt_out before
-      reg.pass_email_opt_out_to_user
-    end
+    # Since reg.email_opt_out is a virtual field,
+    # we loose the state on @email.save
+    # so we have to update user.email_opt_out before
+    @event.registrations.each(&:pass_email_opt_out_to_user)
 
     admins_notified = nil
     users_notified = nil

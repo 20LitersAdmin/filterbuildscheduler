@@ -1,21 +1,21 @@
 {
-	"Id": 9353216,
-	"AccountId": 8300545,
-	"Channel": "Email",
-	"Purpose": "Other",
-	"Subject": "This is the subject",
-	"IsInbound": false,
-	"Date": "2023-01-30",
-	"Note": "\"Calendly Hi Amanda Mulder, A new event has been scheduled. Event Type: Recurring Gift Move Invitee: Megan Kamper Invitee Email: meganjkamper@gmail.com Event Date/Time: 01:15pm - Tuesday, January 31, 2023 (Eastern Time - US &amp; Canada) Description: Choose a time. Have your payment method ready [either your credit card or a check with your routing and account number].Amanda will call you, create your gift in the new system and cancel your gift in the old system. It should take less than 5 minutes. [We're booking 15 minutes because this technology doesn't allow me to book less time.]Thank you for your continued support! Location: +1 616-403-0293 Invitee Time Zone: Eastern Time - US &amp; Canada View event in Calendly Pro Tip! Get Calendly on Mobile Quickly share meeting links, get notifications for new, cancelled, or rescheduled meetings, and view your upcoming schedule on-the-go! Get Calendly for iPhone or Android. See all apps Sent from Calendly Report this event\"",
-	"IsBcc": false,
-	"AttachmentIds": [],
-	"IsEngagementSurveyEmail": false,
-	"IsEngagementSurveyResponse": false,
-	"CustomValues": [],
-	"AuditTrail": {
-		"CreatedDate": "2023-01-30T20:45:01Z",
-		"CreatedName": "Chip Kragt",
-		"LastModifiedDate": "2023-01-30T20:46:43Z",
-		"LastModifiedName": "Chip Kragt"
-	}
+  "Id": 9353216,
+  "AccountId": 8300545,
+  "Channel": "Email",
+  "Purpose": "Other",
+  "Subject": "This is the subject",
+  "IsInbound": false,
+  "Date": "2023-01-30",
+  "Note": "\"Calendly Hi Amanda Mulder, A new event has been scheduled. Event Type: Recurring Gift Move Invitee: Megan Kamper Invitee Email: meganjkamper@gmail.com Event Date/Time: 01:15pm - Tuesday, January 31, 2023 (Eastern Time - US &amp; Canada) Description: Choose a time. Have your payment method ready [either your credit card or a check with your routing and account number].Amanda will call you, create your gift in the new system and cancel your gift in the old system. It should take less than 5 minutes. [We're booking 15 minutes because this technology doesn't allow me to book less time.]Thank you for your continued support! Location: +1 616-403-0293 Invitee Time Zone: Eastern Time - US &amp; Canada View event in Calendly Pro Tip! Get Calendly on Mobile Quickly share meeting links, get notifications for new, cancelled, or rescheduled meetings, and view your upcoming schedule on-the-go! Get Calendly for iPhone or Android. See all apps Sent from Calendly Report this event\"",
+  "IsBcc": false,
+  "AttachmentIds": [],
+  "IsEngagementSurveyEmail": false,
+  "IsEngagementSurveyResponse": false,
+  "CustomValues": [],
+  "AuditTrail": {
+    "CreatedDate": "2023-01-30T20:45:01Z",
+    "CreatedName": "Chip Kragt",
+    "LastModifiedDate": "2023-01-30T20:46:43Z",
+    "LastModifiedName": "Chip Kragt"
+  }
 }
