@@ -10,8 +10,8 @@ jobs:
     parallelism: 3
     docker:
       - image: cimg/ruby:3.2-browsers
-      - image: cimg/redis:7
-      - image: cimg/postgres:15
+      - image: cimg/redis:7.0
+      - image: cimg/postgres:15.1
         environment:
           POSTGRES_USER: circle-ci
           POSTGRES_DB: build_planner_test
