@@ -2,16 +2,16 @@
 version: 2.1
 
 orbs:
-  ruby: circleci/ruby@1.8.0
-  browser-tools: circleci/browser-tools@1.4.0
+  ruby: circleci/ruby@2.0.0
+  browser-tools: circleci/browser-tools@1.4.1
 
 jobs:
   test:
     parallelism: 3
     docker:
-      - image: cimg/ruby:3.1.2-browsers
-      - image: cimg/redis:6.2.6
-      - image: cimg/postgres:14.2
+      - image: cimg/ruby:3.2-browsers
+      - image: cimg/redis:7
+      - image: cimg/postgres:15
         environment:
           POSTGRES_USER: circle-ci
           POSTGRES_DB: build_planner_test
@@ -25,9 +25,9 @@ jobs:
       PGPASSWORD: ""
       RAILS_ENV: test
     steps:
+      - checkout
       - browser-tools/install-chrome
       - browser-tools/install-chromedriver
-      - checkout
       - ruby/install-deps
       - run:
           name: Wait for DB
