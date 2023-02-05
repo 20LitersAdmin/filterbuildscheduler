@@ -116,7 +116,7 @@ class Event < ApplicationRecord
   end
 
   def format_time_slim
-    start_time.strftime('%-l:%M%P').sub(':00', '') + end_time.strftime('-%-l:%-M%P').sub(':00', '')
+    start_time.strftime('%-l:%M%P').sub(':00', '') + end_time.strftime('-%-l:%M%P').sub(':00', '')
   end
 
   def full_title

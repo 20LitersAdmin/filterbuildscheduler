@@ -1,8 +1,8 @@
 # Chip's notes
 
 ## Bloomerang client
-
-TODO: Re-send Stripe webhooks since Feb 1st-ish (check with Amanda for what she's hand-migrated)
+User and Registration just use Bloomerang::Constituent#merge
+but they should check for Constituent first
 
 ## Admin can't register new user when event is full
 
