@@ -95,17 +95,16 @@ class BloomerangClient
     end
   end
 
-  # interaction_types
-  # :became_leader
-  # :skip
-  def create_from_user(user, interaction_type: nil)
-    # merge the Constituent
-    @respone = @bloomerang::Constituent.create(user.as_bloomerang_constituent)
+  ## interaction_types:
+  # 'became_leader'
+  # 'skip'
+  ## force_merge:
+  # force the create/merge of Bloomerange::Constituent
+  # used by User#became_leader? to set additional custom fields
+  def create_from_user(user, interaction_type: 'skip', force_merge: false)
+    constituent_id = force_merge ? merge_constituent(user) : find_local_or_merge_constituent(user)
 
-    return if interaction_type == :skip
-
-    # capture the new/update Constituent ID
-    constituent_id = @response['Id']
+    return if interaction_type == 'skip' || constituent_id.nil?
 
     # Translates to: user.became_leader_interaction(constituent_id)
     body = user.__send__("#{interaction_type}_interaction".to_sym, constituent_id)
@@ -114,16 +113,12 @@ class BloomerangClient
   end
 
   # interaction_types
-  # :attended_event
-  # :skip
-  def create_from_registration(registration, interaction_type: nil)
-    # merge the Constituent
-    @respone = @bloomerang::Constituent.create(registration.user.as_bloomerang_constituent)
+  # 'attended_event'
+  # 'skip'
+  def create_from_registration(registration, interaction_type: 'skip')
+    constituent_id = find_local_or_merge_constituent(registration.user)
 
-    return if interaction_type == :skip
-
-    # capture the new/update Constituent ID
-    constituent_id = @response['Id']
+    return if interaction_type == 'skip' || constituent_id.nil?
 
     # Translates to: registration.attended_event_interaction(constituent_id)
     body = registration.__send__("#{interaction_type}_interaction".to_sym, constituent_id)
@@ -133,12 +128,9 @@ class BloomerangClient
 
   def create_from_causevox(charge)
     # charge is an instance of StripeCharge
+    constituent_id = find_local_or_merge_constituent(charge)
 
-    # merge the Constituent
-    @response = @bloomerang::Constituent.create(charge.as_bloomerang_constituent)
-
-    # capture the new/update Constituent ID
-    constituent_id = @response['Id']
+    return if constituent_id.nil?
 
     # create the Transaction using the Constituent ID
     @bloomerang::Transaction.create(charge.as_bloomerang_transaction(constituent_id))
@@ -189,6 +181,31 @@ class BloomerangClient
   end
 
   protected
+
+  ## Object: User or StripeCharge
+  # both respond to #email and #as_bloomerang_constituent
+  def find_local_or_merge_constituent(object)
+    email = object.email
+    # check for a local constituent ID first
+    local_constituent_id =
+      Constituent.find_by(primary_email: email)&.id ||
+      ConstituentEmail.find_by(value: email)&.constituent&.id
+
+    return local_constituent_id unless local_constituent_id.nil?
+
+    # merge/create a Constituent in Bloomerang
+    # sets @response variable
+    # returns the ConstituentId
+    merge_constituent(object)
+  end
+
+  def merge_constituent(object)
+    # merge the Bloomerang:Constituent
+    @response = @bloomerang::Constituent.create(object.as_bloomerang_constituent)
+    return if @response.blank?
+
+    @response['Id']
+  end
 
   ## Constituent batching
   def batch_get_constituents(skip: 0, take: 50, last_modified: '', type: '')

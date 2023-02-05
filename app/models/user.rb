@@ -308,8 +308,8 @@ class User < ApplicationRecord
     return unless is_leader? && technologies.any?
 
     ary = []
-    technologies.for_events.order(:name).pluck(:name, :owner).each do |tech|
-      ary << "#{tech[0]} (#{tech[1]})"
+    technologies.for_events.order(:name).pluck(:name).each do |tech|
+      ary << tech
     end
 
     ary
@@ -382,13 +382,14 @@ class User < ApplicationRecord
 
   ## Bloomerang
   def became_leader_interaction(constituent_id)
+    note = techs_qualified.any? ? "Qualifications: #{techs_qualified.to_sentence}" : ''
     {
       'AccountId': constituent_id.to_i,
       'Date': Date.today.iso8601,
-      'Channel': 'Other',
+      'Channel': 'InPerson',
       'Purpose': 'VolunteerActivity',
-      'Subject': 'Became Filter Build Leader',
-      'Note': techs_qualified.to_sentence,
+      'Subject': '[Filter Build] Became Leader',
+      'Note': note,
       'IsInbound': true
     }.as_json
   end
@@ -416,6 +417,6 @@ class User < ApplicationRecord
 
   ## Bloomerang
   def send_to_crm
-    BloomerangJob.perform_later(:buildscheduler, :create_from_user, self, interaction_type: :became_leader)
+    BloomerangJob.perform_later(:buildscheduler, :create_from_user, self, interaction_type: 'became_leader', force_merge: true)
   end
 end
