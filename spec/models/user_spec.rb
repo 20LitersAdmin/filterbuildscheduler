@@ -596,14 +596,14 @@ RSpec.describe User, type: :model do
       end
 
       context 'with associated technologies' do
-        it 'returns an array of tech names and owners' do
+        it 'returns an array of tech names' do
           3.times do
             tech = create(:technology)
             leader.technologies << tech
           end
 
           Technology.all.each do |tech|
-            expect(leader.techs_qualified).to include "#{tech.name} (#{tech.owner})"
+            expect(leader.techs_qualified).to include tech.name
           end
         end
       end
@@ -634,9 +634,9 @@ RSpec.describe User, type: :model do
           end
         end
 
-        it 'returns an array of tech names and owners' do
+        it 'returns an array of tech names' do
           Technology.all.each do |tech|
-            expect(leader.techs_qualified_html).to include "<li>#{tech.name} (#{tech.owner})</li>"
+            expect(leader.techs_qualified_html).to include "<li>#{tech.name}</li>"
           end
         end
 
@@ -728,7 +728,7 @@ RSpec.describe User, type: :model do
       end
 
       it 'takes user data and sends it to BloomerangJob' do
-        expect(BloomerangJob).to receive(:perform_later).with(:buildscheduler, :create_from_user, user, interaction_type: :became_leader)
+        expect(BloomerangJob).to receive(:perform_later).with(:buildscheduler, :create_from_user, user, interaction_type: 'became_leader', force_merge: true)
         user.save
       end
     end
