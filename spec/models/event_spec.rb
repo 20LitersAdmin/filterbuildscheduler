@@ -47,19 +47,13 @@ RSpec.describe Event, type: :model do
       expect(no_technologiesbuilt.save).to be_falsey
       expect(no_boxespacked.save).to be_falsey
       expect(no_impact_results.save).to be_falsey
+      expect(no_technology.save).to be_falsey
+      expect(no_location.save).to be_falsey
 
       expect { no_privacy.save!(validate: false) }
         .to raise_error ActiveRecord::NotNullViolation
       expect { no_itemgoal.save!(validate: false) }
         .to raise_error ActiveRecord::NotNullViolation
-    end
-
-    it 'doesn\'t need a technology' do
-      expect(no_technology.save).to eq true
-    end
-
-    it 'doesn\'t need a location' do
-      expect(no_location.save).to eq true
     end
   end
 

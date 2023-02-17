@@ -2,7 +2,7 @@
 
 FactoryBot.define do
   factory :event do
-    title { Faker::Games::Zelda.unique.game }
+    sequence(:title) { |n| Faker::Games::Zelda.game + n.to_s }
     start_time { Faker::Time.between_dates(from: Time.now + 10.days, to: Time.now + 20.days, period: :morning) }
     end_time { start_time + 2.hours }
     min_leaders { 1 }
