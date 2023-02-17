@@ -4,7 +4,7 @@ require 'net/http'
 require 'uri'
 
 namespace :db do
-  desc 'Downloads the Production database from Railway and loads the data into production'
+  desc 'Downloads the Production database from Railway and loads the data into development'
   task parity: :environment do
     # check for psql installed
     unless system('psql -V')
