@@ -41,6 +41,12 @@ class QuantityAndDepthCalculationJob < ApplicationJob
       end
     end
 
+    puts '================= Allocating parts and components ========================='
+
+    [Component, Part, Material].each do |item_class|
+      item_class.active.each(&:allocate!)
+    end
+
     puts '========================= FINISHED QuantityAndDepthCalculationJob ========================='
 
     ActiveRecord::Base.logger.level = 0

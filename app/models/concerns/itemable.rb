@@ -65,6 +65,37 @@ module Itemable
     all_technologies.active&.pluck(:id)&.join(',')
   end
 
+  def allocate!
+    return if [Technology, Material].include?(self.class) || super_assemblies.none?
+
+    # don't bother with items that are only used in one assembly
+    # allows for searching on non-blank assemblies
+    if super_assemblies.count <= 1
+      self.allocations = {}
+      save
+      return
+    end
+
+    super_assemblies.each do |assembly|
+      combination = assembly.combination
+      combination_uid = combination.uid
+
+      allocations[combination_uid] = combination.goal_remainder * assembly.quantity
+    end
+
+    ttl = allocations.values.sum
+
+    super_assemblies.each do |assembly|
+      combination = assembly.combination
+      combination_uid = combination.uid
+
+      allocations[combination_uid] = (allocations[combination_uid] / ttl.to_f).round(2)
+    end
+
+    save
+    reload
+  end
+
   def box_language
     "#{quantity_per_box} / #{box_type}"
   end

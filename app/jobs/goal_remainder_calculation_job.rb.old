@@ -1,0 +1,127 @@
+# frozen_string_literal: true
+
+# NOTE: this is v1 attempt, math seems wrong.
+
+class GoalRemainderCalculationJob < ApplicationJob
+  queue_as :goal_remainder
+
+  # NOTE: This job is fired from:
+  # Part#after_save when #quantity_from_material || #made_from_material is changed
+  # Itemable#after_update
+  # Assembly#after_save && #after_destroy
+  # InventoriesController#update via @inventory.run_goal_remainder_calculation_job
+
+  def perform
+    ActiveRecord::Base.logger.level = 1
+
+    puts '========================= Starting GoalRemainderCalculationJob ========================='
+
+    # Set every active item's goal_remainder to 0
+    [Component, Part, Material].each do |item_class|
+      item_class.kept.update_all goal_remainder: 0
+    end
+
+    Technology.with_set_goal.each do |tech|
+      if tech.available_count >= tech.default_goal
+        tech.update_columns(goal_remainder: 0) unless tech.goal_remainder.zero?
+
+        puts "=+= #{tech.name} has already completed the goal =+="
+        next
+      end
+
+      tech.update_columns(goal_remainder: tech.default_goal - tech.available_count)
+
+      puts "=+= setting max item goal_remainders for #{tech.name} =+="
+      increase_goal_remainders_for_all_items(tech.reload)
+    end
+
+    puts '=+= looping through all assemblies to subtract combination.available_count from item.goal_remainder =+='
+    Assembly.all.each do |assembly|
+      subtract_combination_available_count_from_item_goal_remainder(assembly)
+    end
+
+    puts '=+= looping through all parts made from a material to subtract part.available_count from material.goal_remainder =+='
+    Part.made_from_material.each do |part|
+      subtract_part_available_count_from_material_goal_remainder(part) if part.available_count.positive?
+    end
+
+    # Subtract each item's available count
+    [Component, Part, Material].each do |item_class|
+      puts "=+= subtracting item's available_count from goal_remainder for all kept #{item_class}s =+="
+
+      item_class.kept.each do |item|
+        subtract_item_available_count(item) unless item.available_count.zero?
+      end
+    end
+
+    puts '========================= Finished GoalRemainderCalculationJob ========================='
+
+    ActiveRecord::Base.logger.level = 0
+  end
+
+  def increase_goal_remainders_for_all_items(tech)
+    # set all item goal_remainders to their max,
+    # based on quantity per technology,
+    # ignoring their own available_count,
+    # and ignoring the available_count of any parent assemblies
+    tech_goal_remainder = tech.goal_remainder
+
+    tech.quantities.each do |uid, quantity|
+      item = uid.objectify_uid
+      current_goal_remainder = item.goal_remainder
+
+      new_goal_remainder = current_goal_remainder + (tech_goal_remainder * quantity)
+
+      item.update_columns(goal_remainder: new_goal_remainder) unless current_goal_remainder == new_goal_remainder
+    end
+  end
+
+  def subtract_combination_available_count_from_item_goal_remainder(assembly)
+    combination = assembly.combination
+
+    return if combination.available_count.zero?
+
+    item = assembly.item
+    current_goal_remainder = item.goal_remainder
+
+    available_in_parent = combination.available_count * assembly.quantity
+
+    ## EDGE CASE: assembly.affects_price_only?:
+    # These items are not part of a complete unit until later on (e.g. buckets and lids are added to the shipping container, not stored with every complete SAM3)
+    # so we need to add back the combination.available_count * assembly.quantity
+    goal_remainder =
+      if assembly.affects_price_only?
+        current_goal_remainder + (combination.available_count * assembly.quantity)
+      else
+        current_goal_remainder - available_in_parent
+      end
+
+    # can't go below zero
+    new_goal_remainder = [goal_remainder, 0].max
+
+    item.update_columns(goal_remainder: new_goal_remainder) unless current_goal_remainder == new_goal_remainder
+  end
+
+  def subtract_item_available_count(item)
+    current_goal_remainder = item.goal_remainder
+
+    # can't go below zero
+    new_goal_remainder = [current_goal_remainder - item.available_count, 0].max
+
+    item.update_columns(goal_remainder: new_goal_remainder) unless current_goal_remainder == new_goal_remainder
+  end
+
+  def subtract_part_available_count_from_material_goal_remainder(part)
+    material = part.material
+    current_goal_remainder = material.goal_remainder
+
+    # keeping both numbers as integers under-values how many materials
+    # are in parent parts, which keeps the number in goal_remainder rounded up,
+    # providing overage.
+    available_in_part = part.available_count / part.quantity_from_material.to_f
+
+    new_goal_remainder = [current_goal_remainder - available_in_part, 0].max
+
+    material.update_columns(goal_remainder: new_goal_remainder) unless current_goal_remainder == new_goal_remainder
+  end
+end

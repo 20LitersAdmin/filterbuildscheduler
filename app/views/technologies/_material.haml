@@ -3,6 +3,7 @@
   available = material.available_count
   goal_remainder = material.goal_remainder
   highlight = 'color: red; font-weight: bolder; border: solid 2px red' if goal_remainder > available
+  quantity_for_part = material.quantity_for_part(part)
 
 %tr
   - if nesting.positive?
@@ -16,6 +17,13 @@
   %td.right-align
     = human_number available
   %td.right-align
-    = human_float 1 / part.quantity_from_material.to_f
+    - if quantity_for_part > 1
+      1 &#8594; #{human_number quantity_for_part}
+      %br
+      (need #{human_number part.goal_remainder / part.quantity_from_material})
+    - else
+      = human_number quantity_for_part
   %td.right-align{ style: highlight }
     = human_number goal_remainder
+  %td.right-align
+    = human_number available + goal_remainder

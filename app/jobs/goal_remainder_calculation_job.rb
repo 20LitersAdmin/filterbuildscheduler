@@ -1,7 +1,9 @@
-# frozen_string_literal: true
+# frozen_srtring_literal: true
 
 class GoalRemainderCalculationJob < ApplicationJob
   queue_as :goal_remainder
+
+  # NOTE: This is v2 attempt
 
   # NOTE: This job is fired from:
   # Part#after_save when #quantity_from_material || #made_from_material is changed
@@ -21,34 +23,47 @@ class GoalRemainderCalculationJob < ApplicationJob
 
     Technology.with_set_goal.each do |tech|
       if tech.available_count >= tech.default_goal
-        tech.update_columns(goal_remainder: 0)
+        tech.update_columns(goal_remainder: 0) unless tech.goal_remainder.zero?
 
-        puts "=+= #{tech.name} has already completed the goal =+="
+        puts "= #{tech.name} has already completed the goal =+=+="
         next
       end
 
-      tech.update_columns(goal_remainder: tech.default_goal - tech.available_count)
+      # Set the goal_remainder for the technology
+      tech_goal_remainder = tech.default_goal - tech.available_count
+      tech.update_columns(goal_remainder: tech_goal_remainder) unless tech.goal_remainder == tech_goal_remainder
 
-      puts "=+= setting max item goal_remainders for #{tech.name} =+="
-      increase_goal_remainders_for_all_items(tech.reload)
-    end
+      puts "= #{tech.name} needs #{tech_goal_remainder} =+=+="
 
-    puts '=+= looping through all assemblies to subtract combination.available_count from item.goal_remainder =+='
-    Assembly.all.each do |assembly|
-      subtract_combination_available_count_from_item_goal_remainder(assembly)
-    end
+      @sub_assembly_array_of_ids = []
+      @part_from_material_array = []
 
-    puts '=+= looping through all parts made from a material to subtract part.available_count from material.goal_remainder =+='
-    Part.made_from_material.each do |part|
-      subtract_part_available_count_from_material_goal_remainder(part) if part.available_count.positive?
-    end
+      # Set the goal_remainder for each tech's assemblies.
+      # Traversing horizontally before moving down vertically
+      # by saving any sub-assemblies into an array
+      tech.reload.assemblies.without_price_only.ascending.each do |assembly|
 
-    # Subtract each item's available count
-    [Component, Part, Material].each do |item_class|
-      puts "=+= subtracting item's available_count from goal_remainder for all kept #{item_class}s =+="
+        increase_assembly_item_goal(assembly)
+      end
 
-      item_class.kept.each do |item|
-        subtract_item_available_count(item) unless item.available_count.zero?
+      while @sub_assembly_array_of_ids.any?
+        # have to keep respecting the depth of the assembly, by using .ascending
+        # to ensure we don't try to call item.allocate! when the item's parent
+        # hasn't had their goal_remainder already set
+        assemblies = Assembly.where(id: @sub_assembly_array_of_ids).ascending
+        assemblies.each do |assembly|
+          increase_assembly_item_goal(assembly)
+          # remove this assembly from the array
+          @sub_assembly_array_of_ids.delete(assembly.id)
+        end
+      end
+
+      while @part_from_material_array.any?
+        @part_from_material_array.each do |part|
+          increase_material_goal(part)
+          # remove this part from the array
+          @part_from_material_array.delete(part)
+        end
       end
     end
 
@@ -57,69 +72,66 @@ class GoalRemainderCalculationJob < ApplicationJob
     ActiveRecord::Base.logger.level = 0
   end
 
-  def increase_goal_remainders_for_all_items(tech)
-    # set all item goal_remainders to their max,
-    # based on quantity per technology,
-    # ignoring their own available_count,
-    # and ignoring the available_count of any parent assemblies
-    tech_goal_remainder = tech.goal_remainder
+  def increase_assembly_item_goal(assembly)
+    puts "#{assembly.depth} -- #{assembly.name_long}"
+    item = assembly.item.reload
 
-    tech.quantities.each do |uid, quantity|
-      item = uid.objectify_uid
-      current_goal_remainder = item.goal_remainder
+    combination = assembly.combination
+    combination_uid = combination.uid
+    combination_goal_remainder = combination.goal_remainder
+    current_goal_remainder = item.goal_remainder
 
-      new_goal_remainder = current_goal_remainder + (tech_goal_remainder * quantity)
+    new_goal_remainder = (combination_goal_remainder * assembly.quantity)
 
-      item.update_columns(goal_remainder: new_goal_remainder) unless current_goal_remainder == new_goal_remainder
+    # For items that are used by more than one assembly,
+    # only allocate a weighted portion of the available_count.
+    # This relies on traversing horizontally before moving vertically
+    # to ensure that all parents of the item already have their goal remainder set
+    item.allocate!
+    item.reload
+    weighted_available = (item.available_count * (item.allocations[combination_uid] || 1)).floor
+    new_goal_remainder -= weighted_available
+
+    item_goal_remainder = [new_goal_remainder, 0].max
+    puts "=+= #{item.uid} #{item.name} has #{weighted_available} available, needs #{item_goal_remainder} to make #{combination_goal_remainder} #{combination_uid} #{combination.name} =+="
+
+    # byebug if ['blue', 'red'].include? item.name
+
+    # if item.name == "elbow"
+    #   blue = item.allocations.keys.first.objectify_uid
+    #   red = item.allocations.keys.second.objectify_uid
+    #   byebug
+    # end
+
+    item_goal_remainder += current_goal_remainder
+
+    item.update_columns(goal_remainder: item_goal_remainder) unless current_goal_remainder == item_goal_remainder
+
+    return unless item.has_sub_assemblies?
+
+    if item.is_a? Component
+      # Ensure horizontal traversal by collecting all sub_assemblies
+      @sub_assembly_array_of_ids << item.sub_assemblies.ascending.pluck(:id)
+      @sub_assembly_array_of_ids.flatten!
+    else # item is a Part made from Materials
+      @part_from_material_array << item
     end
   end
 
-  def subtract_combination_available_count_from_item_goal_remainder(assembly)
-    combination = assembly.combination
-
-    return if combination.available_count.zero?
-
-    item = assembly.item
-    current_goal_remainder = item.goal_remainder
-
-    available_in_parent = combination.available_count * assembly.quantity
-
-    ## EDGE CASE: assembly.affects_price_only?:
-    # These items are not part of a complete unit until later on (e.g. buckets and lids are added to the shipping container, not stored with every complete SAM3)
-    # so we need to add back the combination.available_count * assembly.quantity
-    goal_remainder =
-      if assembly.affects_price_only?
-        current_goal_remainder + (combination.available_count * assembly.quantity)
-      else
-        current_goal_remainder - available_in_parent
-      end
-
-    # can't go below zero
-    new_goal_remainder = [goal_remainder, 0].max
-
-    item.update_columns(goal_remainder: new_goal_remainder) unless current_goal_remainder == new_goal_remainder
-  end
-
-  def subtract_item_available_count(item)
-    current_goal_remainder = item.goal_remainder
-
-    # can't go below zero
-    new_goal_remainder = [current_goal_remainder - item.available_count, 0].max
-
-    item.update_columns(goal_remainder: new_goal_remainder) unless current_goal_remainder == new_goal_remainder
-  end
-
-  def subtract_part_available_count_from_material_goal_remainder(part)
-    material = part.material
+  def increase_material_goal(part)
+    material = part.reload.material
     current_goal_remainder = material.goal_remainder
 
-    # keeping both numbers as integers under-values how many materials
-    # are in parent parts, which keeps the number in goal_remainder rounded up,
-    # providing overage.
-    available_in_part = part.available_count / part.quantity_from_material.to_f
+    new_goal_remainder = (part.goal_remainder / part.quantity_from_material.to_f).ceil
 
-    new_goal_remainder = [current_goal_remainder - available_in_part, 0].max
+    # For materials that make multiple parts,
+    # only allocate a weighted portion of the available_count
+    # This relies on traversing horizontally before moving vertically
+    # to ensure that all parts made from the material already have their goal remainder set
+    material.allocate!
+    new_goal_remainder -= material.available_count * [material.allocations[part.uid], 1].without(nil).min
+    material_goal_remainder = [new_goal_remainder, 0].max + current_goal_remainder
 
-    material.update_columns(goal_remainder: new_goal_remainder) unless current_goal_remainder == new_goal_remainder
+    material.update_columns(goal_remainder: material_goal_remainder) unless current_goal_remainder == material_goal_remainder
   end
 end
