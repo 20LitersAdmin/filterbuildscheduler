@@ -26,6 +26,37 @@ class Material < ApplicationRecord
   after_save { image.purge if remove_image == '1' }
   after_save :escalate_price, if: -> { saved_change_to_price_cents? }
 
+  def allocate!
+    return if parts.none?
+
+    if parts.size == 1
+      allocations[parts.first.uid] = 1.0
+      save
+      return
+    end
+
+    hsh = {}
+
+    parts.each do |part|
+      hsh[part.id] = (1 / part.quantity_from_material.to_f)
+    end
+
+    # hash contains:
+    # { part_id: fraction_of_material_needed_for_1_part }
+
+    ttl = hsh.values.sum
+
+    parts.each do |part|
+      # hsh[part.id] / ttl is
+      # the fractional allocation of one material across all parts
+
+      allocations[part.uid] = hsh[part.id] / ttl
+      save
+    end
+
+    ttl
+  end
+
   def assemblies
     # GoalRemainderCalculationJob wants materials to respond to #assemblies.size.positive?
     []
@@ -33,6 +64,15 @@ class Material < ApplicationRecord
 
   def can_be_produced
     0
+  end
+
+  # inverse of part.quantity_from_material
+  def quantity_for_part(part)
+    return 0 unless parts.any? && parts.pluck(:id).include?(part.id)
+
+    return 0 if part.quantity_from_material.nil?
+
+    part.quantity_from_material
   end
 
   def on_order?

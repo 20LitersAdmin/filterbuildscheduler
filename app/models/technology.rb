@@ -70,6 +70,17 @@ class Technology < ApplicationRecord
     Material.where(id: ary)
   end
 
+  def material_quantities
+    uids = quantities.keys.grep(/^M[0-9]{3}/).sort
+    ary = []
+    uids.each do |uid|
+      mat = uid.objectify_uid
+      ary << { uid: uid, name: mat.name, quantity: quantities[uid], available: mat.available_count }
+    end
+
+    ary.sort_by { |rec| rec[:name] }
+  end
+
   def owner_acronym
     owner.scan(/\b(\d+|\w)/).join
   end

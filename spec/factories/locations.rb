@@ -2,7 +2,7 @@
 
 FactoryBot.define do
   factory :location do
-    name { Faker::TvShows::TwinPeaks.unique.location }
+    name { Faker::TvShows::TwinPeaks.location }
     address1 { Faker::Address.street_address }
     address2 { Faker::Address.secondary_address }
     city { Faker::Address.city }
