@@ -87,7 +87,9 @@ RSpec.describe EventInventoryJob, type: :job do
 
       job.inventory = inventory
 
-      expect { job.create_count(technology, 4, 2) }.to change { inventory.counts.size }.from(0).to(1)
+      expect { job.create_count(technology, 4, 2) }
+        .to change { inventory.counts.size }
+        .from(0).to(1)
     end
   end
 
@@ -252,17 +254,16 @@ RSpec.describe EventInventoryJob, type: :job do
 
   describe '#material_can_satisfy_remainder' do
     let(:material) { create :material }
-    let(:part) { create :part_from_material, material: material, quantity_from_material: 5 }
+    let(:part) { create :part_from_material, material:, quantity_from_material: 5 }
     let(:parts_needed) { 25 }
 
     context 'when material.loose_count >= materials needed' do
       before do
-        material.loose_count = 6
+        material.update(loose_count: 6)
       end
 
       it 'calls create_count for the material' do
         expect(job).to receive(:create_count).with(material, -5, 0)
-
         job.material_can_satisfy_remainder(part, parts_needed)
       end
     end
@@ -272,6 +273,7 @@ RSpec.describe EventInventoryJob, type: :job do
         material.loose_count = 3
         material.box_count = 2
         material.quantity_per_box = 6
+        material.save
       end
 
       it 'calculates how many boxes of materials need to be used, then calls create_count for the material' do
@@ -304,13 +306,13 @@ RSpec.describe EventInventoryJob, type: :job do
   end
 
   describe '#produce_from_material' do
-    let(:material) { create :material }
+    let(:material) { create :material, loose_count: 1, box_count: 2, available_count: 3, quantity_per_box: 1 }
     let(:part) { create :part_from_material, material: material, quantity_from_material: 5 }
     let(:remainder) { 25 }
 
     context 'when parts that can be produced >= remainder needed' do
       before do
-        material.available_count = 6
+        material.update(available_count: 6)
       end
 
       it 'calls material_can_satisfy_remainder' do
@@ -321,12 +323,6 @@ RSpec.describe EventInventoryJob, type: :job do
     end
 
     context 'when parts that can be produced < remainder needed' do
-      before do
-        material.loose_count = 1
-        material.box_count = 2
-        material.available_count = 3
-      end
-
       it 'zeros out the material by calling create_count' do
         expect(job).to receive(:create_count).with(material, -1, -2)
 

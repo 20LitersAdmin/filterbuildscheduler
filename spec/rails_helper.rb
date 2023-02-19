@@ -53,10 +53,6 @@ RSpec.configure do |config|
     expectations.syntax = %i[should expect]
   end
 
-  config.before(:each) do
-    Faker::UniqueGenerator.clear
-  end
-
   config.before(:each, type: :system) do
     driven_by :rack_test
   end
@@ -66,7 +62,8 @@ RSpec.configure do |config|
     Capybara.page.driver.browser.manage.window.resize_to(1920, 2024)
   end
 
-  config.after(:suite) do
+  config.after(:all) do
+    Faker::UniqueGenerator.clear
     CleanupCrew.clean_up!
   end
 
