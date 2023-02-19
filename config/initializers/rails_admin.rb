@@ -41,6 +41,9 @@ RailsAdmin.config do |config|
     ActiveStorage::Attachment
     ActiveStorage::Blob
     ActiveStorage::VariantRecord
+    ConstituentEmail
+    ConstituentPhone
+    Constituent
     Count
     Email
     Inventory

@@ -173,6 +173,9 @@ class Part < ApplicationRecord
 
     Sidekiq::Queue.new('goal_remainder').clear
     GoalRemainderCalculationJob.perform_later
+
+    # reset the fractional allocation of a material to all the parts made from that material
+    self.reload.material&.allocate!
   end
 
   def set_made_from_material

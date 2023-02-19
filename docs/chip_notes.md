@@ -1,11 +1,5 @@
 # Chip's notes
 
-## Admin dashboard:
-- no Constituents, Const. Emails and Const. Phones on the dashboard left-hand panel
-
-## Inventory Status and orders:
-- check the math, it doesn't make sense.
-
 ## Admin can't register new user when event is full
 
 ## Inventory

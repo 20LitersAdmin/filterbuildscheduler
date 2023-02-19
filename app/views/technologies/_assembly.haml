@@ -2,6 +2,7 @@
 
 :ruby
   item = assembly.item
+  combination = assembly.combination
   item_type = assembly.item_type
   available = item.available_count
   goal_remainder = item.goal_remainder
@@ -20,8 +21,13 @@
     = human_number available
   %td.right-align
     = human_number assembly.quantity
+    - if item.allocations[combination.uid] && goal_remainder.positive?
+      %br
+      (need #{human_float(item.goal_remainder * item.allocations[combination.uid], 0)})
   %td.right-align{ style: highlight }
     = human_number goal_remainder
+  %td.right-align
+    = human_number available + goal_remainder
 = render partial: 'assembly', collection: item.sub_assemblies.ascending, locals: { nesting: nesting += 1 } if item_type == 'Component' && item.sub_assemblies.any?
-= render partial: 'material', object: item.material, locals: { nesting: nesting += 1, part: item } if item_type == 'Part' && item.material.present?
+= render partial: 'material', object: item.material, locals: { nesting: nesting += 1, part: item } if item_type == 'Part' && item.made_from_material?
 
