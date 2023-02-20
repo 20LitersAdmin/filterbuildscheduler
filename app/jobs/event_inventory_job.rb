@@ -72,8 +72,8 @@ class EventInventoryJob < ApplicationJob
     # see CountTransferJob#transfer_auto_count
 
     @inventory.counts.create(
-      item: item,
-      loose_count: loose_count,
+      item:,
+      loose_count:,
       unopened_boxes_count: box_count
     )
   end
@@ -143,7 +143,7 @@ class EventInventoryJob < ApplicationJob
   end
 
   def loop_assemblies(combination, remainder)
-    assemblies = Assembly.without_price_only.where(combination: combination)
+    assemblies = Assembly.without_price_only.where(combination:)
 
     assemblies.each do |assembly|
       @item = assembly.item
@@ -191,7 +191,7 @@ class EventInventoryJob < ApplicationJob
 
     parts_produced = material_needed * part_quantity_from_material
 
-    return unless parts_produced > parts_needed
+    return if parts_produced <= parts_needed
 
     # add extra parts produced from material to the part's count
     count = @inventory.counts.where(item: part).first

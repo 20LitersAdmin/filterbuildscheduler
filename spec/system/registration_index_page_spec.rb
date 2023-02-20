@@ -4,8 +4,8 @@ require 'rails_helper'
 
 RSpec.describe 'Admin viewing event registrations index', type: :system do
   let(:event) { create :event }
-  let(:registrations) { create_list :registration, 5, event: event }
-  let(:leader_reg) { create_list :registration_leader, 2, event: event }
+  let(:registrations) { create_list :registration, 5, event: }
+  let(:leader_reg) { create_list :registration_leader, 2, event: }
   let(:admin) { create :admin }
 
   it 'can view registered builders and leaders' do

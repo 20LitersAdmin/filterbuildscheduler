@@ -50,7 +50,7 @@ RSpec.describe PriceCalculationJob, type: :job do
 
   describe '#set_prices_for_parts_made_from_materials' do
     let(:material) { create :material, price_cents: 2_500 }
-    let(:part) { create :part_from_material, material: material, price_cents: 0, quantity_from_material: 25 }
+    let(:part) { create :part_from_material, material:, price_cents: 0, quantity_from_material: 25 }
 
     context 'if a part has quantity_from_material.nil? or .zer?' do
       before do

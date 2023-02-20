@@ -5,13 +5,13 @@ require 'rails_helper'
 RSpec.describe Setup, type: :model do
   let(:event) { create :event }
   let(:user) { create :setup_crew }
-  let(:setup) { build :setup, event: event, creator: user }
-  let(:no_date) { build :setup, event: event, creator: user, date: nil }
+  let(:setup) { build :setup, event:, creator: user }
+  let(:no_date) { build :setup, event:, creator: user, date: nil }
   let(:no_event) { build :setup, event: nil, creator: user, date: Faker::Time.between_dates(from: Time.now + 2.days, to: Time.now + 4.days, period: :morning) }
-  let(:date_after_event) { build :setup, event: event, creator: user, date: Time.now + 30.days }
+  let(:date_after_event) { build :setup, event:, creator: user, date: Time.now + 30.days }
 
   describe 'must be valid' do
-    let(:no_creator) { build :setup, event: event, creator: nil }
+    let(:no_creator) { build :setup, event:, creator: nil }
 
     it 'in order to save' do
       expect(setup.valid?).to eq true
@@ -39,7 +39,7 @@ RSpec.describe Setup, type: :model do
     end
 
     context 'when users are assigned' do
-      let(:setup_with_users) { create :setup_with_users, event: event, creator: user }
+      let(:setup_with_users) { create :setup_with_users, event:, creator: user }
 
       it 'returns a string of first names' do
         setup_with_users.users.pluck(:fname).each do |fname|
@@ -63,7 +63,7 @@ RSpec.describe Setup, type: :model do
     end
 
     context 'when date is less than the current time' do
-      let(:setup_in_past) { build :setup_in_past, event: event, creator: user }
+      let(:setup_in_past) { build :setup_in_past, event:, creator: user }
       it 'returns false' do
         expect(setup_in_past.in_the_future?).to eq false
       end

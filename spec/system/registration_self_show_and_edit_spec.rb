@@ -5,7 +5,7 @@ require 'rails_helper'
 RSpec.describe 'Manage own registration:', type: :system do
   let(:event) { create :event }
   let(:user) { create :user, signed_waiver_on: Time.now }
-  let(:registration) { create :registration, event: event, user: user }
+  let(:registration) { create :registration, event:, user: }
 
   context 'anon user' do
     it "can't see a registration on the event page" do
@@ -81,7 +81,7 @@ RSpec.describe 'Manage own registration:', type: :system do
   context 'leader of the event' do
     let(:user) { create :leader, signed_waiver_on: Time.now }
 
-    let(:registration) { create :registration_leader, user: user, event: event }
+    let(:registration) { create :registration_leader, user:, event: }
 
     it 'can see their own registration which mentions they are a leader' do
       registration

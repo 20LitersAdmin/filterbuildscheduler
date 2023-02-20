@@ -70,7 +70,7 @@ class Event < ApplicationRecord
 
   def complete?
     return false if new_record?
-    return false unless start_time < Time.zone.now
+    return false if start_time >= Time.zone.now
 
     attendance.positive? || technology_results.positive?
   end

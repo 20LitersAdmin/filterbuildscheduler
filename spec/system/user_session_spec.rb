@@ -61,6 +61,5 @@ RSpec.describe 'User Session', type: :system do
 
       expect(page).to have_content 'Welcome! You have signed up successfully.'
     end
-
   end
 end

@@ -4,7 +4,6 @@
 Money.locale_backend = :currency
 
 MoneyRails.configure do |config|
-
   # To set the default currency
   #
   config.default_currency = :usd
@@ -82,9 +81,9 @@ MoneyRails.configure do |config|
   config.no_cents_if_whole = false
 
   config.default_format = {
-    :no_cents_if_whole => false,
-    :symbol => "$",
-    :sign_before_symbol => nil
+    no_cents_if_whole: false,
+    symbol: '$',
+    sign_before_symbol: nil
   }
 
   # Set default raise_error_on_money_parsing option

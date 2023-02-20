@@ -5,7 +5,7 @@ require 'rails_helper'
 RSpec.describe 'Setup#Edit', type: :system do
   let(:admin) { create :admin }
   let(:event) { create :event }
-  let(:setup) { create :setup, event: event, creator: admin }
+  let(:setup) { create :setup, event:, creator: admin }
 
   context 'when visited by' do
     it 'anon users redirects to sign-in page' do

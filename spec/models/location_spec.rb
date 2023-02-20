@@ -35,7 +35,7 @@ RSpec.describe Location, type: :model do
     end
 
     it 'when associated with an event' do
-      event = create(:event, location: location)
+      event = create(:event, location:)
 
       expect { location.destroy }
         .to change { Location.all.size }

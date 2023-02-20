@@ -58,9 +58,9 @@ class EventMailer < ApplicationMailer
     @location_was = Location.find(@event.location_id_was)
 
     @recipients = User.notify.map(&:email)
-    @summary = '[20 Liters] ' + @event.title + ': ' + @technology.name
+    @summary = "[20 Liters] #{@event.title}: #{@technology.name}"
     @description = @event.privacy_humanize
-    @attachment_title = '20Liters_filterbuild_' + @event.start_time.strftime("%Y%m%dT%H%M") + '.ical'
+    @attachment_title = "20Liters_filterbuild_#{@event.start_time.strftime('%Y%m%dT%H%M')}.ical"
 
     # These instance variables are set from line 54 `instance_variable_set`
     @registered_users_notified = true if @start_time || @end_time || @location_id || @technology_id
@@ -99,7 +99,7 @@ class EventMailer < ApplicationMailer
   def messenger(registration, subject, message, sender)
     @registration = registration
     @event = @registration.event
-    @subject = '[20 Liters] ' + subject
+    @subject = "[20 Liters] #{subject}"
     @message = message
     @sender = sender
     mail(to: @registration.user.email, subject: @subject)
@@ -107,7 +107,7 @@ class EventMailer < ApplicationMailer
 
   def messenger_reporter(event, subject, message, sender)
     @event = event
-    @subject = '[20 Liters] ' + subject
+    @subject = "[20 Liters] #{subject}"
     @message = message
     @sender = sender
     @recipients = User.notify.map(&:email)

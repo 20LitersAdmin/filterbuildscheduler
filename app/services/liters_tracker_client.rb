@@ -8,12 +8,10 @@ class LitersTrackerClient
   base_uri 'https://track.20liters.org/stats'
 
   def initialize
-    begin
-      response = HTTParty.get('https://track.20liters.org/stats')
-      @as_of_date = Date.parse response.parsed_response.pop['as_of_date']
-      @stat_ary = response.parsed_response.compact.map(&:symbolize_keys)
-    rescue OpenSSL::SSL::SSLError
-      @stat_ary = []
-    end
+    response = HTTParty.get('https://track.20liters.org/stats')
+    @as_of_date = Date.parse response.parsed_response.pop['as_of_date']
+    @stat_ary = response.parsed_response.compact.map(&:symbolize_keys)
+  rescue OpenSSL::SSL::SSLError
+    @stat_ary = []
   end
 end

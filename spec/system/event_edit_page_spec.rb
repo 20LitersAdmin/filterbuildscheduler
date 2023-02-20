@@ -76,7 +76,7 @@ RSpec.describe 'Event edit page', type: :system do
   end
 
   context 'allows for canceling' do
-    let(:registrations) { create_list :registration, 3, event: event }
+    let(:registrations) { create_list :registration, 3, event: }
 
     it 'which discards the event and all registrations' do
       registrations

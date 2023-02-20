@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'rails_helper'
+
 require 'concerns/itemable_spec'
 
 RSpec.describe Technology, type: :model do
@@ -38,7 +39,7 @@ RSpec.describe Technology, type: :model do
     end
 
     it 'when associated with an event' do
-      event = create(:event, technology: technology)
+      event = create(:event, technology:)
 
       expect { technology.destroy }
         .to change { Technology.all.size }

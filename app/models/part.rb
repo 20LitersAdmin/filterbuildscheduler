@@ -107,7 +107,7 @@ class Part < ApplicationRecord
     # so don't sum the values of the receiving inventory, look at the max value
 
     # Get history records where date key is greater than the last_ordered_at date && where inventory type is Receiving
-    history.select { |k, v| Date.parse(k) > last_ordered_at && v['inv_type'] == 'Receiving' }
+    history.select { |key, value| Date.parse(key) > last_ordered_at && value['inv_type'] == 'Receiving' }
            .values.map { |r| r['available'] }
            .max.to_i
   end
@@ -175,7 +175,7 @@ class Part < ApplicationRecord
     GoalRemainderCalculationJob.perform_later
 
     # reset the fractional allocation of a material to all the parts made from that material
-    self.reload.material&.allocate!
+    reload.material&.allocate!
   end
 
   def set_made_from_material
