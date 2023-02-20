@@ -125,7 +125,7 @@ RSpec.describe Replicator, type: :model do
 
     context 'when .occurrences is not present or positive' do
       it 'adds an error' do
-        expect(@bad_replicator.errors[:occurrences][0]).to eq "must be present and positive"
+        expect(@bad_replicator.errors[:occurrences][0]).to eq 'must be present and positive'
       end
     end
 

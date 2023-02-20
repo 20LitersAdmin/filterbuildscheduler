@@ -5,7 +5,7 @@ require 'rails_helper'
 RSpec.describe 'Admin editing event registrations', type: :system do
   let(:user) { create :user }
   let(:event) { create :event }
-  let(:registration) { create :registration, user: user, event: event }
+  let(:registration) { create :registration, user:, event: }
   let(:admin) { create :admin }
 
   before do

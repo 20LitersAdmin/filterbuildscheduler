@@ -191,14 +191,14 @@ module Itemable
 
   def label_hash
     {
-      name: name,
-      description: description,
-      uid: uid,
+      name:,
+      description:,
+      uid:,
       technologies: all_technologies_names,
-      quantity_per_box: quantity_per_box,
-      box_type: box_type,
-      box_notes: box_notes,
-      picture: picture,
+      quantity_per_box:,
+      box_type:,
+      box_notes:,
+      picture:,
       only_loose: only_loose?
     }
   end

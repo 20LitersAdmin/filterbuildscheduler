@@ -61,7 +61,7 @@ RSpec.describe 'Users#communication page', type: :system do
       # UsersController#communication filters to builders with at least one registration
       5.times do
         user = create :user
-        create(:registration, user: user, event: event)
+        create(:registration, user:, event:)
       end
 
       sign_in create :admin

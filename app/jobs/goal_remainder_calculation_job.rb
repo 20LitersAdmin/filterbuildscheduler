@@ -1,4 +1,4 @@
-# frozen_srtring_literal: true
+# frozen_string_literal: true
 
 class GoalRemainderCalculationJob < ApplicationJob
   queue_as :goal_remainder
@@ -22,18 +22,23 @@ class GoalRemainderCalculationJob < ApplicationJob
     end
 
     Technology.with_set_goal.each do |tech|
-      if tech.available_count >= tech.default_goal
-        tech.update_columns(goal_remainder: 0) unless tech.goal_remainder.zero?
+      tech_available_count = tech.available_count
+      tech_former_goal_remainder = tech.goal_remainder
+      tech_default_goal = tech.default_goal
+      tech_name = tech.name
 
-        puts "= #{tech.name} has already completed the goal =+=+="
+      if tech_available_count >= tech_default_goal
+        tech.update_columns(goal_remainder: 0) if tech_former_goal_remainder.nonzero?
+
+        puts "= #{tech_name} has already completed the goal =+=+="
         next
       end
 
       # Set the goal_remainder for the technology
-      tech_goal_remainder = tech.default_goal - tech.available_count
-      tech.update_columns(goal_remainder: tech_goal_remainder) unless tech.goal_remainder == tech_goal_remainder
+      tech_goal_remainder = tech_default_goal - tech_available_count
+      tech.update_columns(goal_remainder: tech_goal_remainder) unless tech_former_goal_remainder == tech_goal_remainder
 
-      puts "= #{tech.name} needs #{tech_goal_remainder} =+=+="
+      puts "= #{tech_name} needs #{tech_goal_remainder} =+=+="
 
       @sub_assembly_array_of_ids = []
       @part_from_material_array = []
@@ -42,7 +47,6 @@ class GoalRemainderCalculationJob < ApplicationJob
       # Traversing horizontally before moving down vertically
       # by saving any sub-assemblies into an array
       tech.reload.assemblies.without_price_only.ascending.each do |assembly|
-
         increase_assembly_item_goal(assembly)
       end
 

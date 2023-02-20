@@ -75,7 +75,7 @@ class Technology < ApplicationRecord
     ary = []
     uids.each do |uid|
       mat = uid.objectify_uid
-      ary << { uid: uid, name: mat.name, quantity: quantities[uid], available: mat.available_count }
+      ary << { uid:, name: mat.name, quantity: quantities[uid], available: mat.available_count }
     end
 
     ary.sort_by { |rec| rec[:name] }
@@ -90,7 +90,7 @@ class Technology < ApplicationRecord
     ary = []
     uids.each do |uid|
       part = uid.objectify_uid
-      ary << { uid: uid, name: part.name, quantity: quantities[uid], available: part.available_count }
+      ary << { uid:, name: part.name, quantity: quantities[uid], available: part.available_count }
     end
 
     ary.sort_by { |rec| rec[:name] }

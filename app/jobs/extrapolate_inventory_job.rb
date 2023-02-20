@@ -64,7 +64,7 @@ class ExtrapolateInventoryJob < ApplicationJob
       loose_count_adjustment = item.is_a?(Technology) ? -item.loose_count : 0
 
       # count.unopened_boxes_count should be left as-is
-      create_or_update_count(item, loose_count_adjustment, 0) unless loose_count_adjustment.zero?
+      create_or_update_count(item, loose_count_adjustment, 0) if loose_count_adjustment.nonzero?
 
       # we assume we use all item.loose_count towards creating produced_and_boxed, the overage remaining is our remainder
       remainder = count.produced_and_boxed - item.loose_count
@@ -78,7 +78,7 @@ class ExtrapolateInventoryJob < ApplicationJob
   def create_or_update_count(item, loose_count, box_count)
     # KEEP IN MIND: the count values should not be the desired values, but instead the amount to add or subtract from the item to achieve the desired values
     # see CountTransferJob#transfer_auto_count
-    count = @inventory.counts.find_or_initialize_by(item: item)
+    count = @inventory.counts.find_or_initialize_by(item:)
 
     count.tap do |c|
       c.loose_count += loose_count
@@ -143,7 +143,7 @@ class ExtrapolateInventoryJob < ApplicationJob
   end
 
   def loop_assemblies(combination, remainder)
-    assemblies = Assembly.without_price_only.where(combination: combination)
+    assemblies = Assembly.without_price_only.where(combination:)
 
     assemblies.each do |assembly|
       item = assembly.item
@@ -189,7 +189,7 @@ class ExtrapolateInventoryJob < ApplicationJob
 
     parts_produced = material_needed * part_quantity_from_material
 
-    return unless parts_produced > parts_needed
+    return if parts_produced <= parts_needed
 
     # add extra parts produced from material to the part's count
     count = @inventory.counts.where(item: part).first

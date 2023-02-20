@@ -29,7 +29,7 @@ class Count < ApplicationRecord
       item_name: item.name,
       loose: loose_count,
       box: unopened_boxes_count,
-      available: available
+      available:
     }
   end
 
@@ -39,7 +39,7 @@ class Count < ApplicationRecord
       inv_type: inventory.type,
       loose: loose_count,
       box: unopened_boxes_count,
-      available: available
+      available:
     }
   end
 

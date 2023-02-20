@@ -40,4 +40,3 @@ class CountPolicy < ApplicationPolicy
     user&.is_admin?
   end
 end
-

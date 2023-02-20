@@ -5,7 +5,7 @@ require 'rails_helper'
 RSpec.describe EventInventoryJob, type: :job do
   let(:job) { EventInventoryJob.new }
   let(:technology) { create :technology, quantity_per_box: 10 }
-  let(:event) { create :complete_event_technology, technology: technology }
+  let(:event) { create :complete_event_technology, technology: }
 
   it 'queues as event_inventory' do
     expect(job.queue_name).to eq 'event_inventory'
@@ -23,7 +23,7 @@ RSpec.describe EventInventoryJob, type: :job do
 
     context 'when event already has an inventory' do
       it 'returns false' do
-        create :inventory_event, event: event
+        create(:inventory_event, event:)
         event.reload
 
         expect(job.perform(event)).to eq false
@@ -210,7 +210,7 @@ RSpec.describe EventInventoryJob, type: :job do
 
     context 'for a given assembly' do
       let(:part) { create :part, available_count: 51 }
-      let(:assembly) { create :assembly, combination: combination, item: part, quantity: 2 }
+      let(:assembly) { create :assembly, combination:, item: part, quantity: 2 }
 
       context 'when item can satisfy the remainder' do
         it 'calls item_can_satisfy_remainder' do
@@ -224,7 +224,7 @@ RSpec.describe EventInventoryJob, type: :job do
 
       context 'when item cannot satify the remainder' do
         let(:part) { create :part, available_count: 49 }
-        let(:assembly) { create :assembly, combination: combination, item: part, quantity: 2 }
+        let(:assembly) { create :assembly, combination:, item: part, quantity: 2 }
 
         it 'calls item_insufficient' do
           expect(part.available_count < (remainder * assembly.quantity))
@@ -236,7 +236,7 @@ RSpec.describe EventInventoryJob, type: :job do
 
         context 'but item has sub-assemblies' do
           let(:part) { create :part_from_material, available_count: 49 }
-          let(:assembly) { create :assembly, combination: combination, item: part, quantity: 2 }
+          let(:assembly) { create :assembly, combination:, item: part, quantity: 2 }
 
           it 'calls item_has_sub_assemblies' do
             allow(job).to receive(:item_insufficient).and_return(true)
@@ -307,7 +307,7 @@ RSpec.describe EventInventoryJob, type: :job do
 
   describe '#produce_from_material' do
     let(:material) { create :material, loose_count: 1, box_count: 2, available_count: 3, quantity_per_box: 1 }
-    let(:part) { create :part_from_material, material: material, quantity_from_material: 5 }
+    let(:part) { create :part_from_material, material:, quantity_from_material: 5 }
     let(:remainder) { 25 }
 
     context 'when parts that can be produced >= remainder needed' do

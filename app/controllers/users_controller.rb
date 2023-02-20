@@ -174,9 +174,9 @@ class UsersController < ApplicationController
   end
 
   def contactor_params
-    if params['contactor'].present?
-      params.require(:contactor).permit :availability,
-                                        :technology
-    end
+    return unless params['contactor'].present?
+
+    params.require(:contactor).permit :availability,
+                                      :technology
   end
 end

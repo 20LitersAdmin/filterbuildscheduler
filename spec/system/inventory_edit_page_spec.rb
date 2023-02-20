@@ -16,7 +16,7 @@ RSpec.describe 'Inventory edit page', type: :system do
   end
 
   context 'when visited by' do
-    let(:count) { create :count, inventory: inventory }
+    let(:count) { create :count, inventory: }
 
     it 'anon users redirects to sign_in page' do
       count
@@ -80,7 +80,7 @@ RSpec.describe 'Inventory edit page', type: :system do
   end
 
   context 'has filters' do
-    let(:count) { create :count, inventory: inventory }
+    let(:count) { create :count, inventory: }
 
     it 'on the page' do
       count

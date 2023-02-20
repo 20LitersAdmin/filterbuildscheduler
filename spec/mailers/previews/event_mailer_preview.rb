@@ -12,8 +12,8 @@ class EventMailerPreview < ActionMailer::Preview
 
   def changed
     event = Event.first
-    event.start_time = DateTime.new(2017, 11, 8, 16, 0, 0, '-05:00')
-    event.end_time = DateTime.new(2017, 11, 8, 21, 0, 0, '-05:00')
+    event.start_time = Time.new(2017, 11, 8, 16, 0, 0, '-05:00')
+    event.end_time = Time.new(2017, 11, 8, 21, 0, 0, '-05:00')
     event.technology_id = 2
     event.location_id = 2
     event.is_private = true
@@ -26,11 +26,11 @@ class EventMailerPreview < ActionMailer::Preview
   end
 
   def messenger
-    EventMailer.messenger(Event.first.registrations.second, "The Subject", "The Message goes a little something like this", User.first)
+    EventMailer.messenger(Event.first.registrations.second, 'The Subject', 'The Message goes a little something like this', User.first)
   end
 
   def messenger_reporter
-    EventMailer.messenger_reporter(Event.first, "The Subject", "The Message goes a litle something like this", User.first)
+    EventMailer.messenger_reporter(Event.first, 'The Subject', 'The Message goes a litle something like this', User.first)
   end
 
   def replicated

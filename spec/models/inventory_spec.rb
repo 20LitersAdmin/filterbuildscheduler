@@ -113,13 +113,13 @@ RSpec.describe Inventory, type: :model do
     let(:user) { create :user }
 
     it 'returns the number of counts that have a user_id' do
-      create_list(:count, 4, inventory: inventory, user: user)
-      create_list(:count_comp, 3, inventory: inventory, user: user)
-      create_list(:count_mat, 2, inventory: inventory, user: user)
+      create_list(:count, 4, inventory:, user:)
+      create_list(:count_comp, 3, inventory:, user:)
+      create_list(:count_mat, 2, inventory:, user:)
 
-      create_list(:count, 7, inventory: inventory)
-      create_list(:count_comp, 6, inventory: inventory)
-      create_list(:count_mat, 5, inventory: inventory)
+      create_list(:count, 7, inventory:)
+      create_list(:count_comp, 6, inventory:)
+      create_list(:count_mat, 5, inventory:)
 
       expect(inventory.__send__(:item_count)).to eq(9)
     end
