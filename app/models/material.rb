@@ -176,7 +176,7 @@ class Material < ApplicationRecord
   end
 
   def escalate_price
-    return true unless parts.any?
+    return true if parts.none?
 
     parts.each do |part|
       part_price = price_cents / part.quantity_from_material

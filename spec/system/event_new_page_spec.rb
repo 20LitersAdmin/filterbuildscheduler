@@ -103,7 +103,7 @@ RSpec.describe 'Create events:', type: :system do
     let(:admin) { create :admin }
     let(:location) { create :location }
     let(:technology) { create :technology }
-    let(:event) { build :event, location: location, technology: technology }
+    let(:event) { build :event, location:, technology: }
 
     it 'creates the event and sends an email' do
       location

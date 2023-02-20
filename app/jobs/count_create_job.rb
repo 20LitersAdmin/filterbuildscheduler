@@ -40,7 +40,7 @@ class CountCreateJob < ApplicationJob
   def create_count(item)
     Count.create(
       inventory_id: @inventory.id,
-      item: item,
+      item:,
       loose_count: 0,
       unopened_boxes_count: 0
     )

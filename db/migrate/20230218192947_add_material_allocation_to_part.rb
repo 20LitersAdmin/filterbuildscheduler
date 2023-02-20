@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AddMaterialAllocationToPart < ActiveRecord::Migration[6.1]
   def change
     add_column :parts, :allocations, :jsonb, null: false, default: {}

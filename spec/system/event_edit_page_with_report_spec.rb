@@ -140,7 +140,7 @@ RSpec.describe 'To create an event report', type: :system do
 
   context 'fill out the form' do
     before do
-      create_list :registration, 5, event: event
+      create_list(:registration, 5, event:)
       sign_in create :admin
       visit edit_event_path event
     end

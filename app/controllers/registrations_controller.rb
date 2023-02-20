@@ -258,12 +258,12 @@ class RegistrationsController < ApplicationController
 
   def find_or_initialize_registration(user, event)
     # check for a discarded record before creating a new one.
-    registration_check = Registration.where(user: user, event: event)
+    registration_check = Registration.where(user:, event:)
     if registration_check.exists?
       registration = registration_check.first
       registration.undiscard
     else
-      registration = Registration.new(event: event, user: user)
+      registration = Registration.new(event:, user:)
     end
 
     registration

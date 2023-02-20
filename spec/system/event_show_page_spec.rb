@@ -22,7 +22,7 @@ RSpec.describe 'Showing Events', type: :system do
 
     it 'full can be visited but without a form' do
       event = create(:event, min_registrations: 1, max_registrations: 2)
-      create(:registration, guests_registered: 1, event: event)
+      create(:registration, guests_registered: 1, event:)
 
       visit event_path event
 
@@ -74,7 +74,7 @@ RSpec.describe 'Showing Events', type: :system do
   context 'past tense, leader, registered' do
     let(:event) { create :past_event }
     let(:leader) { create :leader, signed_waiver_on: Faker::Time.backward(days: 90) }
-    let(:registration) { create :registration_leader, event: event, user: leader }
+    let(:registration) { create :registration_leader, event:, user: leader }
 
     it 'can be visited' do
       leader.technologies << event.technology
@@ -93,7 +93,7 @@ RSpec.describe 'Showing Events', type: :system do
   context 'past tense, admin, regardless of registration' do
     let(:event) { create :past_event }
     let(:admin) { create :admin, signed_waiver_on: Faker::Time.backward(days: 90) }
-    let(:registration) { build :registration_leader, event: event, user: admin }
+    let(:registration) { build :registration_leader, event:, user: admin }
 
     it 'can be visited' do
       sign_in admin
@@ -149,7 +149,7 @@ RSpec.describe 'Showing Events', type: :system do
   context 'future tense, builder, registered' do
     let(:event) { create :event }
     let(:builder) { create :user, signed_waiver_on: Faker::Time.backward(days: 90) }
-    let(:registration) { create :registration_leader, event: event, user: builder }
+    let(:registration) { create :registration_leader, event:, user: builder }
 
     it 'can be visited' do
       registration.save
@@ -186,7 +186,7 @@ RSpec.describe 'Showing Events', type: :system do
   context 'future tense, leader, registered' do
     let(:event) { create :event }
     let(:leader) { create :leader, signed_waiver_on: Faker::Time.backward(days: 90) }
-    let(:registration) { create :registration_leader, event: event, user: leader }
+    let(:registration) { create :registration_leader, event:, user: leader }
 
     it 'can be visited' do
       leader.technologies << event.technology
@@ -228,7 +228,7 @@ RSpec.describe 'Showing Events', type: :system do
   context 'future tense, admin, registered' do
     let(:event) { create :event }
     let(:admin) { create :admin, signed_waiver_on: Faker::Time.backward(days: 90) }
-    let(:registration) { build :registration_leader, event: event, user: admin }
+    let(:registration) { build :registration_leader, event:, user: admin }
 
     it 'can be visited' do
       admin.technologies << event.technology

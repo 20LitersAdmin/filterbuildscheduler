@@ -15,7 +15,8 @@ class ReportController < ApplicationController
     @leaders = User.where(id: @registrations.leaders.map(&:user_id)).order(lname: :asc, fname: :asc)
     @all_builders = User.where(id: @registrations.builders.map(&:user_id)).order(lname: :asc, fname: :asc)
     all_builder_ids = @registrations.builders.map(&:user_id)
-    return_builder_ids = all_builder_ids.select { |e| all_builder_ids.count(e) > 1 }.uniq
+    return_builder_ids = all_builder_ids.select { |e| all_builder_ids.count(e) > 1 }
+                                        .uniq
     @return_builders = User.where(id: return_builder_ids).order(lname: :asc, fname: :asc)
   end
 
