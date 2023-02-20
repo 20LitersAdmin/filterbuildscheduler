@@ -65,7 +65,7 @@ RSpec.describe 'Creating a new inventory', type: :system do
       sign_in create(:data_manager)
       visit new_inventory_path
 
-      expect(page).to have_content "Create a new manual inventory"
+      expect(page).to have_content 'Create a new manual inventory'
     end
   end
 
@@ -133,7 +133,7 @@ RSpec.describe 'Creating a new inventory', type: :system do
         expect(page).to have_css("input#inventory_shipping[value='true']", visible: false)
       end
 
-      it "shows the technology selection options" do
+      it 'shows the technology selection options' do
         expect(page).to have_content 'Select technologies to inventory:'
       end
     end

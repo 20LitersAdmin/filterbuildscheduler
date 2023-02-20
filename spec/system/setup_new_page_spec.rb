@@ -5,7 +5,7 @@ require 'rails_helper'
 RSpec.describe 'Setup#New', type: :system do
   let(:setup_crew) { create :setup_crew }
   let(:event) { create :event }
-  let(:setup) { build :setup, event: event, creator: setup_crew }
+  let(:setup) { build :setup, event:, creator: setup_crew }
 
   context 'when visited by' do
     it 'anon users redirects to sign-in page' do

@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'rails_helper'
+
 require 'concerns/itemable_spec'
 
 RSpec.describe Material, type: :model do

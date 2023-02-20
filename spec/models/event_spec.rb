@@ -15,12 +15,12 @@ RSpec.describe Event, type: :model do
   let(:no_maxregistrations) { build :event, max_registrations: nil }
 
   let(:user) { create :user }
-  let(:reg1) { build :registration, event: event, guests_registered: 19, user: user }
-  let(:reg2) { build :registration, event: event, guests_registered: 9 }
+  let(:reg1) { build :registration, event:, guests_registered: 19, user: }
+  let(:reg2) { build :registration, event:, guests_registered: 9 }
 
-  let(:reg_leader1) { build :registration_leader, event: event, guests_registered: 0 }
-  let(:reg_leader2) { build :registration_leader, event: event, guests_registered: 0 }
-  let(:reg_leader3) { build :registration_leader, event: event }
+  let(:reg_leader1) { build :registration_leader, event:, guests_registered: 0 }
+  let(:reg_leader2) { build :registration_leader, event:, guests_registered: 0 }
+  let(:reg_leader3) { build :registration_leader, event: }
 
   describe 'must be valid' do
     let(:unsaved_event)         { build :event }
@@ -271,7 +271,7 @@ RSpec.describe Event, type: :model do
       reg_leader_b
       reg_leader_c
 
-      expect(complete_event.leaders_hours).to eq(3 * complete_event.length)
+      expect(complete_event.leaders_hours).to eq(complete_event.length * 3)
     end
   end
 
@@ -408,8 +408,8 @@ RSpec.describe Event, type: :model do
   end
 
   describe '#registrations_would_overflow?(registration)' do
-    let(:big_registration) { build :registration, guests_registered: 55, event: event }
-    let(:little_registration) { build :registration, guests_registered: 1, event: event }
+    let(:big_registration) { build :registration, guests_registered: 55, event: }
+    let(:little_registration) { build :registration, guests_registered: 1, event: }
 
     it 'returns true if the given registration would bring the total registrations above the max_registrations limit' do
       expect(event.registrations_would_overflow?(big_registration)).to eq true
@@ -650,8 +650,8 @@ RSpec.describe Event, type: :model do
 
   describe '#you_are_leader' do
     let(:leader) { create :leader }
-    let(:reg3) { build :registration, user: user, event: event, leader: true }
-    let(:reg4) { build :registration, user: leader, event: event, leader: true }
+    let(:reg3) { build :registration, user:, event:, leader: true }
+    let(:reg4) { build :registration, user: leader, event:, leader: true }
 
     it 'checks to see if a user is a leader and is registered as a leader' do
       expect(event.you_are_leader(leader)).to be_falsey

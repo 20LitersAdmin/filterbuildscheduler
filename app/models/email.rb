@@ -67,7 +67,7 @@ class Email < ApplicationRecord
     end
 
     email.save
-    email.reload unless email.errors.any?
+    email.reload if email.errors.none?
   end
 
   def send_to_crm

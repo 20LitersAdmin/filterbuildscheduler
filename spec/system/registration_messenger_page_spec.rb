@@ -4,7 +4,7 @@ require 'rails_helper'
 
 RSpec.describe 'Email registered users:', type: :system do
   let(:event) { create :event, max_registrations: 40 }
-  let(:registrations) { create_list :registration, 5, event: event }
+  let(:registrations) { create_list :registration, 5, event: }
 
   context 'anon user' do
     it 'can\'t visit the messenger page' do

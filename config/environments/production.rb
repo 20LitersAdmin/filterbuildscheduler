@@ -74,8 +74,8 @@ Rails.application.configure do
     address: 'smtp.mailgun.org',
     port: 587,
     domain: '20liters.org',
-    user_name: ENV['SMTP_USER'],
-    password: ENV['SMTP_PASS']
+    user_name: ENV.fetch('SMTP_USER'),
+    password: ENV.fetch('SMTP_PASS')
   }
 
   # Enable locale fallbacks for I18n (makes lookups for any locale fall back to
@@ -86,7 +86,7 @@ Rails.application.configure do
   config.active_support.deprecation = :notify
 
   # Use default logging formatter so that PID and timestamp are not suppressed.
-  config.log_formatter = ::Logger::Formatter.new
+  config.log_formatter = Logger::Formatter.new
 
   # Use a different logger for distributed setups.
   # require 'syslog/logger'

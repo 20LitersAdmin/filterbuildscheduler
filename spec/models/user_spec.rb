@@ -549,7 +549,7 @@ RSpec.describe User, type: :model do
       3.times do
         # FactoryBot events are 3 hours in length
         event = create :past_event
-        create :registration_attended, event:, user: user
+        create(:registration_attended, event:, user:)
         create :registration_leader_attended, event:, user: @leader
       end
     end

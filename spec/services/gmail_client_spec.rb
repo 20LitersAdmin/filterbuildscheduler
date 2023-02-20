@@ -26,9 +26,9 @@ RSpec.describe GmailClient do
     let(:before) { Date.today.iso8601 }
 
     it 'passes the vars to batch_get_queried_messages' do
-      expect(client).to receive(:batch_get_queried_messages).with(query: query)
+      expect(client).to receive(:batch_get_queried_messages).with(query:)
 
-      client.batch_get_latest_messages(after: after, before: before)
+      client.batch_get_latest_messages(after:, before:)
     end
   end
 
@@ -81,19 +81,19 @@ RSpec.describe GmailClient do
 
   describe '#batch_get_queried_messages(:query)' do
     before do
-      allow(client).to receive(:list_queried_messages).with(query: query).and_return(paged_json)
+      allow(client).to receive(:list_queried_messages).with(query:).and_return(paged_json)
       allow(client).to receive(:get_message).and_return(true)
       allow(client).to receive(:batch_get_messages).and_return(true)
     end
 
     it 'passes the query to list_queried_messages' do
-      expect(client).to receive(:list_queried_messages).with(query: query)
-      client.batch_get_queried_messages(query: query)
+      expect(client).to receive(:list_queried_messages).with(query:)
+      client.batch_get_queried_messages(query:)
     end
 
     it 'passes the message ids to batch_get_messages' do
       expect(client).to receive(:batch_get_messages)
-      client.batch_get_queried_messages(query: query)
+      client.batch_get_queried_messages(query:)
     end
   end
 
@@ -175,7 +175,7 @@ RSpec.describe GmailClient do
       allow(gmail_instance).to receive(:fetch_all)
       expect(gmail_instance).to receive(:fetch_all)
 
-      client.list_queried_messages(query: query)
+      client.list_queried_messages(query:)
     end
 
     it 'calls GmailService.list_user_messages' do
@@ -184,7 +184,7 @@ RSpec.describe GmailClient do
 
       expect(gmail_instance).to receive(:list_user_messages).with('me', include_spam_trash: false, q: query, page_token: 't0k3n')
 
-      client.list_queried_messages(query: query)
+      client.list_queried_messages(query:)
     end
   end
 

@@ -101,7 +101,7 @@ RSpec.describe CountTransferJob, type: :job do
   describe '#transfer_auto_count' do
     let(:inventory) { create :inventory_rec }
     let(:part) { create :part, loose_count: 5, box_count: 2, available_count: 25, quantity_per_box: 10 }
-    let(:count) { create :count_submitted, inventory: inventory, loose_count: 8, unopened_boxes_count: 1, item: part }
+    let(:count) { create :count_submitted, inventory:, loose_count: 8, unopened_boxes_count: 1, item: part }
 
     it 'combines Count values with Item values' do
       job.inventory = inventory
@@ -156,7 +156,7 @@ RSpec.describe CountTransferJob, type: :job do
   describe '#transfer_manual_count' do
     let(:inventory) { create :inventory }
     let(:part) { create :part, loose_count: 5, box_count: 2, available_count: 25, quantity_per_box: 10 }
-    let(:count) { create :count_submitted, inventory: inventory, loose_count: 8, unopened_boxes_count: 1, item: part }
+    let(:count) { create :count_submitted, inventory:, loose_count: 8, unopened_boxes_count: 1, item: part }
 
     it 'combines Count values with Item values' do
       job.inventory = inventory

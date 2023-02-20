@@ -135,7 +135,7 @@ RSpec.describe ProduceableJob, type: :job do
 
   describe '#loop_parts' do
     let(:material) { create :material }
-    let(:parts) { create_list :part_from_material, 3, material: material }
+    let(:parts) { create_list :part_from_material, 3, material: }
 
     it 'passes each part to update_part' do
       parts

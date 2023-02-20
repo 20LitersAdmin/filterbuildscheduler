@@ -76,7 +76,7 @@ RSpec.describe 'Inventory#index', type: :system do
   end
 
   context 'with a current inventory with counts' do
-    let(:counts) { create_list :count, 2, inventory: inventory }
+    let(:counts) { create_list :count, 2, inventory: }
 
     it 'shows current inventory' do
       inventory

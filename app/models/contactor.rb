@@ -3,7 +3,8 @@
 class Contactor
   include ActiveModel::Model
 
-  attr_accessor :technology, :availability,
+  attr_accessor :technology,
+                :availability,
                 :available_business_hours,
                 :available_after_hours,
                 :technology_ids,
@@ -25,7 +26,7 @@ class Contactor
   def collect_ids
     self.user_ids = User.kept
                         .leaders
-                        .where(available_business_hours: available_business_hours, available_after_hours: available_after_hours)
+                        .where(available_business_hours:, available_after_hours:)
                         .joins(:technologies)
                         .where(technologies: { id: technology_ids })
                         .map(&:id)

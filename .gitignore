@@ -45,3 +45,4 @@ public/capybara.html
 # Ignore VS Code stuff
 .trunk
 .vscode
+.reek.yml

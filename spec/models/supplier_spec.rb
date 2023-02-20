@@ -15,7 +15,8 @@ RSpec.describe Supplier, type: :model do
 
     it 'in order to save' do
       expect(supplier.save).to eq true
-      expect { no_name.save!(validate: false) }.to raise_error ActiveRecord::NotNullViolation
+      expect { no_name.save!(validate: false) }
+        .to raise_error ActiveRecord::NotNullViolation
       expect(bad_email.save).to be_falsey
       expect(bad_poc_email.save).to be_falsey
       expect(no_url_scheme.save).to be_falsey
