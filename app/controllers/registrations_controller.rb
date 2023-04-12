@@ -90,6 +90,12 @@ class RegistrationsController < ApplicationController
       if params[:registration][:form_source] == 'admin'
         render 'new'
       else
+        @tech_img = @event.technology&.display_image
+        @tech_info = @event.technology&.info_url if @event.technology&.info_url.present?
+        @location = @event.location
+        @location_img = @event.location&.image
+        @show_edit = (current_user&.is_admin || @registration&.leader?)
+        @leaders = @event.registrations.active.leaders
         render 'events/show'
       end
     end
