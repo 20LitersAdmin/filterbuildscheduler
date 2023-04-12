@@ -28,6 +28,8 @@ namespace :db do
 
     `pg_restore -a -O -F t -x -v --disable-triggers --dbname=postgresql://#{pg_vars[:user]}@127.0.0.1:#{pg_vars[:port]}/#{pg_vars[:database]} latest_dump`
 
+    `bin/rails db:environment:set RAILS_ENV=development`
+
     puts '===> Restored the production database to development'
 
     `rm latest_dump`
