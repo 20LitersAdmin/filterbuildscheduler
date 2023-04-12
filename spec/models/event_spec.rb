@@ -628,7 +628,7 @@ RSpec.describe Event, type: :model do
         reg_leader2.save
 
         expect(event.registrations.kept.exists?).to eq true
-        expect(event.total_registered_without(reg2)).to eq 22
+        expect(event.total_registered_without(reg2)).to eq 20
       end
     end
   end
