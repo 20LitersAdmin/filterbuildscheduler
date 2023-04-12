@@ -349,7 +349,7 @@ class Event < ApplicationRecord
   def total_registered_without(registration)
     return 0 if registrations.kept.empty?
 
-    regs = registrations.kept.where.not(id: registration.id)
+    regs = registrations.kept.builders.where.not(id: registration.id)
 
     regs.sum(:guests_registered) + regs.count
   end
