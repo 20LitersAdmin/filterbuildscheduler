@@ -141,7 +141,7 @@ class BloomerangClient
   end
 
   def write_primary_emails_to_constituents!(ids: [])
-    records = ids.empty? ConstituentEmail | ConstituentEmail.where(id: ids)
+    records = ids.empty? ? ConstituentEmail : ConstituentEmail.where(id: ids)
 
     primary_emails = records.only_primaries.select(:constituent_id, :value)
 
@@ -151,7 +151,7 @@ class BloomerangClient
   end
 
   def write_primary_phones_to_constituents!(ids: [])
-    records = ids.empty? ConstituentPhone | ConstituentPhone.where(id: ids)
+    records = ids.empty? ? ConstituentPhone : ConstituentPhone.where(id: ids)
 
     primary_phones = records.only_primaries.select(:constituent_id, :value)
 
