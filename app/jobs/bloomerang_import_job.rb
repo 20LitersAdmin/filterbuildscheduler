@@ -13,12 +13,12 @@ class BloomerangImportJob < ApplicationJob
       puts 'Starting Bloomerang Import in Total Sync mode.'
       perform_total_sync
       # TEMP logging HACK
-      LoggerMailer.notify(OauthUser.last, 'Bloomerang Import Job', 'The Bloomerang Import Job just ran in Total Sync mode')
+      LoggerMailer.notify(OauthUser.first, 'Bloomerang Import Job', 'The Bloomerang Import Job just ran in Total Sync mode')
     else
       puts 'Starting Bloomerang Import in Update mode.'
       perform_update
       # TEMP logging HACK
-      LoggerMailer.notify(OauthUser.last, 'Bloomerang Import Job', 'The Bloomerang Import Job just ran in Update mode.')
+      LoggerMailer.notify(OauthUser.first, 'Bloomerang Import Job', 'The Bloomerang Import Job just ran in Update mode.')
     end
   end
 
