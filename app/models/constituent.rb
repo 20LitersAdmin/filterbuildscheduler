@@ -8,9 +8,11 @@ class Constituent < ApplicationRecord
   alias_attribute :phones, :constituent_phones
 
   scope :with_primary_email, -> { where.not(primary_email: nil) }
-  scope :with_primary_phone, -> { where.not(primary_phone: nil) }
+  scope :wieth_primary_phone, -> { where.not(primary_phone: nil) }
 
   def self.latest_update_date
+    return Time.new(1970, 1, 1, 12, 0, 0) + 10.days if none?
+
     all.order(updated_at: :desc).limit(1).first.updated_at
   end
 
