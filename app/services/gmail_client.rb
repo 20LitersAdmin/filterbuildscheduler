@@ -64,6 +64,9 @@ class GmailClient
   def batch_get_queried_messages(query:)
     paged_response = list_queried_messages(query:)
 
+    # didn't find any messages
+    return unless paged_response.any?
+
     ids = []
     paged_response.each do |message|
       ids << message.id
