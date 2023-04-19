@@ -31,5 +31,8 @@ class SetupReminderJob < ApplicationJob
     end
 
     puts "Done. Sent #{r_count} reminders for #{s_count} setups."
+
+    # TEMP logging HACK
+    LoggerMailer.notify(OauthUser.first, 'Setup Reminder Job', 'Setup Reminder Job just ran.')
   end
 end
