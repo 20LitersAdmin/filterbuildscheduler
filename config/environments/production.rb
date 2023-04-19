@@ -74,8 +74,8 @@ Rails.application.configure do
     address: 'smtp.mailgun.org',
     port: 587,
     domain: '20liters.org',
-    user_name: ENV.fetch('SMTP_USER'),
-    password: ENV.fetch('SMTP_PASS')
+    user_name: Rails.application.credentials.dig(:mailgun, :smtp_user),
+    password: Rails.application.credentials.dig(:mailgun, :smtp_password)
   }
 
   # Enable locale fallbacks for I18n (makes lookups for any locale fall back to
