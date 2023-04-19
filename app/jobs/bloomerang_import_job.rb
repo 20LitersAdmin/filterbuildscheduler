@@ -6,14 +6,19 @@ class BloomerangImportJob < ApplicationJob
   queue_as :bloomerang_import_job
 
   def perform(total_sync: false)
+    @total_sync = total_sync
     @bloom_client = BloomerangClient.new(:buildscheduler)
 
-    if total_sync || is_first_monday_of_the_month?
+    if should_total_sync? || is_first_monday_of_the_month?
       puts 'Starting Bloomerang Import in Total Sync mode.'
       perform_total_sync
+      # TEMP logging HACK
+      LoggerMailer.notify(OauthUser.first, 'Bloomerang Import Job', 'The Bloomerang Import Job just ran in Total Sync mode')
     else
       puts 'Starting Bloomerang Import in Update mode.'
       perform_update
+      # TEMP logging HACK
+      LoggerMailer.notify(OauthUser.first, 'Bloomerang Import Job', 'The Bloomerang Import Job just ran in Update mode.')
     end
   end
 
@@ -43,7 +48,7 @@ class BloomerangImportJob < ApplicationJob
   def perform_total_sync
     puts '========================= Syncing All Constituents'
 
-    @bloom_client.import_constituents!(last_modified:)
+    @bloom_client.import_constituents!
 
     puts "Synced all Constituents, found #{@bloom_client.total_records} total."
 
@@ -61,5 +66,11 @@ class BloomerangImportJob < ApplicationJob
   def is_first_monday_of_the_month?
     current_date = Date.current
     current_date == (current_date.beginning_of_month - 1.day).next_week
+  end
+
+  def should_total_sync?
+    @total_sync ||
+      Constituent.none? ||
+      ConstituentEmail.none?
   end
 end

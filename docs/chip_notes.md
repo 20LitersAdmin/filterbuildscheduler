@@ -1,5 +1,11 @@
 # Chip's notes
 
+## As of Apr 2023
+- receiving inventories have no history?
+- receiving inventories are failing?
+- event inventories: check around 4/6 and 4/12
+- loose counts are negative due to event inventory?
+
 ## Admin can't register new user when event is full
 
 ## Inventory

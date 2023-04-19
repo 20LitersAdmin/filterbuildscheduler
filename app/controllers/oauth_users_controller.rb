@@ -59,7 +59,7 @@ class OauthUsersController < ApplicationController
 
     if oauth_user_params[:manual_query].present?
       begin
-        GmailClient.new(@oauth_user).delay(queue: 'gmail_client').batch_get_queried_messages(query: oauth_user_params[:manual_query])
+        GmailClient.new(@oauth_user).batch_get_queried_messages(query: oauth_user_params[:manual_query])
       rescue Signet::AuthorizationError => e
         @error = e
       end
