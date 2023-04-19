@@ -15,4 +15,10 @@ test:
 
 production:
   <<: *default
-  database: build_planner_prod
+  database: <%= Rails.application.credentials.dig(:railway, :pg, :database) %>
+  url: <%= Rails.application.credentials.dig(:railway, :pg, :url) %>
+  host: <%= Rails.application.credentials.dig(:railway, :pg, :host) %>
+  port: <%= Rails.application.credentials.dig(:railway, :pg, :port) %>
+  username: <%= Rails.application.credentials.dig(:railway, :pg, :user) %>
+  user: <%= Rails.application.credentials.dig(:railway, :pg, :user) %>
+  password: <%= Rails.application.credentials.dig(:railway, :pg, :password) %>
