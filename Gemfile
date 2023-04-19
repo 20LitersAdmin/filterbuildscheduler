@@ -11,7 +11,6 @@ end
 gem 'aws-sdk-s3'
 gem 'barnes'
 gem 'bloomerang_api', '~> 1.0'
-gem 'bootsnap', '>= 1.4.2', require: false
 gem 'bootstrap3-datetimepicker-rails'
 gem 'bootstrap-sass'
 gem 'chartkick'
@@ -35,7 +34,6 @@ gem 'net-smtp'
 gem 'omniauth-google-oauth2'
 gem 'omniauth-rails_csrf_protection', '~> 0.1'
 gem 'pg'
-gem 'pry-byebug'
 gem 'puma'
 gem 'pundit'
 gem 'rails', '>= 6.1.6.1'
@@ -55,7 +53,6 @@ end
 
 group :development do
   gem 'letter_opener_web'
-  gem 'listen', '~> 3.2'
   gem 'rubocop'
   gem 'web-console', '>= 3.3.0'
 end
@@ -64,7 +61,7 @@ group :development, :test do
   gem 'airborne'
   gem 'better_errors'
   gem 'binding_of_caller'
-  gem 'byebug', platforms: %i[mri mingw x64_mingw]
+  gem 'debug', '~> 1.7', platforms: %i[mri mingw x64_mingw]
   gem 'factory_bot_rails'
   gem 'faker'
   gem 'foreman'
