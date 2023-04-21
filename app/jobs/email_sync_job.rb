@@ -55,6 +55,6 @@ class EmailSyncJob < ApplicationJob
     puts 'Done.'
 
     # TEMP logging HACK
-    LoggerMailer.notify(OauthUser.first, 'Email Sync Job', "Rough log of events:\n#{log_msg}")
+    LoggerMailer.notify(OauthUser.first, 'Email Sync Job', "Rough log of events:\n#{log_msg}").deliver_now
   end
 end

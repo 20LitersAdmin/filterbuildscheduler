@@ -2,7 +2,7 @@
 
 class SetupMailer < ApplicationMailer
   helper MailerHelper
-  default from: 'filterbuilds@20liters.org'
+  default from: '20 Liters <filterbuilds@20liters.org>', reply_to: 'filterbuilds@20liters.org'
 
   def notify(setup, user)
     @setup = setup

@@ -14,6 +14,8 @@ RSpec.describe EmailSyncJob, type: :job do
 
   describe '#perform' do
     it 'calls OauthUser.to_sync' do
+      oauth_user
+
       allow(OauthUser).to receive(:to_sync).and_return(OauthUser.all)
 
       expect(OauthUser).to receive(:to_sync)
