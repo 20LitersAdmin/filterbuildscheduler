@@ -7,6 +7,12 @@ RSpec.describe EmailSyncJob, type: :job do
   let(:oauth_user) { create :oauth_user }
   let(:oauth_user2) { create :oauth_user }
   let(:gmail_instance) { instance_double GmailClient }
+  let(:oau) { create :oauth_user }
+
+  before do
+    # create an OauthUser for LoggerMailer.notify
+    oau
+  end
 
   it 'queues as email_sync' do
     expect(job.queue_name).to eq 'email_sync'
