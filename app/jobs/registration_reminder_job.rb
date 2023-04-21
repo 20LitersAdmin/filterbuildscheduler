@@ -32,6 +32,6 @@ class RegistrationReminderJob < ApplicationJob
     puts "Done. Sent #{r_count} reminders for #{e_count} events."
 
     # TEMP logging HACK
-    LoggerMailer.notify(OauthUser.first, 'Registration Reminder Job', 'Registration Reminder Job just ran.')
+    LoggerMailer.notify(OauthUser.first, 'Registration Reminder Job', 'Registration Reminder Job just ran.').deliver_now
   end
 end
