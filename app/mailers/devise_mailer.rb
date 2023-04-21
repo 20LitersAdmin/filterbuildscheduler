@@ -5,7 +5,7 @@ class DeviseMailer < Devise::Mailer
   include Devise::Controllers::UrlHelpers
   default template_path: 'users/mailer'
   layout 'mailer'
-  default from: 'filterbuilds@20liters.org'
+  default from: '20 Liters <filterbuilds@20liters.org>', reply_to: 'filterbuilds@20liters.org'
 
   def password_change(user, _opts = {})
     @user = user
