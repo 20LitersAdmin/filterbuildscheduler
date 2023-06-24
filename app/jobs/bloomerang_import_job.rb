@@ -12,13 +12,9 @@ class BloomerangImportJob < ApplicationJob
     if should_total_sync? || is_first_monday_of_the_month?
       puts 'Starting Bloomerang Import in Total Sync mode.'
       perform_total_sync
-      # TEMP logging HACK
-      LoggerMailer.notify(OauthUser.first, 'Bloomerang Import Job', 'The Bloomerang Import Job just ran in Total Sync mode').deliver_now
     else
       puts 'Starting Bloomerang Import in Update mode.'
       perform_update
-      # TEMP logging HACK
-      LoggerMailer.notify(OauthUser.first, 'Bloomerang Import Job', 'The Bloomerang Import Job just ran in Update mode.').deliver_now
     end
   end
 

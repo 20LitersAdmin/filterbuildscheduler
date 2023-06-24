@@ -3,16 +3,10 @@
 require 'rails_helper'
 
 RSpec.describe RegistrationReminderJob, type: :job do
-  let(:oau) { create :oauth_user }
   let(:job) { RegistrationReminderJob.new }
   let(:event) { create :event_upcoming }
   let(:registration) { create :registration, event: }
   let(:mail_message) { instance_double ActionMailer::MessageDelivery }
-
-  before do
-    # create an OauthUser for LoggerMailer.notify
-    oau
-  end
 
   it 'queues as registration_reminder' do
     expect(job.queue_name).to eq 'registration_reminder'
