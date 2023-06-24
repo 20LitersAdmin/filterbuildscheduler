@@ -34,4 +34,21 @@ namespace :db do
 
     `rm latest_dump`
   end
+
+  desc "Restore a safe_dump file to the development database"
+  task restore_safe_dump: :environment do
+    # check for psql installed
+    unless system('psql -V')
+      puts '===> psql not found or not installed'
+      return
+    end
+
+    puts '===> Performing hard reset of the the dev database'
+
+    `rails db:reset:hard --trace`
+
+    puts '===> Starting the import via pg_restore'
+
+    `pg_restore -a -O -F t -x -v --disable-triggers --dbname=postgresql://@127.0.0.1:/build_planner_dev safe_dump`
+  end
 end
