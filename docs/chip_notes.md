@@ -1,5 +1,15 @@
 # Chip's notes
 
+
+pg_dump -a -F t -x -v --dbname=postgresql://postgres:eHd0Sd5tuUJVMTVQuoBs@containers-us-west-78.railway.app:6449/railway > prod_dump
+
+"pg_restore -a -O -F t -x -v --disable-triggers --dbname=postgresql://#{pg_vars[:user]}@127.0.0.1:#{pg_vars[:port]}/#{pg_vars[:database]} latest_dump"
+"pg_restore -a -O -F t -x -v --disable-triggers --dbname=postgresql://@127.0.0.1:/build_planner_dev prod_dump"
+
+`pg_dump -a -F t -x -v --exclude-table=schema_migrations --exclude-table=ar_internal_metadata --dbname=postgresql://postgres@127.0.0.1:5432/build_planner_dev > safe_dump`
+
+{:adapter=>"postgresql", :encoding=>"utf8", :prepared_statements=>false, :pool=>5, :timeout=>5000, :database=>"build_planner_dev"}
+
 ## As of Apr 2023
 - receiving inventories have no history?
 - receiving inventories are failing?
@@ -108,61 +118,3 @@
 - Ability to pause / cancel registration emails
   - Using a suppress_emails? field?
   - `scope :pre_reminders, -> { where(reminder_sent_at: nil, suppress_reminder_emails: false) }`
-
-## system spec policy checking
-
-```ruby
-context 'when visited by a' do
-  it 'anon user, it redirects to sign-in page' do
-    visit url
-
-    expect(page).to have_content 'You need to sign in first'
-    expect(page).to have_content 'Sign in'
-  end
-
-  it 'builder, it redirects to home page' do
-    sign_in create :user
-    visit url
-
-    expect(page).to have_content 'You don\'t have permission'
-    expect(page).to have_content 'Upcoming Builds'
-  end
-
-  it 'leader, it redirects to home page' do
-    sign_in create :leader
-    visit url
-
-    expect(page).to have_content 'You don\'t have permission'
-    expect(page).to have_content 'Upcoming Builds'
-  end
-
-  it 'inventoryist, it shows the page' do
-    sign_in create :inventoryist
-    visit url
-
-    expect(page).to have_content 'Something'
-  end
-
-  it 'scheduler, it redirects to home page' do
-    sign_in create :scheduler
-    visit url
-
-    expect(page).to have_content 'You don\'t have permission'
-    expect(page).to have_content 'Upcoming Builds'
-  end
-
-  it 'data_manager, it shows the page' do
-    sign_in create :data_manager
-    visit url
-
-    expect(page).to have_content 'Something'
-  end
-
-  it 'admin, it shows the page' do
-    sign_in create :admin
-    visit url
-
-    expect(page).to have_content 'Something'
-  end
-end
-```
