@@ -4,9 +4,9 @@ FactoryBot.define do
   factory :supplier do
     name { Faker::Company.unique.name }
     url { Faker::Internet.url }
-    email { Faker::Internet.safe_email }
+    email { Faker::Internet.email }
     poc_name { Faker::TvShows::DrWho.character }
-    poc_email { Faker::Internet.safe_email }
+    poc_email { Faker::Internet.email }
     comments { Faker::Company.catch_phrase }
     address1 { Faker::Address.street_address }
     address2 { Faker::Address.secondary_address }
