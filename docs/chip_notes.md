@@ -1,14 +1,12 @@
 # Chip's notes
 
-
-pg_dump -a -F t -x -v --dbname=postgresql://postgres:eHd0Sd5tuUJVMTVQuoBs@containers-us-west-78.railway.app:6449/railway > prod_dump
-
-"pg_restore -a -O -F t -x -v --disable-triggers --dbname=postgresql://#{pg_vars[:user]}@127.0.0.1:#{pg_vars[:port]}/#{pg_vars[:database]} latest_dump"
-"pg_restore -a -O -F t -x -v --disable-triggers --dbname=postgresql://@127.0.0.1:/build_planner_dev prod_dump"
-
-`pg_dump -a -F t -x -v --exclude-table=schema_migrations --exclude-table=ar_internal_metadata --dbname=postgresql://postgres@127.0.0.1:5432/build_planner_dev > safe_dump`
-
-{:adapter=>"postgresql", :encoding=>"utf8", :prepared_statements=>false, :pool=>5, :timeout=>5000, :database=>"build_planner_dev"}
+## Prep for Ed's group
+- Instructions on using `rails db:restore_safe_dump`
+  - "Chip@20liters.org" / "password" to login
+  - Postgres 15
+- Tickets for Jobs:
+  - Goal Remainder Calculation Job
+  - Extrapolate Inventory Job
 
 ## As of Apr 2023
 - receiving inventories have no history?
