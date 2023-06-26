@@ -2,7 +2,7 @@
 version: 2.1
 
 orbs:
-  ruby: circleci/ruby@2.0.0
+  ruby: circleci/ruby@2.0.1
   browser-tools: circleci/browser-tools@1.4.1
 
 jobs:
@@ -13,7 +13,7 @@ jobs:
       - image: cimg/redis:7.0
       - image: cimg/postgres:15.1
         environment:
-          POSTGRES_USER: circle-ci
+          POSTGRES_USER: postgres
           POSTGRES_DB: build_planner_test
           POSTGRES_PASSWORD: ""
     environment:

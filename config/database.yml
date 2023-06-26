@@ -4,6 +4,8 @@ default: &default
   prepared_statements: false
   pool: 5
   timeout: 5000
+  user: postgres
+  port: 5432
 
 development:
   <<: *default
