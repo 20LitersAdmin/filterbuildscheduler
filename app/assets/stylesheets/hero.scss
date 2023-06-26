@@ -42,10 +42,17 @@
     padding: 10px 20px;
     margin: 12px 6%;
     height: 140px;
+    text-transform: uppercase;
 
     h1 {
+      font-weight: 700;
       margin-top: 16px;
       margin-bottom: 6px;
+    }
+    p {
+      font-weight: 700;
+      font-size: 1.5em;
+      line-height: 1.25em;
     }
   }
 }
