@@ -1,5 +1,13 @@
 # Chip's notes
 
+## Prep for Ed's group
+- Instructions on using `rails db:restore_safe_dump`
+  - "Chip@20liters.org" / "password" to login
+  - Postgres 15
+- Tickets for Jobs:
+  - Goal Remainder Calculation Job
+  - Extrapolate Inventory Job
+
 ## As of Apr 2023
 - receiving inventories have no history?
 - receiving inventories are failing?
@@ -108,61 +116,3 @@
 - Ability to pause / cancel registration emails
   - Using a suppress_emails? field?
   - `scope :pre_reminders, -> { where(reminder_sent_at: nil, suppress_reminder_emails: false) }`
-
-## system spec policy checking
-
-```ruby
-context 'when visited by a' do
-  it 'anon user, it redirects to sign-in page' do
-    visit url
-
-    expect(page).to have_content 'You need to sign in first'
-    expect(page).to have_content 'Sign in'
-  end
-
-  it 'builder, it redirects to home page' do
-    sign_in create :user
-    visit url
-
-    expect(page).to have_content 'You don\'t have permission'
-    expect(page).to have_content 'Upcoming Builds'
-  end
-
-  it 'leader, it redirects to home page' do
-    sign_in create :leader
-    visit url
-
-    expect(page).to have_content 'You don\'t have permission'
-    expect(page).to have_content 'Upcoming Builds'
-  end
-
-  it 'inventoryist, it shows the page' do
-    sign_in create :inventoryist
-    visit url
-
-    expect(page).to have_content 'Something'
-  end
-
-  it 'scheduler, it redirects to home page' do
-    sign_in create :scheduler
-    visit url
-
-    expect(page).to have_content 'You don\'t have permission'
-    expect(page).to have_content 'Upcoming Builds'
-  end
-
-  it 'data_manager, it shows the page' do
-    sign_in create :data_manager
-    visit url
-
-    expect(page).to have_content 'Something'
-  end
-
-  it 'admin, it shows the page' do
-    sign_in create :admin
-    visit url
-
-    expect(page).to have_content 'Something'
-  end
-end
-```
