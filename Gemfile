@@ -67,7 +67,6 @@ group :development, :test do
   gem 'foreman'
   gem 'selenium-webdriver'
   gem 'timecop'
-  gem 'webdrivers'
 end
 
 group :test do
