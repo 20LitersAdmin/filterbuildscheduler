@@ -26,6 +26,7 @@ require 'support/bloomerang_stub'
 ActiveRecord::Migration.maintain_test_schema!
 Capybara.server = :puma
 Capybara.javascript_driver = :selenium
+Capybara.default_host = 'http://localhost:3000/'
 FactoryBot.use_parent_strategy = false
 ActiveJob::Base.queue_adapter = :test
 
@@ -72,8 +73,6 @@ RSpec.configure do |config|
     ex.run_with_retry retry: 3
   end
 end
-
-Capybara.default_host = 'http://localhost:3000/'
 
 # WARN Selenium [DEPRECATION] [:capabilities] The :capabilities parameter for Selenium::WebDriver::Chrome::Driver is deprecated.
 # should be fixed once Capybara > 3.36.0

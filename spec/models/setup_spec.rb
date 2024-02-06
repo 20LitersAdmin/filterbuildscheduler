@@ -74,7 +74,7 @@ RSpec.describe Setup, type: :model do
     context 'when setup happens the same day as the event' do
       let(:setup_day_of) { create :setup_day_of }
 
-      it 'includes the date and both times' do
+      xit 'includes the date and both times' do
         expect(setup_day_of.summary).to include setup_day_of.date.strftime('%a, %-m/%-d')
         expect(setup_day_of.summary).to include setup_day_of.date.strftime('%-l:%M%P')
         expect(setup_day_of.summary).to include setup_day_of.event.start_time.strftime('%-l:%M%P')

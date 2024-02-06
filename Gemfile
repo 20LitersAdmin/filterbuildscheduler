@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 source 'https://rubygems.org'
-ruby '3.1.3'
+ruby '3.2.3'
 
 git_source(:github) do |repo_name|
   repo_name = "#{repo_name}/#{repo_name}" unless repo_name.include?('/')
@@ -67,7 +67,6 @@ group :development, :test do
   gem 'foreman'
   gem 'selenium-webdriver'
   gem 'timecop'
-  gem 'webdrivers'
 end
 
 group :test do
