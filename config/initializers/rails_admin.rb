@@ -232,6 +232,9 @@ RailsAdmin.config do |config|
             bindings[:object].id == 1
           end
         end
+        field :is_oauth_admin do
+          help 'Additional access to the Google Oauth Email Syncing service.'
+        end
       end
 
       group 'Leader details' do
