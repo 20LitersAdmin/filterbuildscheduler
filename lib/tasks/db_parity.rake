@@ -35,7 +35,7 @@ namespace :db do
     `rm latest_dump`
   end
 
-  desc "Restore a safe_dump file to the development database"
+  desc 'Restore a safe_dump file to the development database'
   task restore_safe_dump: :environment do
     # check for psql installed
     unless system('psql -V')

@@ -417,6 +417,6 @@ class User < ApplicationRecord
 
   ## Bloomerang
   def send_to_crm
-    BloomerangJob.perform_later(:buildscheduler, :create_from_user, self, interaction_type: 'became_leader', force_merge: true)
+    BloomerangJob.perform_later(:buildscheduler, :create_from_user, self, 'became_leader', true)
   end
 end

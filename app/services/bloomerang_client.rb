@@ -101,7 +101,7 @@ class BloomerangClient
   ## force_merge:
   # force the create/merge of Bloomerange::Constituent
   # used by User#became_leader? to set additional custom fields
-  def create_from_user(user, interaction_type: 'skip', force_merge: false)
+  def create_from_user(user, interaction_type = 'skip', force_merge = false)
     constituent_id = force_merge ? merge_constituent(user) : find_local_or_merge_constituent(user)
 
     return if interaction_type == 'skip' || constituent_id.nil?
@@ -115,7 +115,7 @@ class BloomerangClient
   # interaction_types
   # 'attended_event'
   # 'skip'
-  def create_from_registration(registration, interaction_type: 'skip')
+  def create_from_registration(registration, interaction_type = 'skip')
     constituent_id = find_local_or_merge_constituent(registration.user)
 
     return if interaction_type == 'skip' || constituent_id.nil?

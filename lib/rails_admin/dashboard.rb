@@ -114,7 +114,14 @@ module RailsAdmin
                 { name: 'Sign in link', link: 'auth/in' },
                 { name: 'Sign out link', link: 'auth/out' },
                 { name: 'Stored emails', link: 'admin/email' },
-                { name: 'Stored organizations', link: 'admin/organization' }
+              ]
+            }
+
+            bloomerang_management = {
+              title: 'Bloomerang Constituent Sync System',
+              base_uri: '/',
+              links: [
+                { name: 'Stored constituents', link: 'admin/constituent'}
               ]
             }
 
@@ -149,7 +156,7 @@ module RailsAdmin
             end
 
             # Special case:
-            instances << email_management if current_user.is_oauth_admin?
+            instances += [email_management, bloomerang_management] if current_user.is_oauth_admin?
 
             @management_instances = instances.flatten.uniq
 

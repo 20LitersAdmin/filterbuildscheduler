@@ -18,3 +18,19 @@
             = link_to 'Status', auth_status_path(o), class: 'btn yellow'
             = link_to 'Manual', auth_manual_path(o), class: 'btn blue'
             = link_to 'Delete', auth_delete_path(o), method: :delete, class: 'btn red', data: { confirm: 'Are you sure? This will delete the Oauth User and associated emails.' }
+.col-xs-12
+  %h2 Bloomerang Constituent sync
+  %h4 To avoid creating duplicates, the system imports all Bloomerang Consituents, their email addresses, and their phone numbers.
+  %h4 The system imports any new/updated Bloomerang Consituents automatically at 2am everyday.
+  %h4 The system will sync all Consituents if it's the 1st Monday of the month.
+.col-xs-12.spacer-top-1
+  .col-xs-6
+    = link_to 'Force Import/Update Constituents', bloomerang_import_path, class: 'btn blue', data: { disable_with: 'Importing...' }
+  .col-xs-6
+    %p Click to manually force an import/update: (This will take a few seconds to complete.)
+.col-xs-12.spacer-top-1
+  .col-xs-6
+    = link_to 'Force Re-Sync All', bloomerang_sync_path, class: 'btn blue', data: { disable_with: 'Re-Syncing...' }
+  .col-xs-6
+    %p Click to manually force a re-sync: (This will take a few minutes to complete.)
+
