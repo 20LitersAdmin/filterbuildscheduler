@@ -11,9 +11,11 @@ class BloomerangImportJob < ApplicationJob
 
     if should_total_sync? || is_first_monday_of_the_month?
       puts 'Starting Bloomerang Import in Total Sync mode.'
+      Rollbar.info('Bloomerang Import:', 'Total Sync mode')
       perform_total_sync
     else
       puts 'Starting Bloomerang Import in Update mode.'
+      Rollbar.info('Bloomerang Import:', 'Update mode')
       perform_update
     end
   end

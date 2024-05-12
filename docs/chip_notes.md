@@ -108,7 +108,3 @@
 - Ability to pause / cancel registration emails
   - Using a suppress_emails? field?
   - `scope :pre_reminders, -> { where(reminder_sent_at: nil, suppress_reminder_emails: false) }`
-
-## May 2024 Fixes
-- Add Rollbar
-- Add buttons for manually syncing Bloomerang Constituents
