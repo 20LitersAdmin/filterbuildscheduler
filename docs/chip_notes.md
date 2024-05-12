@@ -1,13 +1,5 @@
 # Chip's notes
 
-## Prep for Ed's group
-- Instructions on using `rails db:restore_safe_dump`
-  - "Chip@20liters.org" / "password" to login
-  - Postgres 15
-- Tickets for Jobs:
-  - Goal Remainder Calculation Job
-  - Extrapolate Inventory Job
-
 ## As of Apr 2023
 - receiving inventories have no history?
 - receiving inventories are failing?

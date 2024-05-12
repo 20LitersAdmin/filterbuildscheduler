@@ -728,7 +728,7 @@ RSpec.describe User, type: :model do
       end
 
       it 'takes user data and sends it to BloomerangJob' do
-        expect(BloomerangJob).to receive(:perform_later).with(:buildscheduler, :create_from_user, user, interaction_type: 'became_leader', force_merge: true)
+        expect(BloomerangJob).to receive(:perform_later).with(:buildscheduler, :create_from_user, user, 'became_leader', true)
         user.save
       end
     end

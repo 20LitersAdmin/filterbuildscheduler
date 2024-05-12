@@ -49,6 +49,8 @@ class BloomerangClient
     else
       @total_records
     end
+
+    Rollbar.info('BloomerangClient#import_constituents!', total_records: @total_records, created_record_ids: @created_record_ids)
   end
 
   def import_emails!(batch_size: 50, constituent_ids: '')
@@ -71,6 +73,8 @@ class BloomerangClient
     else
       @total_records
     end
+
+    Rollbar.info('BloomerangClient#import_emails!', total_records: @total_records, created_record_ids: @created_record_ids)
   end
 
   def import_phones!(batch_size: 50, constituent_ids: '')
@@ -93,6 +97,8 @@ class BloomerangClient
     else
       @total_records
     end
+
+    Rollbar.info('BloomerangClient#import_phones!', total_records: @total_records, created_record_ids: @created_record_ids)
   end
 
   ## interaction_types:
@@ -101,7 +107,7 @@ class BloomerangClient
   ## force_merge:
   # force the create/merge of Bloomerange::Constituent
   # used by User#became_leader? to set additional custom fields
-  def create_from_user(user, interaction_type: 'skip', force_merge: false)
+  def create_from_user(user, interaction_type = 'skip', force_merge = false)
     constituent_id = force_merge ? merge_constituent(user) : find_local_or_merge_constituent(user)
 
     return if interaction_type == 'skip' || constituent_id.nil?
@@ -110,12 +116,14 @@ class BloomerangClient
     body = user.__send__("#{interaction_type}_interaction".to_sym, constituent_id)
 
     @bloomerang::Interaction.create(body)
+
+    Rollbar.info('BloomerangClient#create_from_user', user_id: user.id, constituent_id:)
   end
 
   # interaction_types
   # 'attended_event'
   # 'skip'
-  def create_from_registration(registration, interaction_type: 'skip')
+  def create_from_registration(registration, interaction_type = 'skip')
     constituent_id = find_local_or_merge_constituent(registration.user)
 
     return if interaction_type == 'skip' || constituent_id.nil?
@@ -124,6 +132,7 @@ class BloomerangClient
     body = registration.__send__("#{interaction_type}_interaction".to_sym, constituent_id)
 
     @bloomerang::Interaction.create(body)
+    Rollbar.info('BloomerangClient#create_from_registration', registration_id: registration.id, constituent_id:)
   end
 
   def create_from_causevox(charge)
@@ -134,10 +143,12 @@ class BloomerangClient
 
     # create the Transaction using the Constituent ID
     @bloomerang::Transaction.create(charge.as_bloomerang_transaction(constituent_id))
+    Rollbar.info('BloomerangClient#create_from_causevox', charge:, constituent_id:)
   end
 
   def create_from_email(email_as_interaction)
     @bloomerang::Interaction.create(email_as_interaction)
+    Rollbar.info('BloomerangClient#create_from_email', email_as_interaction:)
   end
 
   def write_primary_emails_to_constituents!(ids: [])

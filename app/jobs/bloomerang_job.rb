@@ -8,8 +8,9 @@ class BloomerangJob < ApplicationJob
   # :gmailsync
   # :causevoxsync
   def perform(app = nil, method = '', *args)
-    return if app.nil?
+    return if app.nil? || method.blank?
 
-    BloomerangClient.new(app).__send__(method, *args) if method.present?
+    Rollbar.info('BloomerangJob:', app:, method:, args:)
+    BloomerangClient.new(app).__send__(method, *args)
   end
 end

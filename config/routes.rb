@@ -120,6 +120,9 @@ Rails.application.routes.draw do
 
   post 'stripe-webhook', to: 'webhooks#stripe', as: 'stripe_webhook'
 
+  get '/bloomerang/import', to: 'bloomerang#import', as: 'bloomerang_import'
+  get '/bloomerang/sync', to: 'bloomerang#sync', as: 'bloomerang_sync'
+
   mount RailsAdmin::Engine => '/admin', as: 'rails_admin'
   mount LetterOpenerWeb::Engine, at: '/letter_opener' if Rails.env.development?
   mount ActionCable.server => '/cable'

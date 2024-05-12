@@ -48,7 +48,6 @@ RailsAdmin.config do |config|
     Email
     Inventory
     OauthUser
-    Organization
     Setup
   ].freeze
 
