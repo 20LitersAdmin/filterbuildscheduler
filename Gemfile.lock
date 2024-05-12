@@ -428,6 +428,7 @@ GEM
       netrc (~> 0.8)
     retriable (3.1.2)
     rexml (3.2.6)
+    rollbar (3.5.2)
     rouge (4.2.1)
     rspec (3.13.0)
       rspec-core (~> 3.13.0)
@@ -597,6 +598,7 @@ DEPENDENCIES
   rails_admin (~> 2.2)
   redis (~> 4.3, >= 4.3.1)
   rest-client
+  rollbar
   rspec
   rspec-rails
   rspec-retry

@@ -65,7 +65,7 @@ class Registration < ApplicationRecord
   def send_to_crm
     return if !attended? && user.reload.email_opt_out?
 
-    BloomerangJob.perform_now(:buildscheduler, :create_from_registration, self, 'attended_event')
+    BloomerangJob.perform_later(:buildscheduler, :create_from_registration, self, 'attended_event')
   end
 
   ## Bloomerang

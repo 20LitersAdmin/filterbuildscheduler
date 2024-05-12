@@ -21,7 +21,7 @@ runtimes:
     - go@1.18.3
     - node@18.12.1
     - python@3.10.8
-    - ruby@3.1.0
+    - ruby@3.2.3
 actions:
   disabled:
     - trunk-announce
