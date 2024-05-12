@@ -76,10 +76,10 @@ RSpec.describe 'Event edit page', type: :system do
   end
 
   context 'allows for canceling' do
-    let(:registrations) { create_list :registration, 3, event: }
+    let!(:registrations) { create_list :registration, 3, event: }
 
     it 'which discards the event and all registrations' do
-      registrations
+      allow(RegistrationMailer).to receive(:event_cancelled).and_call_original
       sign_in create(:admin)
       visit edit_event_path event
 
@@ -93,6 +93,7 @@ RSpec.describe 'Event edit page', type: :system do
 
       expect(event.reload.discarded_at).not_to be_nil
       expect(event.registrations.pluck(:discarded_at).uniq).not_to include nil
+      expect(RegistrationMailer).to have_received(:event_cancelled).exactly(3).times
     end
   end
 

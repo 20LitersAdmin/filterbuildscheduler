@@ -51,7 +51,7 @@ class EventsController < ApplicationController
 
       if @event.registrations.exists?
         @event.registrations.each do |registration|
-          RegistrationMailer.event_cancelled(registration, @event).deliver_later
+          RegistrationMailer.event_cancelled(registration).deliver_later
           registration.discard
         end
         users_notified = 'All registered builders notified.'
