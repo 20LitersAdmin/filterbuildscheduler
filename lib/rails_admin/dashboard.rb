@@ -113,7 +113,7 @@ module RailsAdmin
                 { name: 'Oauth User List', link: 'auth' },
                 { name: 'Sign in link', link: 'auth/in' },
                 { name: 'Sign out link', link: 'auth/out' },
-                { name: 'Stored emails', link: 'admin/email' },
+                { name: 'Stored emails', link: 'admin/email' }
               ]
             }
 
@@ -121,7 +121,8 @@ module RailsAdmin
               title: 'Bloomerang Constituent Sync System',
               base_uri: '/',
               links: [
-                { name: 'Stored constituents', link: 'admin/constituent'}
+                { name: 'Stored constituents', link: 'admin/constituent' },
+                { name: 'Sidekiq jobs', link: 'sidekiq' }
               ]
             }
 
