@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'sidekiq/web'
 Rails.application.routes.draw do
   root to: 'events#index'
 
@@ -126,4 +127,9 @@ Rails.application.routes.draw do
   mount RailsAdmin::Engine => '/admin', as: 'rails_admin'
   mount LetterOpenerWeb::Engine, at: '/letter_opener' if Rails.env.development?
   mount ActionCable.server => '/cable'
+
+  # basic auth for sidekiq
+  authenticate :user, lambda { |u| u.is_oauth_admin? } do
+    mount Sidekiq::Web => '/sidekiq'
+  end
 end
