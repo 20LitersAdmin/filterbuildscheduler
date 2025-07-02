@@ -1,6 +1,6 @@
 <% use_edit_link ||= false %>
 <% no_date ||= false %>
-<% disabled = event.registrations_filled? && !current_user&.admin_or_leader? && !current_user.registered?(event) %>
+<% disabled = event.registrations_filled? && !current_user&.admin_or_leader? && !current_user&.registered?(event) %>
 <div class="event <%= 'disabled' if disabled %>" id="event_<%= event.id %>">
   <% if event.you_are_attendee(@user).present? || event.you_are_leader(@user).present? %>
     <%= image_tag "registered_badge.png", size: "80x80", class: "registered-badge" %>
