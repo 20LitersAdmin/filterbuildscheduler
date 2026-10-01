@@ -4,9 +4,7 @@ module CleanupCrew
   def clean_up!
     # This cannot be allowed to run in production
     # I believe it's safe because the require call only exists in RSpec's rails_helper
-    abort('The Rails environment isn\'t Test!!!') unless Rails.env.test?
-
-    puts 'CleanupCrew has arrived.'
+    abort("The Rails environment isn't Test!!!") unless Rails.env.test?
 
     # use .destroy_all to fire all callbacks, including deleting ActiveStorage::Attachments via dependent: :purge
 
@@ -40,13 +38,9 @@ module CleanupCrew
     # To clear all workers' jobs:
     Sidekiq::Worker.clear_all
 
-    puts 'Mess is gone, boss.'
-
     ActiveRecord::Base.connection.tables.each do |t|
       ActiveRecord::Base.connection.reset_pk_sequence!(t)
     end
-
-    puts 'Lights are off, doors are locked. Good night.'
   end
 
   module_function :clean_up!
