@@ -64,7 +64,7 @@ class InventoriesController < ApplicationController
 
     # This view is where the user edits count records associated with the inventory
 
-    @counts = @inventory.counts.sort_by { |c| [c.sort_by_status, - c.item.name] }
+    @counts = @inventory.counts.with_item_images.sort_by { |c| [c.sort_by_status, - c.item.name] }
     @uncounted = "#{view_context.pluralize(@inventory.counts.uncounted.size, 'item')} uncounted."
 
     @techs = Technology.for_inventories.where(id: @inventory.technologies)

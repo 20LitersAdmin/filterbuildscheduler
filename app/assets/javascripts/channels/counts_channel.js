@@ -17,6 +17,43 @@
 // attempt. It was a great learning experience and I think this is much
 // better than the Javascript ping / polling function I had written.
 
+// Same order as Inventory#edit: status (uncounted, partial, counted), then item name.
+// Move the updated node only. Rebuilding the row would request every picture again.
+function placeCountCard(row, card) {
+  if (!card.length) return;
+
+  var statusRank = { uncounted: 0, partial: 1, counted: 2 };
+
+  function sortKey(el) {
+    var status = statusRank[el.getAttribute('data-status')];
+    var title = el.querySelector('.count-title');
+    var name = title ? title.textContent.trim() : '';
+
+    return [(status === undefined ? 0 : status), name];
+  }
+
+  function isAfter(a, b) {
+    var ka = sortKey(a);
+    var kb = sortKey(b);
+
+    if (ka[0] !== kb[0]) return ka[0] > kb[0];
+    return ka[1] > kb[1];
+  }
+
+  var others = row.children('.count-wrapper').not(card).get();
+  var cardEl = card.get(0);
+  var i;
+
+  for (i = 0; i < others.length; i++) {
+    if (isAfter(others[i], cardEl)) {
+      $(others[i]).before(card);
+      return;
+    }
+  }
+
+  row.append(card);
+}
+
 var pathname = window.location.pathname;
 
 if (pathname.match(/^\/inventories\/\d+\/edit/) != null) {
@@ -44,10 +81,18 @@ if (pathname.match(/^\/inventories\/\d+\/edit/) != null) {
         console.log('[ActionCable] data received');
 
         // data["count_id"]
-        // data["html_slug"]
+        // data["html_slug"] is only the count that changed, so the other cards keep their images
         // data["uncounted"]
-        var slugTarget = $('div.row#counts_row');
-        slugTarget.html(data["html_slug"]);
+        var row = $('div.row#counts_row');
+        var existing = $('#count_' + data["count_id"]);
+
+        if (existing.length) {
+          existing.replaceWith(data["html_slug"]);
+        } else {
+          row.append(data["html_slug"]);
+        }
+
+        placeCountCard(row, $('#count_' + data["count_id"]));
 
         var countTargets = $('.uncounted_number');
         countTargets.html(data["uncounted"]);

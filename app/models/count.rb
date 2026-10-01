@@ -11,6 +11,8 @@ class Count < ApplicationRecord
 
   scope :submitted, -> { where.not(user_id: nil) }
   scope :uncounted, -> { where(user_id: nil) }
+  # picture URLs touch each item's ActiveStorage blob; preload them for the edit grid
+  scope :with_item_images, -> { includes(item: { image_attachment: :blob }) }
 
   scope :technologies, -> { where(item_type: 'Technology') }
   scope :components, -> { where(item_type: 'Component') }

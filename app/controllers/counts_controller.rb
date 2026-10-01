@@ -33,11 +33,12 @@ class CountsController < ApplicationController
     if @count.errors.any?
       render 'edit'
     else
+      # Render only the count that changed. Rebuilding the whole grid resolves every item picture.
       CountsChannel.broadcast_to(
         @inventory,
         {
           count_id: @count.id,
-          html_slug: render_to_string(partial: 'counts/count', collection: @inventory.counts.sort_by { |c| [c.sort_by_status, - c.item.name] }),
+          html_slug: render_to_string(partial: 'counts/count', locals: { count: @count }),
           uncounted: "#{view_context.pluralize(@inventory.counts.uncounted.size, 'item')} uncounted."
         }
       )
@@ -66,7 +67,7 @@ class CountsController < ApplicationController
   end
 
   def set_count
-    authorize @count ||= Count.find(params[:id])
+    authorize @count ||= Count.with_item_images.find(params[:id])
   end
 
   def set_inventory
